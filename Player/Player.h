@@ -8,7 +8,7 @@ using namespace DirectX;
 
 const int MAX_ACTIVE_COUNT = 300;
 const int MAX_INVICIBLE_COUNT = 120;
-const float MAX_SPEED = 5.0f;
+const float MAX_SPEED = 0.1f;
 
 static XMFLOAT3 VecNormaliz(XMFLOAT3& vector)
 {

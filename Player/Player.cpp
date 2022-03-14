@@ -32,7 +32,6 @@ void Player::Init()
 	player.shader.vsBlob = LoadShader(L"Resource/HLSL/OBJVertexShader.hlsl", "vs_5_0");
 	player.shader.psBlob = LoadShader(L"Resource/HLSL/OBJPixelShader.hlsl", "ps_5_0");
 	player.CreateModel("Block");
-	player.Init(1);
 	//water.CreateWater();
 
 	XMFLOAT3 pos = { 0,0,0 };
@@ -53,7 +52,7 @@ void Player::Update(bool isBombAlive, bool isHit)
 	else { vec3.x = DirectInput::leftStickX(); vec3.z = DirectInput::leftStickY(); }
 
 	pos.x += vec3.x * MAX_SPEED;
-	pos.z += vec3.z * MAX_SPEED;
+	pos.z += -vec3.z * MAX_SPEED;
 
 	/*éÀåÇÅAíeä÷åW*/
 	if (DirectInput::IsButtonPush(DirectInput::ButtonKind::Button01)) { isShoot = true; }
@@ -85,6 +84,8 @@ void Player::Update(bool isBombAlive, bool isHit)
 			isActive = true;
 		}
 	}
+	player.position = ConvertXMFLOAT3toXMVECTOR(pos);
+	player.Update();
 }
 
 //ï`âÊ
