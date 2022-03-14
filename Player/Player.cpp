@@ -36,10 +36,10 @@ void Player::Init()
 
 	XMFLOAT3 pos = { 0,0,0 };
 	XMFLOAT3 vec3 = { 0,0,0 };
+	bool isInvincible = false;
 	int activeCount = 0;
 	int invincibleCount = 0;
 	bool isActive = true;
-	bool isInvincible = false;
 	bool isShoot = false;
 	bool isDetonating = false;
 }
