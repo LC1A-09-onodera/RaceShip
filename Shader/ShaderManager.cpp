@@ -1,5 +1,6 @@
 #include"ShaderManager.h"
 
+HLSLShader ShaderManager::playerShader;
 void ShaderManager::LoadShaders()
 {
 	playerShader.vsBlob = LoadShader(L"Resource/HLSL/OBJVertexShader.hlsl", "vs_5_0");
