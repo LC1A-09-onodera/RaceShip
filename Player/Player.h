@@ -3,11 +3,12 @@
 #include "../sampleObject/sampleObject.h"
 #include "../Collition/CollisionPrimitive.h"
 #include "../Sound/Sound.h"
-#include "../water/water.h"
+
 using namespace DirectX;
 
-
-class Enemy;
+const int MAX_ACTIVE_COUNT = 300;
+const int MAX_INVICIBLE_COUNT = 120;
+const float MAX_SPEED = 0.1f;
 
 static XMFLOAT3 VecNormaliz(XMFLOAT3& vector)
 {
@@ -18,78 +19,40 @@ static XMFLOAT3 VecNormaliz(XMFLOAT3& vector)
 	return vector;
 }
 
-enum PlayerAction
-{
-	P_MOVE, P_STAY
-};
-
-enum class Direction
-{
-	RIGHT, LEFT,
-};
-
-//struct WaterVert
-//{
-//	int index;
-//	int nearIndex[4];
-//	float moveSpeed;
-//	float addSpeed;
-//	bool moveDirection;
-//	XMFLOAT3 nextPosition;
-//};
-
 class Player final
 {
 private:
 	Player();
 	~Player();
-	/*std::vector<WaterVert> waterVert;*/
-	//Model ground;
-	Water water;
-	static const int WallNum = 500;
-	Model goal;
-	XMFLOAT3 pos;
-	XMFLOAT3 direction = {0, 0, 1};
 
-	float moveSpeedX;
-	float moveSpeedY;
-	bool isDie;
-	bool isGoal;
-	int HP;
-	float speedEase;
-	XMFLOAT3 wallToDirection;
-	/*static const int vertNum = 250;*/
-	static const int R = 1;
-	static const int MaxWS = 1;
-	static const int MaxAD = 3;
+	XMFLOAT3 pos;			//プレイヤーの座標
+	XMFLOAT3 vec3;			//向いている方向（正規化済）
+	int activeCount;		//行動不能カウント
+	int invincibleCount;	//無敵カウント
+	bool isActive;			//行動できるかどうか
+	bool isInvincible;		//無敵かどうか
+	bool isShoot;			//射撃中かどうか（弾があるか）
+	bool isDetonating;		//起爆したかどうか
 
-	XMFLOAT3 directionMove;
-	XMFLOAT3 directionR;
-	XMFLOAT2 normalSpeed;
-	float leng;
-
-	int goalAfterCount = 0;
-
-	static const int moveCountMax = 100;
-	int moveCount;
-
-	//SoundData BGM;
 public:
-	Player(const Player &obj) = delete;
-	Player &operator=(const Player &obj) = delete;
-	static Player *GetPlayer();
+	Player(const Player& obj) = delete;
+	Player& operator=(const Player& obj) = delete;
+	static Player* GetPlayer();
 	//初期化
 	void Init();
 	//更新
-	void Update();
+	void Update(bool isBombAlive,bool isHit);
 	//描画
 	void Draw();
-	//
-	void ReSet();
-	//
-	XMFLOAT3 GetPos();
-	//
-	void Move();
+
+	XMFLOAT3 GetPos() { return pos; }				//プレイヤーの座標
+	XMFLOAT3 GetVec3() { return vec3; }				//向いている方向（正規化済） 
+	bool IsActive() { return isActive; }			//行動できるかどうか
+	bool IsInvincible() { return isInvincible; }	//無敵かどうか
+	bool IsShoot() { return isShoot; }				//射撃中かどうか
+	//void EndShoot() { isShoot = false; }			//弾が画面外か起爆されたか敵と当たった場合に呼び出す
+	bool IsDetonating() { return isDetonating; }	//起爆したかどうか
+
 
 	XMVECTOR oldPlayerPos;
 	Box2D playerCollision;

@@ -64,7 +64,7 @@ void GameScene::Init()
 	BaseDirectX::GetAdress();
 	//ƒJƒƒ‰‰Šú‰»
 	Camera::Init();
-	Camera::eye = { 0, 0, -20.0 };
+	Camera::eye = { 0, 20, -1.0 };
 	Camera::target = { 0, 0, 0 };
 	Camera::Update();
 	//Imgui‚Ì‰Šú‰»
@@ -99,6 +99,7 @@ void GameScene::Init()
 
 void GameScene::TitleUpdate()
 {
+	Player::GetPlayer()->Update(false,false);
 	if (Input::KeyTrigger(DIK_SPACE))
 	{
 		SceneNum = GAME;
@@ -127,7 +128,7 @@ void GameScene::GameUpdate()
 	spotLightPos[1] = 3;
 
 
-	Player::GetPlayer()->Update();
+	//Player::GetPlayer()->Update();
 	Enemy::Update();
 	ParticleControl::Update();
 	
