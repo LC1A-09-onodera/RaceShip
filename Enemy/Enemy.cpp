@@ -3,23 +3,12 @@
 #include "../Particle/Particle3D.h"
 #include "../Sound/Sound.h"
 
-void Enemy::Init()
+void EnemeyProsess::Update(EnemyBase& enemy)
 {
-	
+
 }
 
-
-void Enemy::Update()
-{
-	
-}
-
-void Enemy::Draw()
-{
-	
-}
-
-void Enemy::ReSet()
+void EnemeyProsess::Init(EnemyBase& enemy)
 {
 	
 }
