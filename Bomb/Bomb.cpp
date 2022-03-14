@@ -33,4 +33,5 @@ bool Bomb::Shot(DirectX::XMFLOAT3 angle, DirectX::XMFLOAT3 pos)
 	data.pos = ConvertXMFLOAT3toXMVECTOR(angle);
 	data.isAlive = true;
 	data.bombAngle = ConvertXMFLOAT3toXMVECTOR(angle);
+	return true;
 }

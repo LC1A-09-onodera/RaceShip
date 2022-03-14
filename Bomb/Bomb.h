@@ -22,6 +22,12 @@ public:
 	void Finailize();
 	void Draw();
 
+	/// <summary>
+	/// ”­ŽË
+	/// </summary>
+	/// <param name="angle">Œü‚«</param>
+	/// <param name="pos"></param>
+	/// <returns></returns>
 	bool Shot(DirectX::XMFLOAT3 angle, DirectX::XMFLOAT3 pos);
 private:
 	BombData data;
