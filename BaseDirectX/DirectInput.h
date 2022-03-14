@@ -105,14 +105,14 @@ public: // メンバ関数
 	* @retval false：押されていない
 	* @param[in] button 判定したいボタンの種類
 	*/
-	bool IsButtonPush(ButtonKind button);
+	static bool IsButtonPush(ButtonKind button);
 	/**
 	* @brief ボタンが押された瞬間の判定関数
 	* @retval true：押した瞬間
 	* @retval false：押した瞬間ではない
 	* @param[in] button 判定したいボタンの種類
 	*/
-	bool IsButtonUp(ButtonKind button);
+	static bool IsButtonUp(ButtonKind button);
 	/**
 	* @brief ボタンを離した瞬間の判定関数
 	* @retval true：離した瞬間
