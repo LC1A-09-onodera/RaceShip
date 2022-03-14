@@ -3,6 +3,7 @@
 #include "../Enemy/Enemy.h"
 #include "../Camera/Camera.h"
 #include "../Sound/Sound.h"
+#include "../Shader/ShaderManager.h"
 
 Player::Player()
 {
@@ -29,9 +30,7 @@ Player* Player::GetPlayer()
 //èâä˙âª
 void Player::Init()
 {
-	player.shader.vsBlob = LoadShader(L"Resource/HLSL/OBJVertexShader.hlsl", "vs_5_0");
-	player.shader.psBlob = LoadShader(L"Resource/HLSL/OBJPixelShader.hlsl", "ps_5_0");
-	player.CreateModel("Block");
+	player.CreateModel("Block", ShaderManager::playerShader);
 	//water.CreateWater();
 
 	XMFLOAT3 pos = { 0,0,0 };
