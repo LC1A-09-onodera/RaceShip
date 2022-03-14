@@ -6,6 +6,7 @@
 #include "../water/water.h"
 using namespace DirectX;
 
+
 class Enemy;
 
 static XMFLOAT3 VecNormaliz(XMFLOAT3& vector)
