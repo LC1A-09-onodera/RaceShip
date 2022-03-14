@@ -30,9 +30,7 @@ void Water::CreateWater()
 {
 	for (int k = 0;k < GroundCount;k++)
 	{
-		ground[k].shader.vsBlob = LoadShader(L"Resource/HLSL/OBJVertexShader.hlsl", "vs_5_0");
-		ground[k].shader.psBlob = LoadShader(L"Resource/HLSL/OBJPixelShader.hlsl", "ps_5_0");
-		ground[k].CreateModel("water", true);
+		
 		ground[k].mesh.vertices.clear();
 		ground[k].mesh.indices.clear();
 		ground[k].mesh.vertices.shrink_to_fit();

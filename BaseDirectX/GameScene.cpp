@@ -10,6 +10,7 @@
 #include "../Light/Light.h"
 #include "vec3.h"
 #include "../FBXObject/FBXObject.h"
+#include "../Shader/ShaderManager.h"
 
 GameScene::GameScene()
 {
@@ -71,10 +72,9 @@ void GameScene::Init()
 	Imgui::Init();
 	//ライトの初期化
 	Light::StaticInitialize(BaseDirectX::dev.Get());
+	ShaderManager::LoadShaders();
 	// 3Dパーティクル静的初期化
 	ParticleControl::Init();
-	//登場人物
-	Enemy::Init();
 	//インプット初期化
 	Input::KeySet(WindowsAPI::w, WindowsAPI::hwnd);
 	//FBX系
@@ -129,7 +129,6 @@ void GameScene::GameUpdate()
 
 
 	//Player::GetPlayer()->Update();
-	Enemy::Update();
 	ParticleControl::Update();
 	
 	if (Input::KeyTrigger(DIK_R))
@@ -153,7 +152,6 @@ void GameScene::EndUpdate()
 		SceneNum = TITLE;
 		Camera::Init();
 		Player::GetPlayer()->Init();
-		Enemy::ReSet();
 	}
 }
 

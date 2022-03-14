@@ -110,10 +110,10 @@ void Model::Init(int index)
     name = typeid(*this).name();
 }
 
-void Model::CreateModel(const char *name, bool smoothing)
+void Model::CreateModel(const char *name, HLSLShader &shader, bool smoothing)
 {
     InitializeDescriptorHeap();
-    InitializeGraphicsPipeline();
+    InitializeGraphicsPipeline(shader);
     ifstream file;
     const string modelname = name;
     const string filename = modelname + ".obj";
@@ -272,7 +272,7 @@ void Model::Update()
     }
 }
 
-bool Model::InitializeGraphicsPipeline()
+bool Model::InitializeGraphicsPipeline(HLSLShader &shader)
 {
     HRESULT result = S_FALSE;
     ComPtr<ID3DBlob> errorBlob; // エラーオブジェクト

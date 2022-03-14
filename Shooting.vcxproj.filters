@@ -79,6 +79,9 @@
     <Filter Include="sampleObject">
       <UniqueIdentifier>{9279ebbd-ab74-47c3-95ab-1a2b1698c336}</UniqueIdentifier>
     </Filter>
+    <Filter Include="King">
+      <UniqueIdentifier>{0aa5b8bf-7210-4019-8b93-d9276f0803ca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -234,6 +237,12 @@
     <ClInclude Include="sampleObject\sampleObject.h">
       <Filter>sampleObject</Filter>
     </ClInclude>
+    <ClInclude Include="King\King.h">
+      <Filter>King</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader\ShaderManager.h">
+      <Filter>Shader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -349,6 +358,12 @@
     </ClCompile>
     <ClCompile Include="sampleObject\sampleObject.cpp">
       <Filter>sampleObject</Filter>
+    </ClCompile>
+    <ClCompile Include="King\King.cpp">
+      <Filter>King</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader\ShaderManager.cpp">
+      <Filter>Shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

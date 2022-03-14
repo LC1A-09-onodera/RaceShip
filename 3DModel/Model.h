@@ -112,7 +112,6 @@ public:
 	XMVECTOR position = { 0,0,0 };
 	XMMATRIX matWorld;
 	//Object3d *parent = nullptr;
-	HLSLShader shader;
 	static Light *light;
 	const char *name = nullptr;
 	BaseCollider *collider = nullptr;
@@ -149,7 +148,7 @@ public:
 	int materialCount = 0;
 
 	void Init(int index);
-	void CreateModel(const char *name, bool smoothing = false);
+	void CreateModel(const char *name, HLSLShader &shader, bool smoothing = false);
 	//void Update();
 	virtual void Update();
 	//スムージング
@@ -158,7 +157,7 @@ public:
 	//エッジ平滑化データの追加
 	void AddAmoothData(unsigned short indexPosition, unsigned short indexVertex);
 	void CalculateSmoothedVertexNormals();
-	bool InitializeGraphicsPipeline();
+	bool InitializeGraphicsPipeline(HLSLShader &shader);
 	//bool LoadTexture(const wchar_t *texName = nullptr);
 	bool LoadTexture(const string &directPath, const string &filename);
 	bool InitializeDescriptorHeap();
