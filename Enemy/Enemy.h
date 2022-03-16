@@ -4,6 +4,7 @@
 #include "../DX12operator.h"
 
 using namespace DirectX;
+class King;
 
 enum class EnemyType
 {
@@ -69,7 +70,7 @@ public:
 	EnemyModel GetModel() { return enemy; }
 
 	void Init();
-	void Update();
+	void Update(King &king);
 	void Draw();
 
 	void SetRandomPosition();
@@ -82,6 +83,6 @@ class Enemys
 public:
 	static list<EnemyBase> enemys;
 	static void AddEnemy(EnemyType type);
-	static void Update();
+	static void Update(King &king);
 	static void Draw();
 };
