@@ -15,7 +15,7 @@ void EnemyBase::Init()
 	each.CreateConstBuff1();
 	SetAlive();
 }
-void EnemyBase::Update()
+void EnemyBase::Update(King &king)
 {
 	//”š•—‚ðŽó‚¯‚Ä‚¢‚È‚¢
 	if (!isWind)
@@ -83,12 +83,12 @@ void Enemys::AddEnemy(EnemyType type)
 	}
 }
 
-void Enemys::Update()
+void Enemys::Update(King &king)
 {
 	auto itr = enemys.begin();
 	for (; itr != enemys.end(); ++itr)
 	{
-		itr->Update();
+		itr->Update(king);
 	}
 }
 
