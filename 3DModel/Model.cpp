@@ -82,19 +82,8 @@ void Model::Init(int index)
     mesh.ibView.BufferLocation = mesh.indexBuff->GetGPUVirtualAddress();
     mesh.ibView.Format = DXGI_FORMAT_R16_UINT;
     //ibView.SizeInBytes = sizeIB;
-    D3D12_HEAP_PROPERTIES heapprop{};
-    heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
-    //リソース設定
-    D3D12_RESOURCE_DESC resdesc{};
-    resdesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-    resdesc.Width = (sizeof(ConstBufferDataB0) + 0xff) & ~0xff;
-    resdesc.Height = 1;
-    resdesc.DepthOrArraySize = 1;
-    resdesc.MipLevels = 1;
-    resdesc.SampleDesc.Count = 1;
-    resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-    BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff0));
-    BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) &~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff1));
+    each.CreateConstBuff0();
+    each.CreateConstBuff1();
 
     UINT descHadleIncSize = BaseDirectX::dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     cpuDescHandleCBV = BaseDirectX::basicDescHeap->GetCPUDescriptorHandleForHeapStart();
@@ -104,10 +93,10 @@ void Model::Init(int index)
     gpuDescHandleCBV.ptr += index * descHadleIncSize;
 
     D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc{};
-    cbvDesc.BufferLocation = constBuff0->GetGPUVirtualAddress();
-    cbvDesc.SizeInBytes = (UINT)constBuff0->GetDesc().Width;
+    cbvDesc.BufferLocation = each.constBuff0->GetGPUVirtualAddress();
+    cbvDesc.SizeInBytes = (UINT)each.constBuff0->GetDesc().Width;
     BaseDirectX::dev->CreateConstantBufferView(&cbvDesc, cpuDescHandleCBV);
-    name = typeid(*this).name();
+    //name = typeid(*this).name();
 }
 
 void Model::CreateModel(const char *name, HLSLShader &shader, bool smoothing)
@@ -175,7 +164,7 @@ void Model::CreateModel(const char *name, HLSLShader &shader, bool smoothing)
             string index_string;
             while (getline(line_stream, index_string, ' '))
             {
-                count += 1;
+                //count += 1;
                 istringstream index_stream(index_string);
                 unsigned short indexPosition, indexNormal, indexTexcood;
                 index_stream >> indexPosition;
@@ -195,15 +184,15 @@ void Model::CreateModel(const char *name, HLSLShader &shader, bool smoothing)
                     AddAmoothData(indexPosition, (unsigned short)GetVertexCount() - 1);
                 }
                 mesh.indices.emplace_back((unsigned short)mesh.indices.size());
-                if (count > 3) {
+                /*if (count > 3) {
                     const uint16_t index1 = mesh.vertices.size() - 4;
                     const uint16_t index2 = mesh.vertices.size() - 2;
 
                     mesh.indices.emplace_back(index1);
                     mesh.indices.emplace_back(index2);
-                }
+                }*/
             }
-            count = 0;
+            //count = 0;
         }
     }
 
@@ -219,12 +208,12 @@ void Model::Update()
 {
     XMMATRIX matScale, matRot, matTrans;
     const XMFLOAT3 &cameraPos = Camera::eye.v;
-    matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
+    matScale = XMMatrixScaling(each.scale.x, each.scale.y, each.scale.z);
     matRot = XMMatrixIdentity();
-    matRot *= XMMatrixRotationZ(XMConvertToRadians(rotation.z));
-    matRot *= XMMatrixRotationX(XMConvertToRadians(rotation.x));
-    matRot *= XMMatrixRotationY(XMConvertToRadians(rotation.y));
-    matTrans = XMMatrixTranslation(position.m128_f32[0], position.m128_f32[1], position.m128_f32[2]);
+    matRot *= XMMatrixRotationZ(XMConvertToRadians(each.rotation.z));
+    matRot *= XMMatrixRotationX(XMConvertToRadians(each.rotation.x));
+    matRot *= XMMatrixRotationY(XMConvertToRadians(each.rotation.y));
+    matTrans = XMMatrixTranslation(each.position.m128_f32[0], each.position.m128_f32[1], each.position.m128_f32[2]);
     matWorld = XMMatrixIdentity();
 
     //ビルボード
@@ -250,22 +239,22 @@ void Model::Update()
     }
 
     ConstBufferDataB0 *constMap0 = nullptr;
-    if (SUCCEEDED(constBuff0->Map(0, nullptr, (void **)&constMap0)))
+    if (SUCCEEDED(each.constBuff0->Map(0, nullptr, (void **)&constMap0)))
     {
         //constMap0->mat = matWorld * Camera::matView * BaseDirectX::matProjection;
         constMap0->viewproj = Camera::matView * BaseDirectX::matProjection;
         constMap0->world = matWorld;
         constMap0->cameraPos = cameraPos;
-        constBuff0->Unmap(0, nullptr);
+        each.constBuff0->Unmap(0, nullptr);
     }
 
     ConstBufferDataB1 *constMap1 = nullptr;
-    BaseDirectX::result = constBuff1->Map(0, nullptr, (void **)&constMap1);
+    BaseDirectX::result = each.constBuff1->Map(0, nullptr, (void **)&constMap1);
     constMap1->ambient = material.ambient;
     constMap1->diffuse = material.diffuse;
     constMap1->specular = material.specular;
     constMap1->alpha = material.alpha;
-    constBuff1->Unmap(0, nullptr);
+    each.constBuff1->Unmap(0, nullptr);
     if (collider)
     {
         collider->Update();
@@ -563,9 +552,9 @@ void Draw3DObject(const Model &model, int texNum, bool triangle)
     ID3D12DescriptorHeap *ppHeap[] = { model.descHeap.Get() };
     BaseDirectX::cmdList->SetDescriptorHeaps(_countof(ppHeap), ppHeap);
     //BaseDirectX::cmdList->SetGraphicsRootDescriptorTable(0, model.gpuDescHandleCBV);
-    BaseDirectX::cmdList->SetGraphicsRootConstantBufferView(0, model.constBuff0->GetGPUVirtualAddress());
+    BaseDirectX::cmdList->SetGraphicsRootConstantBufferView(0, model.each.constBuff0->GetGPUVirtualAddress());
     Model::light->Draw(BaseDirectX::cmdList.Get(), 3);
-    BaseDirectX::cmdList->SetGraphicsRootConstantBufferView(1, model.constBuff1->GetGPUVirtualAddress());
+    BaseDirectX::cmdList->SetGraphicsRootConstantBufferView(1, model.each.constBuff1->GetGPUVirtualAddress());
     BaseDirectX::cmdList->SetGraphicsRootDescriptorTable(2, model.gpuDescHandleSRV);
     BaseDirectX::cmdList->DrawIndexedInstanced((UINT)model.mesh.indices.size(), 1, 0, 0, 0);
 }
@@ -606,4 +595,25 @@ void Model::SetCollider(BaseCollider* collider)
     this->collider = collider;
     CollisionManager::GetInstance()->AddCollider(collider);
     collider->Update();
+}
+
+void EachInfo::CreateConstBuff0()
+{
+    D3D12_HEAP_PROPERTIES heapprop{};
+    heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
+    //リソース設定
+    D3D12_RESOURCE_DESC resdesc{};
+    resdesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+    resdesc.Width = (sizeof(ConstBufferDataB0) + 0xff) & ~0xff;
+    resdesc.Height = 1;
+    resdesc.DepthOrArraySize = 1;
+    resdesc.MipLevels = 1;
+    resdesc.SampleDesc.Count = 1;
+    resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+    BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff0));
+}
+
+void EachInfo::CreateConstBuff1()
+{
+    BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff1));
 }

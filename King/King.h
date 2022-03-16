@@ -13,7 +13,11 @@ private:
 	KingModel king;
 	int HP;
 public:
-	XMFLOAT3 GetPosition(){return ConvertXMVECTORtoXMFLOAT3(king.position); }
-	XMFLOAT3 SetPosition(XMFLOAT3 position);
-	int GetHP();
+	XMFLOAT3 GetPosition(){return ConvertXMVECTORtoXMFLOAT3(king.each.position); }
+	void SetPosition(XMFLOAT3 &position);
+	int GetHP(){ return HP; }
+
+	void Init(int HP = 10);
+	void Update();
+	void Draw();
 };
