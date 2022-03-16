@@ -84,7 +84,7 @@ void Player::Update(bool isBombAlive, bool isHit)
 		}
 	}
 
-	player.position = ConvertXMFLOAT3toXMVECTOR(pos);
+	player.each.position = ConvertXMFLOAT3toXMVECTOR(pos);
 	player.Update();
 }
 

@@ -11,6 +11,7 @@
 #include "vec3.h"
 #include "../FBXObject/FBXObject.h"
 #include "../Shader/ShaderManager.h"
+#include"../Enemy/Enemy.h"
 
 GameScene::GameScene()
 {
@@ -87,6 +88,11 @@ void GameScene::Init()
 	Model::SetLight(light);
 	//プレイヤーの初期化
 	Player::GetPlayer()->Init();
+	EnemyModels::LoadModels();
+	for (int i = 0; i < 100; i++)
+	{
+		Enemys::AddEnemy(EnemyType::NONE);
+	}
 	//ポストエフェクトの初期化
 	postEffect.Initialize();
 
@@ -100,6 +106,9 @@ void GameScene::Init()
 void GameScene::TitleUpdate()
 {
 	Player::GetPlayer()->Update(false,false);
+
+	Enemys::Update();
+
 	if (Input::KeyTrigger(DIK_SPACE))
 	{
 		SceneNum = GAME;
@@ -161,7 +170,7 @@ void GameScene::TitleDraw()
 	postEffect.PreDraw();
 
 	Player::GetPlayer()->Draw();
-
+	Enemys::Draw();
 	//PostEffectのPostDraw
 	postEffect.PostDraw();
 

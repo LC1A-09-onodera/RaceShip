@@ -21,11 +21,6 @@ using namespace std;
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "xaudio2.lib")
 
-enum ObjectName
-{
-	NONE, PLAYER, ENEMY1, ENEMY2, ENEMY3, ENEMY4, ENEMY5, BULLETTOP, BULLETEND = 50, ENEMYBULLETTOP = 51, ENEMYEND = 100, WALLTOP = 101, WALLEND = 110,BACKMESH = 111,BACKMESH2 = 112,PARTICL1TOP = 114,PARTICLE1END = 119,PARTICLE2TOP = 120,PARTICLE2END = 125,ENEMY6 = 126,ENEMY7 = 127,ENEMY8 = 128,ENEMY9 = 129,ENEMY10 = 130,GOAL = 131,
-};
-
 class XAudio2VoiceCallback : public IXAudio2VoiceCallback
 {
 public:
@@ -100,18 +95,6 @@ public:
 	//static XMMATRIX matView;
 	static float angle;
 	static float clearColor[4];
-	//
-	/*static ComPtr<ID3D12Resource> _peraResource;
-	static ComPtr<ID3D12DescriptorHeap> _peraRTVHeap;
-	static ComPtr<ID3D12DescriptorHeap> _peraSTVHeap;
-	static PeraVertex pv[4];
-	static ComPtr<ID3D12Resource> _peraVB;
-	static ComPtr<ID3D12RootSignature> _peraRS;
-	static ComPtr<ID3D12PipelineState> _peraPipeline;
-	static D3D12_VERTEX_BUFFER_VIEW _peraVBV;
-	static ComPtr<ID3D12Resource> _peraTexBuff;
-	static ComPtr<ID3D12DescriptorHeap> _peraDescHeapSRV;
-	static bool isPera;*/
 
 	static void DebugLayerOn();
 	static void Set();

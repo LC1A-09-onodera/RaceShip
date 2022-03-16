@@ -92,7 +92,7 @@ void Water::CreateWater()
 	}
 	for (int i = 0; i < GroundCount; i++)
 	{
-		ground[i].position.m128_f32[2] = 15 * i;
+		ground[i].each.position.m128_f32[2] = 15 * i;
 	}
 }
 
