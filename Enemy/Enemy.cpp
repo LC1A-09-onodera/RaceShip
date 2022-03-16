@@ -30,8 +30,7 @@ void EnemyBase::Update()
 }
 void EnemyBase::Draw()
 {
-	enemy.each = sample;
-	enemy.Update();
+	enemy.Update(&sample);
 	Draw3DObject(enemy);
 }
 void EnemyBase::SetAlive()
