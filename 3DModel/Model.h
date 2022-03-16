@@ -92,7 +92,17 @@ public:
 	// 頂点インデックス配列
 	std::vector<unsigned short> indices;
 };
-
+class EachInfo
+{
+public:
+	ComPtr<ID3D12Resource> constBuff0;
+	ComPtr<ID3D12Resource> constBuff1;
+	XMFLOAT3 scale = { 1,1,1 };
+	XMFLOAT3 rotation = { 0,0,0 };
+	XMVECTOR position = { 0,0,0 };
+	void CreateConstBuff0();
+	void CreateConstBuff1();
+};
 class Model
 {
 public:
@@ -103,31 +113,18 @@ public:
 
 	static void SetLight(Light *light);
 	Mesh mesh;
-	ComPtr<ID3D12Resource> constBuff0;
-	ComPtr<ID3D12Resource> constBuff1;
 	D3D12_CPU_DESCRIPTOR_HANDLE cpuDescHandleCBV;
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuDescHandleCBV;
-	XMFLOAT3 scale = { 1,1,1 };
-	XMFLOAT3 rotation = { 0,0,0 };
-	XMVECTOR position = { 0,0,0 };
+	EachInfo each;
 	XMMATRIX matWorld;
 	//Object3d *parent = nullptr;
 	static Light *light;
-	const char *name = nullptr;
+	//const char *name = nullptr;
 	BaseCollider *collider = nullptr;
 	//----基本いるもの-----------
-	bool active = false;
-	Vec3 isDirect;//
 	float radi = 2.0f;
 	bool billboard = false;
-	static const int MaxMaterial = 10;
-	int count = 0;
-	//---------------------------
-	//----ゲームごとに持たせる----
-	bool isBullet = false;
-	bool isEnemyBullet = false;
 	//-----------------------
-
 	// シェーダリソースビューのハンドル(CPU)
 	CD3DX12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV;
 	// シェーダリソースビューのハンドル(CPU)
@@ -168,7 +165,6 @@ public:
 	virtual void OnCollision(const CollisionInfo &info){}
 	inline const std::vector<Vertex> &GetVertices(){return mesh.vertices;}
 	inline const std::vector<unsigned short> &GetIndices(){return mesh.indices;}
-	//inline const std::vector<Mesh *> &GetMeshes(){return meshes}
 };
 void Set3DDraw(const Model &model, bool triangle = true);
 void Draw3DObject(const Model &model, int texNum = -1, bool triangle = true);

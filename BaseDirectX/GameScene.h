@@ -3,7 +3,7 @@
 #include "../Camera/Camera.h"
 #include "../Sprite/Sprite.h"
 #include "../Player/Player.h"
-#include "../Enemy/Enemy.h"
+//#include "../Enemy/Enemy.h"
 #include "../Light/Light.h"
 #include "../RenderTarget/RenderTarget.h"
 #include "../PostEffect/PostEffect.h"
