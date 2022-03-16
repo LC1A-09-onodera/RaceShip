@@ -7,15 +7,18 @@
 #include "../Shader/ShaderManager.h"
 
 EnemyModel EnemyModels::baseEnemy;
+EnemyModel EnemyModels::superEnemy;
+
 list<EnemyBase> Enemys::enemys;
 void EnemyBase::Init()
 {
+	//雑魚敵のMeshをコピー
 	SetMesh(EnemyModels::baseEnemy);
 	each.CreateConstBuff0();
 	each.CreateConstBuff1();
 	SetAlive();
 }
-void EnemyBase::Update(King &king)
+void EnemyBase::Update(King& king)
 {
 	//爆風を受けていない
 	if (!isWind)
@@ -36,9 +39,12 @@ void EnemyBase::Draw()
 }
 void EnemyBase::SetAlive()
 {
+	//ポジションをランダムに生成
 	SetRandomPosition();
+	//以下復活時にセットするモノ
 	this->hp = MaxHP;
 	this->moveSpeed = MaxMoveSpeed;
+	this->weight = MaxWeight;
 	isDead = false;
 	isWind = false;
 	kingDirection = { 0.1f, 0, 0 };
@@ -46,6 +52,7 @@ void EnemyBase::SetAlive()
 }
 void EnemyBase::UpdateKingDirection(XMFLOAT3& kingPos)
 {
+	//キング方向を取得していく
 	XMFLOAT3 result;
 	result = kingPos - GetPosition();
 	kingDirection = Normalize(result);
@@ -79,11 +86,14 @@ void Enemys::AddEnemy(EnemyType type)
 	}
 	else
 	{
-
+		//雑魚敵
+		SuperEnemy enemy;
+		enemy.Init();
+		enemys.push_back(enemy);
 	}
 }
 
-void Enemys::Update(King &king)
+void Enemys::Update(King& king)
 {
 	auto itr = enemys.begin();
 	for (; itr != enemys.end(); ++itr)
@@ -104,4 +114,26 @@ void Enemys::Draw()
 void EnemyModels::LoadModels()
 {
 	baseEnemy.CreateModel("maru", ShaderManager::playerShader);
+	superEnemy.CreateModel("Block", ShaderManager::playerShader);
+}
+
+void SuperEnemy::Init()
+{
+	SetMesh(EnemyModels::superEnemy);
+	each.CreateConstBuff0();
+	each.CreateConstBuff1();
+	SetAlive();
+}
+
+void SuperEnemy::SetAlive()
+{
+	//
+	SetRandomPosition();
+	this->hp = MaxHP;
+	this->moveSpeed = MaxMoveSpeed;
+	this->weight = MaxWeight;
+	isDead = false;
+	isWind = false;
+	kingDirection = { 0.1f, 0, 0 };
+	windDirection = { 0, 0, 0 };
 }

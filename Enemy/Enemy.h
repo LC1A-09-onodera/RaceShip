@@ -9,6 +9,7 @@ class King;
 enum class EnemyType
 {
 	NONE,
+	SUPER,
 };
 
 enum class Target
@@ -27,12 +28,14 @@ class EnemyModels
 {
 public:
 	static EnemyModel baseEnemy;
+	static EnemyModel superEnemy;
 	static void LoadModels();
 };
 
 class EnemyBase
 {
-private:
+//private:
+protected:
 	//
 	EnemyModel enemy;
 	EachInfo each;
@@ -44,6 +47,8 @@ private:
 	bool isWind;
 	//動く速度
 	float moveSpeed;
+	//
+	float weight;
 	//キングの方向
 	XMFLOAT3 kingDirection;
 	//爆風の押し出しPower
@@ -52,6 +57,7 @@ private:
 	Target target;
 	const int MaxHP = 1;
 	const float MaxMoveSpeed = 0.1f;
+	const float MaxWeight = 1.0f;
 public:
 	void SetMesh(EnemyModel &model) { enemy = model; }
 	void SetHP(int HP) { this->hp = HP; }
@@ -72,10 +78,23 @@ public:
 	void Init();
 	void Update(King &king);
 	void Draw();
-
+	//ランダムポジションに生成
 	void SetRandomPosition();
+	//Init時にFlagをセットする
 	void SetAlive();
+	//ヘイトの方向を取得する
 	void UpdateKingDirection(XMFLOAT3 &kingPos);
+};
+
+class SuperEnemy : public EnemyBase
+{
+private:
+	const int MaxHP = 2;
+	const float MaxMoveSpeed = 0.5f;
+	const float MaxWeight = 2.0f;
+public:
+	void Init();
+	void SetAlive();
 };
 
 class Enemys
