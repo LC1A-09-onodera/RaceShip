@@ -44,45 +44,30 @@ void Player::Init()
 }
 
 //更新
-void Player::Update(bool isBombAlive, bool isHit)
+void Player::Update(bool isBombAlive)
 {
 	/*移動*/
-	if (DirectInput::leftStickX() == 0.0f && DirectInput::leftStickY() == 0.0f) { vec3 = { 0,0,0 }; }
-	else { vec3.x = DirectInput::leftStickX(); vec3.z = DirectInput::leftStickY(); }
+	CheakIsInput();
+	//行動可能かつ吹っ飛んでなければ
+	CheakIsActive();
 
-	pos.x += vec3.x * MAX_SPEED;
-	pos.z += -vec3.z * MAX_SPEED;
+	/*発射トリガー*/
+	CheakShootTrigger(isBombAlive);
 
-	/*射撃、弾関係*/
-	if (DirectInput::IsButtonPush(DirectInput::ButtonKind::Button01)) { isShoot = true; }
-	else if (!isBombAlive) { isShoot = false; }
-
-	/*起爆*/
-	if (isShoot && DirectInput::IsButtonPush(DirectInput::ButtonKind::Button01)) { isDetonating = true; }
-	else { isDetonating = false; }
+	/*起爆トリガー*/
+	CheakDetonatingTrigger(isBombAlive);
 
 	/*自機が敵に当たった時の判定*/
-	if (isHit && !isInvincible) { isActive = false; }
+	CheakHitEnemy();
 
 	/*行動不能とか無敵とか*/
-	//行動可能時
-	if (isActive)
-	{
-		if (isInvincible && invincibleCount < MAX_INVICIBLE_COUNT) { invincibleCount++; }
-		else { isInvincible = false; }
-	}
+	CalcActiveCount();
 
-	//行動不能時
-	else
-	{
-		if (activeCount < MAX_ACTIVE_COUNT) { activeCount++; }
-		else
-		{
-			activeCount = 0;
-			isInvincible = true;
-			isActive = true;
-		}
-	}
+	/*ボムの力計算*/
+	AddBombForce();
+
+	/*敵の力計算*/
+	AddEnemyForce();
 
 	player.each.position = ConvertXMFLOAT3toXMVECTOR(pos);
 	player.Update();
@@ -92,4 +77,139 @@ void Player::Update(bool isBombAlive, bool isHit)
 void Player::Draw()
 {
 	Draw3DObject(player);
+}
+
+void Player::HitBomb(const float& BombForce)
+{
+	if (isActive)
+	{
+		//ボムの力を代入
+		bombForce = BombForce;
+
+		//移動制限
+		isActive = false;
+
+		//吹っ飛び中にする
+		isHitBomb = true;
+	}
+}
+
+void Player::CheakIsInput()
+{
+	/*移動*/
+	//入力なければリセット
+	if (DirectInput::leftStickX() == 0.0f && DirectInput::leftStickY() == 0.0f) { vec3 = { 0,0,0 }; }
+	else { vec3.x = DirectInput::leftStickX(); vec3.z = DirectInput::leftStickY(); }
+}
+
+void Player::CheakIsActive()
+{
+	//行動可能かつ吹っ飛んでなければ
+	if (isActive && !isHitBomb)
+	{
+		pos.x += vec3.x * MAX_SPEED;
+		pos.z += -vec3.z * MAX_SPEED;
+	}
+}
+
+void Player::CheakShootTrigger(bool isBombAlive)
+{
+	/*発射トリガー*/
+	if (DirectInput::IsButtonPush(DirectInput::ButtonKind::Button01) && !isBombAlive && isActive) { isShoot = true; }
+	else { isShoot = false; }
+}
+
+void Player::CheakDetonatingTrigger(bool isBombAlive)
+{
+	/*起爆トリガー*/
+	if (DirectInput::IsButtonPush(DirectInput::ButtonKind::Button01) && isBombAlive && isActive) { isDetonating = true; }
+	else { isDetonating = false; }
+}
+
+void Player::CheakHitEnemy()
+{
+	//行動不能時か無敵時か吹っ飛び中は判定無視
+	if (!isActive || isInvincible || isHitBomb) { return; }
+
+	bool isHit;
+	auto itr = Enemys::enemys.begin();
+	for (; itr != Enemys::enemys.end(); ++itr)
+	{
+		XMFLOAT3 enemyPos = itr->GetPosition();
+
+		//2点間の距離と判定（円）
+		isHit = CheakHit(1, 1, pos, enemyPos);
+
+		//当たってなかったらやり直し
+		if (!isHit) { continue; }
+
+		//当たったら行動不能にする
+		isActive = false;
+		break;
+	}
+
+	//誰とも当たらなかった場合、終了
+	if (isActive) { return; }
+
+	enemyForce = MAX_ENEMY_FORCE;
+}
+
+void Player::CalcActiveCount()
+{
+	/*行動不能とか無敵とか*/
+	//無敵かつ行動可能時
+	if (isInvincible && isActive)
+	{
+		if (isInvincible && invincibleCount < MAX_INVICIBLE_COUNT) { invincibleCount++; }
+		else { isInvincible = false; }
+	}
+
+	//行動不能時
+	else if (!isActive)
+	{
+		if (activeCount < MAX_STAN_COUNT) { activeCount++; }
+		else
+		{
+			activeCount = 0;
+			isInvincible = true;
+			isActive = true;
+		}
+	}
+}
+
+void Player::AddBombForce()
+{
+	//吹っ飛び中だけ計算
+	if (!isHitBomb) { return; }
+
+	//移動
+	pos.x += bombForce * vec3.x;
+	pos.z += bombForce * -vec3.z;
+
+	//減算
+	bombForce -= RESISTANCE_VALUE;
+
+	//一定量を下回ったら0にして移動再開
+	if (bombForce < MINIMUM_FORCE)
+	{
+		bombForce = 0;
+		isActive = true;
+		isHitBomb = false;
+	}
+}
+
+void Player::AddEnemyForce()
+{
+	//行動不能時だけ計算
+	if (isActive) { return; }
+
+	//移動
+	pos.x += enemyForce * vec3.x;
+	pos.z += enemyForce * -vec3.z;
+
+	//減算
+	enemyForce -= RESISTANCE_VALUE;
+
+	//一定量を下回ったら0にする
+	if (enemyForce < MAX_ENEMY_FORCE) { enemyForce = 0; }
 }
