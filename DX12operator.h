@@ -148,6 +148,16 @@ static const XMVECTOR ConvertXMFLOAT3toXMVECTOR(const XMFLOAT3& v)
 	return result;
 }
 
+static XMFLOAT3 Normalize(const XMFLOAT3& v)
+{
+	float leg = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
+	XMFLOAT3 result;
+	result.x = v.x / leg;
+	result.y = v.y / leg;
+	result.z = v.z / leg;
+	return result;
+}
+
 static XMFLOAT3 Lerp(const XMFLOAT3& start, XMFLOAT3& end, const float t)
 {
 	XMFLOAT3 result, result2;

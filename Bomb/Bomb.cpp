@@ -30,8 +30,7 @@ void Bomb::Update()
 	{
 		BlastUpdate();
 	}
-	bombObject.active = data.isAlive;
-	blastObject.active = data.isExplosion;
+
 	bombObject.Update();
 	blastObject.Update();
 }
@@ -42,8 +41,14 @@ void Bomb::Finailize()
 
 void Bomb::Draw()
 {
-	Draw3DObject(bombObject);
-	Draw3DObject(blastObject);
+	if (data.isAlive)
+	{
+		Draw3DObject(bombObject);
+	}
+	if (data.isExplosion)
+	{
+		Draw3DObject(blastObject);
+	}
 }
 
 bool Bomb::Shot(DirectX::XMFLOAT3 angle, DirectX::XMFLOAT3 pos)
@@ -61,7 +66,7 @@ bool Bomb::Shot(DirectX::XMFLOAT3 angle, DirectX::XMFLOAT3 pos)
 void Bomb::EnemyBombCollision(EnemyBase *enemyData)
 {
 	//“G‚ÌÀ•W
-	XMVECTOR enemyPosition = enemyData->GetModel().position;
+	XMVECTOR enemyPosition = enemyData->GetModel().each.position;
 
 	//”š’e–{‘Ì‚ÆÚG‚µ‚Ä‚¢‚é‚©‚Ì”»’è
 	bool IsBlast = BombCollision(enemyPosition, 0);
@@ -95,15 +100,15 @@ void Bomb::BombUpdate()
 	DirectX::XMVECTOR moveSpeed = (data.bombAngle * data.bombSpeed);
 	data.pos += moveSpeed;
 
-	bombObject.position = data.pos;
+	bombObject.each.position = data.pos;
 }
 
 void Bomb::BlastUpdate()
 {
 	data.blastTimer++;
-	blastObject.position = data.pos;
+	blastObject.each.position = data.pos;
 
-	blastObject.scale = (blastObject.scale + XMFLOAT3{ 1.0f, 1.0f, 1.0f });
+	blastObject.each.scale = (blastObject.each.scale + XMFLOAT3{ 1.0f, 1.0f, 1.0f });
 	if (data.blastTimer >= explosionTimerMax)
 	{
 		data.isExplosion = false;
