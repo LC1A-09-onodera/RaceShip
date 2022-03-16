@@ -12,6 +12,8 @@ class King
 private:
 	KingModel king;
 	int HP;
+	XMFLOAT3 windDirection;
+	bool isWind;
 public:
 	void LoadModel();
 	KingModel GetModel() { return king; }

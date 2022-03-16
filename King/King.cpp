@@ -14,19 +14,17 @@ void King::SetPosition(XMFLOAT3 &position)
 void King::Init(int HP)
 {
 	this->HP = HP;
+	isWind = false;
 	LoadModel();
 	king.each.position = {0, 0, 0};
 }
 
 void King::Update()
 {
-	if (Input::Key(DIK_D))
+	//”š•—‚ğó‚¯‚Ä‚¢‚é‚Ìˆ—
+	if (isWind)
 	{
-		king.each.position.m128_f32[0] += 0.2f;
-	}
-	if (Input::Key(DIK_S))
-	{
-		king.each.position.m128_f32[0] -= 0.2f;
+
 	}
 }
 
