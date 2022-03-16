@@ -90,6 +90,9 @@ void GameScene::Init()
 	//ポストエフェクトの初期化
 	postEffect.Initialize();
 
+	//爆弾の初期化
+	bombs.Init();
+
 	/*model = FbxLoader::GetInstance()->LoadModelFromFile("boneTest");
 	object = new FBXObject;
 	object->Initialize();
@@ -100,6 +103,13 @@ void GameScene::Init()
 void GameScene::TitleUpdate()
 {
 	Player::GetPlayer()->Update(false,false);
+
+	if (Input::KeyTrigger(DIK_A))
+	{
+		bombs.Shot(XMFLOAT3{1, 0, 1}, XMFLOAT3{ -20, 0, -20 });
+	}
+	bombs.Update();
+
 	if (Input::KeyTrigger(DIK_SPACE))
 	{
 		SceneNum = GAME;
@@ -161,7 +171,7 @@ void GameScene::TitleDraw()
 	postEffect.PreDraw();
 
 	Player::GetPlayer()->Draw();
-
+	bombs.Draw();
 	//PostEffectのPostDraw
 	postEffect.PostDraw();
 

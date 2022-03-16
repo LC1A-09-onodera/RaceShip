@@ -2,6 +2,10 @@
 #include "../DX12operator.h"
 #include "../Shader/ShaderManager.h"
 
+namespace
+{
+	const int explosionTimerMax = 30;
+}
 Bomb::Bomb()
 {
 }
@@ -22,10 +26,14 @@ void Bomb::Update()
 	{
 		BombUpdate();
 	}
-	if (data.isBlast)
+	if (data.isExplosion)
 	{
 		BlastUpdate();
 	}
+	bombObject.active = data.isAlive;
+	blastObject.active = data.isExplosion;
+	bombObject.Update();
+	blastObject.Update();
 }
 
 void Bomb::Finailize()
@@ -61,8 +69,7 @@ void Bomb::EnemyBombCollision(EnemyBase *enemyData)
 	//”š’e‚ÆÚG‚µ‚Ä‚¢‚½‚ç”š”­‚·‚é
 	if (IsBlast)
 	{
-		data.isAlive = false;
-		data.isBlast = true;
+		Explosion();
 	}
 
 
@@ -81,27 +88,32 @@ void Bomb::EnemyBombCollision(EnemyBase *enemyData)
 	}
 }
 
+
+
 void Bomb::BombUpdate()
 {
 	DirectX::XMVECTOR moveSpeed = (data.bombAngle * data.bombSpeed);
 	data.pos += moveSpeed;
 
 	bombObject.position = data.pos;
-	bombObject.active = data.isAlive;
-	bombObject.Update();
 }
 
 void Bomb::BlastUpdate()
 {
+	data.blastTimer++;
 	blastObject.position = data.pos;
-	blastObject.active = data.isBlast;
-	blastObject.Update();
+
+	blastObject.scale = (blastObject.scale + XMFLOAT3{ 1.0f, 1.0f, 1.0f });
+	if (data.blastTimer >= explosionTimerMax)
+	{
+		data.isExplosion = false;
+	}
 }
 
 bool Bomb::BombCollision(const XMVECTOR &pos, const float &radius)
 {
-	//”š’e‚ª‚µ‚Ä‚¢–³‚©‚Á‚½‚ç‘ŠúƒŠƒ^[ƒ“
-	if (!data.isAlive)return;
+	//”š’e‘¶İ‚ª‚µ‚Ä‚¢–³‚©‚Á‚½‚ç‘ŠúƒŠƒ^[ƒ“
+	if (!data.isAlive)return false;
 
 	//”š’e‚©‚ç“G‚Ü‚Å‚ÌƒxƒNƒgƒ‹‚ğŒvZ
 	XMVECTOR distance = (pos - data.pos);
@@ -122,7 +134,7 @@ bool Bomb::BombCollision(const XMVECTOR &pos, const float &radius)
 bool Bomb::BlastCollision(const XMVECTOR &pos, const float &radius, XMFLOAT3 *blastPower)
 {
 	//”š”­‚µ‚Ä‚¢‚È‚©‚Á‚½‚ç
-	if (!data.isBlast)return false;
+	if (!data.isExplosion)return false;
 
 	//”š’e‚©‚ç“G‚Ü‚Å‚ÌƒxƒNƒgƒ‹‚ğŒvZ
 	XMVECTOR distance = (pos - data.pos);
@@ -150,4 +162,11 @@ bool Bomb::BlastCollision(const XMVECTOR &pos, const float &radius, XMFLOAT3 *bl
 		*blastPower = ConvertXMVECTORtoXMFLOAT3(blastVector);
 	}
 	return true;
+}
+
+void Bomb::Explosion()
+{
+	data.blastTimer = 0;
+	data.isAlive = false;
+	data.isExplosion = true;
 }

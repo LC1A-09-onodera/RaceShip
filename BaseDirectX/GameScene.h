@@ -4,6 +4,7 @@
 #include "../Sprite/Sprite.h"
 #include "../Player/Player.h"
 #include "../Enemy/Enemy.h"
+#include "../Bomb/BombManager.h"
 #include "../Light/Light.h"
 #include "../RenderTarget/RenderTarget.h"
 #include "../PostEffect/PostEffect.h"
@@ -56,4 +57,5 @@ public://ÉVÅ[ÉìÇ≈égÇ§Ç‡ÇÃ
 	float circleShadowFactorAngle[2] = {0.0f, 0.0f};
 
 	PostEffect postEffect;
+	BombManager bombs;
 };
