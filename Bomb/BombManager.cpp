@@ -58,3 +58,11 @@ void BombManager::Shot(DirectX::XMFLOAT3 angle, DirectX::XMFLOAT3 pos)
 		}
 	}
 }
+
+void BombManager::enemyCollision(EnemyBase &data)
+{
+	for (int i = 0; i < bombs.size(); i++)
+	{
+		bombs[i].EnemyBombCollision(data);
+	}
+}
