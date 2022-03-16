@@ -147,7 +147,7 @@ public:
 	void Init(int index);
 	void CreateModel(const char *name, HLSLShader &shader, bool smoothing = false);
 	//void Update();
-	virtual void Update();
+	virtual void Update(EachInfo *each = nullptr);
 	//スムージング
 	unordered_map<unsigned short, vector<unsigned short>> smoothData;
 	inline size_t GetVertexCount();
