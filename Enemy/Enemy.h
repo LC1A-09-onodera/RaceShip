@@ -4,6 +4,7 @@
 #include "../DX12operator.h"
 
 using namespace DirectX;
+class King;
 
 enum class EnemyType
 {
@@ -34,7 +35,7 @@ class EnemyBase
 private:
 	//
 	EnemyModel enemy;
-	EachInfo sample;
+	EachInfo each;
 	EnemyType type;
 	int hp;
 	//Ž€‚ñ‚Å‚½‚çtrue
@@ -50,7 +51,7 @@ private:
 	//
 	Target target;
 	const int MaxHP = 1;
-	const float MaxMoveSpeed = 1.0f;
+	const float MaxMoveSpeed = 0.1f;
 public:
 	void SetMesh(EnemyModel &model) { enemy = model; }
 	void SetHP(int HP) { this->hp = HP; }
@@ -65,11 +66,11 @@ public:
 	float GetIsMoveSpeed() { return moveSpeed; }
 	XMFLOAT3 GetKingDirection() { return kingDirection; }
 	XMFLOAT3 GetWindDirection() { return windDirection; }
-	XMFLOAT3 GetPosition() { return ConvertXMVECTORtoXMFLOAT3(enemy.each.position); }
+	XMFLOAT3 GetPosition() { return ConvertXMVECTORtoXMFLOAT3(each.position); }
 	EnemyModel GetModel() { return enemy; }
 
 	void Init();
-	void Update();
+	void Update(King &king);
 	void Draw();
 
 	void SetRandomPosition();
@@ -82,6 +83,6 @@ class Enemys
 public:
 	static list<EnemyBase> enemys;
 	static void AddEnemy(EnemyType type);
-	static void Update();
+	static void Update(King &king);
 	static void Draw();
 };

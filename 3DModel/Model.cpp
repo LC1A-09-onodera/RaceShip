@@ -204,60 +204,120 @@ void Model::CreateModel(const char *name, HLSLShader &shader, bool smoothing)
     file.close();
 }
 
-void Model::Update()
+void Model::Update(EachInfo* each)
 {
-    XMMATRIX matScale, matRot, matTrans;
-    const XMFLOAT3 &cameraPos = Camera::eye.v;
-    matScale = XMMatrixScaling(each.scale.x, each.scale.y, each.scale.z);
-    matRot = XMMatrixIdentity();
-    matRot *= XMMatrixRotationZ(XMConvertToRadians(each.rotation.z));
-    matRot *= XMMatrixRotationX(XMConvertToRadians(each.rotation.x));
-    matRot *= XMMatrixRotationY(XMConvertToRadians(each.rotation.y));
-    matTrans = XMMatrixTranslation(each.position.m128_f32[0], each.position.m128_f32[1], each.position.m128_f32[2]);
-    matWorld = XMMatrixIdentity();
-
-    //ビルボード
-    //if (billboard)
-    //{
-    //    matWorld *= BaseDirectX::matBillboard;//ビルボードをかける
-    //}
-    //ビルボードY
-    //if (billboard)
-    //{
-    //    matWorld *= Camera::matBillboardY;//ビルボードをかける
-    //}
-    matWorld *= matScale;
-    matWorld *= matRot;
-    matWorld *= matTrans;
-
-    Vertex* vertMap = nullptr;
-    BaseDirectX::result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
-    if (SUCCEEDED(BaseDirectX::result))
+    if (each != nullptr)
     {
-        copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
-        mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
+        this->each = *each;
+        XMMATRIX matScale, matRot, matTrans;
+        const XMFLOAT3 &cameraPos = Camera::eye.v;
+        matScale = XMMatrixScaling(this->each.scale.x, this->each.scale.y, this->each.scale.z);
+        matRot = XMMatrixIdentity();
+        matRot *= XMMatrixRotationZ(XMConvertToRadians(this->each.rotation.z));
+        matRot *= XMMatrixRotationX(XMConvertToRadians(this->each.rotation.x));
+        matRot *= XMMatrixRotationY(XMConvertToRadians(this->each.rotation.y));
+        matTrans = XMMatrixTranslation(this->each.position.m128_f32[0], this->each.position.m128_f32[1], this->each.position.m128_f32[2]);
+        matWorld = XMMatrixIdentity();
+
+        //ビルボード
+        //if (billboard)
+        //{
+        //    matWorld *= BaseDirectX::matBillboard;//ビルボードをかける
+        //}
+        //ビルボードY
+        //if (billboard)
+        //{
+        //    matWorld *= Camera::matBillboardY;//ビルボードをかける
+        //}
+        matWorld *= matScale;
+        matWorld *= matRot;
+        matWorld *= matTrans;
+
+        Vertex* vertMap = nullptr;
+        BaseDirectX::result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
+        if (SUCCEEDED(BaseDirectX::result))
+        {
+            copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
+            mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
+        }
+
+        ConstBufferDataB0 *constMap0 = nullptr;
+        if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void **)&constMap0)))
+        {
+            //constMap0->mat = matWorld * Camera::matView * BaseDirectX::matProjection;
+            constMap0->viewproj = Camera::matView * BaseDirectX::matProjection;
+            constMap0->world = matWorld;
+            constMap0->cameraPos = cameraPos;
+            this->each.constBuff0->Unmap(0, nullptr);
+        }
+
+        ConstBufferDataB1 *constMap1 = nullptr;
+        BaseDirectX::result = this->each.constBuff1->Map(0, nullptr, (void **)&constMap1);
+        constMap1->ambient = material.ambient;
+        constMap1->diffuse = material.diffuse;
+        constMap1->specular = material.specular;
+        constMap1->alpha = material.alpha;
+        this->each.constBuff1->Unmap(0, nullptr);
+        if (collider)
+        {
+            collider->Update();
+        }
     }
-
-    ConstBufferDataB0 *constMap0 = nullptr;
-    if (SUCCEEDED(each.constBuff0->Map(0, nullptr, (void **)&constMap0)))
+    else
     {
-        //constMap0->mat = matWorld * Camera::matView * BaseDirectX::matProjection;
-        constMap0->viewproj = Camera::matView * BaseDirectX::matProjection;
-        constMap0->world = matWorld;
-        constMap0->cameraPos = cameraPos;
-        each.constBuff0->Unmap(0, nullptr);
-    }
+        XMMATRIX matScale, matRot, matTrans;
+        const XMFLOAT3& cameraPos = Camera::eye.v;
+        matScale = XMMatrixScaling(this->each.scale.x, this->each.scale.y, this->each.scale.z);
+        matRot = XMMatrixIdentity();
+        matRot *= XMMatrixRotationZ(XMConvertToRadians(this->each.rotation.z));
+        matRot *= XMMatrixRotationX(XMConvertToRadians(this->each.rotation.x));
+        matRot *= XMMatrixRotationY(XMConvertToRadians(this->each.rotation.y));
+        matTrans = XMMatrixTranslation(this->each.position.m128_f32[0], this->each.position.m128_f32[1], this->each.position.m128_f32[2]);
+        matWorld = XMMatrixIdentity();
 
-    ConstBufferDataB1 *constMap1 = nullptr;
-    BaseDirectX::result = each.constBuff1->Map(0, nullptr, (void **)&constMap1);
-    constMap1->ambient = material.ambient;
-    constMap1->diffuse = material.diffuse;
-    constMap1->specular = material.specular;
-    constMap1->alpha = material.alpha;
-    each.constBuff1->Unmap(0, nullptr);
-    if (collider)
-    {
-        collider->Update();
+        //ビルボード
+        //if (billboard)
+        //{
+        //    matWorld *= BaseDirectX::matBillboard;//ビルボードをかける
+        //}
+        //ビルボードY
+        //if (billboard)
+        //{
+        //    matWorld *= Camera::matBillboardY;//ビルボードをかける
+        //}
+        matWorld *= matScale;
+        matWorld *= matRot;
+        matWorld *= matTrans;
+
+        Vertex* vertMap = nullptr;
+        BaseDirectX::result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
+        if (SUCCEEDED(BaseDirectX::result))
+        {
+            copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
+            mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
+        }
+
+        ConstBufferDataB0* constMap0 = nullptr;
+        if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
+        {
+            //constMap0->mat = matWorld * Camera::matView * BaseDirectX::matProjection;
+            constMap0->viewproj = Camera::matView * BaseDirectX::matProjection;
+            constMap0->world = matWorld;
+            constMap0->cameraPos = cameraPos;
+            this->each.constBuff0->Unmap(0, nullptr);
+        }
+
+        ConstBufferDataB1* constMap1 = nullptr;
+        BaseDirectX::result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
+        constMap1->ambient = material.ambient;
+        constMap1->diffuse = material.diffuse;
+        constMap1->specular = material.specular;
+        constMap1->alpha = material.alpha;
+        this->each.constBuff1->Unmap(0, nullptr);
+        if (collider)
+        {
+            collider->Update();
+        }
     }
 }
 

@@ -13,7 +13,9 @@ private:
 	KingModel king;
 	int HP;
 public:
-	XMFLOAT3 GetPosition(){return ConvertXMVECTORtoXMFLOAT3(king.each.position); }
+	void LoadModel();
+	KingModel GetModel() { return king; }
+	XMFLOAT3 GetPosition(){return ConvertXMVECTORtoXMFLOAT3(this->king.each.position); }
 	void SetPosition(XMFLOAT3 &position);
 	int GetHP(){ return HP; }
 
