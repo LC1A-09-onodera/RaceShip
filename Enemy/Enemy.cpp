@@ -11,9 +11,8 @@ list<EnemyBase> Enemys::enemys;
 void EnemyBase::Init()
 {
 	SetMesh(EnemyModels::baseEnemy);
-	sample.CreateConstBuff0();
-	sample.CreateConstBuff1();
-	//enemy.CreateModel("maru", ShaderManager::playerShader);
+	each.CreateConstBuff0();
+	each.CreateConstBuff1();
 	SetAlive();
 }
 void EnemyBase::Update()
@@ -21,7 +20,9 @@ void EnemyBase::Update()
 	//爆風を受けていない
 	if (!isWind)
 	{
-		sample.position += ConvertXMFLOAT3toXMVECTOR(kingDirection);
+		kingDirection = king.GetPosition() - GetPosition();
+		each.position += ConvertXMFLOAT3toXMVECTOR(Normalize(kingDirection) * moveSpeed);
+
 	}
 	else
 	{
@@ -30,7 +31,7 @@ void EnemyBase::Update()
 }
 void EnemyBase::Draw()
 {
-	enemy.Update(&sample);
+	enemy.Update(&each);
 	Draw3DObject(enemy);
 }
 void EnemyBase::SetAlive()
@@ -52,28 +53,19 @@ void EnemyBase::UpdateKingDirection(XMFLOAT3& kingPos)
 void EnemyBase::SetRandomPosition()
 {
 	//左右から出てくる
-	/*if (rand() % 2 == 0)
-	{*/
-
-		sample.position.m128_f32[0] = -20;
-	
+	if (rand() % 2 == 0)
+	{
+		if (rand() % 2)
+		{
+			each.position.m128_f32[0] = rand() % 10 + 30;
+		}
+		else
+		{
+			each.position.m128_f32[0] = -(rand() % 10) - 30;
+		}
 		//上下の調整
-		sample.position.m128_f32[2] = rand() % 30 - 15;
-	//}
-	//上下から出てくる
-	//else
-	//{
-	//	if (rand() % 2 == 0)
-	//	{
-	//		enemy.position.m128_f32[2] = 10;
-	//	}
-	//	else
-	//	{
-	//		enemy.position.m128_f32[2] = -10;
-	//	}
-	//	//左右の調整
-	//	enemy.position.m128_f32[0] = 30;
-	//}
+		each.position.m128_f32[2] = rand() % 30 - 15;
+	}
 }
 
 void Enemys::AddEnemy(EnemyType type)
