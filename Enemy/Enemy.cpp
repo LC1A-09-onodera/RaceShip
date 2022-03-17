@@ -5,11 +5,13 @@
 #include "../WindowsAPI/WinAPI.h"
 #include "../King/King.h"
 #include "../Shader/ShaderManager.h"
+#include "../imgui/ImguiControl.h"
 
 EnemyModel EnemyModels::baseEnemy;
 EnemyModel EnemyModels::superEnemy;
 
 list<EnemyBase> Enemys::enemys;
+list<list<EnemyBase>::iterator> Enemys::deleteEnemys;
 void EnemyBase::Init()
 {
 	//ŽG‹›“G‚ÌMesh‚ðƒRƒs[
@@ -29,8 +31,31 @@ void EnemyBase::Update(King& king)
 	}
 	else
 	{
-
+		//”š•—‚Ì‰e‹¿‚ðŽó‚¯‚Ä‚¢‚é
+		each.position += ConvertXMFLOAT3toXMVECTOR(windDirection);
+		if (windDirection.x > 0.5f && windDirection.x < -0.5f)
+		{
+			windDirection.x = windDirection.x * 0.5f;
+		}
+		else
+		{
+			windDirection.x = 0.0f;
+		}
+		if (windDirection.z > 0.5f && windDirection.z < -0.5f)
+		{
+			windDirection.z = windDirection.z * 0.5f;
+		}
+		else
+		{
+			windDirection.z = 0.0f;
+		}
+		if (windDirection.x == 0.0f && windDirection.z == 0.0f)
+		{
+			isWind = false;
+		}
 	}
+
+	HitDethLine();
 }
 void EnemyBase::Draw()
 {
@@ -57,6 +82,17 @@ void EnemyBase::UpdateKingDirection(XMFLOAT3& kingPos)
 	result = kingPos - GetPosition();
 	kingDirection = Normalize(result);
 }
+void EnemyBase::HitDethLine()
+{
+	bool resultR = each.position.m128_f32[0] > Imgui::dethLine;
+	bool resultL = each.position.m128_f32[0] < -Imgui::dethLine;
+	bool resultU = each.position.m128_f32[2] > Imgui::dethLine;
+	bool resultB = each.position.m128_f32[2] < -Imgui::dethLine;
+	if (resultR || resultL || resultU || resultB)
+	{
+		hp -= 1;
+	}
+}
 void EnemyBase::SetRandomPosition()
 {
 	//¶‰E‚©‚ço‚Ä‚­‚é
@@ -64,14 +100,27 @@ void EnemyBase::SetRandomPosition()
 	{
 		if (rand() % 2)
 		{
-			each.position.m128_f32[0] = rand() % 10 + 30;
+			each.position.m128_f32[0] = 10 + 15;
 		}
 		else
 		{
-			each.position.m128_f32[0] = -(rand() % 10) - 30;
+			each.position.m128_f32[0] = -10 - 15;
 		}
 		//ã‰º‚Ì’²®
-		each.position.m128_f32[2] = rand() % 30 - 15;
+		each.position.m128_f32[2] = 25;
+	}
+	else
+	{
+		if (rand() % 2)
+		{
+			each.position.m128_f32[0] = 10 + 15;
+		}
+		else
+		{
+			each.position.m128_f32[0] = -10 - 15;
+		}
+		//ã‰º‚Ì’²®
+		each.position.m128_f32[2] = 25;
 	}
 }
 
@@ -93,13 +142,29 @@ void Enemys::AddEnemy(EnemyType type)
 	}
 }
 
+void Enemys::DeathEnemy(EnemyBase& enemy)
+{
+	
+}
+
 void Enemys::Update(King& king)
 {
 	auto itr = enemys.begin();
 	for (; itr != enemys.end(); ++itr)
 	{
 		itr->Update(king);
+		if (itr->GetHP() <= 0)
+		{
+			//enemys.erase(itr);
+			deleteEnemys.push_back(itr);
+		}
 	}
+	auto deleteItr = deleteEnemys.begin();
+	for (; deleteItr != deleteEnemys.end(); ++deleteItr)
+	{
+		enemys.erase(*deleteItr);
+	}
+	deleteEnemys.clear();
 }
 
 void Enemys::Draw()
