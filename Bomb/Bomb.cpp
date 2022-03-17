@@ -57,23 +57,25 @@ bool Bomb::Shot(DirectX::XMFLOAT3 angle, DirectX::XMFLOAT3 pos)
 	if (data.isAlive) return false;
 
 	//”š’e‚Ìî•ñ‚ð’Ç‰Á
-	data.pos = ConvertXMFLOAT3toXMVECTOR(angle);
+	data.pos = ConvertXMFLOAT3toXMVECTOR(pos);
 	data.isAlive = true;
 	data.bombAngle = ConvertXMFLOAT3toXMVECTOR(angle);
 	return true;
 }
 
-void Bomb::EnemyBombCollision(EnemyBase *enemyData)
+void Bomb::EnemyBombCollision(EnemyBase &enemyData)
 {
 	//“G‚ÌÀ•W
-	XMVECTOR enemyPosition = enemyData->GetModel().each.position;
+	XMVECTOR enemyPosition = ConvertXMFLOAT3toXMVECTOR(enemyData.GetPosition());
 
 	//”š’e–{‘Ì‚ÆÚG‚µ‚Ä‚¢‚é‚©‚Ì”»’è
-	bool IsBlast = BombCollision(enemyPosition, 0);
+	bool IsBlast = BombCollision(enemyPosition, 1);
 
 	//”š’e‚ÆÚG‚µ‚Ä‚¢‚½‚ç”š”­‚·‚é
 	if (IsBlast)
 	{
+	//”š’e–{‘Ì‚ÆÚG‚µ‚Ä‚¢‚é‚©‚Ì”»’è
+		BombCollision(enemyPosition, 0);
 		Explosion();
 	}
 
@@ -88,8 +90,8 @@ void Bomb::EnemyBombCollision(EnemyBase *enemyData)
 	//“–‚½‚Á‚½î•ñ‚ðŠeƒf[ƒ^‚É“ü‚ê‚é
 	if (IsBlastHit)
 	{
-		enemyData->SetIsWind(IsBlastHit);
-		enemyData->SetWindDirection(blastPower);
+		enemyData.SetIsWind(IsBlastHit);
+		enemyData.SetWindDirection(blastPower);
 	}
 }
 
@@ -125,6 +127,10 @@ bool Bomb::BombCollision(const XMVECTOR &pos, const float &radius)
 	//“G‚Æ”š’e‚Æ‚Ì‹——£ŒvŽZ
 	float bombEnemyLenght = XMVector3Length(distance).m128_f32[0];
 
+	if (bombEnemyLenght <= 0)
+	{
+		return false;
+	}
 	//“G‚Æ”š’e‚ª“–‚½‚Á‚Ä‚¢‚é‚©“–‚½‚Á‚Ä‚¢‚é‚©‚Ì”»’è
 	if ((data.bombRadius + radius) <= bombEnemyLenght)
 	{//”š’e‚ªÚG‚µ‚Ä‚¢‚È‚©‚Á‚½

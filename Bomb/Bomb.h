@@ -8,11 +8,11 @@ struct BombData
 	DirectX::XMVECTOR bombAngle = { -1, 0, 0 };
 	float bombRadius = 0.0f;//爆弾自体の大きさ
 	float bombSpeed = 1.0f;//爆弾の速度
-	float blastRadius = 10;//爆発の半径
+	float blastRadius = 1.0f;//爆発の半径
 	float blastPower = 10;//爆風の強さ
-	int blastTimer = 30;//爆発タイマー(とりあえず使わない)
+	int blastTimer = 0;//爆発タイマー(とりあえず使わない)
 	bool isAlive = false;//爆弾が現在生きているかどうか
-	bool isExplosion = true;//爆風が発生しているかどうか
+	bool isExplosion = false;//爆風が発生しているかどうか
 };
 class Bomb
 {
@@ -40,10 +40,11 @@ public:
 	/// 敵との当たり判定
 	/// </summary>
 	/// <param name="enemyData"></param>
-	void EnemyBombCollision(EnemyBase *enemyData);
-public:
+	void EnemyBombCollision(EnemyBase &enemyData);
+public://アクセッサ
 	bool GetIsAlve() {return data.isAlive;}
 	bool GetIsExplosion(){return data.isExplosion;}
+	const XMVECTOR &GetPos(){return data.pos;}
 private:
 	//爆弾が生きている際の更新処理
 	void BombUpdate();
