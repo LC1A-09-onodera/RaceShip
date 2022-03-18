@@ -40,7 +40,7 @@ void EnemyBase::Update(King& king)
 	SampleAddForce();
 	//外側に当たったらダメージを受ける
 	HitDethLine();
-
+	//穴に当たる
 	HolesHit();
 }
 void EnemyBase::Draw()
