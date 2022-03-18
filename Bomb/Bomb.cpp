@@ -83,6 +83,10 @@ if(enemyData.GetIsWind())return;
 	if (IsBlast)
 	{
 		//”š’e–{‘Ì‚ÆÚG‚µ‚Ä‚¢‚é‚©‚Ì”»’è
+		Hole hole;
+		XMFLOAT3 enemyPos = ConvertXMVECTORtoXMFLOAT3(enemyPosition);
+		hole.Init(enemyPos);
+		Holes::AddHole(hole);
 		BombCollision(enemyPosition, 0);
 		Explosion();
 	}

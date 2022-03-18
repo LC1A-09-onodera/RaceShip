@@ -252,6 +252,12 @@
     <ClInclude Include="Hole\Hole.h">
       <Filter>Hole</Filter>
     </ClInclude>
+    <ClInclude Include="Bomb\Bomb.h">
+      <Filter>Bomb</Filter>
+    </ClInclude>
+    <ClInclude Include="Bomb\BombManager.h">
+      <Filter>Bomb</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -376,6 +382,12 @@
     </ClCompile>
     <ClCompile Include="Hole\Hole.cpp">
       <Filter>Hole</Filter>
+    </ClCompile>
+    <ClCompile Include="Bomb\Bomb.cpp">
+      <Filter>Bomb</Filter>
+    </ClCompile>
+    <ClCompile Include="Bomb\BombManager.cpp">
+      <Filter>Bomb</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

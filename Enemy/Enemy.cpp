@@ -7,12 +7,14 @@
 #include "../Shader/ShaderManager.h"
 #include "../imgui/ImguiControl.h"
 #include "../BaseDirectX/Input.h"
+#include "../Hole/Hole.h"
 
 EnemyModel EnemyModels::baseEnemy;
 EnemyModel EnemyModels::superEnemy;
 
 list<EnemyBase> Enemys::enemys;
 list<list<EnemyBase>::iterator> Enemys::deleteEnemys;
+
 void EnemyBase::Init()
 {
 	//雑魚敵のMeshをコピー
@@ -37,6 +39,8 @@ void EnemyBase::Update(King& king)
 	SampleAddForce();
 	//外側に当たったらダメージを受ける
 	HitDethLine();
+
+	HokesHit();
 }
 void EnemyBase::Draw()
 {
@@ -90,16 +94,16 @@ void EnemyBase::AddWindForce()
 	{
 		windDirection.z -= resistForce;
 	}
-	else if(windDirection.z < 0.1f)
+	else if (windDirection.z < 0.1f)
 	{
 		windDirection.z += resistForce;
 	}
 	//設定値以下なら0に
-	if (windDirection.x < resistMinForce && windDirection.x < -resistMinForce)
+	if (windDirection.x < resistMinForce && windDirection.x > -resistMinForce)
 	{
 		windDirection.x = 0.0f;
 	}
-	if (windDirection.z < resistMinForce && windDirection.z < -resistMinForce)
+	if (windDirection.z < resistMinForce && windDirection.z > -resistMinForce)
 	{
 		windDirection.z = 0.0f;
 	}
@@ -109,7 +113,7 @@ void EnemyBase::AddWindForce()
 		isWind = false;
 	}
 }
-void EnemyBase::GoHate(XMFLOAT3 &hatePosition)
+void EnemyBase::GoHate(XMFLOAT3& hatePosition)
 {
 	kingDirection = hatePosition - GetPosition();
 	each.position += ConvertXMFLOAT3toXMVECTOR(Normalize(kingDirection) * moveSpeed);
@@ -119,7 +123,31 @@ void EnemyBase::SampleAddForce()
 	if (Input::KeyTrigger(DIK_V))
 	{
 		isWind = true;
-		windDirection = {4.0f, 0, 0};
+		windDirection = { 4.0f, 0, 0 };
+	}
+}
+bool EnemyBase::IsHolesHit(XMFLOAT3& hole)
+{
+	if (HolesLenght(hole) <= 2.0f)
+	{
+		return true;
+	}
+	return false;
+}
+float EnemyBase::HolesLenght(XMFLOAT3 &hole)
+{
+	return Lenght(hole,ConvertXMVECTORtoXMFLOAT3(each.position));
+}
+void EnemyBase::HokesHit()
+{
+	if (Holes::GetHoleList().size() <= 0) return;
+	auto itr = Holes::holes.begin();
+	for (; itr != Holes::holes.end(); ++itr)
+	{
+		if (IsHolesHit(itr->GetPosition()))
+		{
+			hp--;
+		}
 	}
 }
 void EnemyBase::SetRandomPosition()
@@ -142,14 +170,14 @@ void EnemyBase::SetRandomPosition()
 	{
 		if (rand() % 2)
 		{
-			each.position.m128_f32[0] = 10 + 15;
+			each.position.m128_f32[2] = 10 + 15;
 		}
 		else
 		{
-			each.position.m128_f32[0] = -10 - 15;
+			each.position.m128_f32[2] = -10 - 15;
 		}
 		//上下の調整
-		each.position.m128_f32[2] = rand() % 49 - 24;
+		each.position.m128_f32[0] = rand() % 49 - 24;
 	}
 }
 
@@ -173,7 +201,7 @@ void Enemys::AddEnemy(EnemyType type)
 
 void Enemys::DeathEnemy(EnemyBase& enemy)
 {
-	
+
 }
 
 void Enemys::Update(King& king)
@@ -184,6 +212,7 @@ void Enemys::Update(King& king)
 		itr->Update(king);
 		if (itr->GetHP() <= 0)
 		{
+			ParticleControl::expEffect->UI(itr->GetPosition(), 10.0f, 10.0f, 30);
 			deleteEnemys.push_back(itr);
 		}
 	}

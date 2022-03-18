@@ -29,6 +29,7 @@ XMMATRIX ParticleManager::matBillboard = XMMatrixIdentity();
 XMMATRIX ParticleManager::matBillboardY = XMMatrixIdentity();
 
 ParticleIndi *ParticleControl::attackEffect = nullptr;
+ParticleIndi *ParticleControl::expEffect = nullptr;
 
 bool ParticleManager::StaticInitialize(ID3D12Device *device,  int window_width, int window_height,XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up)
 {
@@ -975,11 +976,13 @@ ParticleControl::ParticleControl()
 
 ParticleControl::~ParticleControl()
 {
+	delete(attackEffect);
 }
 
 void ParticleControl::Update()
 {
 	attackEffect->Update(Camera::eye.v, Camera::target.v, Camera::up.v);
+	expEffect->Update(Camera::eye.v, Camera::target.v, Camera::up.v);
 }
 
 void ParticleControl::Init()
@@ -990,10 +993,11 @@ void ParticleControl::Init()
 		assert(0);
 	}
 	attackEffect = attackEffect->Create(L"Resource/Img/attackEffect.png");
-
+	expEffect = expEffect->Create(L"Resource/Img/ExpSample.png");
 }
 
 void ParticleControl::Draw()
 {
 	ParticleDraw(BaseDirectX::cmdList.Get(), attackEffect);
+	ParticleDraw(BaseDirectX::cmdList.Get(), expEffect);
 }
