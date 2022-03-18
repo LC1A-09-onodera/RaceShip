@@ -10,7 +10,7 @@
 #include "../FBXObject/FBXObject.h"
 #include "../FbxLoader/FbxLoader.h"
 #include "../King/King.h"
-
+#include "../Bomb/BombManager.h"
 enum GameSceneName{TITLE, SELECT, GAME, END, RESULT};
 
 class GameScene
@@ -62,4 +62,5 @@ public://ÉVÅ[ÉìÇ≈égÇ§Ç‡ÇÃ
 
 	PostEffect postEffect;
 	King king;
+	BombManager bombs;
 };

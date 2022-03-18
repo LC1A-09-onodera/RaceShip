@@ -2,11 +2,14 @@
 #include "../DX12operator.h"
 #include "../Shader/ShaderManager.h"
 #include "../Player/Player.h"
+#include "../Hole/Hole.h"
 namespace
 {
 	const int explosionTimerMax = 5;
 	const int safeTimerMax = 10;
 	const float baseBlastPower = 5.0f;
+	const int bombAliveTimerMax = 60;
+
 }
 Bomb::Bomb()
 {
@@ -63,6 +66,7 @@ bool Bomb::Shot(DirectX::XMFLOAT3 angle, DirectX::XMFLOAT3 pos)
 	data.pos = ConvertXMFLOAT3toXMVECTOR(pos);
 	data.isAlive = true;
 	data.bombAngle = ConvertXMFLOAT3toXMVECTOR(angle);
+	data.bombAliveTimer = 0;
 	return true;
 }
 
@@ -129,6 +133,12 @@ void Bomb::BombUpdate()
 	data.pos += moveSpeed;
 
 	bombObject.each.position = data.pos;
+	data.bombAliveTimer++;
+
+	if (data.bombAliveTimer >= bombAliveTimerMax)
+	{
+		data.isAlive = false;
+	}
 }
 
 void Bomb::BlastUpdate()
@@ -201,7 +211,7 @@ bool Bomb::BlastCollision(const XMVECTOR &pos, const float &radius, XMFLOAT3 *bl
 	return true;
 }
 
-void Bomb::Explosion()
+const Hole &Bomb::Explosion()
 {
 	data.blastTimer = 0;
 	data.isAlive = false;

@@ -15,6 +15,8 @@ public:
 	bool GetBombAlive();
 
 	void enemyCollision(EnemyBase &data);
+
+	void PlayerCollision(XMFLOAT3 pos, float radius);
 private:
 	vector<Bomb> bombs;
 };

@@ -89,3 +89,12 @@ void BombManager::enemyCollision(EnemyBase &data)
 		bombs[i].EnemyBombCollision(data);
 	}
 }
+
+void BombManager::PlayerCollision(XMFLOAT3 pos, float radius)
+{
+	float power = 0.0f;
+	for (int i = 0; i < bombs.size(); i++)
+	{
+	bombs[i].PlayerBlastCollision(pos, radius);
+	}
+}
