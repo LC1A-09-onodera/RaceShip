@@ -13,7 +13,7 @@ struct BombData
 	int blastTimer = 0;//爆発タイマー(とりあえず使わない)
 	bool isAlive = false;//爆弾が現在生きているかどうか
 	bool isExplosion = false;//爆風が発生しているかどうか
-	int safeTimer = 0;//爆弾がプレイヤー接触しても爆発しない時間
+	int safeTimer = 0;//爆弾がプレイヤー接触しても爆発しない時間(生成時即爆発しないため)
 };
 class Bomb
 {
