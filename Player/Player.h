@@ -31,15 +31,15 @@ private:
 	Player();
 	~Player();
 
-	const int MAX_STAN_COUNT = 300;			//行動不能フレーム
-	const int MAX_INVICIBLE_COUNT = 150;	//無敵フレーム
+	const int MAX_STAN_COUNT = 60;			//行動不能フレーム
+	const int MAX_INVICIBLE_COUNT = 30;	//無敵フレーム
 
-	const float MAX_ENEMY_FORCE = 10.0f;	//敵と当たった時に吹っ飛ぶ力（10.0->9.0->8.0,,,,）
+	const float MAX_ENEMY_FORCE = 5.0f;	//敵と当たった時に吹っ飛ぶ力（10.0->9.0->8.0,,,,）
 
 	const float RESISTANCE_VALUE = 1.0f;	//Forceを減算する定数
 	const float MINIMUM_FORCE = 2.0f;		//数値以下になったら強制的にForceを0にする
 
-	const float MAX_SPEED = 0.1f;			//自機スピード
+	const float MAX_SPEED = 0.5f;			//自機スピード
 
 	XMFLOAT3 pos;			//プレイヤーの座標
 	XMFLOAT3 vec3;			//向いている方向（正規化済）
