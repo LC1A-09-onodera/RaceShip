@@ -3,7 +3,7 @@
 #include "../BaseDirectX/Input.h"
 void King::LoadModel()
 {
-	king.CreateModel("maru", ShaderManager::playerShader);
+	king.CreateModel("King", ShaderManager::playerShader);
 }
 
 void King::SetPosition(XMFLOAT3 &position)
@@ -16,7 +16,7 @@ void King::Init(int HP)
 	this->HP = HP;
 	isWind = false;
 	LoadModel();
-	king.each.position = {0, 0, 0};
+	king.each.position = {0, 0, 5};
 }
 
 void King::Update()

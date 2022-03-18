@@ -68,7 +68,7 @@ protected:
 	//
 	Target target;
 	const int MaxHP = 1;
-	const float MaxMoveSpeed = 0.1f;
+	const float MaxMoveSpeed = 0.01f;
 	const float MaxWeight = 1.0f;
 	const float resistForce = 1.0f;
 	const float resistMinForce = 1.1f;
@@ -101,19 +101,26 @@ public:
 	void SetAlive();
 	//ƒwƒCƒg‚Ì•ûŒü‚ğæ“¾‚·‚é
 	void UpdateKingDirection(XMFLOAT3 &kingPos);
+	//˜g‚ÉG‚ê‚Ä‚¢‚é‚©‚È‚Ç‚Ìˆ—
 	void HitDethLine();
+	//”š•—‚ğó‚¯‚½‚Æ‚«‚Ìˆ—
 	void AddWindForce();
+	//ƒwƒCƒg•ûŒü‚Ö“®‚­
 	void GoHate(XMFLOAT3 &hatePosition);
+	//
 	void SampleAddForce();
+
+	bool IsHolesHit(XMFLOAT3& hole);
+	float HolesLenght(XMFLOAT3& hole);
+	void HokesHit();
 };
 
 class SuperEnemy : public EnemyBase
 {
 private:
 	const int MaxHP = 2;
-	const float MaxMoveSpeed = 0.5f;
+	const float MaxMoveSpeed = 0.01f;
 	const float MaxWeight = 2.0f;
-	//static const int dethLine = 25;
 public:
 	void Init();
 	void SetAlive();

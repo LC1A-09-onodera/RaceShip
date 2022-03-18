@@ -322,6 +322,7 @@ public:
 	ParticleControl(const ParticleControl &obj) = delete;
 	ParticleControl &operator=(const ParticleControl &obj) = delete;
 	static ParticleIndi *attackEffect;
+	static ParticleIndi *expEffect;
 	static void Update();
 	static void Init();
 	static void Draw();

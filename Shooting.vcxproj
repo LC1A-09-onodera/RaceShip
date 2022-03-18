@@ -168,6 +168,8 @@
     <ClInclude Include="BaseDirectX\vec2.h" />
     <ClInclude Include="BaseDirectX\vec3.h" />
     <ClInclude Include="BaseDirectX\viewport.h" />
+    <ClInclude Include="Bomb\Bomb.h" />
+    <ClInclude Include="Bomb\BombManager.h" />
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="Collition\BaseCollision.h" />
     <ClInclude Include="Collition\CollisionAttribute.h" />
@@ -220,6 +222,8 @@
     <ClCompile Include="BaseDirectX\Input.cpp" />
     <ClCompile Include="BaseDirectX\Matrix4.cpp" />
     <ClCompile Include="BaseDirectX\Quaternion.cpp" />
+    <ClCompile Include="Bomb\Bomb.cpp" />
+    <ClCompile Include="Bomb\BombManager.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="Collition\CollisionManager.cpp" />
     <ClCompile Include="Collition\CollisionPrimitive.cpp" />
