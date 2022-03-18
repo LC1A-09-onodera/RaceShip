@@ -2,6 +2,8 @@
 #include <DirectXMath.h>
 #include "../sampleObject/sampleObject.h"
 #include "../Enemy/Enemy.h"
+
+class Hole;
 struct BombData
 {
 	DirectX::XMVECTOR pos = {};//”š’e‚ÌÀ•W
@@ -14,6 +16,7 @@ struct BombData
 	bool isAlive = false;//”š’e‚ªŒ»İ¶‚«‚Ä‚¢‚é‚©‚Ç‚¤‚©
 	bool isExplosion = false;//”š•—‚ª”­¶‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
 	int safeTimer = 0;//”š’e‚ªƒvƒŒƒCƒ„[ÚG‚µ‚Ä‚à”š”­‚µ‚È‚¢ŠÔ(¶¬‘¦”š”­‚µ‚È‚¢‚½‚ß)
+	int bombAliveTimer = 0;
 };
 class Bomb
 {
@@ -74,7 +77,7 @@ private:
 	/// <summary>
 	/// ”š”­ˆ—
 	/// </summary>
-	void Explosion();
+	const Hole &Explosion();
 private:
 	BombData data;
 	SampleObject bombObject;

@@ -112,13 +112,22 @@ void GameScene::Init()
 	object->Initialize();
 	object->SetModel(model);
 	object->PlayAnimation();*/
+
+	bombs.Init();
 }
 
 void GameScene::TitleUpdate()
 {
+	if (/*ボタンとかの条件*/)
+	{
+		bombs.Shot(/*向き*/, /*座標*/);
+	}
+	bombs.PlayerCollision(/*座標*/, /*半径*/);
 	Player::GetPlayer()->Update(false);
 	//KingSample::king.GetModel().Update();
 	Enemys::Update(king);
+	bombs.Update();
+
 	king.Update();
 	if (Input::KeyTrigger(DIK_SPACE))
 	{
