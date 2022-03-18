@@ -43,6 +43,7 @@ private:
 
 	XMFLOAT3 pos;			//プレイヤーの座標
 	XMFLOAT3 vec3;			//向いている方向（正規化済）
+	XMFLOAT3 hitEnemypos;	//当たった敵の座標
 	int activeCount;		//行動不能カウント
 	int invincibleCount;	//無敵カウント
 	float bombForce;		//ボムの力保存用

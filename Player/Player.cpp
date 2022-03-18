@@ -140,6 +140,8 @@ void Player::CheakHitEnemy()
 	for (; itr != Enemys::enemys.end(); ++itr)
 	{
 		XMFLOAT3 enemyPos = itr->GetPosition();
+		if (std::isnan(enemyPos.x)) { return; }
+		if (std::isnan(enemyPos.z)) { return; }
 
 		//2点間の距離と判定（円）
 		isHit = CheakHit(1, 1, pos, enemyPos);
@@ -148,6 +150,7 @@ void Player::CheakHitEnemy()
 		if (!isHit) { continue; }
 
 		//当たったら行動不能にする
+		hitEnemypos = itr->GetPosition();
 		isActive = false;
 		break;
 	}
@@ -208,8 +211,12 @@ void Player::AddEnemyForce()
 	if (isActive) { return; }
 
 	//移動
-	pos.x += enemyForce * -vec3.x;
-	pos.z += enemyForce * vec3.z;
+	XMFLOAT3 move;
+	move.x = hitEnemypos.x - pos.x;
+	move.z = hitEnemypos.z - pos.z;
+	VecNormaliz(move);
+	pos.x += enemyForce * move.x;
+	pos.z += enemyForce * move.z;
 
 	//減算
 	enemyForce -= RESISTANCE_VALUE;
