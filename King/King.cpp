@@ -26,6 +26,22 @@ void King::Update()
 	{
 
 	}
+	if (Input::Key(DIK_D))
+	{
+		king.each.position.m128_f32[0] += 0.5f;
+	}
+	if (Input::Key(DIK_A))
+	{
+		king.each.position.m128_f32[0] -= 0.5f;
+	}
+	if (Input::Key(DIK_W))
+	{
+		king.each.position.m128_f32[2] += 0.5f;
+	}
+	if (Input::Key(DIK_S))
+	{
+		king.each.position.m128_f32[2] -= 0.5f;
+	}
 }
 
 void King::Draw()

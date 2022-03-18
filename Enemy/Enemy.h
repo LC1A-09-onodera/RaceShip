@@ -70,6 +70,8 @@ protected:
 	const int MaxHP = 1;
 	const float MaxMoveSpeed = 0.1f;
 	const float MaxWeight = 1.0f;
+	const float resistForce = 1.0f;
+	const float resistMinForce = 1.1f;
 public:
 	void SetMesh(EnemyModel &model) { enemy = model; }
 	void SetHP(int HP) { this->hp = HP; }
@@ -100,6 +102,9 @@ public:
 	//ƒwƒCƒg‚Ì•ûŒü‚ðŽæ“¾‚·‚é
 	void UpdateKingDirection(XMFLOAT3 &kingPos);
 	void HitDethLine();
+	void AddWindForce();
+	void GoHate(XMFLOAT3 &hatePosition);
+	void SampleAddForce();
 };
 
 class SuperEnemy : public EnemyBase

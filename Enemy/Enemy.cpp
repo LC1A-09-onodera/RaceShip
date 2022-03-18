@@ -6,6 +6,7 @@
 #include "../King/King.h"
 #include "../Shader/ShaderManager.h"
 #include "../imgui/ImguiControl.h"
+#include "../BaseDirectX/Input.h"
 
 EnemyModel EnemyModels::baseEnemy;
 EnemyModel EnemyModels::superEnemy;
@@ -25,36 +26,16 @@ void EnemyBase::Update(King& king)
 	//爆風を受けていない
 	if (!isWind)
 	{
-		kingDirection = king.GetPosition() - GetPosition();
-		each.position += ConvertXMFLOAT3toXMVECTOR(Normalize(kingDirection) * moveSpeed);
-
+		//ヘイトの方向に動いていく
+		GoHate(king.GetPosition());
 	}
 	else
 	{
 		//爆風の影響を受けている
-		each.position += ConvertXMFLOAT3toXMVECTOR(windDirection);
-		if (windDirection.x > 0.5f && windDirection.x < -0.5f)
-		{
-			windDirection.x = windDirection.x * 0.5f;
-		}
-		else
-		{
-			windDirection.x = 0.0f;
-		}
-		if (windDirection.z > 0.5f && windDirection.z < -0.5f)
-		{
-			windDirection.z = windDirection.z * 0.5f;
-		}
-		else
-		{
-			windDirection.z = 0.0f;
-		}
-		if (windDirection.x == 0.0f && windDirection.z == 0.0f)
-		{
-			isWind = false;
-		}
+		AddWindForce();
 	}
-
+	SampleAddForce();
+	//外側に当たったらダメージを受ける
 	HitDethLine();
 }
 void EnemyBase::Draw()
@@ -93,6 +74,54 @@ void EnemyBase::HitDethLine()
 		hp -= 1;
 	}
 }
+void EnemyBase::AddWindForce()
+{
+	each.position += ConvertXMFLOAT3toXMVECTOR(windDirection);
+	//爆風の力を減衰させていく
+	if (windDirection.x > 0.1f)
+	{
+		windDirection.x -= resistForce;
+	}
+	else if (windDirection.x < 0.1f)
+	{
+		windDirection.x += resistForce;
+	}
+	if (windDirection.z > 0.1f)
+	{
+		windDirection.z -= resistForce;
+	}
+	else if(windDirection.z < 0.1f)
+	{
+		windDirection.z += resistForce;
+	}
+	//設定値以下なら0に
+	if (windDirection.x < resistMinForce && windDirection.x < -resistMinForce)
+	{
+		windDirection.x = 0.0f;
+	}
+	if (windDirection.z < resistMinForce && windDirection.z < -resistMinForce)
+	{
+		windDirection.z = 0.0f;
+	}
+	//
+	if (windDirection.x == 0.0f && windDirection.z == 0.0f)
+	{
+		isWind = false;
+	}
+}
+void EnemyBase::GoHate(XMFLOAT3 &hatePosition)
+{
+	kingDirection = hatePosition - GetPosition();
+	each.position += ConvertXMFLOAT3toXMVECTOR(Normalize(kingDirection) * moveSpeed);
+}
+void EnemyBase::SampleAddForce()
+{
+	if (Input::KeyTrigger(DIK_V))
+	{
+		isWind = true;
+		windDirection = {4.0f, 0, 0};
+	}
+}
 void EnemyBase::SetRandomPosition()
 {
 	//左右から出てくる
@@ -107,7 +136,7 @@ void EnemyBase::SetRandomPosition()
 			each.position.m128_f32[0] = -10 - 15;
 		}
 		//上下の調整
-		each.position.m128_f32[2] = 25;
+		each.position.m128_f32[2] = rand() % 49 - 24;
 	}
 	else
 	{
@@ -120,7 +149,7 @@ void EnemyBase::SetRandomPosition()
 			each.position.m128_f32[0] = -10 - 15;
 		}
 		//上下の調整
-		each.position.m128_f32[2] = 25;
+		each.position.m128_f32[2] = rand() % 49 - 24;
 	}
 }
 
@@ -155,7 +184,6 @@ void Enemys::Update(King& king)
 		itr->Update(king);
 		if (itr->GetHP() <= 0)
 		{
-			//enemys.erase(itr);
 			deleteEnemys.push_back(itr);
 		}
 	}
