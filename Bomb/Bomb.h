@@ -46,7 +46,14 @@ public:
 	/// <param name="enemyData"></param>
 	void EnemyBombCollision(EnemyBase &enemyData);
 
+	void KingBlastCollision(King *king);
+
 	float PlayerBlastCollision(XMFLOAT3 pos, float radius);
+
+	/// <summary>
+/// 爆発処理
+/// </summary>
+	void Explosion();
 public://アクセッサ
 	bool GetIsAlve() {return data.isAlive;}
 	bool GetIsExplosion(){return data.isExplosion;}
@@ -74,10 +81,6 @@ private:
 	/// <returns></returns>
 	bool BlastCollision(const XMVECTOR &pos, const float &radius, XMFLOAT3 *blastPower = nullptr);
 
-	/// <summary>
-	/// 爆発処理
-	/// </summary>
-	void Explosion();
 private:
 	BombData data;
 	SampleObject bombObject;

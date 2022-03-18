@@ -3,6 +3,7 @@
 #include "../Shader/ShaderManager.h"
 #include "../Player/Player.h"
 #include "../Hole/Hole.h"
+#include "../King/King.h"
 namespace
 {
 const int explosionTimerMax = 5;
@@ -107,6 +108,20 @@ void Bomb::EnemyBombCollision(EnemyBase& enemyData)
 	{
 		enemyData.SetIsWind(IsBlastHit);
 		enemyData.SetWindDirection(blastPower);
+	}
+}
+
+void Bomb::KingBlastCollision(King *king)
+{
+	XMFLOAT3 tmpForce;
+	bool isKingHit = false;
+	float radius = 1;
+	isKingHit = BlastCollision(ConvertXMFLOAT3toXMVECTOR(king->GetPosition()), radius, &tmpForce);
+
+	if (isKingHit)
+	{
+		king->SetIsWind(isKingHit);
+		king->SetWindDirection(tmpForce);
 	}
 }
 

@@ -14,9 +14,13 @@ public:
 
 	bool GetBombAlive();
 
-	void enemyCollision(EnemyBase &data);
+	void enemyCollision(std::list<EnemyBase> &data);
 
 	void PlayerCollision(XMFLOAT3 pos, float radius);
+
+	void KingCollision(King *king);
+
+	void Explosion();
 private:
 	vector<Bomb> bombs;
 };
