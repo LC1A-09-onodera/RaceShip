@@ -19,6 +19,12 @@ float Camera::cameraUpAngle = 0.0f;
 float Camera::rotX = 0;
 float Camera::rotY = 0;
 float Camera::rotZ = 0;
+Vec3 Camera::eyeStartPosition;
+Vec3 Camera::eyeGoalPosition;
+float Camera::shakePower;
+bool Camera::isShake;
+Vec3 Camera::targetStartPosition;
+Vec3 Camera::targetGoalPosition;
 
 void Camera::Init()
 {
@@ -40,6 +46,7 @@ void Camera::Init()
 
 void Camera::Update()
 {
+	ShakeUpdate();
 	//ÉrÉÖÅ[ïœä∑çsóÒÇçÏÇËíºÇ∑
 	//matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 	XMVECTOR eyePosition = XMLoadFloat3(&eye.v);
@@ -249,6 +256,51 @@ void Camera::QuaternionRotation(const float& RightAngle, const float& UpAngle)
 	eye.v.z += ((eyePos.v.z + target.v.z) - eye.v.z) / 1;
 	up = cameraUp;
 	Update();
+}
+
+void Camera::ShakeUpdate()
+{
+	if (!isShake) return;
+	Camera::eye = Camera::eyeStartPosition;
+	Camera::target = Camera::targetStartPosition;
+	int random = rand() % 3;
+	if (random == 0)
+	{
+		eye.v.x += shakePower;
+		target.v.x += shakePower;
+	}
+	else if (random == 1)
+	{
+		eye.v.x += -shakePower;
+		target.v.x += -shakePower;
+	}
+	random = rand() % 3;
+	if (random == 0)
+	{
+		eye.v.z += shakePower;
+		target.v.z += shakePower;
+	}
+	else if (random == 1)
+	{
+		eye.v.z += -shakePower;
+		target.v.z += -shakePower;
+	}
+	shakePower -= 0.5f;
+	if (shakePower <= 0)
+	{
+		shakePower = 0;
+		isShake = false;
+		Camera::eye = Camera::eyeStartPosition;
+		Camera::target = Camera::targetStartPosition;
+	}
+}
+
+void Camera::SetShake(float shakePower)
+{
+	Camera::shakePower = shakePower;
+	Camera::eyeStartPosition = Camera::eye;
+	Camera::targetStartPosition = Camera::target;
+	isShake = true;
 }
 
 float Camera::TargetLength()

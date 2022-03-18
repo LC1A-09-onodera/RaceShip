@@ -9,8 +9,14 @@ public:
 	//位置
 	static Vec3 eye;
 	static Vec3 eyePos;
+	static Vec3 eyeStartPosition;
+	static Vec3 eyeGoalPosition;
+	static float shakePower;
+	static bool isShake;
 	//どこを注視点とするか
 	static Vec3 target;
+	static Vec3 targetStartPosition;
+	static Vec3 targetGoalPosition;
 	//カメラの向き？
 	static Vec3 up;
 	static Vec3 cameraUp;
@@ -55,4 +61,6 @@ public:
 	static void setEye(XMFLOAT3 Amount);
 	static void SetTarget(const XMFLOAT3& target);
 	static void QuaternionRotation(const float &RightAngle = NULL, const float &UpAngle = NULL);
+	static void ShakeUpdate();
+	static void SetShake(float shakePower);
 };
