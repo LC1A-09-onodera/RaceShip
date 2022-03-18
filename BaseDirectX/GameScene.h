@@ -9,6 +9,8 @@
 #include "../PostEffect/PostEffect.h"
 #include "../FBXObject/FBXObject.h"
 #include "../FbxLoader/FbxLoader.h"
+#include "../King/King.h"
+
 enum GameSceneName{TITLE, SELECT, GAME, END, RESULT};
 
 class GameScene
@@ -55,5 +57,9 @@ public://ÉVÅ[ÉìÇ≈égÇ§Ç‡ÇÃ
 	float circleShadowAtten[3] = {0.5f, 0.6f, 0.0f};
 	float circleShadowFactorAngle[2] = {0.0f, 0.0f};
 
+	Tex stageFrameTex;
+	Sprite stageFrameSp;
+
 	PostEffect postEffect;
+	King king;
 };
