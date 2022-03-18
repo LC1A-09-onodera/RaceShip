@@ -36,6 +36,7 @@ void Player::Init()
 	pos = { 0,0,0 };			//プレイヤーの座標
 	vec3 = { 0,0,0 };			//向いている方向（正規化済）
 	hitEnemypos = { 0,0,0 };	//当たった敵の座標
+	hitBombpos = { 0,0,0 };		//爆風が当たった時の爆弾の座標
 	lastVec3 = { 0,0,1 };		//最後に向いていた方向
 	activeCount = 0;			//行動不能カウント
 	invincibleCount = 0;		//無敵カウント
@@ -85,12 +86,16 @@ void Player::Draw()
 	Draw3DObject(player);
 }
 
-void Player::HitBomb(const float& BombForce)
+void Player::HitBomb(const float& BombForce, XMFLOAT3 bombPos)
 {
 	if (isActive)
 	{
 		//ボムの力を代入
 		bombForce = BombForce;
+
+		hitBombpos = bombPos;
+
+		bombForce *= 3.0f;
 
 		//移動制限
 		isActive = false;
@@ -241,8 +246,13 @@ void Player::AddBombForce()
 	if (!isHitBomb) { return; }
 
 	//移動
-	pos.x += bombForce * vec3.x;
-	pos.z += bombForce * -vec3.z;
+	//移動
+	XMFLOAT3 move = { 0,0,0 };
+	move.x = pos.x - hitBombpos.x;
+	move.z = pos.z - hitBombpos.z;
+	VecNormaliz(move);
+	pos.x += bombForce * move.x;
+	pos.z += bombForce * move.z;
 
 	//減算
 	bombForce -= RESISTANCE_VALUE;
