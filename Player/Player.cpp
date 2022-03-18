@@ -102,8 +102,39 @@ void Player::CheakIsInput()
 {
 	/*移動*/
 	//入力なければリセット
-	if (DirectInput::leftStickX() == 0.0f && DirectInput::leftStickY() == 0.0f) { vec3 = { 0,0,0 }; }
-	else { vec3.x = DirectInput::leftStickX(); vec3.z = DirectInput::leftStickY(); }
+	if (DirectInput::leftStickX() == 0.0f &&
+		DirectInput::leftStickY() == 0.0f)
+	{
+		vec3 = { 0,0,0 };
+	}
+	else
+	{
+		vec3.x = DirectInput::leftStickX();
+		vec3.z = DirectInput::leftStickY();
+	}
+
+	if (!Input::Key(DIK_LEFT) &&
+		!Input::Key(DIK_RIGHT) &&
+		!Input::Key(DIK_UP) &&
+		!Input::Key(DIK_DOWN))
+	{
+		if (DirectInput::leftStickX() == 0.0f &&
+			DirectInput::leftStickY() == 0.0f)
+		{
+			vec3 = { 0,0,0 };
+		}
+	}
+	else
+	{
+		if (DirectInput::leftStickX() == 0.0f &&
+			DirectInput::leftStickY() == 0.0f)
+		{
+			if (Input::Key(DIK_LEFT)) { vec3.x = -1.0f; }
+			if (Input::Key(DIK_RIGHT)) { vec3.x = 1.0f; }
+			if (Input::Key(DIK_UP)) { vec3.z = -1.0f; }
+			if (Input::Key(DIK_DOWN)) { vec3.z = 1.0f; }
+		}
+	}
 }
 
 void Player::CheakIsActive()
@@ -119,14 +150,26 @@ void Player::CheakIsActive()
 void Player::CheakShootTrigger(bool isBombAlive)
 {
 	/*発射トリガー*/
-	if (DirectInput::IsButtonPush(DirectInput::ButtonKind::Button01) && !isBombAlive && isActive) { isShoot = true; }
+	if (DirectInput::IsButtonPush(DirectInput::ButtonKind::Button01) ||
+		Input::KeyTrigger(DIK_B) &&
+		!isBombAlive &&
+		isActive)
+	{
+		isShoot = true;
+	}
 	else { isShoot = false; }
 }
 
 void Player::CheakDetonatingTrigger(bool isBombAlive)
 {
 	/*起爆トリガー*/
-	if (DirectInput::IsButtonPush(DirectInput::ButtonKind::Button01) && isBombAlive && isActive) { isDetonating = true; }
+	if (DirectInput::IsButtonPush(DirectInput::ButtonKind::Button01) ||
+		Input::KeyTrigger(DIK_B) &&
+		isBombAlive &&
+		isActive)
+	{
+		isDetonating = true;
+	}
 	else { isDetonating = false; }
 }
 
