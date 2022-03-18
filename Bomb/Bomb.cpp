@@ -1,10 +1,12 @@
 #include "Bomb.h"
 #include "../DX12operator.h"
 #include "../Shader/ShaderManager.h"
-
+#include "../Player/Player.h"
 namespace
 {
-	const int explosionTimerMax = 30;
+	const int explosionTimerMax = 5;
+	const int safeTimerMax = 10;
+	const float baseBlastPower = 5.0f;
 }
 Bomb::Bomb()
 {
@@ -18,6 +20,7 @@ void Bomb::Init()
 {
 	bombObject.CreateModel("Block", ShaderManager::playerShader);
 	blastObject.CreateModel("Block", ShaderManager::playerShader);
+	data.blastPower = baseBlastPower;
 }
 
 void Bomb::Update()
@@ -65,6 +68,7 @@ bool Bomb::Shot(DirectX::XMFLOAT3 angle, DirectX::XMFLOAT3 pos)
 
 void Bomb::EnemyBombCollision(EnemyBase &enemyData)
 {
+if(enemyData.GetIsWind())return;
 	//“G‚ÌÀ•W
 	XMVECTOR enemyPosition = ConvertXMFLOAT3toXMVECTOR(enemyData.GetPosition());
 
@@ -74,7 +78,7 @@ void Bomb::EnemyBombCollision(EnemyBase &enemyData)
 	//”š’e‚ÆÚG‚µ‚Ä‚¢‚½‚ç”š”­‚·‚é
 	if (IsBlast)
 	{
-	//”š’e–{‘Ì‚ÆÚG‚µ‚Ä‚¢‚é‚©‚Ì”»’è
+		//”š’e–{‘Ì‚ÆÚG‚µ‚Ä‚¢‚é‚©‚Ì”»’è
 		BombCollision(enemyPosition, 0);
 		Explosion();
 	}
@@ -85,14 +89,36 @@ void Bomb::EnemyBombCollision(EnemyBase &enemyData)
 
 	//”š•—‚É“–‚½‚Á‚½‚©ƒtƒ‰ƒO
 	bool IsBlastHit = BlastCollision(enemyPosition, 0, &blastPower);
-
-
+	XMVECTOR tmpBlast = ConvertXMFLOAT3toXMVECTOR(blastPower);
+	if (std::isnan(XMVector3Length(tmpBlast).m128_f32[0]))
+	{
+		blastPower = {5, 0, 0};
+	}
 	//“–‚½‚Á‚½î•ñ‚ðŠeƒf[ƒ^‚É“ü‚ê‚é
 	if (IsBlastHit)
 	{
 		enemyData.SetIsWind(IsBlastHit);
 		enemyData.SetWindDirection(blastPower);
 	}
+}
+
+float Bomb::PlayerBlastCollision(XMFLOAT3 pos, float radius)
+{
+	XMVECTOR force;
+	XMFLOAT3 tmpForce;
+	bool isPlayerHit = false;
+	isPlayerHit = BlastCollision(ConvertXMFLOAT3toXMVECTOR(pos), radius, &tmpForce);
+
+	if (isPlayerHit)
+	{
+	force = ConvertXMFLOAT3toXMVECTOR(tmpForce);
+
+		float power =XMVector3Length(force).m128_f32[0];
+		//ƒVƒ“ƒOƒ‹ƒgƒ“‚È‚Ì‚ðˆ«—p‚µ‚Ä‚¢‚Ü‚·
+		Player::GetPlayer()->HitBomb(power);
+		return power;
+	}
+	return 0.0f;
 }
 
 
@@ -110,7 +136,7 @@ void Bomb::BlastUpdate()
 	data.blastTimer++;
 	blastObject.each.position = data.pos;
 
-	blastObject.each.scale = (blastObject.each.scale + XMFLOAT3{ 1.0f, 1.0f, 1.0f });
+	blastObject.each.scale =( XMFLOAT3{ data.blastRadius, data.blastRadius, data.blastRadius });
 	if (data.blastTimer >= explosionTimerMax)
 	{
 		data.isExplosion = false;
@@ -180,4 +206,5 @@ void Bomb::Explosion()
 	data.blastTimer = 0;
 	data.isAlive = false;
 	data.isExplosion = true;
+	blastObject.each.scale = XMFLOAT3{ 1.0f, 1.0f, 1.0f };
 }
