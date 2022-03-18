@@ -150,7 +150,7 @@ void GameScene::GameUpdate()
 
 	//Player::GetPlayer()->Update();
 	ParticleControl::Update();
-	
+
 	if (Input::KeyTrigger(DIK_R))
 	{
 		SceneNum = SELECT;
@@ -249,7 +249,7 @@ void GameScene::GameDraw()
 
 	//スプライトの描画-------------------------
 	//titleSprite.SpriteDraw();
-	
+
 	Imgui::DrawImGui();
 	//描画コマンドここまで
 	BaseDirectX::UpdateBack();

@@ -144,7 +144,7 @@ void Player::CheakHitEnemy()
 		if (std::isnan(enemyPos.z)) { return; }
 
 		//2ì_ä‘ÇÃãóó£Ç∆îªíËÅiâ~Åj
-		isHit = CheakHit(1, 1, pos, enemyPos);
+		isHit = CheakHit(1.2f, 1.2f, pos, enemyPos);
 
 		//ìñÇΩÇ¡ÇƒÇ»Ç©Ç¡ÇΩÇÁÇ‚ÇËíºÇµ
 		if (!isHit) { continue; }
@@ -211,9 +211,9 @@ void Player::AddEnemyForce()
 	if (isActive) { return; }
 
 	//à⁄ìÆ
-	XMFLOAT3 move;
-	move.x = hitEnemypos.x - pos.x;
-	move.z = hitEnemypos.z - pos.z;
+	XMFLOAT3 move = { 0,0,0 };
+	move.x = pos.x - hitEnemypos.x;
+	move.z = pos.z - hitEnemypos.z;
 	VecNormaliz(move);
 	pos.x += enemyForce * move.x;
 	pos.z += enemyForce * move.z;
