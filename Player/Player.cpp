@@ -33,18 +33,18 @@ void Player::Init()
 	player.CreateModel("Block", ShaderManager::playerShader);
 	//water.CreateWater();
 
-	XMFLOAT3 pos = { 0,0,0 };		//プレイヤーの座標
-	XMFLOAT3 vec3 = { 0,0,0 };		//向いている方向（正規化済）
-	int activeCount = 0;			//行動不能カウント
-	int invincibleCount = 0;		//無敵カウント
-	float bombForce = 0;			//ボムの力保存用
-	float enemyForce = 0;			//敵の力保存用
-	bool isActive = true;			//行動できるかどうか
-	bool isHitBomb = false;			//ボムに当たって飛ばされてるかどうか
-	bool isHitEnemy = false;		//敵に当たって飛ばされてるかどうか
-	bool isInvincible = false;		//無敵かどうか
-	bool isShoot = false;			//射撃中かどうか（弾があるか）
-	bool isDetonating = false;		//起爆したかどうか
+	pos = { 0,0,0 };		//プレイヤーの座標
+	vec3 = { 0,0,0 };		//向いている方向（正規化済）
+	activeCount = 0;		//行動不能カウント
+	invincibleCount = 0;	//無敵カウント
+	bombForce = 0;			//ボムの力保存用
+	enemyForce = 0;			//敵の力保存用
+	isActive = true;		//行動できるかどうか
+	isHitBomb = false;		//ボムに当たって飛ばされてるかどうか
+	isHitEnemy = false;		//敵に当たって飛ばされてるかどうか
+	isInvincible = false;	//無敵かどうか
+	isShoot = false;		//射撃中かどうか（弾があるか）
+	isDetonating = false;	//起爆したかどうか
 }
 
 //更新
@@ -135,19 +135,22 @@ void Player::CheakHitEnemy()
 	//行動不能時か無敵時か吹っ飛び中は判定無視
 	if (!isActive || isInvincible || isHitBomb) { return; }
 
-	bool isHit;
+	bool isHit = false;
 	auto itr = Enemys::enemys.begin();
 	for (; itr != Enemys::enemys.end(); ++itr)
 	{
 		XMFLOAT3 enemyPos = itr->GetPosition();
+		if (std::isnan(enemyPos.x)) { return; }
+		if (std::isnan(enemyPos.z)) { return; }
 
 		//2点間の距離と判定（円）
-		isHit = CheakHit(1, 1, pos, enemyPos);
+		isHit = CheakHit(1.2f, 1.2f, pos, enemyPos);
 
 		//当たってなかったらやり直し
 		if (!isHit) { continue; }
 
 		//当たったら行動不能にする
+		hitEnemypos = itr->GetPosition();
 		isActive = false;
 		break;
 	}
@@ -164,8 +167,8 @@ void Player::CalcActiveCount()
 	//無敵かつ行動可能時
 	if (isInvincible && isActive)
 	{
-		if (isInvincible && invincibleCount < MAX_INVICIBLE_COUNT) { invincibleCount++; }
-		else { isInvincible = false; }
+		if (invincibleCount < MAX_INVICIBLE_COUNT) { invincibleCount++; }
+		else { invincibleCount = 0; isInvincible = false; }
 	}
 
 	//行動不能時
@@ -208,8 +211,12 @@ void Player::AddEnemyForce()
 	if (isActive) { return; }
 
 	//移動
-	pos.x += enemyForce * vec3.x;
-	pos.z += enemyForce * -vec3.z;
+	XMFLOAT3 move = { 0,0,0 };
+	move.x = pos.x - hitEnemypos.x;
+	move.z = pos.z - hitEnemypos.z;
+	VecNormaliz(move);
+	pos.x += enemyForce * move.x;
+	pos.z += enemyForce * move.z;
 
 	//減算
 	enemyForce -= RESISTANCE_VALUE;
