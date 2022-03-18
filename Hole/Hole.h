@@ -22,3 +22,16 @@ public:
 	void Init(XMFLOAT3 position);
 
 };
+
+class Holes
+{
+	static list<Hole> holes;
+	static list<list<Hole>::iterator> deleteHoles;
+public:
+	void Init();
+	void Update();
+	void Draw();
+
+	void AddHole(Hole hole);
+	void DeleteHole();
+};
