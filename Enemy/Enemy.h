@@ -112,7 +112,12 @@ public:
 
 	bool IsHolesHit(XMFLOAT3& hole);
 	float HolesLenght(XMFLOAT3& hole);
-	void HokesHit();
+	void HolesHit();
+
+	void CheckHitKing(King& kingPos);
+	bool IsKingHit(XMFLOAT3& kingPos);
+	float KingToLenght(XMFLOAT3& kingPos);
+
 };
 
 class SuperEnemy : public EnemyBase

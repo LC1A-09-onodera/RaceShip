@@ -36,11 +36,12 @@ void EnemyBase::Update(King& king)
 		//爆風の影響を受けている
 		AddWindForce();
 	}
+	CheckHitKing(king);
 	SampleAddForce();
 	//外側に当たったらダメージを受ける
 	HitDethLine();
-
-	HokesHit();
+	//穴に当たる
+	HolesHit();
 }
 void EnemyBase::Draw()
 {
@@ -138,7 +139,7 @@ float EnemyBase::HolesLenght(XMFLOAT3 &hole)
 {
 	return Lenght(hole,ConvertXMVECTORtoXMFLOAT3(each.position));
 }
-void EnemyBase::HokesHit()
+void EnemyBase::HolesHit()
 {
 	if (Holes::GetHoleList().size() <= 0) return;
 	auto itr = Holes::holes.begin();
@@ -149,6 +150,28 @@ void EnemyBase::HokesHit()
 			hp--;
 		}
 	}
+}
+void EnemyBase::CheckHitKing(King& king)
+{
+	if (king.GetIsEnemyhit())return;
+	if (!IsKingHit(king.GetPosition())) return;
+	king.SetIsEnemyHit(true);
+	XMFLOAT3 kingPos = king.GetPosition();
+	XMFLOAT3 vec = kingPos - GetPosition();
+	const float enemyForce = 5.0f;
+	XMFLOAT3 result = Normalize(vec) * enemyForce;
+	king.SetEnemyDirection(result);
+}
+bool EnemyBase::IsKingHit(XMFLOAT3& kingPos)
+{
+	if (KingToLenght(kingPos) > 2.0f)return false;
+	return true;
+}
+float EnemyBase::KingToLenght(XMFLOAT3 &kingPos)
+{
+	float leng;
+	leng = Lenght(kingPos, ConvertXMVECTORtoXMFLOAT3(each.position));
+	return leng;
 }
 void EnemyBase::SetRandomPosition()
 {
