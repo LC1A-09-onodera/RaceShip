@@ -44,6 +44,7 @@ private:
 	XMFLOAT3 pos;			//プレイヤーの座標
 	XMFLOAT3 vec3;			//向いている方向（正規化済）
 	XMFLOAT3 hitEnemypos;	//当たった敵の座標
+	XMFLOAT3 hitBombpos;	//爆風が当たった時の爆弾の座標
 	XMFLOAT3 lastVec3;		//最後に向いていた方向
 	int activeCount;		//行動不能カウント
 	int invincibleCount;	//無敵カウント
@@ -77,19 +78,19 @@ public:
 public:
 	/*----------↓情報取得用↓----------*/
 
-	XMFLOAT3 GetPos() { return pos; }					//プレイヤーの座標					がわかるよ
-	XMFLOAT3 GetVec3() { return vec3; }					//向いている方向（正規化済）			がわかるよ
-	XMFLOAT3 GetLastVec3() { return lastVec3; }			//最後に向いていた方向（正規化済）	がわかるよ
-	bool IsActive() { return isActive; }				//行動できるか						がわかるよ
-	bool IsInvincible() { return isInvincible; }		//無敵かどうか						がわかるよ
+	XMFLOAT3 GetPos() { return pos; }						//プレイヤーの座標					がわかるよ
+	XMFLOAT3 GetVec3() { return vec3; }						//向いている方向（正規化済）			がわかるよ
+	XMFLOAT3 GetLastVec3() { return lastVec3; }				//最後に向いていた方向（正規化済）	がわかるよ
+	bool IsActive() { return isActive; }					//行動できるか						がわかるよ
+	bool IsInvincible() { return isInvincible; }			//無敵かどうか						がわかるよ
 
-	bool IsShootTrigger() { return isShoot; }			//射撃した瞬間						がわかるよ
-	bool IsDetonatingTrigger() { return isDetonating; }	//起爆した瞬間						がわかるよ
+	bool IsShootTrigger() { return isShoot; }				//射撃した瞬間						がわかるよ
+	bool IsDetonatingTrigger() { return isDetonating; }		//起爆した瞬間						がわかるよ
 
 	/*----------↑情報取得用↑----------*/
 
 
-	void HitBomb(const float& BombForce);				//Hit時に力入れて呼んでね
+	void HitBomb(const float& BombForce, XMFLOAT3 bombPos);	//Hit時に力入れて呼んでね
 
 
 private://チェックだけじゃなくて処理も入ってます！！！！！カス

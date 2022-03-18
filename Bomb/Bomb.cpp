@@ -5,10 +5,10 @@
 #include "../Hole/Hole.h"
 namespace
 {
-	const int explosionTimerMax = 5;
-	const int safeTimerMax = 10;
-	const float baseBlastPower = 5.0f;
-	const int bombAliveTimerMax = 60;
+const int explosionTimerMax = 5;
+const int safeTimerMax = 10;
+const float baseBlastPower = 5.0f;
+const int bombAliveTimerMax = 60;
 
 }
 Bomb::Bomb()
@@ -70,9 +70,9 @@ bool Bomb::Shot(DirectX::XMFLOAT3 angle, DirectX::XMFLOAT3 pos)
 	return true;
 }
 
-void Bomb::EnemyBombCollision(EnemyBase &enemyData)
+void Bomb::EnemyBombCollision(EnemyBase& enemyData)
 {
-if(enemyData.GetIsWind())return;
+	if (enemyData.GetIsWind())return;
 	//敵の座標
 	XMVECTOR enemyPosition = ConvertXMFLOAT3toXMVECTOR(enemyData.GetPosition());
 
@@ -100,7 +100,7 @@ if(enemyData.GetIsWind())return;
 	XMVECTOR tmpBlast = ConvertXMFLOAT3toXMVECTOR(blastPower);
 	if (std::isnan(XMVector3Length(tmpBlast).m128_f32[0]))
 	{
-		blastPower = {5, 0, 0};
+		blastPower = { 5, 0, 0 };
 	}
 	//当たった情報を各データに入れる
 	if (IsBlastHit)
@@ -119,11 +119,12 @@ float Bomb::PlayerBlastCollision(XMFLOAT3 pos, float radius)
 
 	if (isPlayerHit)
 	{
-	force = ConvertXMFLOAT3toXMVECTOR(tmpForce);
+		force = ConvertXMFLOAT3toXMVECTOR(tmpForce);
 
-		float power =XMVector3Length(force).m128_f32[0];
+		float power = XMVector3Length(force).m128_f32[0];
 		//シングルトンなのを悪用しています
-		Player::GetPlayer()->HitBomb(power);
+		XMFLOAT3 pos = ConvertXMVECTORtoXMFLOAT3(data.pos);
+		Player::GetPlayer()->HitBomb(power, pos);
 		return power;
 	}
 	return 0.0f;
@@ -150,14 +151,14 @@ void Bomb::BlastUpdate()
 	data.blastTimer++;
 	blastObject.each.position = data.pos;
 
-	blastObject.each.scale =( XMFLOAT3{ data.blastRadius, data.blastRadius, data.blastRadius });
+	blastObject.each.scale = (XMFLOAT3{ data.blastRadius, data.blastRadius, data.blastRadius });
 	if (data.blastTimer >= explosionTimerMax)
 	{
 		data.isExplosion = false;
 	}
 }
 
-bool Bomb::BombCollision(const XMVECTOR &pos, const float &radius)
+bool Bomb::BombCollision(const XMVECTOR& pos, const float& radius)
 {
 	//爆弾存在がしてい無かったら早期リターン
 	if (!data.isAlive)return false;
@@ -182,7 +183,7 @@ bool Bomb::BombCollision(const XMVECTOR &pos, const float &radius)
 	}
 }
 
-bool Bomb::BlastCollision(const XMVECTOR &pos, const float &radius, XMFLOAT3 *blastPower)
+bool Bomb::BlastCollision(const XMVECTOR& pos, const float& radius, XMFLOAT3* blastPower)
 {
 	//爆発していなかったら
 	if (!data.isExplosion)return false;
