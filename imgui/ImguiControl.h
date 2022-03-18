@@ -24,4 +24,6 @@ public:
 
     static bool spotLight1;
     static float lightColor[3];
+
+    static float dethLine;
 };
