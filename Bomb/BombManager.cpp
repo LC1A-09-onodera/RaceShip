@@ -47,16 +47,39 @@ void BombManager::Draw()
 
 void BombManager::Shot(DirectX::XMFLOAT3 angle, DirectX::XMFLOAT3 pos)
 {
+	bool isShot = false;
+	const int Nothing = 100;
+	int bombNumber = Nothing;
 	for (int i = 0; i < bombs.size(); i++)
 	{
-		//”­ŽË‚Å‚«‚é‚©
-		bool isShot = (!bombs[i].GetIsAlve() && !bombs[i].GetIsExplosion());
-		if (isShot)
+		if (bombs[i].GetIsAlve())
 		{
-			bombs[i].Shot(angle, pos);
-			break;
+			return;
+		}
+
+		//”­ŽË‚Å‚«‚é‚©
+		if (!bombs[i].GetIsAlve() && !bombs[i].GetIsExplosion())
+		{
+			bombNumber = i;
+		}
+
+	}
+	if (bombNumber != Nothing)
+	{
+		bombs[bombNumber].Shot(angle, pos);
+	}
+}
+
+bool BombManager::GetBombAlive()
+{
+	for (int i = 0; i < bombs.size(); i++)
+	{
+		if (bombs[i].GetIsAlve())
+		{
+			return true;
 		}
 	}
+	return false;
 }
 
 void BombManager::enemyCollision(EnemyBase &data)
