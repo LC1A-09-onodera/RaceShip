@@ -116,7 +116,7 @@ void GameScene::Init()
 
 void GameScene::TitleUpdate()
 {
-	Player::GetPlayer()->Update(false,false);
+	Player::GetPlayer()->Update(false);
 	//KingSample::king.GetModel().Update();
 	Enemys::Update(king);
 	king.Update();

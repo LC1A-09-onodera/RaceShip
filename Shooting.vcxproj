@@ -183,6 +183,7 @@
     <ClInclude Include="FbxLoader\FbxLoader.h" />
     <ClInclude Include="FBXModel\FBXModel.h" />
     <ClInclude Include="FBXObject\FBXObject.h" />
+    <ClInclude Include="Hole\Hole.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\ImguiControl.h" />
@@ -228,6 +229,7 @@
     <ClCompile Include="FbxLoader\FbxLoader.cpp" />
     <ClCompile Include="FBXModel\FBXModel.cpp" />
     <ClCompile Include="FBXObject\FBXObject.cpp" />
+    <ClCompile Include="Hole\Hole.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\ImguiControl.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />

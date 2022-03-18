@@ -82,6 +82,12 @@
     <Filter Include="King">
       <UniqueIdentifier>{0aa5b8bf-7210-4019-8b93-d9276f0803ca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Bomb">
+      <UniqueIdentifier>{0f1dd705-b3d5-4906-9c25-1ca58b17a889}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hole">
+      <UniqueIdentifier>{16a4f51e-2c8f-40ae-b343-c7c442be6daa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -243,6 +249,9 @@
     <ClInclude Include="Shader\ShaderManager.h">
       <Filter>Shader</Filter>
     </ClInclude>
+    <ClInclude Include="Hole\Hole.h">
+      <Filter>Hole</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -364,6 +373,9 @@
     </ClCompile>
     <ClCompile Include="Shader\ShaderManager.cpp">
       <Filter>Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Hole\Hole.cpp">
+      <Filter>Hole</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
