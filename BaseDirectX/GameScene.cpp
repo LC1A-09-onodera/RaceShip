@@ -12,6 +12,7 @@
 #include "../FBXObject/FBXObject.h"
 #include "../Shader/ShaderManager.h"
 #include"../Enemy/Enemy.h"
+#include "../Hole/Hole.h"
 
 GameScene::GameScene()
 {
@@ -89,6 +90,8 @@ void GameScene::Init()
 	//プレイヤーの初期化
 	Player::GetPlayer()->Init();
 	EnemyModels::LoadModels();
+	HoleModels::Init();
+	Holes::Init();
 	for (int i = 0; i < 100; i++)
 	{
 		if (rand() % 2 == 0)
@@ -118,13 +121,19 @@ void GameScene::Init()
 
 void GameScene::TitleUpdate()
 {
+	if (Input::KeyTrigger(DIK_N))
+	{
+		Hole hole;
+		hole.Init(XMFLOAT3(rand() % 20 - 10, 0, rand() % 20 - 10));
+		Holes::AddHole(hole);
+	}
 	if (Player::GetPlayer()->IsShootTrigger())
 	{
 		XMFLOAT3 lastVec3 = Player::GetPlayer()->GetLastVec3();
 		lastVec3.z = -lastVec3.z;
 		bombs.Shot(/*向き*/lastVec3, /*座標*/Player::GetPlayer()->GetPos());
 	}
-	bombs.PlayerCollision(/*座標*/Player::GetPlayer()->GetPos(),/*半径*/1.2f);
+	bombs.PlayerCollision(Player::GetPlayer()->GetPos(),1.2f);
 	{
 		auto itr = Enemys::enemys.begin();
 		for (; itr != Enemys::enemys.end(); ++itr)
@@ -136,8 +145,9 @@ void GameScene::TitleUpdate()
 	//KingSample::king.GetModel().Update();
 	Enemys::Update(king);
 	bombs.Update();
-
+	Holes::Update();
 	king.Update();
+	ParticleControl::Update();
 	if (Input::KeyTrigger(DIK_SPACE))
 	{
 		SceneNum = GAME;
@@ -201,9 +211,11 @@ void GameScene::TitleDraw()
 	Player::GetPlayer()->Draw();
 	Enemys::Draw();
 	king.Draw();
+	Holes::Draw();
 	//PostEffectのPostDraw
 	postEffect.PostDraw();
 	bombs.Draw();
+	ParticleControl::Draw();
 	BaseDirectX::clearColor[0] = 0.0f;
 	BaseDirectX::clearColor[1] = 0.0f;
 	BaseDirectX::clearColor[2] = 0.0f;
