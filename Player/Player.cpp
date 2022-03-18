@@ -33,14 +33,18 @@ void Player::Init()
 	player.CreateModel("Block", ShaderManager::playerShader);
 	//water.CreateWater();
 
-	XMFLOAT3 pos = { 0,0,0 };
-	XMFLOAT3 vec3 = { 0,0,0 };
-	bool isInvincible = false;
-	int activeCount = 0;
-	int invincibleCount = 0;
-	bool isActive = true;
-	bool isShoot = false;
-	bool isDetonating = false;
+	XMFLOAT3 pos = { 0,0,0 };		//プレイヤーの座標
+	XMFLOAT3 vec3 = { 0,0,0 };		//向いている方向（正規化済）
+	int activeCount = 0;			//行動不能カウント
+	int invincibleCount = 0;		//無敵カウント
+	float bombForce = 0;			//ボムの力保存用
+	float enemyForce = 0;			//敵の力保存用
+	bool isActive = true;			//行動できるかどうか
+	bool isHitBomb = false;			//ボムに当たって飛ばされてるかどうか
+	bool isHitEnemy = false;		//敵に当たって飛ばされてるかどうか
+	bool isInvincible = false;		//無敵かどうか
+	bool isShoot = false;			//射撃中かどうか（弾があるか）
+	bool isDetonating = false;		//起爆したかどうか
 }
 
 //更新
@@ -211,5 +215,5 @@ void Player::AddEnemyForce()
 	enemyForce -= RESISTANCE_VALUE;
 
 	//一定量を下回ったら0にする
-	if (enemyForce < MAX_ENEMY_FORCE) { enemyForce = 0; }
+	if (enemyForce < MINIMUM_FORCE) { enemyForce = 0; }
 }
