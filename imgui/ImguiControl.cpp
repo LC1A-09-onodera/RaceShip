@@ -3,12 +3,13 @@
 #include "../imgui/imgui_impl_dx12.h"
 #include "../imgui/imgui_impl_win32.h"
 #include "../BaseDirectX/BaseDirectX.h"
-#include "../BaseDirectX/GameScene.h"
+//#include "../BaseDirectX/GameScene.h"
 
 ComPtr<ID3D12DescriptorHeap> Imgui::imguiDescHeap;
 ComPtr<ID3D12DescriptorHeap> Imgui::heapForImgui;
 bool Imgui::spotLight1;
 float Imgui::lightColor[3];
+float Imgui::dethLine = 25.0f;
 
 ComPtr<ID3D12DescriptorHeap> Imgui::CreateDescrriptorHeapForImgui()
 {
@@ -36,8 +37,9 @@ void Imgui::DrawImGui()
     ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
 
     //imguiÇ±Ç±Ç…Ç¢ÇÎÇ¢ÇÎèëÇ≠
-    ImGui::Checkbox("spotLight1", &spotLight1);
-    ImGui::SliderFloat3("ligthColor", lightColor, 0.0f, 1.0f);
+    /*ImGui::Checkbox("spotLight1", &spotLight1);
+    ImGui::SliderFloat3("ligthColor", lightColor, 0.0f, 1.0f);*/
+    ImGui::SliderFloat("dethLine", &dethLine, 0.0f, 50.0f);
     //------------
 
     ImGui::End();

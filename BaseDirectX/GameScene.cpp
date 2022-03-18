@@ -66,7 +66,7 @@ void GameScene::Init()
 	BaseDirectX::GetAdress();
 	//カメラ初期化
 	Camera::Init();
-	Camera::eye = { 0, 20, -1.0 };
+	Camera::eye = { 0, 50, -1.0 };
 	Camera::target = { 0, 0, 0 };
 	Camera::Update();
 	//Imguiの初期化
@@ -91,10 +91,21 @@ void GameScene::Init()
 	EnemyModels::LoadModels();
 	for (int i = 0; i < 100; i++)
 	{
-		Enemys::AddEnemy(EnemyType::NONE);
+		if (rand() % 2 == 0)
+		{
+			Enemys::AddEnemy(EnemyType::NONE);
+		}
+		else
+		{
+			Enemys::AddEnemy(EnemyType::SUPER);
+		}
 	}
+	king.Init();
 	//ポストエフェクトの初期化
 	postEffect.Initialize();
+
+	stageFrameTex.LoadGraph(L"Resource/Img/StageFrame.png");
+	stageFrameSp.CreateSprite(stageFrameTex, XMFLOAT3(0, 0, 0));
 
 	/*model = FbxLoader::GetInstance()->LoadModelFromFile("boneTest");
 	object = new FBXObject;
@@ -106,9 +117,9 @@ void GameScene::Init()
 void GameScene::TitleUpdate()
 {
 	Player::GetPlayer()->Update(false,false);
-
-	Enemys::Update();
-
+	//KingSample::king.GetModel().Update();
+	Enemys::Update(king);
+	king.Update();
 	if (Input::KeyTrigger(DIK_SPACE))
 	{
 		SceneNum = GAME;
@@ -171,6 +182,7 @@ void GameScene::TitleDraw()
 
 	Player::GetPlayer()->Draw();
 	Enemys::Draw();
+	king.Draw();
 	//PostEffectのPostDraw
 	postEffect.PostDraw();
 
@@ -184,7 +196,8 @@ void GameScene::TitleDraw()
 
 	//スプライトの描画-------------------------
 	//titleSprite.SpriteDraw();
-
+	stageFrameSp.ChangeSize(stageFrameTex, 1280, 720);
+	stageFrameSp.SpriteDraw();
 	Imgui::DrawImGui();
 	//描画コマンドここまで
 	BaseDirectX::UpdateBack();
