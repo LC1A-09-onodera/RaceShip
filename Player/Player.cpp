@@ -33,18 +33,20 @@ void Player::Init()
 	player.CreateModel("Block", ShaderManager::playerShader);
 	//water.CreateWater();
 
-	pos = { 0,0,0 };		//プレイヤーの座標
-	vec3 = { 0,0,0 };		//向いている方向（正規化済）
-	activeCount = 0;		//行動不能カウント
-	invincibleCount = 0;	//無敵カウント
-	bombForce = 0;			//ボムの力保存用
-	enemyForce = 0;			//敵の力保存用
-	isActive = true;		//行動できるかどうか
-	isHitBomb = false;		//ボムに当たって飛ばされてるかどうか
-	isHitEnemy = false;		//敵に当たって飛ばされてるかどうか
-	isInvincible = false;	//無敵かどうか
-	isShoot = false;		//射撃中かどうか（弾があるか）
-	isDetonating = false;	//起爆したかどうか
+	pos = { 0,0,0 };			//プレイヤーの座標
+	vec3 = { 0,0,0 };			//向いている方向（正規化済）
+	hitEnemypos = { 0,0,0 };	//当たった敵の座標
+	lastVec3 = { 0,0,1 };		//最後に向いていた方向
+	activeCount = 0;			//行動不能カウント
+	invincibleCount = 0;		//無敵カウント
+	bombForce = 0;				//ボムの力保存用
+	enemyForce = 0;				//敵の力保存用
+	isActive = true;			//行動できるかどうか
+	isHitBomb = false;			//ボムに当たって飛ばされてるかどうか
+	isHitEnemy = false;			//敵に当たって飛ばされてるかどうか
+	isInvincible = false;		//無敵かどうか
+	isShoot = false;			//射撃中かどうか（弾があるか）
+	isDetonating = false;		//起爆したかどうか
 }
 
 //更新
@@ -111,6 +113,9 @@ void Player::CheakIsInput()
 	{
 		vec3.x = DirectInput::leftStickX();
 		vec3.z = DirectInput::leftStickY();
+
+		lastVec3 = vec3;
+		VecNormaliz(lastVec3);
 	}
 
 	if (!Input::Key(DIK_LEFT) &&
@@ -133,6 +138,9 @@ void Player::CheakIsInput()
 			if (Input::Key(DIK_RIGHT)) { vec3.x = 1.0f; }
 			if (Input::Key(DIK_UP)) { vec3.z = -1.0f; }
 			if (Input::Key(DIK_DOWN)) { vec3.z = 1.0f; }
+
+			lastVec3 = vec3;
+			VecNormaliz(lastVec3);
 		}
 	}
 }
