@@ -211,7 +211,7 @@ bool Bomb::BlastCollision(const XMVECTOR &pos, const float &radius, XMFLOAT3 *bl
 	return true;
 }
 
-const Hole &Bomb::Explosion()
+void Bomb::Explosion()
 {
 	data.blastTimer = 0;
 	data.isAlive = false;

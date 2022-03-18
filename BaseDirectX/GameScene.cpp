@@ -118,12 +118,21 @@ void GameScene::Init()
 
 void GameScene::TitleUpdate()
 {
-	if (/*ボタンとかの条件*/)
+	if (Player::GetPlayer()->IsShootTrigger())
 	{
-		bombs.Shot(/*向き*/, /*座標*/);
+		XMFLOAT3 vec3 = Player::GetPlayer()->GetVec3();
+		vec3.z = -vec3.z;
+		bombs.Shot(/*向き*/vec3, /*座標*/Player::GetPlayer()->GetPos());
 	}
-	bombs.PlayerCollision(/*座標*/, /*半径*/);
-	Player::GetPlayer()->Update(false);
+	bombs.PlayerCollision(/*座標*/Player::GetPlayer()->GetPos(),/*半径*/1.2f);
+	{
+		auto itr = Enemys::enemys.begin();
+		for (; itr != Enemys::enemys.end(); ++itr)
+		{
+			bombs.enemyCollision(*itr);
+		}
+	}
+	Player::GetPlayer()->Update(bombs.GetBombAlive());
 	//KingSample::king.GetModel().Update();
 	Enemys::Update(king);
 	bombs.Update();
@@ -194,7 +203,7 @@ void GameScene::TitleDraw()
 	king.Draw();
 	//PostEffectのPostDraw
 	postEffect.PostDraw();
-
+	bombs.Draw();
 	BaseDirectX::clearColor[0] = 0.0f;
 	BaseDirectX::clearColor[1] = 0.0f;
 	BaseDirectX::clearColor[2] = 0.0f;
