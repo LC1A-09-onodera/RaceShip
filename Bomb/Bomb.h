@@ -77,7 +77,7 @@ private:
 	/// <summary>
 	/// ”š”­ˆ—
 	/// </summary>
-	const Hole &Explosion();
+	void Explosion();
 private:
 	BombData data;
 	SampleObject bombObject;
