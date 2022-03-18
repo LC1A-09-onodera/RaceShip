@@ -8,12 +8,12 @@ struct BombData
 	DirectX::XMVECTOR bombAngle = { -1, 0, 0 };
 	float bombRadius = 0.0f;//爆弾自体の大きさ
 	float bombSpeed = 1.0f;//爆弾の速度
-	float blastRadius = 1.0f;//爆発の半径
-	float blastPower = 10;//爆風の強さ
+	float blastRadius = 5.0f;//爆発の半径
+	float blastPower = 0;//爆風の強さ
 	int blastTimer = 0;//爆発タイマー(とりあえず使わない)
 	bool isAlive = false;//爆弾が現在生きているかどうか
 	bool isExplosion = false;//爆風が発生しているかどうか
-	int safeTimer = 0;//爆弾がプレイヤー接触しても爆発しない時間
+	int safeTimer = 0;//爆弾がプレイヤー接触しても爆発しない時間(生成時即爆発しないため)
 };
 class Bomb
 {

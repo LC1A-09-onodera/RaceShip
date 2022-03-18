@@ -12,6 +12,8 @@ public:
 	void Draw();
 	void Shot(DirectX::XMFLOAT3 angle, DirectX::XMFLOAT3 pos);
 
+	bool GetBombAlive();
+
 	void enemyCollision(EnemyBase &data);
 private:
 	vector<Bomb> bombs;
