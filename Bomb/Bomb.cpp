@@ -4,8 +4,9 @@
 #include "../Player/Player.h"
 namespace
 {
-	const int explosionTimerMax = 30;
+	const int explosionTimerMax = 5;
 	const int safeTimerMax = 10;
+	const float baseBlastPower = 5.0f;
 }
 Bomb::Bomb()
 {
@@ -19,6 +20,7 @@ void Bomb::Init()
 {
 	bombObject.CreateModel("Block", ShaderManager::playerShader);
 	blastObject.CreateModel("Block", ShaderManager::playerShader);
+	data.blastPower = baseBlastPower;
 }
 
 void Bomb::Update()
@@ -66,6 +68,7 @@ bool Bomb::Shot(DirectX::XMFLOAT3 angle, DirectX::XMFLOAT3 pos)
 
 void Bomb::EnemyBombCollision(EnemyBase &enemyData)
 {
+if(enemyData.GetIsWind())return;
 	//敵の座標
 	XMVECTOR enemyPosition = ConvertXMFLOAT3toXMVECTOR(enemyData.GetPosition());
 
@@ -86,8 +89,11 @@ void Bomb::EnemyBombCollision(EnemyBase &enemyData)
 
 	//爆風に当たったかフラグ
 	bool IsBlastHit = BlastCollision(enemyPosition, 0, &blastPower);
-
-
+	XMVECTOR tmpBlast = ConvertXMFLOAT3toXMVECTOR(blastPower);
+	if (std::isnan(XMVector3Length(tmpBlast).m128_f32[0]))
+	{
+		blastPower = {5, 0, 0};
+	}
 	//当たった情報を各データに入れる
 	if (IsBlastHit)
 	{
@@ -130,7 +136,7 @@ void Bomb::BlastUpdate()
 	data.blastTimer++;
 	blastObject.each.position = data.pos;
 
-	blastObject.each.scale = (blastObject.each.scale + XMFLOAT3{ 1.0f, 1.0f, 1.0f });
+	blastObject.each.scale =( XMFLOAT3{ data.blastRadius, data.blastRadius, data.blastRadius });
 	if (data.blastTimer >= explosionTimerMax)
 	{
 		data.isExplosion = false;
