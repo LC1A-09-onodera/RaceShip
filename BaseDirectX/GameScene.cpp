@@ -133,14 +133,12 @@ void GameScene::TitleUpdate()
 		lastVec3.z = -lastVec3.z;
 		bombs.Shot(/*Œü‚«*/lastVec3, /*À•W*/Player::GetPlayer()->GetPos());
 	}
-	bombs.PlayerCollision(Player::GetPlayer()->GetPos(),1.2f);
-	{
-		auto itr = Enemys::enemys.begin();
-		for (; itr != Enemys::enemys.end(); ++itr)
-		{
-			bombs.enemyCollision(*itr);
-		}
-	}
+	bombs.PlayerCollision(Player::GetPlayer()->GetPos(), 1.2f);
+
+	bombs.enemyCollision(Enemys::enemys);
+
+	bombs.KingCollision(&king);
+
 	Player::GetPlayer()->Update(bombs.GetBombAlive());
 	//KingSample::king.GetModel().Update();
 	Enemys::Update(king);
