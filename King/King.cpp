@@ -1,6 +1,8 @@
 #include "King.h"
 #include "../Shader/ShaderManager.h"
 #include "../BaseDirectX/Input.h"
+#include "../imgui/ImguiControl.h"
+
 void King::LoadModel()
 {
 	king.CreateModel("King", ShaderManager::playerShader);
@@ -15,6 +17,7 @@ void King::Init(int HP)
 {
 	this->HP = HP;
 	isWind = false;
+	isLife = true;
 	LoadModel();
 	king.each.position = {0, 0, 5};
 }
@@ -46,10 +49,15 @@ void King::Update()
 	{
 		king.each.position.m128_f32[2] -= 0.5f;
 	}
+
+	StageLineDeth();
+
+	DethUpdate();
 }
 
 void King::Draw()
 {
+	if (!isLife) return;
 	king.Update();
 	Draw3DObject(king);
 }
@@ -126,4 +134,22 @@ void King::AddEnemyForce()
 	{
 		isEnemyHit = false;
 	}
+}
+
+void King::StageLineDeth()
+{
+	bool result1 = king.each.position.m128_f32[0] > Imgui::dethLine;
+	bool result2 = king.each.position.m128_f32[0] < -Imgui::dethLine;
+	bool result3 = king.each.position.m128_f32[2] > Imgui::dethLine;
+	bool result4 = king.each.position.m128_f32[2] < -Imgui::dethLine;
+	if (result1 || result2 || result3 || result4)
+	{
+		HP--;
+	}
+}
+
+void King::DethUpdate()
+{
+	if (HP > 0) return;
+	isLife = false;
 }

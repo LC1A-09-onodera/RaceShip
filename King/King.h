@@ -12,6 +12,7 @@ class King
 private:
 	KingModel king;
 	int HP;
+	bool isLife = true;
 	XMFLOAT3 windDirection;
 	XMFLOAT3 enemyDirection;
 	bool isWind;
@@ -36,5 +37,6 @@ public:
 
 	void AddWindForce();
 	void AddEnemyForce();
-
+	void StageLineDeth();
+	void DethUpdate();
 };
