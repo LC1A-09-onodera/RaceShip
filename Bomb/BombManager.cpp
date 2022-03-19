@@ -82,12 +82,19 @@ bool BombManager::GetBombAlive()
 	return false;
 }
 
-void BombManager::enemyCollision(EnemyBase &data)
+void BombManager::enemyCollision(std::list<EnemyBase> &data)
 {
-	for (int i = 0; i < bombs.size(); i++)
 	{
-		bombs[i].EnemyBombCollision(data);
+		auto itr = data.begin();
+		for (; itr != Enemys::enemys.end(); ++itr)
+		{
+			for (int i = 0; i < bombs.size(); i++)
+			{
+				bombs[i].EnemyBombCollision(*itr);
+			}
+		}
 	}
+
 }
 
 void BombManager::PlayerCollision(XMFLOAT3 pos, float radius)
@@ -95,6 +102,26 @@ void BombManager::PlayerCollision(XMFLOAT3 pos, float radius)
 	float power = 0.0f;
 	for (int i = 0; i < bombs.size(); i++)
 	{
-	bombs[i].PlayerBlastCollision(pos, radius);
+		bombs[i].PlayerBlastCollision(pos, radius);
+	}
+}
+
+void BombManager::KingCollision(King *king)
+{
+	for (int i = 0; i < bombs.size(); i++)
+	{
+		bombs[i].KingBlastCollision(king);
+	}
+}
+
+void BombManager::Explosion()
+{
+	//”š’e‚Ì”š”j
+	for (int i = 0; i < bombs.size(); i++)
+	{
+		if (!bombs[i].GetIsExplosion() && bombs[i].GetIsAlve())
+		{
+			bombs[i].Explosion();
+		}
 	}
 }

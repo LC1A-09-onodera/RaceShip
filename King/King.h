@@ -24,6 +24,7 @@ public:
 	XMFLOAT3 GetPosition(){return ConvertXMVECTORtoXMFLOAT3(this->king.each.position); }
 	void SetPosition(XMFLOAT3 &position);
 	void SetIsWind(bool flag){ isWind = flag; }
+	void SetWindDirection(XMFLOAT3 windDirection) { this->windDirection = windDirection; }
 	void SetIsEnemyHit(bool flag) { isEnemyHit = flag; }
 	void SetEnemyDirection(XMFLOAT3 &direction) { enemyDirection = direction; }
 	bool GetIsEnemyhit(){ return isEnemyHit; }
