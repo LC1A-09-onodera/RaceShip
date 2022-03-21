@@ -180,11 +180,9 @@ void Player::CheakShootTrigger(bool isBombAlive)
 {
 	/*発射トリガー*/
 	if (DirectInput::IsButtonPush(DirectInput::ButtonKind::Button01) ||
-		Input::KeyTrigger(DIK_B) &&
-		!isBombAlive &&
-		isActive)
+		Input::KeyTrigger(DIK_B))
 	{
-		isShoot = true;
+		if (!isBombAlive && isActive) { isShoot = true; }
 	}
 	else { isShoot = false; }
 }
@@ -193,11 +191,9 @@ void Player::CheakDetonatingTrigger(bool isBombAlive)
 {
 	/*起爆トリガー*/
 	if (DirectInput::IsButtonPush(DirectInput::ButtonKind::Button01) ||
-		Input::KeyTrigger(DIK_B) &&
-		isBombAlive &&
-		isActive)
+		Input::KeyTrigger(DIK_B))
 	{
-		isDetonating = true;
+		if (isBombAlive && isActive) { isDetonating = true; }
 	}
 	else { isDetonating = false; }
 }
