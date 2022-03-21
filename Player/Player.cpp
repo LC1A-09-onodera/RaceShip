@@ -4,6 +4,7 @@
 #include "../Camera/Camera.h"
 #include "../Sound/Sound.h"
 #include "../Shader/ShaderManager.h"
+#include "../Hole/Hole.h"
 
 Player::Player()
 {
@@ -67,6 +68,9 @@ void Player::Update(bool isBombAlive)
 	/*自機が敵に当たった時の判定*/
 	CheakHitEnemy();
 
+	/*自機が穴に当たった時の判定*/
+	CheakHitHole();
+
 	/*行動不能とか無敵とか*/
 	CalcActiveCount();
 
@@ -83,7 +87,15 @@ void Player::Update(bool isBombAlive)
 //描画
 void Player::Draw()
 {
-	Draw3DObject(player);
+	if (isActive)
+	{
+		if (!isInvincible) { Draw3DObject(player); }
+		else if (invincibleCount % 2 == 0) { Draw3DObject(player); }
+	}
+	else
+	{
+		if (activeCount % 3 == 0) { Draw3DObject(player); }
+	}
 }
 
 void Player::HitBomb(const float& BombForce, XMFLOAT3 bombPos)
@@ -215,6 +227,32 @@ void Player::CheakHitEnemy()
 	if (isActive) { return; }
 
 	enemyForce = MAX_ENEMY_FORCE;
+}
+
+void Player::CheakHitHole()
+{
+	//無敵時は判定無視
+	if (isInvincible) { return; }
+
+	bool isHit = false;
+	auto itr = Holes::holes.begin();
+	for (; itr != Holes::holes.end(); ++itr)
+	{
+		XMFLOAT3 holePos = itr->GetPosition();
+		if (std::isnan(holePos.x)) { return; }
+		if (std::isnan(holePos.z)) { return; }
+
+		//2点間の距離と判定（円）
+		isHit = CheakHit(1.2f, 1.2f, pos, holePos);
+
+		//当たってなかったらやり直し
+		if (!isHit) { continue; }
+
+		//当たったら真ん中でリスポーンして行動不能に
+		pos = { 0,0,0 };
+		isActive = false;
+		break;
+	}
 }
 
 void Player::CalcActiveCount()
