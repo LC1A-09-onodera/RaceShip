@@ -99,6 +99,8 @@ private://チェックだけじゃなくて処理も入ってます！！！！！カス
 	void CheakShootTrigger(bool isBombAlive);			//射撃したか
 	void CheakDetonatingTrigger(bool isBombAlive);		//起爆したか
 	void CheakHitEnemy();								//敵が当たったか
+	void CheakHitHole();								//穴との判定
+	void CheakHitDeathLine();							//線との判定
 
 	void CalcActiveCount();								//カウントの計算
 	void AddBombForce();								//ボムと当たった際に計算
