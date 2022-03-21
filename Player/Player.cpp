@@ -5,6 +5,7 @@
 #include "../Sound/Sound.h"
 #include "../Shader/ShaderManager.h"
 #include "../Hole/Hole.h"
+#include "../imgui/ImguiControl.h"
 
 Player::Player()
 {
@@ -70,6 +71,9 @@ void Player::Update(bool isBombAlive)
 
 	/*自機が穴に当たった時の判定*/
 	CheakHitHole();
+
+	/*自機が周りの線に当たった時の判定*/
+	CheakHitDeathLine();
 
 	/*行動不能とか無敵とか*/
 	CalcActiveCount();
@@ -252,6 +256,18 @@ void Player::CheakHitHole()
 		pos = { 0,0,0 };
 		isActive = false;
 		break;
+	}
+}
+
+void Player::CheakHitDeathLine()
+{
+	if (pos.x > Imgui::dethLine ||
+		pos.x < -Imgui::dethLine ||
+		pos.z > Imgui::dethLine ||
+		pos.z < -Imgui::dethLine)
+	{
+		pos = { 0,0,0 };
+		isActive = false;
 	}
 }
 
