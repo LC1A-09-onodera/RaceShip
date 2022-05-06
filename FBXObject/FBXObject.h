@@ -1,6 +1,6 @@
 #pragma once
 #include "../FBXModel/FBXModel.h"
-#include <Windows.h>
+//#include <Windows.h>
 #include <wrl.h>
 #include <d3d12.h>
 #include <d3dx12.h>
@@ -40,6 +40,7 @@ public:
 	XMFLOAT3 rotation = {0, 0, 0};
 	XMFLOAT3 position = {0, 0, 0};
 private:
+	~FBXObject();
 	static ID3D12Device *dev;
 	static ComPtr<ID3D12RootSignature> rootSignature;
 	static ComPtr<ID3D12PipelineState> pipelineState;

@@ -2,7 +2,7 @@
 #define DIRECTINPUT_VERSION  0x0800
 #include <dinput.h>
 #include <windef.h>
-#include <Windows.h>
+//#include <Windows.h>
 #include "BaseDirectX.h"
 #include "DirectInput.h"
 
@@ -17,9 +17,16 @@ static LPDIRECTINPUT8 g_lpDI;
 static LPDIRECTINPUTDEVICE8 g_lpDIDevive;
 static DIDEVCAPS g_diDevCaps;
 static POINT mousePos{};
-static bool mouseInput[2] = {false, false};
-static bool oldMouseInput[2] = {false,false};
+static bool mouseInput[10] = {false, false, false, false , false , false , false , false , false , false };
+static bool oldMouseInput[10] = {false,false, false , false , false , false , false , false , false , false };
 static DirectInput *directInput = DirectInput::GetInstance();/////////////////////
+
+enum class MouseButton
+{
+	NONE,
+	LBUTTON,
+	RBUTTON,
+};
 
 class Input
 {
@@ -34,8 +41,8 @@ public:
 
 	static bool KeyEnd(BYTE key);
 
-	static bool MouseTrigger(int mouseinput);
+	static bool MouseTrigger(MouseButton mouseinput);
 
-	static bool Mouse(int mouseinput);
+	static bool Mouse(MouseButton mouseinput);
 
 };

@@ -2,16 +2,11 @@
 #include "../3DModel/Model.h"
 #include "../Camera/Camera.h"
 #include "../Sprite/Sprite.h"
-#include "../Player/Player.h"
-//#include "../Enemy/Enemy.h"
 #include "../Light/Light.h"
-#include "../RenderTarget/RenderTarget.h"
 #include "../PostEffect/PostEffect.h"
 #include "../FBXObject/FBXObject.h"
 #include "../FbxLoader/FbxLoader.h"
-#include "../King/King.h"
-#include "../Bomb/BombManager.h"
-enum GameSceneName{TITLE, SELECT, GAME, END, RESULT};
+enum GameSceneName { TITLE, SELECT, GAME, END, RESULT };
 
 class GameScene
 {
@@ -37,30 +32,27 @@ public:
 	void SceneManageUpdateAndDraw();
 	//èâä˙âª
 	void Init();
-	
+
 	void LightUpdate();
 
 public://ÉVÅ[ÉìÇ≈égÇ§Ç‡ÇÃ
-	Light *light = nullptr;
+	Light *light;
 	PostEffect post;
-	float pointLightPos[3] = {0, 1, 0};
-	float pointLightColor[3] = {1, 1, 1};
-	float pointLightAtten[3] = {0.3f, 0.1f, 0.1f};
+	float pointLightPos[3] = { 0, 1, 0 };
+	float pointLightColor[3] = { 1, 1, 1 };
+	float pointLightAtten[3] = { 0.3f, 0.1f, 0.1f };
 
-	float spotLightDir[3] = {0, -1, 0};
-	float spotLightPos[3] = {0, 1, -100};
-	float spotLightColor[3] = {0.9f, 0.9f, 0.9f};
-	float spotLightAtten[3] = {0.0f, 0.0f, 0.0f};
-	float spotLightAngle[2] = {1.0f, 500.0f};
+	float spotLightDir[3] = { 0, -1, 0 };
+	float spotLightPos[3] = { 0, 1, -100 };
+	float spotLightColor[3] = { 0.9f, 0.9f, 0.9f };
+	float spotLightAtten[3] = { 0.0f, 0.0f, 0.0f };
+	float spotLightAngle[2] = { 1.0f, 500.0f };
 
-	float circleShadowDir[3] = {0, -1, 0};
-	float circleShadowAtten[3] = {0.5f, 0.6f, 0.0f};
-	float circleShadowFactorAngle[2] = {0.0f, 0.0f};
+	float circleShadowDir[3] = { 0, -1, 0 };
+	float circleShadowAtten[3] = { 0.5f, 0.6f, 0.0f };
+	float circleShadowFactorAngle[2] = { 0.0f, 0.0f };
 
-	Tex stageFrameTex;
-	Sprite stageFrameSp;
-
-	PostEffect postEffect;
-	King king;
-	BombManager bombs;
+	PostEffect postWater;
+	PostEffect postMosaic;
+	Model sample;
 };

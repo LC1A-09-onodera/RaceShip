@@ -5,7 +5,7 @@ class RenderTarget
 {
 public:
 	//マルチレンダリング行うために配列化
-	static const int renderNum = 2;
+	static const int renderNum = 1;
 	ComPtr<ID3D12Resource> texBuff[renderNum];
 	static const float clearColor[4];
 	//RTV用デスクリプタヒープ

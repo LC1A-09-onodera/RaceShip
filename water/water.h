@@ -22,12 +22,14 @@ class Water
 public:
 	Water();
 	~Water();
-	std::vector<WaterVert> waterVert;
+	static Model ground;
+	static const int waterAmount = 8;
+	EachInfo each[waterAmount][waterAmount];
 	static const int vertNum = 5;
 	static const int vertNumX = 4;
 	static const int R = 5;
 	static const int GroundCount = 10;
-	Model ground[GroundCount];
+	
 	bool isPolygon;
 	void Init();
 	void CreateWater();

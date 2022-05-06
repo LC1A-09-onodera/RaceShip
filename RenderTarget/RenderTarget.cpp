@@ -11,22 +11,20 @@ void RenderTarget::TexInit()
 	{
 		BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0), D3D12_HEAP_FLAG_NONE, &texDesc, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, &CD3DX12_CLEAR_VALUE(DXGI_FORMAT_R8G8B8A8_UNORM, clearColor), IID_PPV_ARGS(&texBuff[i]));
 		assert(SUCCEEDED(BaseDirectX::result));
-	}
-	//イメージデータの作成
-	const UINT pixelCount = WindowsAPI::window_width * WindowsAPI::window_height;
-	const UINT rowPitch = sizeof(UINT) * WindowsAPI::window_width;
-	const UINT depthPitch = rowPitch * WindowsAPI::window_height;
-	UINT* img = new UINT[pixelCount];
-	for (int i = 0; i < pixelCount; i++)
-	{
-		img[i] = 0x000000ff;
-	}
-	for (int i = 0; i < RenderTarget::renderNum; i++)
-	{
+
+		//イメージデータの作成
+		const UINT pixelCount = WindowsAPI::window_width * WindowsAPI::window_height;
+		const UINT rowPitch = sizeof(UINT) * WindowsAPI::window_width;
+		const UINT depthPitch = rowPitch * WindowsAPI::window_height;
+		UINT* img = new UINT[pixelCount];
+		for (int j = 0; j < pixelCount; j++)
+		{
+			img[j] = 0x000000ff;
+		}
 		BaseDirectX::result = texBuff[i]->WriteToSubresource(0, nullptr, img, rowPitch, depthPitch);
 		assert(SUCCEEDED(BaseDirectX::result));
+		delete[] img;
 	}
-	delete[] img;
 }
 
 void RenderTarget::RTVInit()

@@ -3,18 +3,25 @@
 #include "../WindowsAPI/WinAPI.h"
 #include <d3dcompiler.h>
 #include "../BaseDirectX/Input.h"
-
+#include "../imgui/ImguiControl.h"
 #pragma comment (lib, "d3dcompiler.lib")
 
 using namespace DirectX;
 UINT PostEffect::frameTime;
+float PostEffect::effectType;
+
+PostEffect PostEffects::postWater;
+PostEffect PostEffects::postMosaic;
+PostEffect PostEffects::postBlur;
+PostEffect PostEffects::postNormal;
+PostEffects::PostEffectType PostEffects::type;
 
 PostEffect::PostEffect()
 {
 	frameTime = 0;
 }
 
-void PostEffect::Initialize()
+void PostEffect::Initialize(HLSLShader& shader)
 {
 	HRESULT result;
 	/*VertexPosUv Spritevertices[] = {
@@ -29,8 +36,8 @@ void PostEffect::Initialize()
 		{{ +1.0f, -1.0f, 0.0f}, {1.0f, 1.0f}},
 		{{ +1.0f, +1.0f, 0.0f}, {1.0f, 0.0f}},
 	};
-	CreateGraphicsPipelineState();
-	
+	CreateGraphicsPipelineState(shader);
+
 	int sizevb = sizeof(Spritevertices);
 
 	//頂点マップ
@@ -42,14 +49,14 @@ void PostEffect::Initialize()
 	vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
 	vbView.SizeInBytes = sizeof(Spritevertices);
 	vbView.StrideInBytes = sizeof(Spritevertices[0]);
-	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff));
-	
+	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(PostEffectConstBuffer) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff));
+
 	//ガウスブラー用
 	CalcWeightGaussian(weights, NumWeight, 8.0f);
 	XMFLOAT4 weight0 = { weights[0], weights[1] ,weights[2] ,weights[3] };
 	XMFLOAT4 weight1 = { weights[4], weights[5] ,weights[6] ,weights[7] };
 	//定数マップ
-	ConstBufferData* constMap = nullptr;
+	PostEffectConstBuffer* constMap = nullptr;
 	BaseDirectX::result = constBuff->Map(0, nullptr, (void**)&constMap);
 	constMap->mat = XMMatrixIdentity();
 	constMap->weight0 = weight0;
@@ -73,7 +80,7 @@ void PostEffect::Initialize()
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = 1;
-	for (int i = 0;i < PostEffect::texNum;i++)
+	for (int i = 0; i < PostEffect::texNum; i++)
 	{
 		//BaseDirectX::dev->CreateShaderResourceView(texBuff[0].Get(), &srvDesc, descHeapSRV->GetCPUDescriptorHandleForHeapStart());
 		BaseDirectX::dev->CreateShaderResourceView(renderTarget.texBuff[i].Get(), &srvDesc, CD3DX12_CPU_DESCRIPTOR_HANDLE(descHeapSRV->GetCPUDescriptorHandleForHeapStart(), i, BaseDirectX::dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)));
@@ -87,7 +94,7 @@ void PostEffect::Initialize()
 	//DSV
 	D3D12_DESCRIPTOR_HEAP_DESC DescHeapDesc{};
 	DescHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-	DescHeapDesc.NumDescriptors = 1;
+	DescHeapDesc.NumDescriptors = RenderTarget::renderNum;
 	result = BaseDirectX::dev->CreateDescriptorHeap(&DescHeapDesc, IID_PPV_ARGS(&descHeapDSV));
 	assert(SUCCEEDED(result));
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
@@ -114,7 +121,7 @@ void PostEffect::Draw()
 	matWorld *= XMMatrixRotationZ(rotation);
 	matWorld *= XMMatrixTranslationFromVector(position);
 	//転送
-	ConstBufferData* constMap = nullptr;
+	PostEffectConstBuffer* constMap = nullptr;
 	BaseDirectX::result = constBuff->Map(0, nullptr, (void**)&constMap);
 	constMap->mat = matWorld * common.matProjection;
 	XMFLOAT4 weight0 = { weights[0], weights[1] ,weights[2] ,weights[3] };
@@ -143,45 +150,46 @@ void PostEffect::Draw()
 	// シェーダリソースビューをセット
 	//いちまいの時
 	//BaseDirectX::cmdList->SetGraphicsRootDescriptorTable(1, descHeapSRV->GetGPUDescriptorHandleForHeapStart());
-	
-	//mulchTexの時
-	BaseDirectX::cmdList->SetGraphicsRootDescriptorTable(1, CD3DX12_GPU_DESCRIPTOR_HANDLE(descHeapSRV->GetGPUDescriptorHandleForHeapStart(), 0, BaseDirectX::dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)));
-	BaseDirectX::cmdList->SetGraphicsRootDescriptorTable(2, CD3DX12_GPU_DESCRIPTOR_HANDLE(descHeapSRV->GetGPUDescriptorHandleForHeapStart(), 1, BaseDirectX::dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)));
 
+	//mulchTexの時
+	for (int i = 0; i < texNum; i++)
+	{
+		BaseDirectX::cmdList->SetGraphicsRootDescriptorTable(i + 1, CD3DX12_GPU_DESCRIPTOR_HANDLE(descHeapSRV->GetGPUDescriptorHandleForHeapStart(), i, BaseDirectX::dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)));
+	}
 	// 描画コマンド
 	BaseDirectX::cmdList->DrawInstanced(4, 1, 0, 0);
 }
 
 void PostEffect::PreDraw()
 {
-	for (int i = 0;i < RenderTarget::renderNum;i++)
+	for (int i = 0; i < RenderTarget::renderNum; i++)
 	{
 		BaseDirectX::cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(renderTarget.texBuff[i].Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET));
 	}
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvH[RenderTarget::renderNum];
-	for (int i = 0;i < RenderTarget::renderNum;i++)
+	for (int i = 0; i < RenderTarget::renderNum; i++)
 	{
 		//rtvH[i] = descHeapRTV->GetCPUDescriptorHandleForHeapStart();
 		rtvH[i] = CD3DX12_CPU_DESCRIPTOR_HANDLE(renderTarget.descHeapRTV->GetCPUDescriptorHandleForHeapStart(), i, BaseDirectX::dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
 	}
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvH = descHeapDSV->GetCPUDescriptorHandleForHeapStart();
-	BaseDirectX::cmdList->OMSetRenderTargets(2, rtvH, false, &dsvH);
-	
+	//BaseDirectX::cmdList->OMSetRenderTargets(2, rtvH, false, &dsvH);
+	BaseDirectX::cmdList->OMSetRenderTargets(RenderTarget::renderNum, rtvH, false, &dsvH);
+
 	CD3DX12_VIEWPORT viewports[RenderTarget::renderNum];
 	CD3DX12_RECT scissorRects[RenderTarget::renderNum];
 	for (int i = 0; i < RenderTarget::renderNum; i++)
 	{
 		viewports[i] = CD3DX12_VIEWPORT(0.0f, 0.0f, WindowsAPI::window_width, WindowsAPI::window_height);
-		scissorRects[i] = CD3DX12_RECT(0, 0 ,WindowsAPI::window_width, WindowsAPI::window_height);
+		scissorRects[i] = CD3DX12_RECT(0, 0, WindowsAPI::window_width, WindowsAPI::window_height);
 	}
-	BaseDirectX::cmdList->RSSetViewports(2, viewports);
-	BaseDirectX::cmdList->RSSetScissorRects(2, scissorRects);
+	BaseDirectX::cmdList->RSSetViewports(RenderTarget::renderNum, viewports);
+	BaseDirectX::cmdList->RSSetScissorRects(RenderTarget::renderNum, scissorRects);
 	for (int i = 0; i < RenderTarget::renderNum; i++)
 	{
 		BaseDirectX::cmdList->ClearRenderTargetView(rtvH[i], renderTarget.clearColor, 0, nullptr);
 	}
 	BaseDirectX::cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0.0f, 0, nullptr);
-
 }
 
 void PostEffect::PostDraw()
@@ -192,46 +200,12 @@ void PostEffect::PostDraw()
 	}
 }
 
-void PostEffect::CreateGraphicsPipelineState()
+void PostEffect::CreateGraphicsPipelineState(HLSLShader& shader)
 {
 	HRESULT result = S_FALSE;
-	ComPtr<ID3DBlob> vsBlob;
-	ComPtr<ID3DBlob> psBlob;
 	ComPtr<ID3DBlob> errorBlob;
 
-	//頂点シェーダーの読み込みピクセルシェーダーの読み込み頂点レイアウトの読み込み
-	// 頂点シェーダの読み込みとコンパイル
-	BaseDirectX::result = D3DCompileFromFile(L"Resource/HLSL/PostEffectTestVS.hlsl", nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "vs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0, &vsBlob, &errorBlob);
 
-	if (FAILED(BaseDirectX::result)) {
-		// errorBlobからエラー内容をstring型にコピー
-		std::string errstr;
-		errstr.resize(errorBlob->GetBufferSize());
-
-		std::copy_n((char*)errorBlob->GetBufferPointer(), errorBlob->GetBufferSize(), errstr.begin());
-		errstr += "\n";
-
-		// エラー内容を出力ウィンドウに表示
-		OutputDebugStringA(errstr.c_str());
-		exit(1);
-	}
-
-	// ピクセルシェーダの読み込みとコンパイル
-	BaseDirectX::result = D3DCompileFromFile(L"Resource/HLSL/PostEffectTestPS.hlsl", nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0, &psBlob, &errorBlob);
-
-	if (FAILED(BaseDirectX::result)) {
-		// errorBlobからエラー内容をstring型にコピー
-		std::string errstr;
-		errstr.resize(errorBlob->GetBufferSize());
-
-		std::copy_n((char*)errorBlob->GetBufferPointer(),
-			errorBlob->GetBufferSize(),
-			errstr.begin());
-		errstr += "\n";
-		// エラー内容を出力ウィンドウに表示
-		OutputDebugStringA(errstr.c_str());
-		exit(1);
-	}
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
 		{
 			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
@@ -242,8 +216,8 @@ void PostEffect::CreateGraphicsPipelineState()
 	};
 	//グラフィックスパイプラインの設定
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline{};
-	gpipeline.VS = CD3DX12_SHADER_BYTECODE(vsBlob.Get());
-	gpipeline.PS = CD3DX12_SHADER_BYTECODE(psBlob.Get());
+	gpipeline.VS = CD3DX12_SHADER_BYTECODE(shader.vsBlob.Get());
+	gpipeline.PS = CD3DX12_SHADER_BYTECODE(shader.psBlob.Get());
 	//サンプルマスク
 	gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	//ラスタライザステート
@@ -261,9 +235,10 @@ void PostEffect::CreateGraphicsPipelineState()
 	blenddesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
 	blenddesc.SrcBlendAlpha = D3D12_BLEND_ONE;
 	blenddesc.DestBlendAlpha = D3D12_BLEND_ZERO;
-	gpipeline.BlendState.RenderTarget[0] = blenddesc;
-	gpipeline.BlendState.RenderTarget[1] = blenddesc;
-
+	for (int i = 0; i < RenderTarget::renderNum; i++)
+	{
+		gpipeline.BlendState.RenderTarget[i] = blenddesc;
+	}
 	gpipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 	gpipeline.InputLayout.pInputElementDescs = inputLayout;
 	gpipeline.InputLayout.NumElements = _countof(inputLayout);
@@ -271,21 +246,24 @@ void PostEffect::CreateGraphicsPipelineState()
 	gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
 	gpipeline.NumRenderTargets = texNum;
-	gpipeline.RTVFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	gpipeline.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	for (int i = 0; i < RenderTarget::renderNum; i++)
+	{
+		gpipeline.RTVFormats[i] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	}
 	gpipeline.SampleDesc.Count = 1;
 
 	//デスクリプタレンジ
-	CD3DX12_DESCRIPTOR_RANGE descRangeSRV0;
-	descRangeSRV0.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);//テクスチャ1
-	CD3DX12_DESCRIPTOR_RANGE descRangeSRV1;
-	descRangeSRV1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);//テクスチャ2
-
-	CD3DX12_ROOT_PARAMETER rootparams[3];
+	CD3DX12_DESCRIPTOR_RANGE descRangeSRV[PostEffect::texNum];
+	for (int i = 0; i < PostEffect::texNum; i++)
+	{
+		descRangeSRV[i].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, i);//テクスチャ1
+	}
+	CD3DX12_ROOT_PARAMETER rootparams[PostEffect::texNum + 1];
 	rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);//定数バッファビューとして初期化
-	rootparams[1].InitAsDescriptorTable(1, &descRangeSRV0, D3D12_SHADER_VISIBILITY_ALL);
-	rootparams[2].InitAsDescriptorTable(1, &descRangeSRV1, D3D12_SHADER_VISIBILITY_ALL);
-
+	for (int i = 1; i <= PostEffect::texNum; i++)
+	{
+		rootparams[i].InitAsDescriptorTable(1, &descRangeSRV[i - 1], D3D12_SHADER_VISIBILITY_ALL);
+	}
 	//スタティックサンプラー
 	CD3DX12_STATIC_SAMPLER_DESC samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_MINIMUM_MIN_MAG_MIP_POINT);
 	//ルートシグネチャの設定
@@ -317,5 +295,86 @@ void PostEffect::CalcWeightGaussian(float* weightsTbl, int sizeOfWeightsTbl, flo
 	for (int i = 0; i < sizeOfWeightsTbl; i++)
 	{
 		weightsTbl[i] /= total;
+	}
+}
+
+void PostEffects::Init()
+{
+	postWater.Initialize(ShaderManager::postWater);
+	postBlur.Initialize(ShaderManager::postBlur);
+	postMosaic.Initialize(ShaderManager::postMosaic);
+	postNormal.Initialize(ShaderManager::postNormal);
+}
+
+void PostEffects::PreDraw()
+{
+	type = (PostEffectType)Imgui::effectType;
+	if (type == PostEffectType::Normal)
+	{
+		postNormal.PreDraw();
+	}
+	else if (type == PostEffectType::Water)
+	{
+		postWater.PreDraw();
+	}
+	else if (type == PostEffectType::Mosaic)
+	{
+		postMosaic.PreDraw();
+	}
+	else if (type == PostEffectType::Blur)
+	{
+		postBlur.PreDraw();
+	}
+	else
+	{
+		postNormal.PreDraw();
+	}
+}
+
+void PostEffects::Draw()
+{
+	if (type == PostEffectType::Normal)
+	{
+		postNormal.Draw();
+	}
+	else if (type == PostEffectType::Water)
+	{
+		postWater.Draw();
+	}
+	else if (type == PostEffectType::Mosaic)
+	{
+		postMosaic.Draw();
+	}
+	else if (type == PostEffectType::Blur)
+	{
+		postBlur.Draw();
+	}
+	else
+	{
+		postNormal.Draw();
+	}
+}
+
+void PostEffects::PostDraw()
+{
+	if (type == PostEffectType::Normal)
+	{
+		postNormal.PostDraw();
+	}
+	else if (type == PostEffectType::Water)
+	{
+		postWater.PostDraw();
+	}
+	else if (type == PostEffectType::Mosaic)
+	{
+		postMosaic.PostDraw();
+	}
+	else if (type == PostEffectType::Blur)
+	{
+		postBlur.PostDraw();
+	}
+	else
+	{
+		postNormal.PostDraw();
 	}
 }

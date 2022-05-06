@@ -4,6 +4,24 @@
 using namespace Microsoft::WRL;
 using namespace DirectX;
 
+class ImguiEnumElement
+{
+public:
+    int number;
+    std::string name;
+};
+
+class ImguiEnum
+{
+public:
+    ImguiEnum(int count, ...);
+    ~ImguiEnum();
+    const char* GetNames();
+    std::list<ImguiEnumElement> enums;
+    std::string nameString;
+    int enumCount;
+};
+
 class Imgui
 {
 private:
@@ -22,8 +40,39 @@ public:
     static void ChangeInfo(float &floatOriginal, float& imguiInfo);
     static void ChangeInfo(XMFLOAT3 &xmfloat3Original, XMFLOAT3& imguiInfo);
 
-    static bool spotLight1;
-    static float lightColor[3];
+    static void CreateMenuBar();
+    static void EachInfo();
+    static void DebugUpdate();
 
-    static float dethLine;
+    static bool isActive;
+    static void SetWindowActive(bool isActive);
+
+    static int effectType;
+    enum ImguiType
+    {
+        Status,
+        CameraInfo,
+        Debug,
+        PostEffect,
+
+        ImguiTypeEnd,
+    };
+    static ImguiType tab;
+
+    enum DebugType
+    {
+        Player,
+        Water,
+
+        DebugTypeEnd,
+    };
+    static DebugType debugType;
+
+    static int playerCombo;
+    static ImguiEnum iEnum;
+
+    static std::string test;
+    static std::string ipv4Name;
+    static void GetTest(const char *st) {test = st;}
+    static void GetIp(const char *st) {ipv4Name = st;}
 };

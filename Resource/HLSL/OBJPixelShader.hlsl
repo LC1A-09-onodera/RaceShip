@@ -7,7 +7,6 @@ float4 main(VSOutput input) : SV_TARGET
 {
 	//テクスチャマッピング
 	float4 texcolor = tex.Sample(smp, input.uv);
-	
 	//シェーディングによる色
 	float4 shadecolor;
 	//光沢度
@@ -21,6 +20,10 @@ float4 main(VSOutput input) : SV_TARGET
 	//環境光
 	float3 ambient = m_ambient;
 	float3 diffuse = dotlightnormal * m_diffuse;
+	//トゥーン
+    //diffuse.x = step(0.5, diffuse.x);
+    //diffuse.y = step(0.5, diffuse.y);
+    //diffuse.z = step(0.5, diffuse.z);
 	float3 specular = pow(saturate(dot(reflect, eyedir)), shininess) * m_specular;
 	shadecolor.rgb = (ambient + diffuse + specular) * lightcolor;
 	shadecolor.a = m_alpha;
@@ -76,25 +79,9 @@ float4 main(VSOutput input) : SV_TARGET
 			shadecolor.rgb += atten * (diffuse + specular) * spotLights[i].lightcolor;
 		}
 	}
-	for (int i = 0; i < CIRCLESHADOW_NUM; i++)
-	{
-		if (circleShadows[i].active)
-		{
-			float3 casterv = circleShadows[i].casterPos - input.worldpos.xyz;
-			float d = dot(casterv, circleShadows[i].dir);
-			float atten = saturate(1.0f / (circleShadows[i].atten.x + circleShadows[i].atten.y * d + circleShadows[i].atten.z * d * d));
-			atten *= step(0, d);
-			float3 lightpos = circleShadows[i].casterPos + circleShadows[i].dir * circleShadows[i].distanceCasterLight;
-			float3 lightv = normalize(lightpos - input.worldpos.xyz);
-			float cos = dot(lightv, circleShadows[i].dir);
-			float angleatten = smoothstep(circleShadows[i].factorAngleCos.y, circleShadows[i].factorAngleCos.x, cos);
-			atten *= angleatten;
-			shadecolor.rgb -= atten;
-		}
-	}
 	float4 result;
 	//texcolor.a = 0.5f;
 	result = shadecolor * texcolor;
-	//result.w = 1.0f;
+	result.a = 1.0f;
 	return result;
 }

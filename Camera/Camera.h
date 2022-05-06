@@ -63,4 +63,8 @@ public:
 	static void QuaternionRotation(const float &RightAngle = NULL, const float &UpAngle = NULL);
 	static void ShakeUpdate();
 	static void SetShake(float shakePower);
+
+	static XMFLOAT3 GetMousePosition();
+	static XMFLOAT3 EyeToMouseVec();
+	static XMFLOAT3 MousePosition(float z);
 };

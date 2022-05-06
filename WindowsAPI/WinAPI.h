@@ -10,10 +10,12 @@ public:
 	static MSG msg;
 	static WNDCLASSEX w;
 	static bool Qite;
-	
+	static int intarval;
+	static float rate;
 	static void Set();
 	static void Clear();
 	static void CheckMsg();
 	static void Update();
 	static void Gethwnd();
+	static POINT GetMousePos();
 };

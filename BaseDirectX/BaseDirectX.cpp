@@ -324,7 +324,8 @@ void BaseDirectX::UpdateBack()
     ID3D12CommandList* cmdLists[] = { cmdList.Get() };
     cmdQueue->ExecuteCommandLists(1, cmdLists);
     //バッファのフリップ
-    swapchain->Present(1, 0);
+    swapchain->Present(WindowsAPI::intarval, 0);
+    //swapchain->Present(1, 0);
     //コマンドキューの実行完了を待つ
     BaseDirectX::cmdQueue->Signal(fence.Get(), ++fenceVal);
     if (fence->GetCompletedValue() != fenceVal)

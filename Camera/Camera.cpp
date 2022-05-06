@@ -1,6 +1,8 @@
 #include "Camera.h"
 #include "../BaseDirectX/Input.h"
 #include "../BaseDirectX/Quaternion.h"
+#include "../BaseDirectX/viewport.h"
+
 Vec3 Camera::eye;
 Vec3 Camera::target;
 Vec3 Camera::up;
@@ -301,6 +303,59 @@ void Camera::SetShake(float shakePower)
 	Camera::eyeStartPosition = Camera::eye;
 	Camera::targetStartPosition = Camera::target;
 	isShake = true;
+}
+
+XMFLOAT3 Camera::GetMousePosition()
+{
+	//スクリーン系
+	POINT mouse = WindowsAPI::GetMousePos();
+	XMFLOAT2 mouseFloat;
+	mouseFloat = XMFLOAT2(mouse.x, mouse.y);
+	//クリップ系
+	mouseFloat.x = mouseFloat.x / (float)window_width;
+	mouseFloat.y = mouseFloat.y / (float)window_height;
+	mouseFloat.x = mouseFloat.x * 2.0f;
+	mouseFloat.y = mouseFloat.y * 2.0f;
+	mouseFloat.x = mouseFloat.x - 1.0f;
+	mouseFloat.y = mouseFloat.y - 1.0f;
+	mouseFloat.y = mouseFloat.y * -1.0f;
+	//ビュー座標
+	XMVECTOR mousePosition;
+	XMMATRIX invProj, invView;
+	invProj = XMMatrixInverse(nullptr, BaseDirectX::matProjection);
+	invView = XMMatrixInverse(nullptr, Camera::matView);
+	mousePosition = XMLoadFloat3(&XMFLOAT3(mouseFloat.x, mouseFloat.y, 0));
+	mousePosition = XMVector3Transform(mousePosition, invProj);
+	mousePosition = XMVector3Transform(mousePosition, invView);
+	XMFLOAT3 result;
+	result.x = mousePosition.m128_f32[0];
+	result.y = mousePosition.m128_f32[1];
+	result.z = mousePosition.m128_f32[2];
+	return result;
+}
+
+XMFLOAT3 Camera::EyeToMouseVec()
+{
+	XMFLOAT3 mouse;
+	mouse = GetMousePosition();
+	XMFLOAT3 eyePos;
+	eyePos = Camera::eye.v;
+	XMFLOAT3 result;
+	result = mouse - eyePos;
+	return Normalize(result);
+}
+
+XMFLOAT3 Camera::MousePosition(float z)
+{
+	XMFLOAT3 mouseVec = EyeToMouseVec();
+	float count;
+	count = z - Camera::eye.v.z / mouseVec.z;
+	float x;
+	x = mouseVec.x * count;
+	float y;
+	y = mouseVec.y * count;
+	XMFLOAT3 result = { x, y, z };
+	return result;
 }
 
 float Camera::TargetLength()

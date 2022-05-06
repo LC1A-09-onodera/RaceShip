@@ -2,6 +2,7 @@
 #include "../BaseDirectX/viewport.h"
 #include "../Camera/Camera.h"
 #include "../DX12operator.h"
+#include "../BaseDirectX/Library.h"
 
 //const XMFLOAT3 operator+(const XMFLOAT3 &lhs, const XMFLOAT3 &rhs)
 //{
@@ -30,6 +31,9 @@ XMMATRIX ParticleManager::matBillboardY = XMMatrixIdentity();
 
 ParticleIndi *ParticleControl::attackEffect = nullptr;
 ParticleIndi *ParticleControl::expEffect = nullptr;
+ParticleIndi *ParticleControl::flashEffect = nullptr;
+ParticleIndi * ParticleControl::rockOnEffect = nullptr;
+ParticleIndi* ParticleControl::numbers[10];
 
 bool ParticleManager::StaticInitialize(ID3D12Device *device,  int window_width, int window_height,XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up)
 {
@@ -570,30 +574,6 @@ void ParticleIndi::Update(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, XMFLOAT3 *
 		it->scale += it->s_scale;
 	}
 	
-
-	//else
-	//{
-	//	//全パーティクルの更新
-	//	for (std::forward_list<Particle>::iterator it = particles.begin(); it != particles.end(); it++)
-	//	{
-	//		//フレームの増加
-	//		it->frame++;
-	//		//速度に加速度を追加
-	//		it->velocity = it->velocity + it->accel;
-	//		if (pos != nullptr)
-	//		{
-	//			it->position.z = pos->z;
-	//		}
-	//		//移動
-	//		it->position = it->position + it->velocity;
-	//		//スケールの変更
-	//		float f = (float)it->num_frame / it->frame;
-	//		//スケールの線形補間
-	//		it->scale = (it->e_scale - it->s_scale) / f;
-	//		it->scale += it->s_scale;
-	//	}
-	//}
-
 	ParticleManager::UpdateViewMatrix(eye, target, up, isBilbord);
 
 	//頂点バッファへデータ転送
@@ -616,6 +596,7 @@ void ParticleIndi::Update(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, XMFLOAT3 *
 	//constMap->color = color;
 	constMap->mat = ParticleManager::matView * ParticleManager::matProjection;	// 行列の合成
 	constMap->matBillboard = ParticleManager::matBillboard;
+	constMap->alpha = this->alpha;
 	constBuff->Unmap(0, nullptr);
 	
 }
@@ -970,6 +951,30 @@ void ParticleIndi::BackParticle(const DirectX::XMFLOAT3 emitterPosition, float s
 	Add(life, pos, vel, acc, startSize, endSize);
 }
 
+void ParticleIndi::FlashParticle(const DirectX::XMFLOAT3 emitterPosition, float startSize, float endSize, int life)
+{
+	XMFLOAT3 pos{};
+	XMFLOAT3 vel{};
+	XMFLOAT3 acc{};
+
+	float randam = rand();
+	pos = emitterPosition;
+	vel.x = 1.0f;
+	acc.x = -0.01f;
+	Add(life, pos, vel, acc, startSize, endSize);
+	vel.x = -1.0f;
+	acc.x = 0.01;
+	Add(life, pos, vel, acc, startSize, endSize);
+	vel.x = 0.0f;
+	acc.x = 0.0f;
+	vel.y = -1.0f;
+	acc.y = 0.01;
+	Add(life, pos, vel, acc, startSize, endSize);
+	vel.y = 1.0f;
+	acc.y = -0.01;
+	Add(life, pos, vel, acc, startSize, endSize);
+}
+
 ParticleControl::ParticleControl()
 {
 }
@@ -977,12 +982,22 @@ ParticleControl::ParticleControl()
 ParticleControl::~ParticleControl()
 {
 	delete(attackEffect);
+	delete(expEffect);
+	delete(flashEffect);
+	delete(rockOnEffect);
+	for (int i = 0; i < 10; i++)
+	{
+		delete(numbers[i]);
+	}
 }
 
 void ParticleControl::Update()
 {
-	attackEffect->Update(Camera::eye.v, Camera::target.v, Camera::up.v);
-	expEffect->Update(Camera::eye.v, Camera::target.v, Camera::up.v);
+	
+	for (int i = 0; i < 10; i++)
+	{
+		numbers[i]->Update(Camera::eye.v, Camera::target.v, Camera::up.v);
+	}
 }
 
 void ParticleControl::Init()
@@ -992,12 +1007,27 @@ void ParticleControl::Init()
 	{
 		assert(0);
 	}
-	attackEffect = attackEffect->Create(L"Resource/Img/attackEffect.png");
-	expEffect = expEffect->Create(L"Resource/Img/ExpSample.png");
+	
+	numbers[0] = numbers[0]->Create(L"Resource/Img/number_0.png");
+	numbers[1] = numbers[0]->Create(L"Resource/Img/number_1.png");
+	numbers[2] = numbers[0]->Create(L"Resource/Img/number_2.png");
+	numbers[3] = numbers[0]->Create(L"Resource/Img/number_3.png");
+	numbers[4] = numbers[0]->Create(L"Resource/Img/number_4.png");
+	numbers[5] = numbers[0]->Create(L"Resource/Img/number_5.png");
+	numbers[6] = numbers[0]->Create(L"Resource/Img/number_6.png");
+	numbers[7] = numbers[0]->Create(L"Resource/Img/number_7.png");
+	numbers[8] = numbers[0]->Create(L"Resource/Img/number_8.png");
+	numbers[9] = numbers[0]->Create(L"Resource/Img/number_9.png");
+	for (int i = 0; i < 10; i++)
+	{
+		numbers[i]->alpha = 0.0f;
+	}
 }
 
 void ParticleControl::Draw()
 {
-	ParticleDraw(BaseDirectX::cmdList.Get(), attackEffect);
-	ParticleDraw(BaseDirectX::cmdList.Get(), expEffect);
+	for (int i = 0; i < 10; i++)
+	{
+		ParticleDraw(BaseDirectX::cmdList.Get(), numbers[i]);
+	}
 }

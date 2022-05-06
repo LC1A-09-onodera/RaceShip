@@ -6,8 +6,9 @@ HWND WindowsAPI::hwnd{};
 MSG WindowsAPI::msg{};
 WNDCLASSEX WindowsAPI::w{};
 bool WindowsAPI::Qite;
-
+int WindowsAPI::intarval;
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND, UINT, WPARAM, LPARAM);
+float WindowsAPI::rate;
 
 LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
@@ -33,11 +34,11 @@ void WindowsAPI::Set()
     RegisterClassEx(&w);
     // ウィンドウサイズ{ X座標 Y座標 横幅 縦幅 }
     RECT wrc = { 0, 0, window_width, window_height };
-    AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false); // 自動でサイズ補正
+    AdjustWindowRect(&wrc, (WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX), false); // 自動でサイズ補正
 
     hwnd = CreateWindow(w.lpszClassName, // クラス名
-        L"LE2A_05_オノデラユウスケ",         // タイトルバーの文字
-        WS_OVERLAPPEDWINDOW,        // 標準的なウィンドウスタイル
+        L"ll[thello]",         // タイトルバーの文字
+        (WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX),        // 標準的なウィンドウスタイル
         CW_USEDEFAULT,              // 表示X座標（OSに任せる）
         CW_USEDEFAULT,              // 表示Y座標（OSに任せる）
         wrc.right - wrc.left,       // ウィンドウ横幅
@@ -70,6 +71,10 @@ void WindowsAPI::CheckMsg()
 
 void WindowsAPI::Update()
 {
+    auto hdc = GetDC(hwnd);
+    rate = GetDeviceCaps(hdc, VREFRESH);
+    intarval = 0;
+    intarval = rate / 60.0f;
     if (msg.message == WM_QUIT)
     {
         Qite = true;
@@ -78,7 +83,16 @@ void WindowsAPI::Update()
 
 void WindowsAPI::Gethwnd()
 {
-    
+
+}
+
+POINT WindowsAPI::GetMousePos()
+{
+    POINT result;
+    GetCursorPos(&result);
+    ScreenToClient(hwnd, &result);
+
+    return result;
 }
 
 

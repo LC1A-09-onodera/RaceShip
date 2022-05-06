@@ -1,3 +1,4 @@
+#include "../VoiceUDPRecive/VoiceUDPRecive.h"
 #include"GameScene.h"
 #include "BaseDirectX.h"
 #include "../WindowsAPI/WinAPI.h"
@@ -7,12 +8,10 @@
 #include "../Particle/Particle3D.h"
 #include "../imgui/ImguiControl.h"
 #include "../Sound/Sound.h"
-#include "../Light/Light.h"
 #include "vec3.h"
 #include "../FBXObject/FBXObject.h"
 #include "../Shader/ShaderManager.h"
-#include"../Enemy/Enemy.h"
-#include "../Hole/Hole.h"
+#include "../3DObjectParticle/3DObjectParticle.h"
 
 GameScene::GameScene()
 {
@@ -21,9 +20,8 @@ GameScene::GameScene()
 
 GameScene::~GameScene()
 {
+	VoiceReciver::EndRecive();
 	delete(light);
-	/*delete(object);
-	delete(model);*/
 }
 
 void GameScene::SceneManageUpdateAndDraw()
@@ -67,7 +65,7 @@ void GameScene::Init()
 	BaseDirectX::GetAdress();
 	//カメラ初期化
 	Camera::Init();
-	Camera::eye = { 0, 50, -1.0 };
+	Camera::eye = { 0, 0, -15.0 };
 	Camera::target = { 0, 0, 0 };
 	Camera::Update();
 	//Imguiの初期化
@@ -87,110 +85,38 @@ void GameScene::Init()
 	light = Light::Create();
 	//モデルすべてにライトを適用
 	Model::SetLight(light);
-	//プレイヤーの初期化
-	Player::GetPlayer()->Init();
-	EnemyModels::LoadModels();
-	HoleModels::Init();
-	Holes::Init();
-	for (int i = 0; i < 100; i++)
-	{
-		if (rand() % 2 == 0)
-		{
-			Enemys::AddEnemy(EnemyType::NONE);
-		}
-		else
-		{
-			Enemys::AddEnemy(EnemyType::SUPER);
-		}
-	}
-	king.Init();
 	//ポストエフェクトの初期化
-	postEffect.Initialize();
+	PostEffects::Init();
 
-	stageFrameTex.LoadGraph(L"Resource/Img/StageFrame.png");
-	stageFrameSp.CreateSprite(stageFrameTex, XMFLOAT3(0, 0, 0));
-
-	/*model = FbxLoader::GetInstance()->LoadModelFromFile("boneTest");
-	object = new FBXObject;
-	object->Initialize();
-	object->SetModel(model);
-	object->PlayAnimation();*/
-
-	bombs.Init();
+	sample.CreateModel("maru", ShaderManager::playerShader, true);
+	VoiceReciver::port = 50008;
+	VoiceReciver::StartUp();
 }
 
 void GameScene::TitleUpdate()
 {
-	if (Input::KeyTrigger(DIK_N))
-	{
-		Hole hole;
-		hole.Init(XMFLOAT3(rand() % 20 - 10, 0, rand() % 20 - 10));
-		Holes::AddHole(hole);
-	}
-	if (Player::GetPlayer()->IsShootTrigger())
-	{
-		XMFLOAT3 lastVec3 = Player::GetPlayer()->GetLastVec3();
-		lastVec3.z = -lastVec3.z;
-		bombs.Shot(/*向き*/lastVec3, /*座標*/Player::GetPlayer()->GetPos());
-	}
-	bombs.PlayerCollision(Player::GetPlayer()->GetPos(), 1.2f);
-
-	bombs.enemyCollision(Enemys::enemys);
-
-	bombs.KingCollision(&king);
-
-	if (Player::GetPlayer()->IsDetonatingTrigger()) { bombs.Explosion(); }
-
-	Player::GetPlayer()->Update(bombs.GetBombAlive());
-	//KingSample::king.GetModel().Update();
-	Enemys::Update(king);
-	bombs.Update();
-	Holes::Update();
-	king.Update();
-	ParticleControl::Update();
-	if (Input::KeyTrigger(DIK_SPACE))
-	{
-		SceneNum = GAME;
-		Camera::eye.v.y = 20;
-		Camera::eye.v.z = -10;
-	}
+	
+	VoiceReciver::VoiceUDPUpdate();
+	sample.Update();
+	LightUpdate();
 }
 
 void GameScene::SelectUpdate()
 {
 	if (Input::KeyTrigger(DIK_SPACE))
 	{
-		Player::GetPlayer()->Init();
-
 		SceneNum = GAME;
 	}
 }
 
 void GameScene::GameUpdate()
 {
-	Camera::eye.v.z = Player::GetPlayer()->GetPos().z - 10.0f;
-	GameScene::LightUpdate();
-	Camera::target.v = XMFLOAT3(Player::GetPlayer()->GetPos());
-	Camera::Update();	spotLightPos[0] = Player::GetPlayer()->GetPos().x;
-	spotLightPos[2] = Player::GetPlayer()->GetPos().z;
-	spotLightPos[1] = 3;
 
-
-	//Player::GetPlayer()->Update();
-	ParticleControl::Update();
-
-	if (Input::KeyTrigger(DIK_R))
-	{
-		SceneNum = SELECT;
-	}
 }
 
 void GameScene::ResultUpdate()
 {
-	if (Input::KeyTrigger(DIK_SPACE))
-	{
-		SceneNum = TITLE;
-	}
+	
 }
 
 void GameScene::EndUpdate()
@@ -199,35 +125,23 @@ void GameScene::EndUpdate()
 	{
 		SceneNum = TITLE;
 		Camera::Init();
-		Player::GetPlayer()->Init();
 	}
 }
 
 void GameScene::TitleDraw()
 {
 	//PostEffectのPreDraw
-	postEffect.PreDraw();
-
-	Player::GetPlayer()->Draw();
-	Enemys::Draw();
-	king.Draw();
-	Holes::Draw();
-	//PostEffectのPostDraw
-	postEffect.PostDraw();
-	bombs.Draw();
-	ParticleControl::Draw();
+	PostEffects::PreDraw();
+	Draw3DObject(sample);
 	BaseDirectX::clearColor[0] = 0.0f;
 	BaseDirectX::clearColor[1] = 0.0f;
 	BaseDirectX::clearColor[2] = 0.0f;
 	BaseDirectX::clearColor[3] = 0.0f;
 	BaseDirectX::UpdateFront();
 	//PostEffectのDraw
-	postEffect.Draw();
+	PostEffects::Draw();
+	PostEffects::PostDraw();
 
-	//スプライトの描画-------------------------
-	//titleSprite.SpriteDraw();
-	stageFrameSp.ChangeSize(stageFrameTex, 1280, 720);
-	stageFrameSp.SpriteDraw();
 	Imgui::DrawImGui();
 	//描画コマンドここまで
 	BaseDirectX::UpdateBack();
@@ -236,23 +150,16 @@ void GameScene::TitleDraw()
 void GameScene::SelectDraw()
 {
 	//PostEffectのPreDraw
-	postEffect.PreDraw();
-
-	Player::GetPlayer()->Draw();
-
-	//PostEffectのPostDraw
-	postEffect.PostDraw();
-
+	PostEffects::PreDraw();
+	Draw3DObject(sample);
 	BaseDirectX::clearColor[0] = 0.0f;
 	BaseDirectX::clearColor[1] = 0.0f;
 	BaseDirectX::clearColor[2] = 0.0f;
 	BaseDirectX::clearColor[3] = 0.0f;
 	BaseDirectX::UpdateFront();
 	//PostEffectのDraw
-	postEffect.Draw();
-
-	//スプライトの描画-------------------------
-	//titleSprite.SpriteDraw();
+	PostEffects::Draw();
+	PostEffects::PostDraw();
 
 	Imgui::DrawImGui();
 	//描画コマンドここまで
@@ -262,25 +169,18 @@ void GameScene::SelectDraw()
 void GameScene::GameDraw()
 {
 	//PostEffectのPreDraw
-	postEffect.PreDraw();
-
-	Player::GetPlayer()->Draw();
-
-	//PostEffectのPostDraw
-	postEffect.PostDraw();
-
+	PostEffects::PreDraw();
+	Draw3DObject(sample);
 	BaseDirectX::clearColor[0] = 0.0f;
 	BaseDirectX::clearColor[1] = 0.0f;
 	BaseDirectX::clearColor[2] = 0.0f;
 	BaseDirectX::clearColor[3] = 0.0f;
 	BaseDirectX::UpdateFront();
 	//PostEffectのDraw
-	postEffect.Draw();
-
-	//スプライトの描画-------------------------
-	//titleSprite.SpriteDraw();
-
+	PostEffects::Draw();
+	PostEffects::PostDraw();
 	Imgui::DrawImGui();
+
 	//描画コマンドここまで
 	BaseDirectX::UpdateBack();
 }
@@ -288,25 +188,18 @@ void GameScene::GameDraw()
 void GameScene::ResultDraw()
 {
 	//PostEffectのPreDraw
-	postEffect.PreDraw();
-
-	Player::GetPlayer()->Draw();
-
-	//PostEffectのPostDraw
-	postEffect.PostDraw();
-
+	PostEffects::PreDraw();
+	Draw3DObject(sample);
 	BaseDirectX::clearColor[0] = 0.0f;
 	BaseDirectX::clearColor[1] = 0.0f;
 	BaseDirectX::clearColor[2] = 0.0f;
 	BaseDirectX::clearColor[3] = 0.0f;
 	BaseDirectX::UpdateFront();
 	//PostEffectのDraw
-	postEffect.Draw();
-
-	//スプライトの描画-------------------------
-	//titleSprite.SpriteDraw();
-
+	PostEffects::Draw();
+	PostEffects::PostDraw();
 	Imgui::DrawImGui();
+
 	//描画コマンドここまで
 	BaseDirectX::UpdateBack();
 }
@@ -314,25 +207,18 @@ void GameScene::ResultDraw()
 void GameScene::EndDraw()
 {
 	//PostEffectのPreDraw
-	postEffect.PreDraw();
-
-	Player::GetPlayer()->Draw();
-
-	//PostEffectのPostDraw
-	postEffect.PostDraw();
-
+	PostEffects::PreDraw();
+	Draw3DObject(sample);
 	BaseDirectX::clearColor[0] = 0.0f;
 	BaseDirectX::clearColor[1] = 0.0f;
 	BaseDirectX::clearColor[2] = 0.0f;
 	BaseDirectX::clearColor[3] = 0.0f;
 	BaseDirectX::UpdateFront();
 	//PostEffectのDraw
-	postEffect.Draw();
-
-	//スプライトの描画-------------------------
-	//titleSprite.SpriteDraw();
-
+	PostEffects::Draw();
+	PostEffects::PostDraw();
 	Imgui::DrawImGui();
+
 	//描画コマンドここまで
 	BaseDirectX::UpdateBack();
 }
@@ -340,14 +226,14 @@ void GameScene::EndDraw()
 void GameScene::LightUpdate()
 {
 	light->SetPointLightActive(0, false);
-	light->SetSpotLightActive(0, Imgui::spotLight1);
+	light->SetSpotLightActive(0, false);
 	//light->SetCircleShadowActive(0, false);
 	light->SetPointLightPos(0, XMFLOAT3(pointLightPos));
 	light->SetPointLightAtten(0, XMFLOAT3(pointLightAtten));
 	light->SetPointLightColor(0, XMFLOAT3(pointLightColor));
 	light->SetSpotLightDir(0, XMVECTOR({ spotLightDir[0], spotLightDir[1], spotLightDir[2], 0 }));
 	light->SetSpotLightPos(0, XMFLOAT3(spotLightPos));
-	light->SetSpotLightColor(0, XMFLOAT3(Imgui::lightColor[0], Imgui::lightColor[1], Imgui::lightColor[2]));
+	light->SetSpotLightColor(0, XMFLOAT3(spotLightColor));
 	light->SetSpotLightAtten(0, XMFLOAT3(spotLightAtten));
 	light->SetSpotLightAngle(0, XMFLOAT2(spotLightAngle));
 }

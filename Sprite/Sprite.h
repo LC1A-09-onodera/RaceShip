@@ -1,5 +1,5 @@
 #pragma once
-#include <Windows.h>
+//#include <Windows.h>
 #include <vector>
 #include <string>
 #include <d3d12.h>
@@ -32,6 +32,7 @@ class Sprite
 {
 public:
 	static SpriteCommon common;
+	Tex tex;
 	ComPtr<ID3DBlob> vsBlob;	// 頂点シェーダオブジェクト
 	ComPtr<ID3DBlob> psBlob;	// ピクセルシェーダオブジェクト
 	ComPtr<ID3DBlob> errorBlob;	// エラーオブジェクト
@@ -62,7 +63,8 @@ public:
 	XMFLOAT2 texSize = {100,100};
 
 	//スプライトの生成
-	void CreateSprite( Tex tex, XMFLOAT3 position, ComPtr<ID3D12Resource> texBuff = nullptr, bool back = false, bool TexSize = true);
+	void CreateSprite(const wchar_t* graph, XMFLOAT3 position, ComPtr<ID3D12Resource> texBuff = nullptr, bool back = false, bool TexSize = true);
+	void CreateSprite(Tex tex, XMFLOAT3 position, ComPtr<ID3D12Resource> texBuff = nullptr, bool back = false, bool TexSize = true);
 	//スプライト用パイプラインの設定コマンド
 	
 	//スプライト用描画コマンド
@@ -71,7 +73,8 @@ public:
 	//座標変更
 	void Move();
 	//表示サイズの変更
-	void ChangeSize(Tex tex, float wid,float hei);
+	void ChangeSize(float wid,float hei);
+	void ChangeSizeOther(float wid, float hei);
 	
 	//毎フレーム処理
 	private:

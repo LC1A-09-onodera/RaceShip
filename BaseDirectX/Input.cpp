@@ -14,7 +14,7 @@ void Input::Update()
 
 	//マウス位置の取得
 	//GetCursorPos(&mousePos);
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		oldMouseInput[i] = mouseInput[i];
 		mouseInput[i] = false;
@@ -26,6 +26,10 @@ void Input::Update()
 	if (GetAsyncKeyState(VK_RBUTTON))
 	{
 		mouseInput[VK_RBUTTON] = true;
+	}
+	if (GetAsyncKeyState(VK_CANCEL))
+	{
+		mouseInput[VK_CANCEL] = true;
 	}
 }
 
@@ -61,12 +65,12 @@ bool Input::KeyEnd(BYTE key)
 	return !keys[key] && oldkeys[key];
 }
 
-bool Input::MouseTrigger(int mouseinput)
+bool Input::MouseTrigger(MouseButton mouseinput)
 {
-	return mouseInput[mouseinput] && !oldMouseInput[mouseinput];
+	return mouseInput[(int)mouseinput] && !oldMouseInput[(int)mouseinput];
 }
 
-bool Input::Mouse(int mouseinput)
+bool Input::Mouse(MouseButton mouseinput)
 {
-	return mouseInput[mouseinput];
+	return mouseInput[(int)mouseinput];
 }

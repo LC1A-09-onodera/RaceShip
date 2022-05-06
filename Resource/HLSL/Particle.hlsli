@@ -2,6 +2,7 @@ cbuffer cbuff0 : register(b0)
 {
 	matrix mat;
 	matrix matBillboard; // ３Ｄ変換行列
+	float alpha;
 };
 
 struct VSOutput

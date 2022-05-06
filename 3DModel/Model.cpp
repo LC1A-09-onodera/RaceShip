@@ -351,15 +351,20 @@ bool Model::InitializeGraphicsPipeline(HLSLShader &shader)
     // グラフィックスパイプラインの流れを設定
     D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline{};
     gpipeline.VS = CD3DX12_SHADER_BYTECODE(shader.vsBlob.Get());
+    /*if (shader.hsBlob != nullptr)
+    {
+        gpipeline.HS = CD3DX12_SHADER_BYTECODE(shader.hsBlob.Get());
+    }
+    if (shader.dsBlob != nullptr)
+    {
+        gpipeline.DS = CD3DX12_SHADER_BYTECODE(shader.dsBlob.Get());
+    }*/
     if (shader.gsBlob != nullptr)
     {
         gpipeline.GS = CD3DX12_SHADER_BYTECODE(shader.gsBlob.Get());
     }
     gpipeline.PS = CD3DX12_SHADER_BYTECODE(shader.psBlob.Get());
-    if (shader.hsBlob != nullptr)
-    {
-        gpipeline.HS = CD3DX12_SHADER_BYTECODE(shader.hsBlob.Get());
-    }
+    
     // サンプルマスク
     gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
     // ラスタライザステート
@@ -393,6 +398,7 @@ bool Model::InitializeGraphicsPipeline(HLSLShader &shader)
 
     // 図形の形状設定（三角形）
     gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+    //gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
     gpipeline.NumRenderTargets = 1;	// 描画対象は1つ
     gpipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
@@ -586,7 +592,6 @@ void Model::LoadMaterial(const string &directoryPath, const string &filename)
     file.close();
 }
 
-
 void Set3DDraw(const Model &model, bool triangle)
 {
     BaseDirectX::cmdList->IASetIndexBuffer(&model.mesh.ibView);
@@ -596,6 +601,7 @@ void Set3DDraw(const Model &model, bool triangle)
     if (triangle == true)
     {
         BaseDirectX::cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        //BaseDirectX::cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
     }
 
     else if (triangle == false)

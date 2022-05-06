@@ -11,5 +11,6 @@ public:
     ComPtr<ID3DBlob> gsBlob = nullptr; //ジオメトリシェーダー
     ComPtr<ID3DBlob> psBlob = nullptr; //ピクセルシェーダオブジェクト
     ComPtr<ID3DBlob> hsBlob = nullptr; //ハルシェーダー
+    ComPtr<ID3DBlob> dsBlob = nullptr; //ドメインシェーダー
 };
 ComPtr<ID3DBlob> LoadShader(LPCWSTR VshaderName = L"", LPCSTR Vtarget = "");

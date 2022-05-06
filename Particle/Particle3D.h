@@ -149,11 +149,13 @@ class ParticleIndi
 		float s_scale = 1.0f;
 		//最終地
 		float e_scale = 0.0f;
+		
 	};
 	struct ConstBufferData
 	{
 		DirectX::XMMATRIX mat;
 		DirectX::XMMATRIX matBillboard;
+		float alpha;
 	};
 public:
 	// ルートシグネチャ
@@ -177,7 +179,9 @@ public:
 
 	//消滅しないためのフラグ
 	bool isUI = false;
-
+	//縦横を変更するなら仕様
+	bool isSize = false;
+	float alpha = 1.0f;
 	ComPtr<ID3D12Resource> constBuff; // 定数バッファ
 	// 色
 	DirectX::XMFLOAT4 color = { 1,1,1,1 };
@@ -303,6 +307,8 @@ public:
 	void StarParticle(const DirectX::XMFLOAT3 emitterPosition = { 0, 0, 0 }, float startSize = 6.0f, float endSize = 3.0f, int life = 60, int count = 20);
 
 	void BackParticle(const DirectX::XMFLOAT3 emitterPosition = { 0, 0, 0 }, float startSize = 2.0f, float endSize = 2.0f, int life = 180);
+
+	void FlashParticle(const DirectX::XMFLOAT3 emitterPosition = { 0, 0, 0 }, float startSize = 2.0f, float endSize = 2.0f, int life = 60);
 };
 /// <summary>
 	/// 描画
@@ -323,6 +329,9 @@ public:
 	ParticleControl &operator=(const ParticleControl &obj) = delete;
 	static ParticleIndi *attackEffect;
 	static ParticleIndi *expEffect;
+	static ParticleIndi *flashEffect;
+	static ParticleIndi *rockOnEffect;
+	static ParticleIndi *numbers[10];
 	static void Update();
 	static void Init();
 	static void Draw();

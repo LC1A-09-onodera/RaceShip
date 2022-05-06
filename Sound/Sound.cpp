@@ -115,3 +115,8 @@ SoundControl* SoundControl::GetSound()
     static SoundControl soundControl;
     return &soundControl;
 }
+
+SoundData::~SoundData()
+{
+    delete(pBuffer);
+}

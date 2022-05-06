@@ -272,3 +272,8 @@ void FBXObject::CreateGraphicsPipeline()
 	result = dev->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(pipelineState.ReleaseAndGetAddressOf()));
 	if (FAILED(result)) { assert(0); }
 }
+
+FBXObject::~FBXObject()
+{
+	delete(model);
+}

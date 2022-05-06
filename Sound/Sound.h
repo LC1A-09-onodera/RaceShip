@@ -21,6 +21,7 @@ struct FormatChunk
 
 struct SoundData
 {
+	~SoundData();
 	WAVEFORMATEX wfex;
 	BYTE *pBuffer;
 	unsigned int bufferSize;

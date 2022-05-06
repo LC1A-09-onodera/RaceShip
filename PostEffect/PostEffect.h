@@ -1,22 +1,30 @@
 #pragma once
 #include "../Sprite/Sprite.h"
 #include "../RenderTarget/RenderTarget.h"
+#include "../Shader/ShaderManager.h"
+
+class PostEffectConstBuffer : public ConstBufferData
+{
+	public:
+	float postEffectType;
+};
 
 class PostEffect : public Sprite
 {
 public:
 	PostEffect();
-	void Initialize();
+	void Initialize(HLSLShader &shader);
 	void Draw();
 	void PreDraw();
 	void PostDraw();
-	void CreateGraphicsPipelineState();
+	void CreateGraphicsPipelineState(HLSLShader &shader);
 
 	void CalcWeightGaussian(float* weightsTbl, int sizeOfWeightsTbl, float sigma);
 	
 	RenderTarget renderTarget;
-	static const int texNum = 2;
+	static const int texNum = 1;
 	static UINT frameTime;
+	static float effectType;
 	ComPtr<ID3D12DescriptorHeap> descHeapSRV;
 	//震度バッファ
 	ComPtr<ID3D12Resource> depthBuff;
@@ -27,4 +35,27 @@ public:
 
 	static const int NumWeight = 8;
 	float weights[NumWeight];
+};
+
+
+
+class PostEffects
+{
+public:
+	enum class PostEffectType
+	{
+		Normal = 0,
+		Water = 1,
+		Mosaic = 2,
+		Blur = 3,
+	};
+	static PostEffect postWater;
+	static PostEffect postMosaic;
+	static PostEffect postBlur;
+	static PostEffect postNormal;
+	static PostEffectType type;
+	static void Init();
+	static void PreDraw();
+	static void Draw();
+	static void PostDraw();
 };

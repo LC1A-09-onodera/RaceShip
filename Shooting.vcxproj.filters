@@ -46,12 +46,6 @@
     <Filter Include="Camera">
       <UniqueIdentifier>{bd98f04e-0b12-49dc-b1df-b2fa29f616b3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Player">
-      <UniqueIdentifier>{980cf8e9-c942-4d1b-8e7c-5d5ada1c0372}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Enemy">
-      <UniqueIdentifier>{cd18cac4-b706-4c91-bb51-e067e7178264}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shader">
       <UniqueIdentifier>{f69d0092-efa2-4e68-a079-6e8094f66914}</UniqueIdentifier>
     </Filter>
@@ -60,9 +54,6 @@
     </Filter>
     <Filter Include="RenderTarget">
       <UniqueIdentifier>{bf3aee4f-016b-4de7-b522-ee19823e25ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="water">
-      <UniqueIdentifier>{59ca1425-0852-431b-8bcb-9cdd582a424b}</UniqueIdentifier>
     </Filter>
     <Filter Include="PostEffect">
       <UniqueIdentifier>{0e8de67c-36b1-49b0-bb39-f1eb30b4e887}</UniqueIdentifier>
@@ -76,17 +67,8 @@
     <Filter Include="FBXObject">
       <UniqueIdentifier>{42f49b83-7441-4844-91b1-7edbc86de1d2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="sampleObject">
-      <UniqueIdentifier>{9279ebbd-ab74-47c3-95ab-1a2b1698c336}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="King">
-      <UniqueIdentifier>{0aa5b8bf-7210-4019-8b93-d9276f0803ca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Bomb">
-      <UniqueIdentifier>{0f1dd705-b3d5-4906-9c25-1ca58b17a889}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Hole">
-      <UniqueIdentifier>{16a4f51e-2c8f-40ae-b343-c7c442be6daa}</UniqueIdentifier>
+    <Filter Include="Udp">
+      <UniqueIdentifier>{b2353c99-8890-443e-8f79-5250e75bba10}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -171,14 +153,8 @@
     <ClInclude Include="imgui\ImguiControl.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Player\Player.h">
-      <Filter>Player</Filter>
-    </ClInclude>
     <ClInclude Include="Shader\Shader.h">
       <Filter>Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemy\Enemy.h">
-      <Filter>Enemy</Filter>
     </ClInclude>
     <ClInclude Include="3DModel\Model.h">
       <Filter>3DModel</Filter>
@@ -225,9 +201,6 @@
     <ClInclude Include="Collition\MeshCollider.h">
       <Filter>Collition</Filter>
     </ClInclude>
-    <ClInclude Include="water\water.h">
-      <Filter>water</Filter>
-    </ClInclude>
     <ClInclude Include="PostEffect\PostEffect.h">
       <Filter>PostEffect</Filter>
     </ClInclude>
@@ -240,23 +213,17 @@
     <ClInclude Include="FBXObject\FBXObject.h">
       <Filter>FBXObject</Filter>
     </ClInclude>
-    <ClInclude Include="sampleObject\sampleObject.h">
-      <Filter>sampleObject</Filter>
-    </ClInclude>
-    <ClInclude Include="King\King.h">
-      <Filter>King</Filter>
-    </ClInclude>
     <ClInclude Include="Shader\ShaderManager.h">
       <Filter>Shader</Filter>
     </ClInclude>
-    <ClInclude Include="Hole\Hole.h">
-      <Filter>Hole</Filter>
+    <ClInclude Include="VoiceUDPRecive\VoiceUDPRecive.h">
+      <Filter>Udp</Filter>
     </ClInclude>
-    <ClInclude Include="Bomb\Bomb.h">
-      <Filter>Bomb</Filter>
+    <ClInclude Include="VoiceUDPRecive\VoiceUDPSender.h">
+      <Filter>Udp</Filter>
     </ClInclude>
-    <ClInclude Include="Bomb\BombManager.h">
-      <Filter>Bomb</Filter>
+    <ClInclude Include="IpAddress\IpAddress.h">
+      <Filter>Udp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -314,14 +281,8 @@
     <ClCompile Include="imgui\ImguiControl.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Player\Player.cpp">
-      <Filter>Player</Filter>
-    </ClCompile>
     <ClCompile Include="Shader\Shader.cpp">
       <Filter>Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemy\Enemy.cpp">
-      <Filter>Enemy</Filter>
     </ClCompile>
     <ClCompile Include="3DModel\Model.cpp">
       <Filter>3DModel</Filter>
@@ -356,9 +317,6 @@
     <ClCompile Include="Collition\MeshCollider.cpp">
       <Filter>Collition</Filter>
     </ClCompile>
-    <ClCompile Include="water\water.cpp">
-      <Filter>water</Filter>
-    </ClCompile>
     <ClCompile Include="PostEffect\PostEffect.cpp">
       <Filter>PostEffect</Filter>
     </ClCompile>
@@ -371,23 +329,17 @@
     <ClCompile Include="FBXObject\FBXObject.cpp">
       <Filter>FBXObject</Filter>
     </ClCompile>
-    <ClCompile Include="sampleObject\sampleObject.cpp">
-      <Filter>sampleObject</Filter>
-    </ClCompile>
-    <ClCompile Include="King\King.cpp">
-      <Filter>King</Filter>
-    </ClCompile>
     <ClCompile Include="Shader\ShaderManager.cpp">
       <Filter>Shader</Filter>
     </ClCompile>
-    <ClCompile Include="Hole\Hole.cpp">
-      <Filter>Hole</Filter>
+    <ClCompile Include="VoiceUDPRecive\VoiceUDPRecive.cpp">
+      <Filter>Udp</Filter>
     </ClCompile>
-    <ClCompile Include="Bomb\Bomb.cpp">
-      <Filter>Bomb</Filter>
+    <ClCompile Include="VoiceUDPRecive\VoiceUDPSender.cpp">
+      <Filter>Udp</Filter>
     </ClCompile>
-    <ClCompile Include="Bomb\BombManager.cpp">
-      <Filter>Bomb</Filter>
+    <ClCompile Include="IpAddress\IpAddress.cpp">
+      <Filter>Udp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
