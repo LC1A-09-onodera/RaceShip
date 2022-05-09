@@ -44,6 +44,14 @@ struct ConstBufferDataB1
 	float alpha;
 };
 
+struct ConstBufferDataB2
+{
+public:
+	XMMATRIX rViewproj;//ビュープロジェクション行列
+	XMMATRIX rWorld;//ワールド行列
+	XMFLOAT3 rCameraPos;//カメラ座標
+};
+
 struct Material
 {
 	string name;
@@ -97,11 +105,14 @@ class EachInfo
 public:
 	ComPtr<ID3D12Resource> constBuff0;
 	ComPtr<ID3D12Resource> constBuff1;
+	ComPtr<ID3D12Resource> constBuff2;
 	XMFLOAT3 scale = { 1,1,1 };
 	XMFLOAT3 rotation = { 0,0,0 };
 	XMVECTOR position = { 0,0,0 };
 	void CreateConstBuff0();
 	void CreateConstBuff1();
+	void CreateConstBuff2();
+	void ConstInit();
 };
 class Model
 {
@@ -147,7 +158,7 @@ public:
 	void Init(int index);
 	void CreateModel(const char *name, HLSLShader &shader, bool smoothing = false);
 	//void Update();
-	virtual void Update(EachInfo *each = nullptr);
+	virtual void Update(EachInfo *each = nullptr, bool rCamera = false);
 	//スムージング
 	unordered_map<unsigned short, vector<unsigned short>> smoothData;
 	inline size_t GetVertexCount();

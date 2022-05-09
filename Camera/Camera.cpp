@@ -2,31 +2,8 @@
 #include "../BaseDirectX/Input.h"
 #include "../BaseDirectX/Quaternion.h"
 #include "../BaseDirectX/viewport.h"
-
-Vec3 Camera::eye;
-Vec3 Camera::target;
-Vec3 Camera::up;
-XMFLOAT3 Camera::direction;
-XMMATRIX Camera::matBillboard;
-XMMATRIX Camera::matBillboardY;
-XMMATRIX Camera::matView;
-float Camera::cameraAngleHorizonal;
-float Camera::cameraAngleVertical;
-XMMATRIX Camera::rotM;
-XMVECTOR Camera::vv0;
-Vec3 Camera::eyePos;
-Vec3 Camera::cameraUp;
-float Camera::cameraRightAngle = 0.0f;
-float Camera::cameraUpAngle = 0.0f;
-float Camera::rotX = 0;
-float Camera::rotY = 0;
-float Camera::rotZ = 0;
-Vec3 Camera::eyeStartPosition;
-Vec3 Camera::eyeGoalPosition;
-float Camera::shakePower;
-bool Camera::isShake;
-Vec3 Camera::targetStartPosition;
-Vec3 Camera::targetGoalPosition;
+Camera Cameras::camera;
+Camera Cameras::rCamera;
 
 void Camera::Init()
 {
@@ -136,35 +113,6 @@ void Camera::TargetMove(XMFLOAT3 moveAmount)
 void Camera::FPSTargetMove(XMFLOAT3 moveAmount, float R)
 {
 
-}
-
-void Camera::setEyePositionTPS(XMFLOAT3 Amount)
-{
-	if (cameraAngleHorizonal >= 360) {
-		cameraAngleHorizonal = 360;
-	}
-	else if (cameraAngleHorizonal <= 0) {
-		cameraAngleHorizonal = 0;
-	}
-
-	if (cameraAngleVertical >= 90) {
-		cameraAngleVertical = 90;
-	}
-	else if (cameraAngleVertical <= -90) {
-		cameraAngleVertical = -90;
-	}
-	eye.v.x = cos(
-		cameraAngleHorizonal) * cos(cameraAngleVertical) * Amount.x;
-	eye.v.z = sin(cameraAngleHorizonal) * cos(cameraAngleVertical) * Amount.y;
-	eye.v.y = sin(cameraAngleVertical) * Amount.z;
-	Update();
-}
-
-void Camera::setEyeTargetTPS(XMFLOAT3 Amount)
-{
-	target.v = Amount;
-	target.v.y = Amount.y + 8;
-	Update();
 }
 
 void Camera::eyeMoveCircleHorizonal(XMFLOAT3 Amount)
@@ -367,35 +315,4 @@ float Camera::TargetLength()
 	sub.z = target.v.z - eye.v.z;
 	lenght = sqrtf((sub.x * sub.x) + (sub.y * sub.y) + (sub.z * sub.z));
 	return lenght;
-}
-
-XMFLOAT3 Camera::GetTargetDirection()
-{
-	XMFLOAT3 dire;
-	XMFLOAT3 sub;
-	sub.x = target.v.x - eye.v.x;
-	sub.y = target.v.y - eye.v.y;
-	sub.z = target.v.z - eye.v.z;
-	float leg = TargetLength();
-	dire.x = sub.x / leg;
-	dire.y = sub.y / leg;
-	dire.z = sub.z / leg;
-	direction = dire;
-	return direction;
-}
-
-XMFLOAT3 Camera::GetTargetDirectionSideR()
-{
-	XMFLOAT3 result;
-	result.x = sinf(90) * GetTargetDirection().x;
-	result.z = cosf(90) * GetTargetDirection().z;
-	return result;
-}
-
-XMFLOAT3 Camera::GetTargetDirectionSideL()
-{
-	XMFLOAT3 result;
-	result.x = sinf(-90.0f * 3.141592f / 180.0f) * GetTargetDirection().x;
-	result.z = cosf(-90.0f * 3.141592f / 180.0f) * GetTargetDirection().z;
-	return result;
 }

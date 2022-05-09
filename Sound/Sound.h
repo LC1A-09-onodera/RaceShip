@@ -37,6 +37,7 @@ public:
 	static IXAudio2MasteringVoice *masterVoice;
 	//‰Šú‰»
 	static void CreateVoice();
+	static void Updete(float volume);
 };
 
 //ƒTƒEƒ“ƒh“Ç‚İ‚İ

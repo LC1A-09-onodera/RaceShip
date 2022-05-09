@@ -43,16 +43,16 @@ void FBXObject::Update()
 	matWorld *= matRot;
 	matWorld *= matTrans;
 
-	const XMMATRIX &matViewProjection = Camera::matView;
+	const XMMATRIX &matViewProjection = Cameras::camera.matView;
 	const XMMATRIX &modelTransform = model->GetModelTransform();
-	const XMFLOAT3 &cameraPos = Camera::eye.v;
+	const XMFLOAT3 &cameraPos = Cameras::camera.eye.v;
 
 	HRESULT result;
 	ConstBufferDataTransform *constMap = nullptr;
 	result = constBuffTrabsform->Map(0, nullptr, (void **)&constMap);
 	if (SUCCEEDED(result))
 	{
-		constMap->viewproj = Camera::matView * BaseDirectX::matProjection;
+		constMap->viewproj = Cameras::camera.matView * BaseDirectX::matProjection;
 		constMap->world = matWorld;
 		constMap->cameraPos = cameraPos;
 		constBuffTrabsform->Unmap(0, nullptr);

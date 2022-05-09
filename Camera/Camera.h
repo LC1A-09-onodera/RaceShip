@@ -7,64 +7,65 @@ class Camera
 {
 public:
 	//位置
-	static Vec3 eye;
-	static Vec3 eyePos;
-	static Vec3 eyeStartPosition;
-	static Vec3 eyeGoalPosition;
-	static float shakePower;
-	static bool isShake;
+	Vec3 eye;
+	Vec3 eyePos;
+	Vec3 eyeStartPosition;
+	Vec3 eyeGoalPosition;
+	float shakePower;
+	bool isShake;
 	//どこを注視点とするか
-	static Vec3 target;
-	static Vec3 targetStartPosition;
-	static Vec3 targetGoalPosition;
+	Vec3 target;
+	Vec3 targetStartPosition;
+	Vec3 targetGoalPosition;
 	//カメラの向き？
-	static Vec3 up;
-	static Vec3 cameraUp;
-	//向いている方向の単位ベクトル
-	static XMFLOAT3 direction;
+	Vec3 up;
+	Vec3 cameraUp;
 	//ビュー行列の作成
-	static XMMATRIX matView;
+	XMMATRIX matView;
 	//ビルボード
-	static XMMATRIX matBillboard;
+	XMMATRIX matBillboard;
 	//Y軸ビルボード
-	static XMMATRIX matBillboardY;
+	XMMATRIX matBillboardY;
 
-	static XMMATRIX rotM;
+	XMMATRIX rotM;
+	XMVECTOR vv0;
 
-	static XMVECTOR vv0;
-
-	static float cameraRightAngle;
-	static float cameraUpAngle;
+	float cameraRightAngle;
+	float cameraUpAngle;
 
 
-	static float rotX;
-	static float rotY;
-	static float rotZ;
+	float rotX;
+	float rotY;
+	float rotZ;
 
-	static float cameraAngleHorizonal;
-	static float cameraAngleVertical;
+	float cameraAngleHorizonal;
+	float cameraAngleVertical;
 
-	static void Init();
-	static void Update();
-	static void EyeMove(Vec3 moveAmount);
-	static void EyeAndTargetMove(XMFLOAT3 moveAmount);
-	static void TargetMove(XMFLOAT3 moveAmount);
-	static void FPSTargetMove(XMFLOAT3 moveAmount, float R = 100.0f);
-	static float TargetLength();
-	static XMFLOAT3 GetTargetDirection();
-	static XMFLOAT3 GetTargetDirectionSideR();
-	static XMFLOAT3 GetTargetDirectionSideL();
-	static void setEyePositionTPS(XMFLOAT3 Amount);
-	static void setEyeTargetTPS(XMFLOAT3 Amount);
-	static void eyeMoveCircleHorizonal(XMFLOAT3 Amount);
-	static void eyeMoveCircleVertical(XMFLOAT3 Amount);
-	static void setEye(XMFLOAT3 Amount);
-	static void SetTarget(const XMFLOAT3& target);
-	static void QuaternionRotation(const float &RightAngle = NULL, const float &UpAngle = NULL);
-	static void ShakeUpdate();
-	static void SetShake(float shakePower);
+	void Init();
+	void Update();
+	void EyeMove(Vec3 moveAmount);
+	void EyeAndTargetMove(XMFLOAT3 moveAmount);
+	void TargetMove(XMFLOAT3 moveAmount);
+	void FPSTargetMove(XMFLOAT3 moveAmount, float R = 100.0f);
+	float TargetLength();
+	XMFLOAT3 GetTargetDirectionSideR();
+	XMFLOAT3 GetTargetDirectionSideL();
+	void eyeMoveCircleHorizonal(XMFLOAT3 Amount);
+	void eyeMoveCircleVertical(XMFLOAT3 Amount);
+	void setEye(XMFLOAT3 Amount);
+	void SetTarget(const XMFLOAT3& target);
+	void QuaternionRotation(const float &RightAngle = NULL, const float &UpAngle = NULL);
+	void ShakeUpdate();
+	void SetShake(float shakePower);
 
-	static XMFLOAT3 GetMousePosition();
-	static XMFLOAT3 EyeToMouseVec();
-	static XMFLOAT3 MousePosition(float z);
+	XMFLOAT3 GetMousePosition();
+	XMFLOAT3 EyeToMouseVec();
+	XMFLOAT3 MousePosition(float z);
+};
+
+class Cameras
+{
+public:
+	static Camera camera;
+	static Camera rCamera;
 };

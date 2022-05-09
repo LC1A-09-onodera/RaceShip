@@ -9,6 +9,10 @@ void Sound::CreateVoice()
     BaseDirectX::result = XAudio2Create(&xAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
     BaseDirectX::result = xAudio2->CreateMasteringVoice(&masterVoice);
 }
+void Sound::Updete(float volume)
+{
+    masterVoice->SetVolume(volume);
+}
 void SoundLoad(const char *filename, SoundData &sound)
 {
     //ファイルオープン---------------

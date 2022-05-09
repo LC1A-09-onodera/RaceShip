@@ -5,8 +5,8 @@ class ShaderManager
 {
 public:
 	static HLSLShader playerShader;
-	static HLSLShader thunderShader;
-	static HLSLShader othelloShader;
+	static HLSLShader waterShader;
+	static HLSLShader shieldShader;
 	
 	static HLSLShader postWater;
 	static HLSLShader postMosaic;

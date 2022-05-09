@@ -1,8 +1,21 @@
 #pragma once
 #include <DirectXMath.h>
+#include <cstdlib>
 #define PI 3.141592f
 
 using namespace DirectX;
+
+namespace ShlomonMath
+{
+	static const float Cos(float angle)
+	{
+		return cos(angle * PI / 180.0f);
+	}
+	static const float Sin(float angle)
+	{
+		return sin(angle * PI / 180.0f);
+	}
+}
 
 static const XMFLOAT3 operator +(const XMFLOAT3 v1, const XMFLOAT3 v2)
 {
@@ -130,6 +143,24 @@ static const XMFLOAT3 operator *(float s, const XMFLOAT3& v1)
 	return v;
 }
 
+//static XMVECTOR operator + (const XMVECTOR v1, const XMFLOAT3& v2)
+//{
+//	XMVECTOR v;
+//	v.m128_f32[0] += v2.x;
+//	v.m128_f32[1] += v2.y;
+//	v.m128_f32[2] += v2.z;
+//	return v;
+//}
+
+static XMVECTOR operator - (const XMVECTOR v1, const XMFLOAT3& v2)
+{
+	XMVECTOR v;
+	v.m128_f32[0] -= v2.x;
+	v.m128_f32[1] -= v2.y;
+	v.m128_f32[2] -= v2.z;
+	return v;
+}
+
 static const XMFLOAT3 ConvertXMVECTORtoXMFLOAT3(const XMVECTOR& v)
 {
 	XMFLOAT3 result;
@@ -241,6 +272,13 @@ static float Lenght(XMVECTOR position1, XMFLOAT3 position2)
 	return result;
 }
 
+static float Lenght(XMFLOAT3 &v)
+{
+	float result;
+	result = sqrtf((v.x * v.x) + (v.y + v.y) + (v.z + v.z));
+	return result;
+}
+
 static float length(const float v1, const float v2)
 {
 	float result;
@@ -259,5 +297,14 @@ static XMFLOAT2 Dot(const float v1, const float v2)
 {
 	XMFLOAT2 result;
 
+	return result;
+}
+
+static XMFLOAT3 GetRandom(int length)
+{
+	XMFLOAT3 result;
+	result.x = (float)(std::rand() % (length * 2)) - length + 0.5f;
+	result.y = (float)(std::rand() % (length * 2)) - length + 0.5f;
+	result.z = (float)(std::rand() % (length * 2)) - length + 0.5f;
 	return result;
 }

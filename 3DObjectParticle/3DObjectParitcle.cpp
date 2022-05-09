@@ -4,8 +4,7 @@
 #include "../WindowsAPI/WinAPI.h"
 
 ObjectParticleInfo ObjectParticles::triangle;
-ObjectParticleInfo ObjectParticles::othello;
-ObjectParticleInfo ObjectParticles::frame;
+
 void ObjectParticle3D::Add(XMFLOAT3& emitter, ParticleType type)
 {
 	if (type == ParticleType::Exprotion)
@@ -87,8 +86,8 @@ void ObjectParticle3D::InitExprotion(XMFLOAT3& emitter)
 {
 	time = Life;
 	each.position = ConvertXMFLOAT3toXMVECTOR(emitter);
-	each.CreateConstBuff0();
-	each.CreateConstBuff1();
+	each.ConstInit();
+	
 	speed = GetRandom(2.0f);
 	acc = GetRandom(1.0f);
 	speed.x = speed.x / 10.0f;
@@ -120,8 +119,7 @@ void ObjectParticle3D::InitConverge(XMFLOAT3& emitter)
 		zSub = -zSub;
 	}
 	each.position.m128_f32[2] = emitter.x + zSub;
-	each.CreateConstBuff0();
-	each.CreateConstBuff1();
+	each.ConstInit();
 	startPosition = ConvertXMVECTORtoXMFLOAT3(each.position);
 	each.scale = { 0.2f, 0.2f, 0.2f };
 	endPosition = emitter;
@@ -150,8 +148,7 @@ void ObjectParticle3D::InitTitle(XMFLOAT3& emitter)
 	{
 		zSub = -zSub;
 	}
-	each.CreateConstBuff0();
-	each.CreateConstBuff1();
+	each.ConstInit();
 	speed = GetRandom(2.0f);
 	acc = GetRandom(1.0f);
 	startPosition = ConvertXMVECTORtoXMFLOAT3(each.position);
@@ -174,8 +171,7 @@ void ObjectParticle3D::InitSwell(XMFLOAT3& emitter)
 	each.position.m128_f32[2] = 30.0f;
 	each.position.m128_f32[0] = rand() % 50 - 24;
 	each.position.m128_f32[1] = rand() % 50 - 24;
-	each.CreateConstBuff0();
-	each.CreateConstBuff1();
+	each.ConstInit();
 	speed.z = -rand() % 5 + 1;
 	acc.z = -rand() % 5 + 1;
 	speed.z = speed.z / 10.0f;
@@ -187,8 +183,7 @@ void ObjectParticle3D::InitTarget(XMFLOAT3& emitter)
 {
 	time = 1;
 	each.position = ConvertXMFLOAT3toXMVECTOR(emitter);
-	each.CreateConstBuff0();
-	each.CreateConstBuff1();
+	each.ConstInit();
 	endPosition = XMFLOAT3(-5, -5, 3);
 	speed.x = (rand() % 3 + 1) / 10.0f;
 	speed.y = (rand() % 3 + 1) / 10.0f;
@@ -201,8 +196,7 @@ void ObjectParticle3D::InitTornado(XMFLOAT3& emitter)
 	time = 1;
 	//each.position = ConvertXMFLOAT3toXMVECTOR(emitter);
 	startPosition = {0, 0, 10};
-	each.CreateConstBuff0();
-	each.CreateConstBuff1();
+	each.ConstInit();
 	each.position.m128_f32[2] = 10;
 	speed.z = rand() % 10 + 5;
 	speed.z = -speed.z / 100.0f;
@@ -213,12 +207,16 @@ void ObjectParticle3D::InitTornado(XMFLOAT3& emitter)
 void ObjectParticle3D::InitBorn(XMFLOAT3& emitter)
 {
 	time = 1;
-	each.CreateConstBuff0();
-	each.CreateConstBuff1();
+	each.ConstInit();
 	each.position = ConvertXMFLOAT3toXMVECTOR(emitter);
 	
 	each.scale = {0.1f, 0.1f, 0.1f};
 	easeTime = 1.0f;
+}
+
+void ObjectParticle3D::InitLink()
+{
+	
 }
 
 void ObjectParticle3D::UpdateExprotion()
@@ -239,14 +237,14 @@ void ObjectParticle3D::UpdateExprotion()
 
 void ObjectParticle3D::UpdateConverge()
 {
-	each.position = ConvertXMFLOAT3toXMVECTOR(ShlomonMath::EaseOutQuad(startPosition, endPosition, easeTime));
+	/*each.position = ConvertXMFLOAT3toXMVECTOR(ShlomonMath::EaseOutQuad(startPosition, endPosition, easeTime));
 	each.rotation.x += 3.0f;
 	each.rotation.z += 2.0f;
 	easeTime += addTime;
 	if (easeTime >= 1.0f)
 	{
 		time = 0;
-	}
+	}*/
 }
 
 void ObjectParticle3D::UpdateTitle()
@@ -298,7 +296,7 @@ void ObjectParticle3D::UpdateSwell()
 
 void ObjectParticle3D::UpdateTarget()
 {
-	easeTime -= 0.01f;
+	/*easeTime -= 0.01f;
 	XMFLOAT3 homing = ShlomonMath::Homing(ConvertXMVECTORtoXMFLOAT3(each.position), endPosition, speed);
 	speed = homing / 1.0f;
 	each.position = ConvertXMFLOAT3toXMVECTOR(ConvertXMVECTORtoXMFLOAT3(each.position) + speed);
@@ -306,7 +304,7 @@ void ObjectParticle3D::UpdateTarget()
 	if (easeTime <= 0.0f)
 	{
 		time = 0;
-	}
+	}*/
 }
 
 void ObjectParticle3D::UpdateTornado()
@@ -347,7 +345,7 @@ void ObjectParticle3D::UpdateBorn()
 	}
 }
 
-void ObjectParticleInfo::Init(XMFLOAT3& emitter, int count, ParticleType type)
+void ObjectParticleInfo::Init(XMFLOAT3& emitter, int count, ObjectParticle3D::ParticleType type)
 {
 	for (int i = 0; i < count; i++)
 	{
@@ -391,27 +389,19 @@ void ObjectParticleInfo::DeleteAllParticle()
 void ObjectParticles::LoadModels()
 {
 	triangle.object.CreateModel("Triangle", ShaderManager::playerShader);
-	othello.object.CreateModel("newOserro", ShaderManager::playerShader);
-	frame.object.CreateModel("Frame", ShaderManager::playerShader);
 }
 
 void ObjectParticles::Update()
 {
 	triangle.Update();
-	othello.Update();
-	frame.Update();
 }
 
 void ObjectParticles::Draw()
 {
 	triangle.Draw(triangle.object);
-	othello.Draw(othello.object);
-	frame.Draw(frame.object);
 }
 
 void ObjectParticles::DeleteAllParticles()
 {
 	triangle.DeleteAllParticle();
-	othello.DeleteAllParticle();
-	frame.DeleteAllParticle();
 }

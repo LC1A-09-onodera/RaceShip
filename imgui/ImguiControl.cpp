@@ -17,7 +17,8 @@ int Imgui::playerCombo = 0;
 ImguiEnum Imgui::iEnum(5, "a", "sample2", "sample3", "sample4", "player");
 std::string Imgui::test;
 std::string Imgui::ipv4Name;
-bool Imgui::isActive = false;
+bool Imgui::isActive = true;
+float Imgui::volume = 1.0f;
 
 ComPtr<ID3D12DescriptorHeap> Imgui::CreateDescrriptorHeapForImgui()
 {
@@ -142,11 +143,12 @@ void Imgui::EachInfo()
         ImGui::Text("FPS:%.2f", WindowsAPI::rate);
         ImGui::Text(test.c_str());
         ImGui::Text(ipv4Name.c_str());
+        ImGui::SliderFloat("volume", &volume, 0, 100.0f);
     }
     else if (tab == ImguiType::CameraInfo)
     {
-        ImGui::Text("eye:%.2f, %.2f, %.2f", Camera::eye.v.x, Camera::eye.v.y, Camera::eye.v.z);
-        ImGui::Text("target:%.2f, %.2f, %.2f", Camera::target.v.x, Camera::target.v.y, Camera::target.v.z);
+        ImGui::Text("eye:%.2f, %.2f, %.2f", Cameras::camera.eye.v.x, Cameras::camera.eye.v.y, Cameras::camera.eye.v.z);
+        ImGui::Text("target:%.2f, %.2f, %.2f", Cameras::camera.target.v.x, Cameras::camera.target.v.y, Cameras::camera.target.v.z);
     }
     else if (tab == ImguiType::Debug)
     {
