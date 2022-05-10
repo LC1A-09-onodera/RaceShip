@@ -45,6 +45,13 @@ cbuffer cbuff1 : register(b1)
 	float m_alpha : packoffset(c2.w);
 }
 
+cbuffer cbuff3 : register(b3)
+{
+    matrix rViewproj; //ビュープロジェクション行列
+    matrix rWorld; //ワールド行列
+    float3 rCameraPos; //カメラ座標
+}
+
 struct VSOutput
 {
 	float4 svpos : SV_POSITION;

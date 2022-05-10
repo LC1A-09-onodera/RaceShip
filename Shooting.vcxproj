@@ -158,6 +158,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="3DModel\Model.h" />
+    <ClInclude Include="3DObjectParticle\3DObjectParticle.h" />
     <ClInclude Include="BaseDirectX\BaseDirectX.h" />
     <ClInclude Include="BaseDirectX\DirectInput.h" />
     <ClInclude Include="BaseDirectX\GameScene.h" />
@@ -179,6 +180,7 @@
     <ClInclude Include="Collition\RaycastHit.h" />
     <ClInclude Include="Collition\SphereCollider.h" />
     <ClInclude Include="DX12operator.h" />
+    <ClInclude Include="Enemy\selingEnemy.h" />
     <ClInclude Include="FbxLoader\FbxLoader.h" />
     <ClInclude Include="FBXModel\FBXModel.h" />
     <ClInclude Include="FBXObject\FBXObject.h" />
@@ -196,21 +198,26 @@
     <ClInclude Include="Light\Light.h" />
     <ClInclude Include="Light\SpotLight.h" />
     <ClInclude Include="Particle\Particle3D.h" />
+    <ClInclude Include="Player\Seling.h" />
+    <ClInclude Include="Player\WaterVertex.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="PostEffect\PostEffect.h" />
     <ClInclude Include="RenderTarget\RenderTarget.h" />
+    <ClInclude Include="Rewired\Rewired.h" />
     <ClInclude Include="Shader\Shader.h" />
     <ClInclude Include="Shader\ShaderManager.h" />
     <ClInclude Include="Sound\Sound.h" />
     <ClInclude Include="Sprite\Sprite.h" />
     <ClInclude Include="Sprite\SpriteCommon.h" />
     <ClInclude Include="Texture\Texture.h" />
+    <ClInclude Include="udp.h" />
     <ClInclude Include="VoiceUDPRecive\VoiceUDPRecive.h" />
     <ClInclude Include="VoiceUDPRecive\VoiceUDPSender.h" />
     <ClInclude Include="WindowsAPI\WinAPI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DModel\Model.cpp" />
+    <ClCompile Include="3DObjectParticle\3DObjectParitcle.cpp" />
     <ClCompile Include="BaseDirectX\BaseDirectX.cpp" />
     <ClCompile Include="BaseDirectX\DirectInput.cpp" />
     <ClCompile Include="BaseDirectX\GameScene.cpp" />
@@ -222,6 +229,7 @@
     <ClCompile Include="Collition\CollisionPrimitive.cpp" />
     <ClCompile Include="Collition\MeshCollider.cpp" />
     <ClCompile Include="Collition\SphereCollider.cpp" />
+    <ClCompile Include="Enemy\selingEnemy.cpp" />
     <ClCompile Include="FbxLoader\FbxLoader.cpp" />
     <ClCompile Include="FBXModel\FBXModel.cpp" />
     <ClCompile Include="FBXObject\FBXObject.cpp" />
@@ -237,14 +245,17 @@
     <ClCompile Include="Light\Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Particle\Particle3D.cpp" />
+    <ClCompile Include="Player\Seling.cpp" />
     <ClCompile Include="PostEffect\PostEffect.cpp" />
     <ClCompile Include="RenderTarget\RenderTarget.cpp" />
+    <ClCompile Include="Rewired\Rewired.cpp" />
     <ClCompile Include="Shader\Shader.cpp" />
     <ClCompile Include="Shader\ShaderManager.cpp" />
     <ClCompile Include="Sound\Sound.cpp" />
     <ClCompile Include="Sprite\Sprite.cpp" />
     <ClCompile Include="Sprite\SpriteCommon.cpp" />
     <ClCompile Include="Texture\Texture.cpp" />
+    <ClCompile Include="udp.cpp" />
     <ClCompile Include="VoiceUDPRecive\VoiceUDPRecive.cpp" />
     <ClCompile Include="VoiceUDPRecive\VoiceUDPSender.cpp" />
     <ClCompile Include="WindowsAPI\WinAPI.cpp" />
@@ -365,6 +376,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="Resource\HLSL\PostBlurPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="Resource\HLSL\PostEffectTestPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -379,6 +396,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\PostMosaicPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\PostWaterPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Resource\HLSL\SamplePS.hlsl">
@@ -426,6 +455,12 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\WaterSamplePS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Resource\HLSL\WireFrameGS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
