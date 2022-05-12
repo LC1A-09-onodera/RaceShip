@@ -17,7 +17,7 @@ int Imgui::playerCombo = 0;
 ImguiEnum Imgui::iEnum(5, "a", "sample2", "sample3", "sample4", "player");
 std::string Imgui::test;
 std::string Imgui::ipv4Name;
-bool Imgui::isActive = false;
+bool Imgui::isActive = true;
 
 ComPtr<ID3D12DescriptorHeap> Imgui::CreateDescrriptorHeapForImgui()
 {

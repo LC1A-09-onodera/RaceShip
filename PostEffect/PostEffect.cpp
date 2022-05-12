@@ -300,9 +300,9 @@ void PostEffect::CalcWeightGaussian(float* weightsTbl, int sizeOfWeightsTbl, flo
 
 void PostEffects::Init()
 {
-	postWater.Initialize(ShaderManager::postWater);
+	/*postWater.Initialize(ShaderManager::postWater);
 	postBlur.Initialize(ShaderManager::postBlur);
-	postMosaic.Initialize(ShaderManager::postMosaic);
+	postMosaic.Initialize(ShaderManager::postMosaic);*/
 	postNormal.Initialize(ShaderManager::postNormal);
 }
 
