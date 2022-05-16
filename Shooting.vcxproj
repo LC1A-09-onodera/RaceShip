@@ -213,6 +213,7 @@
     <ClInclude Include="udp.h" />
     <ClInclude Include="VoiceUDPRecive\VoiceUDPRecive.h" />
     <ClInclude Include="VoiceUDPRecive\VoiceUDPSender.h" />
+    <ClInclude Include="WaterFace\WaterFace.h" />
     <ClInclude Include="WindowsAPI\WinAPI.h" />
   </ItemGroup>
   <ItemGroup>
@@ -258,6 +259,7 @@
     <ClCompile Include="udp.cpp" />
     <ClCompile Include="VoiceUDPRecive\VoiceUDPRecive.cpp" />
     <ClCompile Include="VoiceUDPRecive\VoiceUDPSender.cpp" />
+    <ClCompile Include="WaterFace\WaterFace.cpp" />
     <ClCompile Include="WindowsAPI\WinAPI.cpp" />
   </ItemGroup>
   <ItemGroup>

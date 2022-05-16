@@ -92,18 +92,12 @@ void GameScene::Init()
 	//ポストエフェクトの初期化
 	PostEffects::Init();
 	ObjectParticles::LoadModels();
-	/*sample.CreateModel("maru", ShaderManager::playerShader, true);
-	playerPos.ConstInit();
-	rPlayerPos.ConstInit();*/
+
 	seling.LoadModel();
 	seling.Init();
-	water.CreateModel("WaterPolygon", ShaderManager::waterShader, true);
-	water.each.rotation.x = -60.0f;
-	water.each.position.m128_f32[1] = -0.5f;
-	VoiceReciver::StartUp();
 
+	VoiceReciver::StartUp();
 	EnemyModels::LoadModels();
-	
 }
 
 void GameScene::TitleUpdate()
@@ -147,16 +141,10 @@ void GameScene::TitleDraw()
 {
 	//PostEffectのPreDraw
 	PostEffects::PreDraw();
-	/*sample.Update(&playerPos);
-	Draw3DObject(sample);*/
 
 	seling.Draw();
 	ObjectParticles::Draw();
-	/*rPlayerPos.position.m128_f32[1] = -1.0f;
-	sample.Update(&rPlayerPos, true);
-	Draw3DObject(sample);
-	water.Update(&water.each);
-	Draw3DObject(water);*/
+
 	BaseDirectX::clearColor[0] = 0.0f;
 	BaseDirectX::clearColor[1] = 0.0f;
 	BaseDirectX::clearColor[2] = 0.0f;
@@ -164,6 +152,7 @@ void GameScene::TitleDraw()
 	BaseDirectX::UpdateFront();
 	//PostEffectのDraw
 	PostEffects::Draw();
+
 	PostEffects::PostDraw();
 
 	Imgui::DrawImGui();

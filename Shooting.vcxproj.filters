@@ -76,6 +76,9 @@
     <Filter Include="Enemy">
       <UniqueIdentifier>{c8b45bfe-6935-4a63-8945-348a1cff3460}</UniqueIdentifier>
     </Filter>
+    <Filter Include="WaterFace">
+      <UniqueIdentifier>{d6a1824b-bac7-4497-a1df-f5f0e63fd461}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -249,6 +252,9 @@
     <ClInclude Include="Rewired\Rewired.h">
       <Filter>BaseDirectx</Filter>
     </ClInclude>
+    <ClInclude Include="WaterFace\WaterFace.h">
+      <Filter>WaterFace</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -379,6 +385,9 @@
     </ClCompile>
     <ClCompile Include="Rewired\Rewired.cpp">
       <Filter>BaseDirectx</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterFace\WaterFace.cpp">
+      <Filter>WaterFace</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

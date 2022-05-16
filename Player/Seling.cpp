@@ -36,7 +36,7 @@ void Seling::Init()
 	maxForce = { 0.7f, 0.7f, 0.7f };
 	frontDirection = { 0, 0 ,1.0f };
 	isShield = false;
-	enemy.Init(XMFLOAT3(0 ,0 ,10));
+	enemy.Init(XMFLOAT3(0, 0, 10));
 }
 
 void Seling::Update()
@@ -47,27 +47,9 @@ void Seling::Update()
 
 	ForceAttach();
 
-	if (VoiceReciver::GetIsShot())
-	{
-		ShotInit();
-		VoiceReciver::SetIsShot(false);
-	}
-
-	if (isShot)
-	{
-		ShotUpdate();
-	}
-
-	if (VoiceReciver::GetWall())
-	{
-		ShieldInit();
-		VoiceReciver::SetWall(false);
-	}
-
-	if (isShield)
-	{
-		ShieldUpdate();
-	}
+	ShotInitAndUpdate();
+	
+	ShieldInitAndUpdate();
 
 	enemy.Update(shieldPos);
 }
@@ -92,8 +74,8 @@ void Seling::Draw()
 	}
 	else
 	{
-		shieldPos = {-100000, -1000000, -100000};
-		
+		shieldPos = { -100000, -1000000, -100000 };
+
 	}
 
 	enemy.Draw();
@@ -126,14 +108,6 @@ void Seling::Move()
 	{
 		AddForce(XMFLOAT3(frontDirection.x * -0.02f, frontDirection.y * -0.02f, frontDirection.z * -0.02f));
 	}
-	if (Input::Key(DIK_R))
-	{
-		ShotInit();
-	}
-	if (Input::Key(DIK_R))
-	{
-		ShieldInit();
-	}
 	VoiceReciver::SetRight(false);
 	VoiceReciver::SetLeft(false);
 	VoiceReciver::SetFront(false);
@@ -151,9 +125,31 @@ void Seling::ShotUpdate()
 	shotPos.z += 0.1f;
 }
 
+void Seling::ShotInitAndUpdate()
+{
+	if (Input::Key(DIK_R))
+	{
+		ShotInit();
+	}
+	if (VoiceReciver::GetIsShot())
+	{
+		ShotInit();
+		VoiceReciver::SetIsShot(false);
+	}
+	if (isShot)
+	{
+		ShotUpdate();
+	}
+}
+
 void Seling::ShieldInit()
 {
 	isShield = true;
+	shieldTime = shieldMaxTime;
+	shieldModel.each.scale = { 0.01f, 0.01f, 0.01f };
+	scaleStart = { 0.02f, 0.02f, 0.01f };
+	scaleEnd = { 2.0f, 2.0f, 1.0f };
+	easeTime = 0.0f;
 }
 
 void Seling::ShieldUpdate()
@@ -166,6 +162,37 @@ void Seling::ShieldUpdate()
 	addPos = { frontDirection.x * R, 0, frontDirection.z * R };
 	pos = pos + addPos;
 	shieldPos = pos;
+	shieldTime--;
+	easeTime += 0.05f;
+	if (easeTime <= 1.0f)
+	{
+		shieldModel.each.scale = EaseInQuad(scaleStart, scaleEnd, easeTime);
+	}
+	else
+	{
+		shieldModel.each.scale = EaseInQuad(scaleStart, scaleEnd, 1.0f);
+	}
+	if (shieldTime <= 0)
+	{
+		isShield = false;
+	}
+}
+
+void Seling::ShieldInitAndUpdate()
+{
+	if (Input::Key(DIK_R))
+	{
+		ShieldInit();
+	}
+	if (VoiceReciver::GetWall())
+	{
+		ShieldInit();
+		VoiceReciver::SetWall(false);
+	}
+	if (isShield)
+	{
+		ShieldUpdate();
+	}
 }
 
 void ShieldModel::CreateModel(const char* name, HLSLShader& shader, bool smoothing)

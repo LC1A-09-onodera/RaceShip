@@ -60,7 +60,6 @@ public://ƒV[ƒ“‚Åg‚¤‚à‚Ì
 	Model sample;
 	EachInfo playerPos;
 	EachInfo rPlayerPos;
-	Model water;
 
 	Seling seling;
 };

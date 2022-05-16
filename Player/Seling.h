@@ -30,6 +30,11 @@ class Seling
 	ShieldModel shieldModel;
 	bool isShield;
 	XMFLOAT3 shieldPos;
+	XMFLOAT3 scaleStart;
+	XMFLOAT3 scaleEnd;
+	float easeTime;
+	int shieldTime;
+	const int shieldMaxTime = 180;
 
 	Enemy enemy;
 
@@ -72,8 +77,10 @@ public:
 	//弾が出る
 	void ShotInit();
 	void ShotUpdate();
+	void ShotInitAndUpdate();
 
 	//シールドが出る
 	void ShieldInit();
 	void ShieldUpdate();
+	void ShieldInitAndUpdate();
 };
