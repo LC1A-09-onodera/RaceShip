@@ -97,19 +97,22 @@ void GameScene::Init()
 	rPlayerPos.ConstInit();*/
 	seling.LoadModel();
 	seling.Init();
-	water.CreateModel("WaterPolygon", ShaderManager::waterShader, true);
+	/*water.CreateModel("WaterPolygon", ShaderManager::waterShader, true);
 	water.each.rotation.x = -60.0f;
-	water.each.position.m128_f32[1] = -0.5f;
+	water.each.position.m128_f32[1] = -0.5f;*/
 	VoiceReciver::StartUp();
 
 	EnemyModels::LoadModels();
-	
+	playerShieldKey.Init(4, KeyCode::A, KeyCode::B, KeyCode::C, KeyCode::D);
 }
 
 void GameScene::TitleUpdate()
 {
 	seling.Update();
-
+	if (playerShieldKey.GetKeyDown())
+	{
+		int hoge = 0;
+	}
 	VoiceReciver::VoiceUDPUpdate();
 	ObjectParticles::Update();
 	LightUpdate();
