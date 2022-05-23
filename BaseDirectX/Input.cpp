@@ -1,4 +1,5 @@
 #include "Input.h"
+#include "../Rewired/Rewired.h"
 
 void Input::Update()
 {
@@ -55,14 +56,29 @@ bool Input::Key(BYTE key)
 	return keys[key];
 }
 
+bool Input::Key(KeyCode key)
+{
+	return keys[(BYTE)key];
+}
+
 bool Input::KeyTrigger(BYTE key)
 {
 	return keys[key] && !oldkeys[key];
 }
 
+bool Input::KeyTrigger(KeyCode key)
+{
+	return keys[(BYTE)key] && !oldkeys[(BYTE)key];
+}
+
 bool Input::KeyEnd(BYTE key)
 {
 	return !keys[key] && oldkeys[key];
+}
+
+bool Input::KeyEnd(KeyCode key)
+{
+	return !keys[(BYTE)key] && oldkeys[(BYTE)key];
 }
 
 bool Input::MouseTrigger(MouseButton mouseinput)

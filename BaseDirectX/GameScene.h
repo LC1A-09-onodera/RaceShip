@@ -8,6 +8,7 @@
 #include "../FbxLoader/FbxLoader.h"
 #include "../Player/Seling.h"
 #include "../Enemy/selingEnemy.h"
+#include "../Rewired/Rewired.h"
 
 enum GameSceneName { TITLE, SELECT, GAME, END, RESULT };
 
@@ -62,4 +63,5 @@ public://ÉVÅ[ÉìÇ≈égÇ§Ç‡ÇÃ
 	EachInfo rPlayerPos;
 
 	Seling seling;
+	Rewired playerShieldKey;
 };
