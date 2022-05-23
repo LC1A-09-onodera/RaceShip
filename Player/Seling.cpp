@@ -37,6 +37,9 @@ void Seling::Init()
 	frontDirection = { 0, 0 ,1.0f };
 	isShield = false;
 	enemy.Init(XMFLOAT3(0, 0, 10));
+
+	playerShieldKey.KeyBoradInit(5, KeyCode::A, KeyCode::B, KeyCode::C, KeyCode::Space);
+	playerShieldKey.PadInit(2, PadKeyCode::Button01, PadKeyCode::ButtonRB);
 }
 
 void Seling::Update()
@@ -51,7 +54,7 @@ void Seling::Update()
 	
 	ShieldInitAndUpdate();
 
-	enemy.Update(shieldPos);
+	enemy.Update(shieldPos, isShield);
 }
 
 void Seling::Draw()
@@ -72,12 +75,6 @@ void Seling::Draw()
 		shieldModel.Update(&shieldModel.each);
 		Draw3DObject(shieldModel);
 	}
-	else
-	{
-		shieldPos = { -100000, -1000000, -100000 };
-
-	}
-
 	enemy.Draw();
 }
 
@@ -92,21 +89,21 @@ void Seling::Move()
 {
 	if (VoiceReciver::GetRight() || Input::KeyTrigger(DIK_D))
 	{
-		angle += 30;
+		angle += addShieldRotaion;
 	}
 	if (VoiceReciver::GetLeft() || Input::KeyTrigger(DIK_A))
 	{
-		angle -= 30;
+		angle -= addShieldRotaion;
 	}
 	frontDirection = { ShlomonMath::Sin(angle), 0, ShlomonMath::Cos(angle) };
 
 	if (VoiceReciver::GetFront() || Input::Key(DIK_W))
 	{
-		AddForce(XMFLOAT3(frontDirection.x * 0.02f, frontDirection.y * 0.02f, frontDirection.z * 0.02f));
+		AddForce(XMFLOAT3(frontDirection.x * addForcePower, frontDirection.y * addForcePower, frontDirection.z * addForcePower));
 	}
 	if (VoiceReciver::GetBack() || Input::Key(DIK_S))
 	{
-		AddForce(XMFLOAT3(frontDirection.x * -0.02f, frontDirection.y * -0.02f, frontDirection.z * -0.02f));
+		AddForce(XMFLOAT3(frontDirection.x * -addForcePower, frontDirection.y * -addForcePower, frontDirection.z * -addForcePower));
 	}
 	VoiceReciver::SetRight(false);
 	VoiceReciver::SetLeft(false);
@@ -158,8 +155,7 @@ void Seling::ShieldUpdate()
 	pos = ConvertXMVECTORtoXMFLOAT3(seling.each.position);
 	shieldModel.each.rotation.y = angle + 180;
 	XMFLOAT3 addPos;
-	const float R = 2.2f;
-	addPos = { frontDirection.x * R, 0, frontDirection.z * R };
+	addPos = { frontDirection.x * shieldR, 0, frontDirection.z * shieldR };
 	pos = pos + addPos;
 	shieldPos = pos;
 	shieldTime--;
@@ -180,6 +176,10 @@ void Seling::ShieldUpdate()
 
 void Seling::ShieldInitAndUpdate()
 {
+	if (playerShieldKey.GetKeyDown())
+	{
+		ShieldInit();
+	}
 	if (Input::Key(DIK_R))
 	{
 		ShieldInit();
@@ -280,15 +280,7 @@ void ShieldModel::CreateModel(const char* name, HLSLShader& shader, bool smoothi
 					AddAmoothData(indexPosition, (unsigned short)GetVertexCount() - 1);
 				}
 				mesh.indices.emplace_back((unsigned short)mesh.indices.size());
-				/*if (count > 3) {
-					const uint16_t index1 = mesh.vertices.size() - 4;
-					const uint16_t index2 = mesh.vertices.size() - 2;
-
-					mesh.indices.emplace_back(index1);
-					mesh.indices.emplace_back(index2);
-				}*/
 			}
-			//count = 0;
 		}
 	}
 

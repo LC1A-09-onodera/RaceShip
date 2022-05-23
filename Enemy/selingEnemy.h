@@ -29,7 +29,7 @@ public:
 	int life;
 	static const int lifemax = 180;
 	void Init();
-	void Update(XMFLOAT3& shieldPos);
+	void Update(XMFLOAT3& shieldPos, bool isShieldActive);
 	void Draw();
 	bool Collision(XMFLOAT3 &position);
 };
@@ -43,7 +43,7 @@ class Enemy
 	const int intervalMax = 30;
 public:
 	void Init(XMFLOAT3 &pos);
-	void Update(XMFLOAT3 &shieldPos);
+	void Update(XMFLOAT3 &shieldPos, bool isShieldActive);
 	void Draw();
 	void ShotInit();
 };

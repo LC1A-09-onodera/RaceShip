@@ -113,7 +113,15 @@ bool DirectInput::IsButtonPush(ButtonKind button)
 	{
 		return true;
 	}
+	return false;
+}
 
+bool DirectInput::IsButtonPush(PadKeyCode button)
+{
+	if (g_ButtonStates[(ButtonKind)button] == ButtonState::ButtonStatePush)
+	{
+		return true;
+	}
 	return false;
 }
 
@@ -127,6 +135,15 @@ bool DirectInput::IsButtonUp(ButtonKind button)
 	return false;
 }
 
+bool DirectInput::IsButtonUp(PadKeyCode button)
+{
+	if (g_ButtonStates[(ButtonKind)button] == ButtonState::ButtonStateUp)
+	{
+		return true;
+	}
+	return false;
+}
+
 bool DirectInput::IsButtonDown(ButtonKind button)
 {
 	if (g_ButtonStates[button] == ButtonState::ButtonStateDown)
@@ -134,6 +151,15 @@ bool DirectInput::IsButtonDown(ButtonKind button)
 		return true;
 	}
 
+	return false;
+}
+
+bool DirectInput::IsButtonDown(PadKeyCode button)
+{
+	if (g_ButtonStates[(ButtonKind)button] == ButtonState::ButtonStateDown)
+	{
+		return true;
+	}
 	return false;
 }
 

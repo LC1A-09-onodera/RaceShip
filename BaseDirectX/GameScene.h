@@ -63,5 +63,5 @@ public://ƒV[ƒ“‚Åg‚¤‚à‚Ì
 	EachInfo rPlayerPos;
 
 	Seling seling;
-	Rewired playerShieldKey;
+	
 };

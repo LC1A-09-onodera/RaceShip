@@ -2,6 +2,7 @@
 #include "../3DModel/Model.h"
 #include "../DX12operator.h"
 #include "../Enemy/selingEnemy.h"
+#include "../Rewired/Rewired.h"
 
 class ShieldModel : public Model
 {
@@ -37,7 +38,11 @@ class Seling
 	const int shieldMaxTime = 180;
 
 	Enemy enemy;
+	Rewired playerShieldKey;
 
+	const float addShieldRotaion = 30.0f;
+	const float shieldR = 2.2f;
+	const float addForcePower = 0.02f;
 public:
 	void AddForce(XMFLOAT3& force)
 	{

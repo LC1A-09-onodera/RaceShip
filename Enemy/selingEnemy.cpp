@@ -13,7 +13,7 @@ void Bullet::Init()
 	direction = {0, 0, -1};
 }
 
-void Bullet::Update(XMFLOAT3& shieldPos)
+void Bullet::Update(XMFLOAT3& shieldPos, bool isShieldActive)
 {
 	life--;
 	if (life <= 0)
@@ -22,7 +22,7 @@ void Bullet::Update(XMFLOAT3& shieldPos)
 	}
 	pos = {pos.x + direction.x * 0.1f, pos.y + direction.y * 0.1f, pos.z + direction.z * 0.1f};
 	bulletEach.position = {pos.x, pos.y, pos.z, 1.0f};
-	if (Collision(shieldPos) && isActive)
+	if (Collision(shieldPos) && isActive && isShieldActive)
 	{
 		ObjectParticles::triangle.Init(shieldPos, 5, ObjectParticle3D::ParticleType::Exprotion);
 		isActive = false;
@@ -53,7 +53,7 @@ void Enemy::Init(XMFLOAT3& pos)
 	isShot = false;
 }
 
-void Enemy::Update(XMFLOAT3& shieldPos)
+void Enemy::Update(XMFLOAT3& shieldPos, bool isShieldActive)
 {
 	shotInterval++;
 	if (shotInterval > intervalMax)
@@ -64,7 +64,7 @@ void Enemy::Update(XMFLOAT3& shieldPos)
 	auto itr = bullets.begin();
 	for (; itr != bullets.end(); ++itr)
 	{
-		itr->Update(shieldPos);
+		itr->Update(shieldPos, isShieldActive);
 	}
 }
 

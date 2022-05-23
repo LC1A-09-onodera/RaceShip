@@ -9,8 +9,10 @@ class InputKey
 class Rewired
 {
 	list<KeyCode> keys;
+	list<PadKeyCode> padKeys;
 public:
-	void Init(int count, ...);
+	void KeyBoradInit(int count, ...);
+	void PadInit(int count, ...);
 	bool GetKey();
 	bool GetKeyDown();
 	bool GetKeyUp();
