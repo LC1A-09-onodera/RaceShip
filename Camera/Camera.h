@@ -30,6 +30,12 @@ public:
 	XMMATRIX rotM;
 	XMVECTOR vv0;
 
+	bool isControl = true;
+	float targetR = 10.0f;
+	float rotationXZ = 0.0f;
+	XMFLOAT3 rotation = {0, 0.2f, -1.0f};
+	void CameraTargetRot();
+
 	float cameraRightAngle;
 	float cameraUpAngle;
 
@@ -46,17 +52,14 @@ public:
 	void EyeMove(Vec3 moveAmount);
 	void EyeAndTargetMove(XMFLOAT3 moveAmount);
 	void TargetMove(XMFLOAT3 moveAmount);
-	void FPSTargetMove(XMFLOAT3 moveAmount, float R = 100.0f);
 	float TargetLength();
-	XMFLOAT3 GetTargetDirectionSideR();
-	XMFLOAT3 GetTargetDirectionSideL();
 	void eyeMoveCircleHorizonal(XMFLOAT3 Amount);
 	void eyeMoveCircleVertical(XMFLOAT3 Amount);
-	void setEye(XMFLOAT3 Amount);
 	void SetTarget(const XMFLOAT3& target);
 	void QuaternionRotation(const float &RightAngle = NULL, const float &UpAngle = NULL);
 	void ShakeUpdate();
 	void SetShake(float shakePower);
+	void SetTarget(XMFLOAT3 target);
 
 	XMFLOAT3 GetMousePosition();
 	XMFLOAT3 EyeToMouseVec();

@@ -44,7 +44,7 @@ struct ConstBufferDataB1
 	float alpha;
 };
 
-struct ConstBufferDataB2
+struct ConstBufferDataB3
 {
 public:
 	XMMATRIX rViewproj;//ビュープロジェクション行列
