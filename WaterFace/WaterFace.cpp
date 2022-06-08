@@ -12,7 +12,7 @@ void WaterFace::Init()
 	waterModel.each.ConstInit();
 	waterModel.each.position = { 0, -1.0f, 0, 1 };
 	waterModel.each.rotation = { 0, 180, 0};
-	waterModel.each.scale = {100, 1, 100};
+	waterModel.each.scale = {30, 1, 30};
 }
 
 void WaterFace::Update()

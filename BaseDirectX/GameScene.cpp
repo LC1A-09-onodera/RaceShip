@@ -105,9 +105,9 @@ void GameScene::Init()
 	waterFace.Init();
 
 	world.CreateModel("SphereW", ShaderManager::playerShader);
-	world.each.scale = {50.0f, 50.0f, 50.0f};
+	world.each.scale = {40.0f, 40.0f, 40.0f};
 	rWorld.CreateModel("SphereW", ShaderManager::playerShader);
-	rWorld.each.scale = { 50.0f, 50.0f, 50.0f };
+	rWorld.each.scale = { 40.0f, 40.0f, 40.0f };
 }
 
 void GameScene::TitleUpdate()
@@ -123,11 +123,12 @@ void GameScene::TitleUpdate()
 	rSeling.Update();
 	waterFace.Update();
 
-
 	VoiceReciver::VoiceUDPUpdate();
 	ObjectParticles::Update();
 	LightUpdate();
 	Sound::Updete(Imgui::volume);
+	light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
+	LightUpdate();
 }
 
 void GameScene::SelectUpdate()
@@ -162,7 +163,7 @@ void GameScene::TitleDraw()
 	//PostEffect‚ÌPreDraw
 	PostEffects::PreDraw();
 	//seling.Draw(true);
-	//rSeling.seling.each.position = { -seling.seling.each.position.m128_f32[0], -seling.seling.each.position.m128_f32[1], rSeling.seling.each.position.m128_f32[2], 1.0f };
+	rSeling.seling.each.position = { -seling.seling.each.position.m128_f32[0], -seling.seling.each.position.m128_f32[1], seling.seling.each.position.m128_f32[2], 1.0f };
 	rSeling.seling.each.rotation.x = 180;
 	rSeling.Draw(true);
 	rWorld.each.rotation.x = 180;
@@ -183,7 +184,7 @@ void GameScene::TitleDraw()
 	world.Update();
 	Draw3DObject(world);
 	ObjectParticles::Draw();
-	XMVECTOR sample = {};
+	XMVECTOR sample = {0, 0, 2.0f, 1.0};
 	waterFace.Draw(PostEffects::postNormal, sample/*seling.seling.each.position*/);
 	
 	PostEffects::PostDraw();

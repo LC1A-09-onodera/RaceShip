@@ -60,7 +60,7 @@ public:
 	void ShakeUpdate();
 	void SetShake(float shakePower);
 	void SetTarget(XMFLOAT3 target);
-
+	XMFLOAT3 GetTargetDirection();
 	XMFLOAT3 GetMousePosition();
 	XMFLOAT3 EyeToMouseVec();
 	XMFLOAT3 MousePosition(float z);

@@ -5,7 +5,6 @@
 #include "../BaseDirectX/BaseDirectX.h"
 #include "../Camera/Camera.h"
 #include <stdarg.h>
-#include <algorithm>
 
 ComPtr<ID3D12DescriptorHeap> Imgui::imguiDescHeap;
 ComPtr<ID3D12DescriptorHeap> Imgui::heapForImgui;
@@ -157,7 +156,6 @@ void Imgui::EachInfo()
         ImGui::InputFloat("CameraLength:", &CameraR, 1.0f, 10.0f);
         ImGui::InputFloat("CameraRotation:", & CameraRotation, 1.0f, 10.0f);
         ImGui::InputFloat("CameraHigh:", &CameraHigh, 0.01f, 0.02f);
-        CameraHigh = std::clamp(CameraHigh, 0, 2);
     }
     else if (tab == ImguiType::Debug)
     {

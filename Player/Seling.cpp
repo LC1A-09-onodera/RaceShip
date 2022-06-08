@@ -2,7 +2,7 @@
 #include "Seling.h"
 #include "../BaseDirectX/Input.h"
 #include "../Shader/ShaderManager.h"
-
+#include <algorithm>
 
 void Seling::ForceUpdate()
 {
@@ -40,6 +40,7 @@ void Seling::Init()
 
 	playerShieldKey.KeyBoradInit(5, KeyCode::A, KeyCode::B, KeyCode::C, KeyCode::Space);
 	playerShieldKey.PadInit(2, PadKeyCode::Button01, PadKeyCode::ButtonRB);
+	
 }
 
 void Seling::Update()

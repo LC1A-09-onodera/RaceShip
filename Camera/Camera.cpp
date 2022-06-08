@@ -273,6 +273,20 @@ void Camera::SetTarget(XMFLOAT3 target)
 	this->target.v = target;
 }
 
+XMFLOAT3 Camera::GetTargetDirection()
+{
+	XMFLOAT3 dire;
+	XMFLOAT3 sub;
+	sub.x = target.v.x - eye.v.x;
+	sub.y = target.v.y - eye.v.y;
+	sub.z = target.v.z - eye.v.z;
+	float leg = TargetLength();
+	dire.x = sub.x / leg;
+	dire.y = sub.y / leg;
+	dire.z = sub.z / leg;
+	return dire;
+}
+
 XMFLOAT3 Camera::GetMousePosition()
 {
 	//ƒXƒNƒŠ[ƒ“Œn
