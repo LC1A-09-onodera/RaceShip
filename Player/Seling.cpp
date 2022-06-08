@@ -50,32 +50,40 @@ void Seling::Update()
 
 	ForceAttach();
 
-	ShotInitAndUpdate();
-	
-	ShieldInitAndUpdate();
+	//ShotInitAndUpdate();
+
+	//ShieldInitAndUpdate();
 
 	enemy.Update(shieldPos, isShield);
 }
 
-void Seling::Draw()
+void Seling::Draw(bool isRCamera)
 {
-	seling.Update(&seling.each);
-	Draw3DObject(seling);
+	if (isRCamera)
+	{
+		seling.Update(&seling.each, isRCamera);
+		Draw3DObject(seling);
+	}
+	else if (!isRCamera)
+	{
+		seling.Update(&seling.each, isRCamera);
+		Draw3DObject(seling);
+	}
 
 	if (isShot)
 	{
 		shotModel.each.position = ConvertXMFLOAT3toXMVECTOR(shotPos);
-		shotModel.Update(&shotModel.each);
+		shotModel.Update(&shotModel.each, isRCamera);
 		Draw3DObject(shotModel);
 	}
 
 	if (isShield)
 	{
 		shieldModel.each.position = ConvertXMFLOAT3toXMVECTOR(shieldPos);
-		shieldModel.Update(&shieldModel.each);
+		shieldModel.Update(&shieldModel.each, isRCamera);
 		Draw3DObject(shieldModel);
 	}
-	enemy.Draw();
+	//enemy.Draw();
 }
 
 void Seling::ForceAttach()
