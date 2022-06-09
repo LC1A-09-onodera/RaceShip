@@ -14,7 +14,7 @@ public:
 
 class Seling
 {
-	Model seling;
+	
 	int nowNumber;
 	XMFLOAT3 frontDirection;
 	float angle;
@@ -44,6 +44,7 @@ class Seling
 	const float shieldR = 2.2f;
 	const float addForcePower = 0.02f;
 public:
+	Model seling;
 	void AddForce(XMFLOAT3& force)
 	{
 		if (this->addForce.x < maxForce.x && this->addForce.x > -maxForce.x)
@@ -68,7 +69,7 @@ public:
 	void LoadModel();
 	void Init();
 	void Update();
-	void Draw();
+	void Draw(bool isRCamera = false);
 
 	void ForceAttach();
 	void Move();

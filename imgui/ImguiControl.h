@@ -78,4 +78,9 @@ public:
 
     static float volume;
 
+
+    static float CameraR;
+    static float CameraRotation;
+    static float CameraHigh;
+    static bool CameraControl;
 };

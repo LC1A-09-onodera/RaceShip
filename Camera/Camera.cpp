@@ -2,8 +2,27 @@
 #include "../BaseDirectX/Input.h"
 #include "../BaseDirectX/Quaternion.h"
 #include "../BaseDirectX/viewport.h"
+#include "../imgui/ImguiControl.h"
+
 Camera Cameras::camera;
 Camera Cameras::rCamera;
+
+void Camera::CameraTargetRot()
+{
+	isControl = Imgui::CameraControl;
+	if (isControl)
+	{
+		targetR = Imgui::CameraR;
+		rotationXZ = Imgui::CameraRotation;
+		rotation.x = ShlomonMath::Cos(rotationXZ);
+		rotation.z = ShlomonMath::Sin(rotationXZ);
+		rotation.y = Imgui::CameraHigh;
+		Normalize(rotation);
+		eye.v.x = target.v.x + rotation.x * targetR;
+		eye.v.y = target.v.y + rotation.y * targetR;
+		eye.v.z = target.v.z + rotation.z * targetR;
+	}
+}
 
 void Camera::Init()
 {
@@ -26,6 +45,7 @@ void Camera::Init()
 void Camera::Update()
 {
 	ShakeUpdate();
+	CameraTargetRot();
 	//ƒrƒ…[•ÏŠ·s—ñ‚ðì‚è’¼‚·
 	//matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 	XMVECTOR eyePosition = XMLoadFloat3(&eye.v);
@@ -108,11 +128,6 @@ void Camera::TargetMove(XMFLOAT3 moveAmount)
 	target.v.y += moveAmount.y;
 	target.v.z += moveAmount.z;
 	Update();
-}
-
-void Camera::FPSTargetMove(XMFLOAT3 moveAmount, float R)
-{
-
 }
 
 void Camera::eyeMoveCircleHorizonal(XMFLOAT3 Amount)
@@ -251,6 +266,25 @@ void Camera::SetShake(float shakePower)
 	Camera::eyeStartPosition = Camera::eye;
 	Camera::targetStartPosition = Camera::target;
 	isShake = true;
+}
+
+void Camera::SetTarget(XMFLOAT3 target)
+{
+	this->target.v = target;
+}
+
+XMFLOAT3 Camera::GetTargetDirection()
+{
+	XMFLOAT3 dire;
+	XMFLOAT3 sub;
+	sub.x = target.v.x - eye.v.x;
+	sub.y = target.v.y - eye.v.y;
+	sub.z = target.v.z - eye.v.z;
+	float leg = TargetLength();
+	dire.x = sub.x / leg;
+	dire.y = sub.y / leg;
+	dire.z = sub.z / leg;
+	return dire;
 }
 
 XMFLOAT3 Camera::GetMousePosition()

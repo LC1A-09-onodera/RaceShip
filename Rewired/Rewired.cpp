@@ -1,5 +1,7 @@
 #include "Rewired.h"
-
+#include <fstream>
+#include <string>
+#include <sstream>
 void Rewired::KeyBoradInit(int count,...)
 {
 	va_list ap;
@@ -88,4 +90,22 @@ bool Rewired::GetKeyUp()
 void Rewired::AddKey(KeyCode key)
 {
 	keys.push_back(key);
+}
+
+void Rewired::LoadKey(const char* path)
+{
+	ifstream file;
+	file.open(path);
+	string keyType;
+	while (getline(file, keyType))
+	{
+		istringstream line_stream(keyType);
+
+		string key;
+		getline(line_stream, key, ' ');
+		if (key == "KeyBoard")
+		{
+			
+		}
+	}
 }

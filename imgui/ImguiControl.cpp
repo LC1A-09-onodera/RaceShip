@@ -6,8 +6,6 @@
 #include "../Camera/Camera.h"
 #include <stdarg.h>
 
-//#include "../BaseDirectX/GameScene.h"
-
 ComPtr<ID3D12DescriptorHeap> Imgui::imguiDescHeap;
 ComPtr<ID3D12DescriptorHeap> Imgui::heapForImgui;
 int Imgui::effectType;
@@ -19,7 +17,10 @@ std::string Imgui::test;
 std::string Imgui::ipv4Name;
 bool Imgui::isActive = true;
 float Imgui::volume = 1.0f;
-
+float Imgui::CameraR = 25.0f;
+float Imgui::CameraRotation = 270.0f;
+float Imgui::CameraHigh = 0.2f;
+bool Imgui::CameraControl = true;
 ComPtr<ID3D12DescriptorHeap> Imgui::CreateDescrriptorHeapForImgui()
 {
     ComPtr<ID3D12DescriptorHeap> ret;
@@ -149,6 +150,12 @@ void Imgui::EachInfo()
     {
         ImGui::Text("eye:%.2f, %.2f, %.2f", Cameras::camera.eye.v.x, Cameras::camera.eye.v.y, Cameras::camera.eye.v.z);
         ImGui::Text("target:%.2f, %.2f, %.2f", Cameras::camera.target.v.x, Cameras::camera.target.v.y, Cameras::camera.target.v.z);
+        ImGui::Text("Reye:%.2f, %.2f, %.2f", Cameras::rCamera.eye.v.x, Cameras::rCamera.eye.v.y, Cameras::rCamera.eye.v.z);
+        ImGui::Text("Rtarget:%.2f, %.2f, %.2f", Cameras::rCamera.target.v.x, Cameras::rCamera.target.v.y, Cameras::rCamera.target.v.z);
+        ImGui::Checkbox("ImGuiCameraControl", &CameraControl);
+        ImGui::InputFloat("CameraLength:", &CameraR, 1.0f, 10.0f);
+        ImGui::InputFloat("CameraRotation:", & CameraRotation, 1.0f, 10.0f);
+        ImGui::InputFloat("CameraHigh:", &CameraHigh, 0.01f, 0.02f);
     }
     else if (tab == ImguiType::Debug)
     {

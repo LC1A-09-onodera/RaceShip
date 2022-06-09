@@ -17,4 +17,6 @@ public:
 	bool GetKeyDown();
 	bool GetKeyUp();
 	void AddKey(KeyCode key);
+
+	void LoadKey(const char *path);
 };

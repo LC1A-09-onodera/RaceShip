@@ -4,6 +4,7 @@
 #include <d3dcompiler.h>
 #include "../BaseDirectX/Input.h"
 #include "../imgui/ImguiControl.h"
+#include "../Camera/Camera.h"
 #pragma comment (lib, "d3dcompiler.lib")
 
 using namespace DirectX;
@@ -82,7 +83,6 @@ void PostEffect::Initialize(HLSLShader& shader)
 	srvDesc.Texture2D.MipLevels = 1;
 	for (int i = 0; i < PostEffect::texNum; i++)
 	{
-		//BaseDirectX::dev->CreateShaderResourceView(texBuff[0].Get(), &srvDesc, descHeapSRV->GetCPUDescriptorHandleForHeapStart());
 		BaseDirectX::dev->CreateShaderResourceView(renderTarget.texBuff[i].Get(), &srvDesc, CD3DX12_CPU_DESCRIPTOR_HANDLE(descHeapSRV->GetCPUDescriptorHandleForHeapStart(), i, BaseDirectX::dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)));
 	}
 
@@ -117,13 +117,22 @@ void PostEffect::Draw()
 		BaseDirectX::dev->CreateShaderResourceView(renderTarget.texBuff[tex].Get(), &srvDesc, descHeapSRV->GetCPUDescriptorHandleForHeapStart());
 	}
 	//ワールド行列更新
+	const XMFLOAT3& cameraPos = Cameras::camera.eye.v;
+	XMMATRIX matScale, matRot, matTrans;
+	matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
+	matRot = XMMatrixIdentity();
+	matRot *= XMMatrixRotationZ(XMConvertToRadians(rotation.z));
+	matRot *= XMMatrixRotationX(XMConvertToRadians(rotation.x));
+	matRot *= XMMatrixRotationY(XMConvertToRadians(rotation.y));
+	matTrans = XMMatrixTranslation(pos.x, pos.y, pos.z);
 	matWorld = XMMatrixIdentity();
-	matWorld *= XMMatrixRotationZ(rotation);
-	matWorld *= XMMatrixTranslationFromVector(position);
+	matWorld *= matScale;
+	matWorld *= matRot;
+	matWorld *= matTrans;
 	//転送
 	PostEffectConstBuffer* constMap = nullptr;
 	BaseDirectX::result = constBuff->Map(0, nullptr, (void**)&constMap);
-	constMap->mat = matWorld * common.matProjection;
+	constMap->mat = matWorld * BaseDirectX::matProjection;
 	XMFLOAT4 weight0 = { weights[0], weights[1] ,weights[2] ,weights[3] };
 	XMFLOAT4 weight1 = { weights[4], weights[5] ,weights[6] ,weights[7] };
 	constMap->weight0 = weight0;
@@ -253,7 +262,7 @@ void PostEffect::CreateGraphicsPipelineState(HLSLShader& shader)
 	gpipeline.SampleDesc.Count = 1;
 
 	//デスクリプタレンジ
-	CD3DX12_DESCRIPTOR_RANGE descRangeSRV[PostEffect::texNum];
+	//CD3DX12_DESCRIPTOR_RANGE descRangeSRV[PostEffect::texNum];
 	for (int i = 0; i < PostEffect::texNum; i++)
 	{
 		descRangeSRV[i].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, i);//テクスチャ1
@@ -343,10 +352,12 @@ void PostEffects::Draw()
 	}
 	else if (type == PostEffectType::Mosaic)
 	{
+		postMosaic.pos.x = 700;
 		postMosaic.Draw();
 	}
 	else if (type == PostEffectType::Blur)
 	{
+
 		postBlur.Draw();
 	}
 	else

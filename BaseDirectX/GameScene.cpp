@@ -95,18 +95,40 @@ void GameScene::Init()
 
 	seling.LoadModel();
 	seling.Init();
+	rSeling.LoadModel();
+	rSeling.Init();
 
 	VoiceReciver::StartUp();
 	EnemyModels::LoadModels();
+
+	waterFace.LoadModel(PostEffects::postNormal);
+	waterFace.Init();
+
+	world.CreateModel("SphereW", ShaderManager::playerShader);
+	world.each.scale = {40.0f, 40.0f, 40.0f};
+	rWorld.CreateModel("SphereW", ShaderManager::playerShader);
+	rWorld.each.scale = { 40.0f, 40.0f, 40.0f };
 }
 
 void GameScene::TitleUpdate()
 {
+	Cameras::camera.Update();
+	Cameras::rCamera.eye.v.x = Cameras::camera.eye.v.x;
+	Cameras::rCamera.eye.v.y = -Cameras::camera.eye.v.y;
+	Cameras::rCamera.eye.v.z = Cameras::camera.eye.v.z;
+	Cameras::rCamera.target = Cameras::camera.target;
+	Cameras::rCamera.Update();
+
 	seling.Update();
+	rSeling.Update();
+	waterFace.Update();
+
 	VoiceReciver::VoiceUDPUpdate();
 	ObjectParticles::Update();
 	LightUpdate();
 	Sound::Updete(Imgui::volume);
+	light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
+	LightUpdate();
 }
 
 void GameScene::SelectUpdate()
@@ -140,18 +162,31 @@ void GameScene::TitleDraw()
 {
 	//PostEffect‚ÌPreDraw
 	PostEffects::PreDraw();
-
-	seling.Draw();
+	//seling.Draw(true);
+	rSeling.seling.each.position = { -seling.seling.each.position.m128_f32[0], -seling.seling.each.position.m128_f32[1], seling.seling.each.position.m128_f32[2], 1.0f };
+	rSeling.seling.each.rotation.x = 180;
+	rSeling.Draw(true);
+	rWorld.each.rotation.x = 180;
+	rWorld.Update();
+	Draw3DObject(rWorld);
 	ObjectParticles::Draw();
-
+	
 	BaseDirectX::clearColor[0] = 0.0f;
 	BaseDirectX::clearColor[1] = 0.0f;
 	BaseDirectX::clearColor[2] = 0.0f;
 	BaseDirectX::clearColor[3] = 0.0f;
 	BaseDirectX::UpdateFront();
+	
 	//PostEffect‚ÌDraw
-	PostEffects::Draw();
-
+	//PostEffects::Draw();
+	seling.Draw(true);
+	world.each.rotation.y = 180;
+	world.Update();
+	Draw3DObject(world);
+	ObjectParticles::Draw();
+	XMVECTOR sample = {0, 0, 2.0f, 1.0};
+	waterFace.Draw(PostEffects::postNormal, sample/*seling.seling.each.position*/);
+	
 	PostEffects::PostDraw();
 
 	Imgui::DrawImGui();
