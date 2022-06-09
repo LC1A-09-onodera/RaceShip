@@ -83,4 +83,6 @@ public:
     static float CameraRotation;
     static float CameraHigh;
     static bool CameraControl;
+
+    static int useWaterNum;
 };

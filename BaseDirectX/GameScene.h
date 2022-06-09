@@ -66,7 +66,7 @@ public://ƒV[ƒ“‚Åg‚¤‚à‚Ì
 	Seling seling;
 	Seling rSeling;
 	WaterFace waterFace;
-
+	WaterFace normalWater;
 	Model world;
 	Model rWorld;
 };

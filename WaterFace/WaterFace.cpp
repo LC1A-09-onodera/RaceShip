@@ -2,9 +2,9 @@
 #include "../Shader/ShaderManager.h"
 #include "../Camera/Camera.h"
 
-void WaterFace::LoadModel(PostEffect& postEffect)
+void WaterFace::LoadModel(HLSLShader &useShader, PostEffect& postEffect)
 {
-	waterModel.CreateModel("Plane", ShaderManager::waterShader, postEffect);
+	waterModel.CreateModel("Plane", useShader, postEffect);
 }
 
 void WaterFace::Init()
