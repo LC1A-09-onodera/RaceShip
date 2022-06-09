@@ -6,6 +6,10 @@
 #include "../PostEffect/PostEffect.h"
 #include "../FBXObject/FBXObject.h"
 #include "../FbxLoader/FbxLoader.h"
+#include "../Player/Seling.h"
+#include "../Enemy/selingEnemy.h"
+#include "../Rewired/Rewired.h"
+
 enum GameSceneName { TITLE, SELECT, GAME, END, RESULT };
 
 class GameScene
@@ -55,4 +59,9 @@ public://ÉVÅ[ÉìÇ≈égÇ§Ç‡ÇÃ
 	PostEffect postWater;
 	PostEffect postMosaic;
 	Model sample;
+	EachInfo playerPos;
+	EachInfo rPlayerPos;
+
+	Seling seling;
+	
 };

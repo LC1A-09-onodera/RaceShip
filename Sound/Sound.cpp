@@ -9,6 +9,10 @@ void Sound::CreateVoice()
     BaseDirectX::result = XAudio2Create(&xAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
     BaseDirectX::result = xAudio2->CreateMasteringVoice(&masterVoice);
 }
+void Sound::Updete(float volume)
+{
+    masterVoice->SetVolume(volume);
+}
 void SoundLoad(const char *filename, SoundData &sound)
 {
     //ファイルオープン---------------
@@ -92,6 +96,19 @@ void SoundPlayOnce(SoundData &soundData)
     buf.pAudioData = soundData.pBuffer;
     buf.AudioBytes = soundData.bufferSize;
     buf.Flags = XAUDIO2_END_OF_STREAM;
+    BaseDirectX::result = soundData.pSourceVoice->SubmitSourceBuffer(&soundData.buf);
+    BaseDirectX::result = soundData.pSourceVoice->Start();
+}
+void SoundPlayLoop(SoundData& soundData)
+{
+    IXAudio2SourceVoice* pSourceVoice = nullptr;
+    BaseDirectX::result = Sound::xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
+    assert(SUCCEEDED(BaseDirectX::result));
+    XAUDIO2_BUFFER buf{};
+    buf.pAudioData = soundData.pBuffer;
+    buf.AudioBytes = soundData.bufferSize;
+    buf.Flags = XAUDIO2_END_OF_STREAM;
+    buf.LoopCount = XAUDIO2_LOOP_INFINITE;
     BaseDirectX::result = soundData.pSourceVoice->SubmitSourceBuffer(&soundData.buf);
     BaseDirectX::result = soundData.pSourceVoice->Start();
 }

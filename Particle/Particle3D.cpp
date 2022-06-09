@@ -996,14 +996,14 @@ void ParticleControl::Update()
 	
 	for (int i = 0; i < 10; i++)
 	{
-		numbers[i]->Update(Camera::eye.v, Camera::target.v, Camera::up.v);
+		numbers[i]->Update(Cameras::camera.eye.v, Cameras::camera.target.v, Cameras::camera.up.v);
 	}
 }
 
 void ParticleControl::Init()
 {
 	// 3Dパーティクル静的初期化
-	if (!ParticleManager::StaticInitialize(BaseDirectX::dev.Get(), window_width, window_height, Camera::eye.v, Camera::target.v, Camera::up.v))
+	if (!ParticleManager::StaticInitialize(BaseDirectX::dev.Get(), window_width, window_height, Cameras::camera.eye.v, Cameras::camera.target.v, Cameras::camera.up.v))
 	{
 		assert(0);
 	}

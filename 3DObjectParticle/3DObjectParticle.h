@@ -1,25 +1,26 @@
 #pragma once
 #include "../3DModel/Model.h"
 
-enum class ParticleType
-{
-	Exprotion,
-	Converge,
-	TITLE,
-	Swell,
-	Target,
-	Tornado,
-	Born,
-
-};
-
 class ObjectParticle : public Model
 {
 
 };
 class ObjectParticle3D
 {
+public:
+	enum ParticleType
+	{
+		Exprotion,
+		Converge,
+		TITLE,
+		Swell,
+		Target,
+		Tornado,
+		Born,
+		LinkStart,
 
+	};
+private:
 	const int Life = 120;
 
 	XMFLOAT3 speed;
@@ -44,6 +45,7 @@ public:
 	void InitTarget(XMFLOAT3 &emitter);
 	void InitTornado(XMFLOAT3 &emitter);
 	void InitBorn(XMFLOAT3 &emitter);
+	void InitLink();
 	void UpdateExprotion();
 	void UpdateConverge();
 	void UpdateTitle();
@@ -51,6 +53,7 @@ public:
 	void UpdateTarget();
 	void UpdateTornado();
 	void UpdateBorn();
+	void UpdateLink();
 	int time;
 };
 
@@ -60,7 +63,7 @@ public:
 	list<ObjectParticle3D> particles;
 	list<list<ObjectParticle3D>::iterator> deleteItr;
 	ObjectParticle object;
-	void Init(XMFLOAT3& emitter, int count, ParticleType type);
+	void Init(XMFLOAT3& emitter, int count, ObjectParticle3D::ParticleType type);
 	void Update();
 	void Draw(ObjectParticle& object);
 	void DeleteAllParticle();
@@ -71,8 +74,6 @@ class ObjectParticles
 {
 public:
 	static ObjectParticleInfo triangle;
-	static ObjectParticleInfo othello;
-	static ObjectParticleInfo frame;
 	static void LoadModels();
 	static void Update();
 	static void Draw();

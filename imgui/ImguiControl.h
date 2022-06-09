@@ -75,4 +75,7 @@ public:
     static std::string ipv4Name;
     static void GetTest(const char *st) {test = st;}
     static void GetIp(const char *st) {ipv4Name = st;}
+
+    static float volume;
+
 };

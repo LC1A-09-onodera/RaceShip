@@ -3,15 +3,14 @@
 #include "BaseDirectX.h"
 #include "../WindowsAPI/WinAPI.h"
 #include "Input.h"
-#include "../Sound/Sound.h"
 #include "viewport.h"
 #include "../Particle/Particle3D.h"
 #include "../imgui/ImguiControl.h"
-#include "../Sound/Sound.h"
 #include "vec3.h"
 #include "../FBXObject/FBXObject.h"
 #include "../Shader/ShaderManager.h"
 #include "../3DObjectParticle/3DObjectParticle.h"
+#include "../Sound/Sound.h"
 
 GameScene::GameScene()
 {
@@ -64,10 +63,15 @@ void GameScene::Init()
 	//SRVのアドレス確保
 	BaseDirectX::GetAdress();
 	//カメラ初期化
-	Camera::Init();
-	Camera::eye = { 0, 0, -15.0 };
-	Camera::target = { 0, 0, 0 };
-	Camera::Update();
+	Cameras::camera.Init();
+	Cameras::camera.eye = { 0, 10, -15.0f };
+	Cameras::camera.target = { 0, 0, 0 };
+	Cameras::camera.Update();
+
+	Cameras::rCamera.Init();
+	Cameras::rCamera.eye = {0, 0, -15.0f};
+	Cameras::rCamera.target = {0, 0, 0};
+	Cameras::rCamera.Update();
 	//Imguiの初期化
 	Imgui::Init();
 	//ライトの初期化
@@ -87,18 +91,22 @@ void GameScene::Init()
 	Model::SetLight(light);
 	//ポストエフェクトの初期化
 	PostEffects::Init();
+	ObjectParticles::LoadModels();
 
-	sample.CreateModel("maru", ShaderManager::playerShader, true);
-	VoiceReciver::port = 50008;
+	seling.LoadModel();
+	seling.Init();
+
 	VoiceReciver::StartUp();
+	EnemyModels::LoadModels();
 }
 
 void GameScene::TitleUpdate()
 {
-	
+	seling.Update();
 	VoiceReciver::VoiceUDPUpdate();
-	sample.Update();
+	ObjectParticles::Update();
 	LightUpdate();
+	Sound::Updete(Imgui::volume);
 }
 
 void GameScene::SelectUpdate()
@@ -124,7 +132,7 @@ void GameScene::EndUpdate()
 	if (Input::KeyTrigger(DIK_SPACE) || directInput->IsButtonPush(DirectInput::ButtonKind::Button01))
 	{
 		SceneNum = TITLE;
-		Camera::Init();
+		Cameras::camera.Init();
 	}
 }
 
@@ -132,7 +140,10 @@ void GameScene::TitleDraw()
 {
 	//PostEffectのPreDraw
 	PostEffects::PreDraw();
-	Draw3DObject(sample);
+
+	seling.Draw();
+	ObjectParticles::Draw();
+
 	BaseDirectX::clearColor[0] = 0.0f;
 	BaseDirectX::clearColor[1] = 0.0f;
 	BaseDirectX::clearColor[2] = 0.0f;
@@ -140,6 +151,7 @@ void GameScene::TitleDraw()
 	BaseDirectX::UpdateFront();
 	//PostEffectのDraw
 	PostEffects::Draw();
+
 	PostEffects::PostDraw();
 
 	Imgui::DrawImGui();
