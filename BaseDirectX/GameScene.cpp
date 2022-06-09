@@ -69,8 +69,8 @@ void GameScene::Init()
 	Cameras::camera.Update();
 
 	Cameras::rCamera.Init();
-	Cameras::rCamera.eye = {0, 0, -15.0f};
-	Cameras::rCamera.target = {0, 0, 0};
+	Cameras::rCamera.eye = { 0, 0, -15.0f };
+	Cameras::rCamera.target = { 0, 0, 0 };
 	Cameras::rCamera.Update();
 	//ImguiÇÃèâä˙âª
 	Imgui::Init();
@@ -101,11 +101,12 @@ void GameScene::Init()
 	VoiceReciver::StartUp();
 	EnemyModels::LoadModels();
 
-	waterFace.LoadModel(PostEffects::postNormal);
+	waterFace.LoadModel(ShaderManager::waterShader, PostEffects::postNormal);
 	waterFace.Init();
-
+	normalWater.LoadModel(ShaderManager::normalPlaneShader, PostEffects::postNormal);
+	normalWater.Init();
 	world.CreateModel("SphereW", ShaderManager::playerShader);
-	world.each.scale = {40.0f, 40.0f, 40.0f};
+	world.each.scale = { 40.0f, 40.0f, 40.0f };
 	rWorld.CreateModel("SphereW", ShaderManager::playerShader);
 	rWorld.each.scale = { 40.0f, 40.0f, 40.0f };
 }
@@ -122,7 +123,7 @@ void GameScene::TitleUpdate()
 	seling.Update();
 	rSeling.Update();
 	waterFace.Update();
-
+	normalWater.Update();
 	VoiceReciver::VoiceUDPUpdate();
 	ObjectParticles::Update();
 	LightUpdate();
@@ -146,7 +147,7 @@ void GameScene::GameUpdate()
 
 void GameScene::ResultUpdate()
 {
-	
+
 }
 
 void GameScene::EndUpdate()
@@ -170,13 +171,13 @@ void GameScene::TitleDraw()
 	rWorld.Update();
 	Draw3DObject(rWorld);
 	ObjectParticles::Draw();
-	
+
 	BaseDirectX::clearColor[0] = 0.0f;
 	BaseDirectX::clearColor[1] = 0.0f;
 	BaseDirectX::clearColor[2] = 0.0f;
 	BaseDirectX::clearColor[3] = 0.0f;
 	BaseDirectX::UpdateFront();
-	
+
 	//PostEffectÇÃDraw
 	//PostEffects::Draw();
 	seling.Draw(true);
@@ -184,9 +185,15 @@ void GameScene::TitleDraw()
 	world.Update();
 	Draw3DObject(world);
 	ObjectParticles::Draw();
-	XMVECTOR sample = {0, 0, 2.0f, 1.0};
-	waterFace.Draw(PostEffects::postNormal, sample/*seling.seling.each.position*/);
-	
+	XMVECTOR sample = { 0, 0, 2.0f, 1.0 };
+	if (Imgui::useWaterNum == 0)
+	{
+		waterFace.Draw(PostEffects::postNormal, sample/*seling.seling.each.position*/);
+	}
+	else if (Imgui::useWaterNum == 1)
+	{
+		normalWater.Draw(PostEffects::postNormal, sample/*seling.seling.each.position*/);
+	}
 	PostEffects::PostDraw();
 
 	Imgui::DrawImGui();

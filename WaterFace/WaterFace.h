@@ -44,7 +44,7 @@ class WaterFace
 public:
 	WaterFaceModel waterModel;
 
-	void LoadModel(PostEffect &postEffect);
+	void LoadModel(HLSLShader &useShader, PostEffect &postEffect);
 	void Init();
 	void Update();
 	void Draw(PostEffect& postEffect, XMVECTOR &selingPos);

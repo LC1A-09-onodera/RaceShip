@@ -95,5 +95,8 @@ float4 main(VSOutput input) : SV_TARGET
 	//texcolor.a = 0.5f;
 	result = shadecolor * texcolor;
 	result.a = 1.0f;
+	result.r += 0.3f;
+	result.g += 0.3f;
+	result.b += 0.3f;
 	return result;
 }

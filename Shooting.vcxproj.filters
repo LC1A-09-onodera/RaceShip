@@ -429,5 +429,6 @@
     <None Include="Resource\HLSL\PostEffectTest.hlsli" />
     <None Include="Resource\HLSL\FBX.hlsli" />
     <None Include="Resource\HLSL\Sample.hlsli" />
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

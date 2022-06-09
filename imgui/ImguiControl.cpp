@@ -21,6 +21,7 @@ float Imgui::CameraR = 25.0f;
 float Imgui::CameraRotation = 270.0f;
 float Imgui::CameraHigh = 0.2f;
 bool Imgui::CameraControl = true;
+int Imgui::useWaterNum = 0;
 ComPtr<ID3D12DescriptorHeap> Imgui::CreateDescrriptorHeapForImgui()
 {
     ComPtr<ID3D12DescriptorHeap> ret;
@@ -145,6 +146,20 @@ void Imgui::EachInfo()
         ImGui::Text(test.c_str());
         ImGui::Text(ipv4Name.c_str());
         ImGui::SliderFloat("volume", &volume, 0, 100.0f);
+        ImGui::InputInt("WaterFaceType", &useWaterNum, 1, 1);
+        if (useWaterNum == 0)
+        {
+            ImGui::Text("water");
+        }
+        else if (useWaterNum == 1)
+        {
+            ImGui::Text("Normal");
+        }
+        else if (useWaterNum == 2)
+        {
+            ImGui::Text("notiong");
+        }
+
     }
     else if (tab == ImguiType::CameraInfo)
     {
