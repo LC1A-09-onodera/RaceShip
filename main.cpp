@@ -30,7 +30,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			break;
 		}
 	}
-
 	Sound::xAudio2.Reset();
 	// ウィンドウクラスを登録解除
 	WindowsAPI::Clear();

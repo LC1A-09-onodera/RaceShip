@@ -13,8 +13,8 @@ public:
 //画面サイズの変更とかもろもろ
 	static void ViewPortUpdate()
 	{
-        viewport.Width = window_width;
-        viewport.Height = window_height;
+        viewport.Width = static_cast<float>(window_width);
+        viewport.Height = static_cast<float>(window_height);
         viewport.TopLeftX = 0.0;
         viewport.TopLeftY = 0.0;
         viewport.MinDepth = 0.0f;
@@ -27,9 +27,9 @@ class Scissorrect
 public:
     static void ScissorrectUpdate()
     {
-        scissorrect.left = 0.0;
+        scissorrect.left = static_cast<LONG>(0.0f);
         scissorrect.right = scissorrect.left + window_width;
-        scissorrect.top = 0.0;
+        scissorrect.top = static_cast<LONG>(0.0f);
         scissorrect.bottom = scissorrect.top + window_height;
     }
 };

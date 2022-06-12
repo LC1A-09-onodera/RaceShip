@@ -29,11 +29,11 @@ XMFLOAT3 ParticleManager::up = { 0, 1, 0 };
 XMMATRIX ParticleManager::matBillboard = XMMatrixIdentity();
 XMMATRIX ParticleManager::matBillboardY = XMMatrixIdentity();
 
-ParticleIndi *ParticleControl::attackEffect = nullptr;
-ParticleIndi *ParticleControl::expEffect = nullptr;
-ParticleIndi *ParticleControl::flashEffect = nullptr;
-ParticleIndi * ParticleControl::rockOnEffect = nullptr;
-ParticleIndi* ParticleControl::numbers[10];
+std::shared_ptr<ParticleIndi> ParticleControl::attackEffect = nullptr;
+std::shared_ptr<ParticleIndi> ParticleControl::expEffect = nullptr;
+std::shared_ptr<ParticleIndi> ParticleControl::flashEffect = nullptr;
+std::shared_ptr<ParticleIndi>  ParticleControl::rockOnEffect = nullptr;
+std::shared_ptr<ParticleIndi> ParticleControl::numbers[10];
 
 bool ParticleManager::StaticInitialize(ID3D12Device *device,  int window_width, int window_height,XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up)
 {
@@ -486,7 +486,7 @@ bool ParticleIndi::InitializeGraphicsPipeline()
 	descRangeSRV.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0); // t0 レジスタ
 
 	// ルートパラメータ
-	CD3DX12_ROOT_PARAMETER rootparams[2];
+	CD3DX12_ROOT_PARAMETER rootparams[2] = {};
 	rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 	rootparams[1].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
 
@@ -503,7 +503,7 @@ bool ParticleIndi::InitializeGraphicsPipeline()
 	// ルートシグネチャの生成
 	result = ParticleManager::device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
 	if (FAILED(result)) {
-		return result;
+		assert(0);
 	}
 
 	gpipeline.pRootSignature = rootsignature.Get();
@@ -512,7 +512,7 @@ bool ParticleIndi::InitializeGraphicsPipeline()
 	result = ParticleManager::device->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelinestate));
 
 	if (FAILED(result)) {
-		return result;
+		assert(0);
 	}
 
 	return true;
@@ -612,7 +612,7 @@ bool ParticleIndi::LoadTexture(const wchar_t *texName)
 		texName, WIC_FLAGS_NONE,
 		&metadata, scratchImg);
 	if (FAILED(result)) {
-		return result;
+		assert(0);
 	}
 
 	const Image *img = scratchImg.GetImage(0, 0, 0); // 生データ抽出
@@ -635,7 +635,7 @@ bool ParticleIndi::LoadTexture(const wchar_t *texName)
 		nullptr,
 		IID_PPV_ARGS(&texbuff));
 	if (FAILED(result)) {
-		return result;
+		assert(0);
 	}
 
 	// テクスチャバッファにデータ転送
@@ -647,7 +647,7 @@ bool ParticleIndi::LoadTexture(const wchar_t *texName)
 		(UINT)img->slicePitch // 1枚サイズ
 	);
 	if (FAILED(result)) {
-		return result;
+		assert(0);
 	}
 
 	// シェーダリソースビュー作成
@@ -702,11 +702,11 @@ void ParticleIndi::StartParticle( const XMFLOAT3 emitterPosition, float startSiz
 		/*vel.x = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
 		vel.y = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
 		vel.z = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;*/
-		vel.x = rand() % 10;
-		vel.x = -vel.x / 100.0f * 1.4f;
-		vel.y = rand() % 15;
-		vel.y = vel.y / 150.0f * 1.4f;
-		vel.z = 0;
+		vel.x = static_cast<float>(rand() % 10);
+		vel.x = static_cast<float>(-vel.x / 100.0f * 1.4f);
+		vel.y = static_cast<float>(rand() % 15);
+		vel.y = static_cast<float>(vel.y / 150.0f * 1.4f);
+		vel.z = 0.0f;
 
 		XMFLOAT3 acc{};//加速度
 		const float rnd_acc = 0.001f;
@@ -749,7 +749,7 @@ void ParticleIndi::ContinueParticle(const DirectX::XMFLOAT3 emitterPosition, flo
 	pos = emitterPosition;
 	pos.y -= 1;
 	const float rnd_acc = 0.001f;
-	acc.y = rand() % 3 + 1;
+	acc.y = static_cast<float>(rand() % 3 + 1);
 	acc.y = acc.y / 80.0f;
 	Add(life, pos, vel, acc, startSize, endSize);
 }
@@ -779,11 +779,11 @@ void ParticleIndi::JumpParticle(const DirectX::XMFLOAT3 emitterPosition, float s
 	for (int i = 0; i < count; i++)
 	{
 		pos = emitterPosition;
-		vel.y = rand() % 3 / 40.0f;
-		acc.x = ((rand() % 4) - 2.0f) / 500.0f;
-		acc.y = rand() % 2;
-		acc.y = acc.y / (float)(rand() % 10);
-		acc.y = acc.y / 80.0f;
+		vel.y = static_cast<float>(rand() % 3 / 40.0f);
+		acc.x = static_cast<float>((((rand() % 4) - 2.0f) / 500.0f));
+		acc.y = static_cast<float>(rand() % 2);
+		acc.y = static_cast<float>(acc.y / (rand() % 10));
+		acc.y = static_cast<float>(acc.y / 80.0f);
 		Add(life, pos, vel, acc, startSize, endSize);
 	}
 }
@@ -797,8 +797,8 @@ void ParticleIndi::LuckParticle(const DirectX::XMFLOAT3 emitterPosition, float s
 	for (int i = 0; i < count; i++)
 	{
 		pos = emitterPosition;
-		vel.z = cosf((int)i * (360 / count) * 3.141592 / 180.0f);
-		vel.y = sinf((int)i * (360 / count) * 3.141592 / 180.0f);
+		vel.z = cosf((int)i * (360.0f / count) * 3.141592f / 180.0f);
+		vel.y = sinf((int)i * (360.0f / count) * 3.141592f / 180.0f);
 		vel.z = (vel.z * (rand() % 3 + 0.1f)) / 10.0f;
 		vel.y = (vel.y * (rand() % 3 + 0.1f)) / 10.0f;
 
@@ -860,8 +860,8 @@ void ParticleIndi::UpParticle(const DirectX::XMFLOAT3 emitterPosition, float sta
 	{
 		pos = emitterPosition;
 		
-		z = cosf(i * (360 / count) * 3.141592 / 180);
-		y = sinf(i * (360 / count) * 3.141592 / 180);
+		z = cosf(i * (360.0f / count) * 3.141592f / 180.0f);
+		y = sinf(i * (360.0f / count) * 3.141592f / 180.0f);
 		
 		pos.z += z * life;
 		pos.y += y * life;
@@ -885,7 +885,7 @@ void ParticleIndi::RainParticle(const DirectX::XMFLOAT3 emitterPosition, float s
 	for (int i = 0;i < count;i++)
 	{
 		pos = emitterPosition;
-		pos.z = rand() % 100 - 50;
+		pos.z = static_cast<float>(rand() % 100 - 50);
 		vel.y = rand() % 3 + 0.2f;
 		Add(life, pos, vel, acc, startSize, endSize);
 	}
@@ -899,8 +899,8 @@ void ParticleIndi::BaffParticle(const DirectX::XMFLOAT3 emitterPosition, float s
 	for (int i = 0; i < count; i++)
 	{
 		pos = emitterPosition;
-		z = cosf(i * (360 / count) * 3.141592 / 180);
-		y = sinf(i * (360 / count) * 3.141592 / 180);
+		z = cosf(i * (360.0f / count) * 3.141592f / 180.0f);
+		y = sinf(i * (360.0f / count) * 3.141592f / 180.0f);
 
 		pos.z += z * 4.0f;
 
@@ -926,11 +926,11 @@ void ParticleIndi::StarParticle(const DirectX::XMFLOAT3 emitterPosition, float s
 
 	for (int i = 0; i < count; i++)
 	{
-		float randam = rand();
+		int randam = rand();
 		pos = emitterPosition;
-		vel.z = (int)randam % 3 - 1 + ((int)randam % 10 / 10) + ((int)randam % 10 / 100);
-		vel.y = (int)randam % 3 + ((int)randam % 10 / 10) + ((int)randam % 10 / 100);
-		acc.y = -((int)randam % 10 / 10);
+		vel.z = static_cast<float>(randam % 3 - 1 + (randam % 10 / 10) + (randam % 10 / 100));
+		vel.y = static_cast<float>(randam % 3 + (randam % 10 / 10) + (randam % 10 / 100));
+		acc.y = -static_cast<float>((randam % 10 / 10));
 	}
 	Add(life, pos, vel, acc, startSize, endSize);
 }
@@ -940,7 +940,7 @@ void ParticleIndi::BackParticle(const DirectX::XMFLOAT3 emitterPosition, float s
 	XMFLOAT3 vel{};
 	XMFLOAT3 acc{};
 
-	float randam = rand();
+	float randam = static_cast<float>(rand());
 	pos = emitterPosition;
 	pos.z += 200;
 	pos.x += 10;
@@ -957,21 +957,21 @@ void ParticleIndi::FlashParticle(const DirectX::XMFLOAT3 emitterPosition, float 
 	XMFLOAT3 vel{};
 	XMFLOAT3 acc{};
 
-	float randam = rand();
+	float randam = static_cast<float>(rand());
 	pos = emitterPosition;
 	vel.x = 1.0f;
 	acc.x = -0.01f;
 	Add(life, pos, vel, acc, startSize, endSize);
 	vel.x = -1.0f;
-	acc.x = 0.01;
+	acc.x = 0.01f;
 	Add(life, pos, vel, acc, startSize, endSize);
 	vel.x = 0.0f;
 	acc.x = 0.0f;
 	vel.y = -1.0f;
-	acc.y = 0.01;
+	acc.y = 0.01f;
 	Add(life, pos, vel, acc, startSize, endSize);
 	vel.y = 1.0f;
-	acc.y = -0.01;
+	acc.y = -0.01f;
 	Add(life, pos, vel, acc, startSize, endSize);
 }
 
@@ -981,14 +981,7 @@ ParticleControl::ParticleControl()
 
 ParticleControl::~ParticleControl()
 {
-	delete(attackEffect);
-	delete(expEffect);
-	delete(flashEffect);
-	delete(rockOnEffect);
-	for (int i = 0; i < 10; i++)
-	{
-		delete(numbers[i]);
-	}
+	
 }
 
 void ParticleControl::Update()
@@ -1008,16 +1001,16 @@ void ParticleControl::Init()
 		assert(0);
 	}
 	
-	numbers[0] = numbers[0]->Create(L"Resource/Img/number_0.png");
-	numbers[1] = numbers[0]->Create(L"Resource/Img/number_1.png");
-	numbers[2] = numbers[0]->Create(L"Resource/Img/number_2.png");
-	numbers[3] = numbers[0]->Create(L"Resource/Img/number_3.png");
-	numbers[4] = numbers[0]->Create(L"Resource/Img/number_4.png");
-	numbers[5] = numbers[0]->Create(L"Resource/Img/number_5.png");
-	numbers[6] = numbers[0]->Create(L"Resource/Img/number_6.png");
-	numbers[7] = numbers[0]->Create(L"Resource/Img/number_7.png");
-	numbers[8] = numbers[0]->Create(L"Resource/Img/number_8.png");
-	numbers[9] = numbers[0]->Create(L"Resource/Img/number_9.png");
+	numbers[0].reset(numbers[0]->Create(L"Resource/Img/number_0.png"));
+	numbers[1].reset(numbers[0]->Create(L"Resource/Img/number_1.png"));
+	numbers[2].reset(numbers[0]->Create(L"Resource/Img/number_2.png"));
+	numbers[3].reset(numbers[0]->Create(L"Resource/Img/number_3.png"));
+	numbers[4].reset(numbers[0]->Create(L"Resource/Img/number_4.png"));
+	numbers[5].reset(numbers[0]->Create(L"Resource/Img/number_5.png"));
+	numbers[6].reset(numbers[0]->Create(L"Resource/Img/number_6.png"));
+	numbers[7].reset(numbers[0]->Create(L"Resource/Img/number_7.png"));
+	numbers[8].reset(numbers[0]->Create(L"Resource/Img/number_8.png"));
+	numbers[9].reset(numbers[0]->Create(L"Resource/Img/number_9.png"));
 	for (int i = 0; i < 10; i++)
 	{
 		numbers[i]->alpha = 0.0f;
@@ -1028,6 +1021,6 @@ void ParticleControl::Draw()
 {
 	for (int i = 0; i < 10; i++)
 	{
-		ParticleDraw(BaseDirectX::cmdList.Get(), numbers[i]);
+		ParticleDraw(BaseDirectX::cmdList.Get(), numbers[i].get());
 	}
 }

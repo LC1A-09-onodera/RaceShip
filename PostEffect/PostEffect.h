@@ -29,7 +29,7 @@ public:
 	static float effectType;
 	ComPtr<ID3D12DescriptorHeap> descHeapSRV;
 	//デスクリプタレンジ
-	CD3DX12_DESCRIPTOR_RANGE descRangeSRV[1/*PostEffect::texNum*/];
+	CD3DX12_DESCRIPTOR_RANGE descRangeSRV[1] = {};
 	//震度バッファ
 	ComPtr<ID3D12Resource> depthBuff;
 	//DST用デスクリプタヒープ
@@ -38,7 +38,7 @@ public:
 	ComPtr<ID3D12RootSignature> rootSignature;
 
 	static const int NumWeight = 8;
-	float weights[NumWeight];
+	float weights[NumWeight] = {};
 };
 
 

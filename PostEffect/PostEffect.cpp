@@ -198,7 +198,7 @@ void PostEffect::PreDraw()
 	{
 		BaseDirectX::cmdList->ClearRenderTargetView(rtvH[i], renderTarget.clearColor, 0, nullptr);
 	}
-	BaseDirectX::cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0.0f, 0, nullptr);
+	BaseDirectX::cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 }
 
 void PostEffect::PostDraw()
@@ -267,7 +267,7 @@ void PostEffect::CreateGraphicsPipelineState(HLSLShader& shader)
 	{
 		descRangeSRV[i].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, i);//テクスチャ1
 	}
-	CD3DX12_ROOT_PARAMETER rootparams[PostEffect::texNum + 1];
+	CD3DX12_ROOT_PARAMETER rootparams[PostEffect::texNum + 1]{};
 	rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);//定数バッファビューとして初期化
 	for (int i = 1; i <= PostEffect::texNum; i++)
 	{

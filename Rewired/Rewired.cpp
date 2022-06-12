@@ -41,7 +41,7 @@ bool Rewired::GetKey()
 	}
 	for (auto padItr = padKeys.begin(); padItr != padKeys.end(); ++padItr)
 	{
-		if (directInput->IsButtonDown(*padItr))
+		if (Input::directInput->IsButtonDown(*padItr))
 		{
 			return true;
 		}
@@ -60,7 +60,7 @@ bool Rewired::GetKeyDown()
 	}
 	for (auto padItr = padKeys.begin(); padItr != padKeys.end(); ++padItr)
 	{
-		if (directInput->IsButtonPush(*padItr))
+		if (Input::directInput->IsButtonPush(*padItr))
 		{
 			return true;
 		}
@@ -79,7 +79,7 @@ bool Rewired::GetKeyUp()
 	}
 	for (auto padItr = padKeys.begin(); padItr != padKeys.end(); ++padItr)
 	{
-		if (directInput->IsButtonUp(*padItr))
+		if (Input::directInput->IsButtonUp(*padItr))
 		{
 			return true;
 		}

@@ -10,8 +10,8 @@
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
 
-static IDirectInput8* dinput = nullptr;
-static IDirectInputDevice8* devkeyboard = nullptr;
+
+
 static BYTE keys[256] = {};
 static BYTE oldkeys[256] = {};
 static LPDIRECTINPUT8 g_lpDI;
@@ -20,7 +20,7 @@ static DIDEVCAPS g_diDevCaps;
 static POINT mousePos{};
 static bool mouseInput[10] = { false, false, false, false , false , false , false , false , false , false };
 static bool oldMouseInput[10] = { false,false, false , false , false , false , false , false , false , false };
-static DirectInput* directInput = DirectInput::GetInstance();/////////////////////
+
 
 enum class KeyCode
 {
@@ -85,6 +85,10 @@ static const char MouseCode[] = "LButton\0RButton\0\0";
 class Input
 {
 public:
+	static IDirectInput8 *dinput;
+	static IDirectInputDevice8 *devkeyboard;
+	static DirectInput *directInput;/////////////////////
+	static void Init();
 	static void Update();
 
 	static void KeySet(WNDCLASSEX w, HWND hwnd);

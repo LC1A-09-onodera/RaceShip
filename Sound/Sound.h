@@ -23,7 +23,7 @@ struct SoundData
 {
 	~SoundData();
 	WAVEFORMATEX wfex;
-	BYTE *pBuffer;
+	std::shared_ptr<BYTE> pBuffer;
 	unsigned int bufferSize;
 	IXAudio2SourceVoice *pSourceVoice;
 	XAUDIO2_BUFFER buf{};

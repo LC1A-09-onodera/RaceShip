@@ -70,6 +70,7 @@ public:
 	{
 		LPDIRECTINPUTDEVICE8* GamePadDevice;
 		int FindCount;
+		~DeviceEnumParameter();
 	};
 private:
 	// コンストラクタをprivateにする

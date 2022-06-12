@@ -20,7 +20,7 @@ GameScene::GameScene()
 GameScene::~GameScene()
 {
 	VoiceReciver::EndRecive();
-	delete(light);
+	
 }
 
 void GameScene::SceneManageUpdateAndDraw()
@@ -86,9 +86,9 @@ void GameScene::Init()
 	FBXObject::SetDevice(BaseDirectX::dev.Get());
 	FBXObject::CreateGraphicsPipeline();
 	//ライト初期化
-	light = Light::Create();
+	light.reset(Light::Create());
 	//モデルすべてにライトを適用
-	Model::SetLight(light);
+	Model::SetLight(light.get());
 	//ポストエフェクトの初期化
 	PostEffects::Init();
 	ObjectParticles::LoadModels();
@@ -152,7 +152,7 @@ void GameScene::ResultUpdate()
 
 void GameScene::EndUpdate()
 {
-	if (Input::KeyTrigger(DIK_SPACE) || directInput->IsButtonPush(DirectInput::ButtonKind::Button01))
+	if (Input::KeyTrigger(DIK_SPACE) || Input::directInput->IsButtonPush(DirectInput::ButtonKind::Button01))
 	{
 		SceneNum = TITLE;
 		Cameras::camera.Init();

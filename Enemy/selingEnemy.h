@@ -23,10 +23,10 @@ class Bullet
 {
 public:
 	EachInfo bulletEach;
-	XMFLOAT3 direction;
-	XMFLOAT3 pos;
-	bool isActive;
-	int life;
+	XMFLOAT3 direction = {0, 0, 0};
+	XMFLOAT3 pos = {0, 0, 0};
+	bool isActive = false;
+	int life = 0;
 	static const int lifemax = 180;
 	void Init();
 	void Update(XMFLOAT3& shieldPos, bool isShieldActive);

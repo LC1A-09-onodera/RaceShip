@@ -171,11 +171,11 @@ void Seling::ShieldUpdate()
 	easeTime += 0.05f;
 	if (easeTime <= 1.0f)
 	{
-		shieldModel.each.scale = EaseInQuad(scaleStart, scaleEnd, easeTime);
+		shieldModel.each.scale = ShlomonMath::EaseInQuad(scaleStart, scaleEnd, easeTime);
 	}
 	else
 	{
-		shieldModel.each.scale = EaseInQuad(scaleStart, scaleEnd, 1.0f);
+		shieldModel.each.scale = ShlomonMath::EaseInQuad(scaleStart, scaleEnd, 1.0f);
 	}
 	if (shieldTime <= 0)
 	{

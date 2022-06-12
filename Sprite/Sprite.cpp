@@ -112,7 +112,7 @@ void Sprite::CreateSprite(const wchar_t* graph, XMFLOAT3 position, ComPtr<ID3D12
     ConstBufferDataSP *constMap = nullptr;
     BaseDirectX::result = constBuff->Map(0, nullptr, (void **)&constMap);
     constMap->color = XMFLOAT4(1, 1, 1, 1);
-    constMap->mat = XMMatrixOrthographicOffCenterLH(0.0f, window_width, window_height, 0.0f, 0.0f, 1.0f);
+    constMap->mat = XMMatrixOrthographicOffCenterLH(0.0f, static_cast<float>(window_width), static_cast<float>(window_height), 0.0f, 0.0f, 1.0f);
     constBuff->Unmap(0, nullptr);
 }
 
@@ -224,7 +224,7 @@ void Sprite::CreateSprite(Tex tex, XMFLOAT3 position, ComPtr<ID3D12Resource> tex
     ConstBufferDataSP* constMap = nullptr;
     BaseDirectX::result = constBuff->Map(0, nullptr, (void**)&constMap);
     constMap->color = XMFLOAT4(1, 1, 1, 1);
-    constMap->mat = XMMatrixOrthographicOffCenterLH(0.0f, window_width, window_height, 0.0f, 0.0f, 1.0f);
+    constMap->mat = XMMatrixOrthographicOffCenterLH(0.0f, static_cast<float>(window_width), static_cast<float>(window_height), 0.0f, 0.0f, 1.0f);
     constBuff->Unmap(0, nullptr);
 }
 
@@ -340,7 +340,7 @@ void Sprite::ChangeSize(float wid, float hei)
     ConstBufferDataSP *constMap = nullptr;
     BaseDirectX::result = constBuff->Map(0, nullptr, (void **)&constMap);
     constMap->color = XMFLOAT4(1, 1, 1, 1);
-    constMap->mat = XMMatrixOrthographicOffCenterLH(0.0f, window_width, window_height, 0.0f, 0.0f, 1.0f);
+    constMap->mat = XMMatrixOrthographicOffCenterLH(0.0f, static_cast<float>(window_width), static_cast<float>(window_height), 0.0f, 0.0f, 1.0f);
     constBuff->Unmap(0, nullptr);
 }
 
@@ -411,6 +411,6 @@ void Sprite::ChangeSizeOther(float wid, float hei)
     ConstBufferDataSP* constMap = nullptr;
     BaseDirectX::result = constBuff->Map(0, nullptr, (void**)&constMap);
     constMap->color = XMFLOAT4(1, 1, 1, 1);
-    constMap->mat = XMMatrixOrthographicOffCenterLH(0.0f, window_width, window_height, 0.0f, 0.0f, 1.0f);
+    constMap->mat = XMMatrixOrthographicOffCenterLH(0.0f, static_cast<float>(window_width), static_cast<float>(window_height), 0.0f, 0.0f, 1.0f);
     constBuff->Unmap(0, nullptr);
 }

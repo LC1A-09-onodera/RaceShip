@@ -169,13 +169,13 @@ public:
 	// テクスチャバッファ
 	ComPtr<ID3D12Resource> texbuff;
 	// 頂点バッファビュー
-	D3D12_VERTEX_BUFFER_VIEW vbView;
+	D3D12_VERTEX_BUFFER_VIEW vbView = {};
 	// 頂点データ配列
 	VertexPos vertices[ParticleManager::vertexCount];
 	//パーティクルのコンテナ
 	std::forward_list<Particle> particles;
 	// デスクリプタサイズ
-	UINT descriptorHandleIncrementSize;
+	UINT descriptorHandleIncrementSize = 0;
 
 	//消滅しないためのフラグ
 	bool isUI = false;
@@ -192,9 +192,9 @@ public:
 	// ローカル座標
 	DirectX::XMFLOAT3 position = { 0,0,0 };
 	// ローカルワールド変換行列
-	DirectX::XMMATRIX matWorld;
+	DirectX::XMMATRIX matWorld = {};
 	// 親オブジェクト
-	ParticleManager *parent = nullptr;
+	std::shared_ptr<ParticleManager> parent = nullptr;
 	// シェーダリソースビューのハンドル(CPU)
 	CD3DX12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV;
 	// シェーダリソースビューのハンドル(CPU)
@@ -327,11 +327,11 @@ private:
 public:
 	ParticleControl(const ParticleControl &obj) = delete;
 	ParticleControl &operator=(const ParticleControl &obj) = delete;
-	static ParticleIndi *attackEffect;
-	static ParticleIndi *expEffect;
-	static ParticleIndi *flashEffect;
-	static ParticleIndi *rockOnEffect;
-	static ParticleIndi *numbers[10];
+	static std::shared_ptr<ParticleIndi> attackEffect;
+	static std::shared_ptr<ParticleIndi> expEffect;
+	static std::shared_ptr<ParticleIndi> flashEffect;
+	static std::shared_ptr<ParticleIndi> rockOnEffect;
+	static std::shared_ptr<ParticleIndi> numbers[10];
 	static void Update();
 	static void Init();
 	static void Draw();

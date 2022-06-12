@@ -177,12 +177,12 @@ void Camera::QuaternionRotation(const float& RightAngle, const float& UpAngle)
 		cameraRightAngle += UpAngle;
 	}
 
-	if (directInput->rightStickX() > 0 || Input::Key(DIK_RIGHT))
+	if (Input::directInput->rightStickX() > 0 || Input::Key(DIK_RIGHT))
 	{
 		cameraRightAngle = -ROT_UNIT;
 	}
 
-	if (directInput->rightStickX() < 0 || Input::Key(DIK_LEFT))
+	if (Input::directInput->rightStickX() < 0 || Input::Key(DIK_LEFT))
 	{
 		cameraRightAngle = ROT_UNIT;
 	}
@@ -292,7 +292,7 @@ XMFLOAT3 Camera::GetMousePosition()
 	//スクリーン系
 	POINT mouse = WindowsAPI::GetMousePos();
 	XMFLOAT2 mouseFloat;
-	mouseFloat = XMFLOAT2(mouse.x, mouse.y);
+	mouseFloat = XMFLOAT2(static_cast<float>(mouse.x), static_cast<float>(mouse.y));
 	//クリップ系
 	mouseFloat.x = mouseFloat.x / (float)window_width;
 	mouseFloat.y = mouseFloat.y / (float)window_height;

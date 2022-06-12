@@ -645,3 +645,8 @@ float DirectInput::getTriggerZ()
 //
 //	return 0;
 //}
+
+DirectInput::DeviceEnumParameter::~DeviceEnumParameter()
+{
+	//delete(GamePadDevice);
+}

@@ -41,7 +41,7 @@ CD3DX12_DESCRIPTOR_RANGE BaseDirectX::descRangeSRV;
 CD3DX12_ROOT_PARAMETER BaseDirectX::rootparam[2];
 ComPtr<ID3D12PipelineState> BaseDirectX::pipelinestate;
 ComPtr<ID3D12RootSignature> BaseDirectX::rootsignature;
-const int BaseDirectX::ObjectNum;
+//const int BaseDirectX::ObjectNum;
 const int BaseDirectX::TexBufferNum;
 D3D12_CPU_DESCRIPTOR_HANDLE BaseDirectX::cpuDescHandleSRV[TexBufferNum];
 D3D12_GPU_DESCRIPTOR_HANDLE BaseDirectX::gpuDescHandleSRV[TexBufferNum];
@@ -281,7 +281,7 @@ void BaseDirectX::Set()
     D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
     descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-    descHeapDesc.NumDescriptors = ObjectNum + TexBufferNum;
+    descHeapDesc.NumDescriptors = TexBufferNum;
     BaseDirectX::result = BaseDirectX::dev->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&basicDescHeap));
     D3D12_CPU_DESCRIPTOR_HANDLE basicHeapHandle = basicDescHeap->GetCPUDescriptorHandleForHeapStart();
 }
@@ -346,7 +346,7 @@ void BaseDirectX::GetAdress()
     {
         cpuDescHandleSRV[i] = basicDescHeap->GetCPUDescriptorHandleForHeapStart();
         gpuDescHandleSRV[i] = basicDescHeap->GetGPUDescriptorHandleForHeapStart();
-        cpuDescHandleSRV[i].ptr += (ObjectNum + i) * dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-        gpuDescHandleSRV[i].ptr += (ObjectNum + i) * dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+        cpuDescHandleSRV[i].ptr += i * dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+        gpuDescHandleSRV[i].ptr += i * dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     }
 }

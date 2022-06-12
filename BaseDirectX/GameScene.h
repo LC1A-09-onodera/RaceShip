@@ -41,7 +41,7 @@ public:
 	void LightUpdate();
 
 public://ÉVÅ[ÉìÇ≈égÇ§Ç‡ÇÃ
-	Light *light;
+	std::shared_ptr<Light> light;
 	PostEffect post;
 	float pointLightPos[3] = { 0, 1, 0 };
 	float pointLightColor[3] = { 1, 1, 1 };

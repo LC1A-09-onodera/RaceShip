@@ -38,7 +38,6 @@ void Bullet::Draw()
 
 bool Bullet::Collision(XMFLOAT3& position)
 {
-	bool result;
 	if (Lenght(pos, position) < 1.0f)
 	{
 		return true;

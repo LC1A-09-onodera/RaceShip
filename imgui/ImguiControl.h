@@ -16,10 +16,9 @@ class ImguiEnum
 public:
     ImguiEnum(int count, ...);
     ~ImguiEnum();
-    const char* GetNames();
     std::list<ImguiEnumElement> enums;
     std::string nameString;
-    int enumCount;
+    int enumCount = 0;
 };
 
 class Imgui
@@ -48,7 +47,7 @@ public:
     static void SetWindowActive(bool isActive);
 
     static int effectType;
-    enum ImguiType
+    enum class ImguiType
     {
         Status,
         CameraInfo,
@@ -59,7 +58,7 @@ public:
     };
     static ImguiType tab;
 
-    enum DebugType
+    enum class DebugType
     {
         Player,
         Water,
