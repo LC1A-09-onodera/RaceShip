@@ -11,6 +11,8 @@
 #include "../Shader/ShaderManager.h"
 #include "../3DObjectParticle/3DObjectParticle.h"
 #include "../Sound/Sound.h"
+#include "../LoadStage/LoadStage.h"
+#include "../LoadStage/StageObject.h"
 
 GameScene::GameScene()
 {
@@ -20,7 +22,7 @@ GameScene::GameScene()
 GameScene::~GameScene()
 {
 	VoiceReciver::EndRecive();
-	delete(light);
+	
 }
 
 void GameScene::SceneManageUpdateAndDraw()
@@ -69,8 +71,8 @@ void GameScene::Init()
 	Cameras::camera.Update();
 
 	Cameras::rCamera.Init();
-	Cameras::rCamera.eye = {0, 0, -15.0f};
-	Cameras::rCamera.target = {0, 0, 0};
+	Cameras::rCamera.eye = { 0, 0, -15.0f };
+	Cameras::rCamera.target = { 0, 0, 0 };
 	Cameras::rCamera.Update();
 	//Imguiの初期化
 	Imgui::Init();
@@ -86,37 +88,54 @@ void GameScene::Init()
 	FBXObject::SetDevice(BaseDirectX::dev.Get());
 	FBXObject::CreateGraphicsPipeline();
 	//ライト初期化
-	light = Light::Create();
+	light.reset(Light::Create());
 	//モデルすべてにライトを適用
-	Model::SetLight(light);
+	Model::SetLight(light.get());
 	//ポストエフェクトの初期化
 	PostEffects::Init();
 	ObjectParticles::LoadModels();
-	/*sample.CreateModel("maru", ShaderManager::playerShader, true);
-	playerPos.ConstInit();
-	rPlayerPos.ConstInit();*/
+
+	LoadStage::LoadStages("test.txt");
+	StageObjects::walls.wallModel.CreateModel("MapWall", ShaderManager::playerShader);
+	StageObjects::walls.LoadPosition();
 	seling.LoadModel();
 	seling.Init();
-	/*water.CreateModel("WaterPolygon", ShaderManager::waterShader, true);
-	water.each.rotation.x = -60.0f;
-	water.each.position.m128_f32[1] = -0.5f;*/
-	VoiceReciver::StartUp();
+	rSeling.LoadModel();
+	rSeling.Init();
 
+	VoiceReciver::StartUp();
 	EnemyModels::LoadModels();
-	playerShieldKey.Init(4, KeyCode::A, KeyCode::B, KeyCode::C, KeyCode::D);
+
+	waterFace.LoadModel(ShaderManager::waterShader, PostEffects::postNormal);
+	waterFace.Init();
+	normalWater.LoadModel(ShaderManager::normalPlaneShader, PostEffects::postNormal);
+	normalWater.Init();
+	world.CreateModel("SphereW", ShaderManager::playerShader);
+	world.each.scale = { 40.0f, 40.0f, 40.0f };
+	rWorld.CreateModel("SphereW", ShaderManager::playerShader);
+	rWorld.each.scale = { 40.0f, 40.0f, 40.0f };
 }
 
 void GameScene::TitleUpdate()
 {
+	Cameras::camera.Update();
+	Cameras::rCamera.eye.v.x = Cameras::camera.eye.v.x;
+	Cameras::rCamera.eye.v.y = -Cameras::camera.eye.v.y;
+	Cameras::rCamera.eye.v.z = Cameras::camera.eye.v.z;
+	Cameras::rCamera.target = Cameras::camera.target;
+	Cameras::rCamera.Update();
+
 	seling.Update();
-	if (playerShieldKey.GetKeyDown())
-	{
-		int hoge = 0;
-	}
+	rSeling.Update();
+	waterFace.Update();
+	normalWater.Update();
+
 	VoiceReciver::VoiceUDPUpdate();
 	ObjectParticles::Update();
 	LightUpdate();
 	Sound::Updete(Imgui::volume);
+	light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
+	LightUpdate();
 }
 
 void GameScene::SelectUpdate()
@@ -134,12 +153,12 @@ void GameScene::GameUpdate()
 
 void GameScene::ResultUpdate()
 {
-	
+
 }
 
 void GameScene::EndUpdate()
 {
-	if (Input::KeyTrigger(DIK_SPACE) || directInput->IsButtonPush(DirectInput::ButtonKind::Button01))
+	if (Input::KeyTrigger(DIK_SPACE) || Input::directInput->IsButtonPush(DirectInput::ButtonKind::Button01))
 	{
 		SceneNum = TITLE;
 		Cameras::camera.Init();
@@ -150,23 +169,38 @@ void GameScene::TitleDraw()
 {
 	//PostEffectのPreDraw
 	PostEffects::PreDraw();
-	/*sample.Update(&playerPos);
-	Draw3DObject(sample);*/
-
-	seling.Draw();
+	//seling.Draw(true);
+	rSeling.seling.each.position = { -seling.seling.each.position.m128_f32[0], -seling.seling.each.position.m128_f32[1], seling.seling.each.position.m128_f32[2], 1.0f };
+	rSeling.seling.each.rotation.x = 180;
+	rSeling.Draw(true);
+	rWorld.each.rotation.x = 180;
+	rWorld.Update();
+	Draw3DObject(rWorld);
 	ObjectParticles::Draw();
-	/*rPlayerPos.position.m128_f32[1] = -1.0f;
-	sample.Update(&rPlayerPos, true);
-	Draw3DObject(sample);
-	water.Update(&water.each);
-	Draw3DObject(water);*/
+
 	BaseDirectX::clearColor[0] = 0.0f;
 	BaseDirectX::clearColor[1] = 0.0f;
 	BaseDirectX::clearColor[2] = 0.0f;
 	BaseDirectX::clearColor[3] = 0.0f;
 	BaseDirectX::UpdateFront();
+
 	//PostEffectのDraw
-	PostEffects::Draw();
+	//PostEffects::Draw();
+	seling.Draw(true);
+	world.each.rotation.y = 180;
+	world.Update();
+	StageObjects::Draw();
+	Draw3DObject(world);
+	ObjectParticles::Draw();
+	XMVECTOR sample = { 0, 0, 2.0f, 1.0 };
+	if (Imgui::useWaterNum == 0)
+	{
+		waterFace.Draw(PostEffects::postNormal, sample/*seling.seling.each.position*/);
+	}
+	else if (Imgui::useWaterNum == 1)
+	{
+		normalWater.Draw(PostEffects::postNormal, sample/*seling.seling.each.position*/);
+	}
 	PostEffects::PostDraw();
 
 	Imgui::DrawImGui();

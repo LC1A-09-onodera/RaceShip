@@ -17,7 +17,9 @@ private:
 	static const int PointLightNum = 3;
 	static const int SpotLightNum = 3;
 	static const int CircleShadowNum = 1;
+	
 public:
+	~Light();
 	struct ConstBufferData
 	{
 		XMVECTOR lightv;	//ライトの方向ベクトル

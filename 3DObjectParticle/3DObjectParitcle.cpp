@@ -88,32 +88,32 @@ void ObjectParticle3D::InitExprotion(XMFLOAT3& emitter)
 	each.position = ConvertXMFLOAT3toXMVECTOR(emitter);
 	each.ConstInit();
 	
-	speed = GetRandom(2.0f);
-	acc = GetRandom(1.0f);
+	speed = GetRandom(2);
+	acc = GetRandom(1);
 	speed.x = speed.x / 10.0f;
 	speed.y = speed.y / 10.0f;
 	speed.z = speed.z / 10.0f;
 	acc.x = acc.x / 400.0f;
 	acc.y = acc.y / 400.0f;
 	acc.z = acc.z / 400.0f;
-	addRotation = GetRandom(2.0f);
+	addRotation = GetRandom(2);
 }
 
 void ObjectParticle3D::InitConverge(XMFLOAT3& emitter)
 {
-	int xSub = (rand() % 10 + 13.0f);
+	int xSub = rand() % 10 + 13;
 	if (rand() % 2 == 0)
 	{
 		xSub = -xSub;
 	}
 	each.position.m128_f32[0] = emitter.x + xSub;
-	int ySub = (rand() % 5 + 13.0f);
+	int ySub = rand() % 5 + 13;
 	if (rand() % 2 == 0)
 	{
 		ySub = -ySub;
 	}
 	each.position.m128_f32[1] = emitter.x + ySub;
-	int zSub = (rand() % 10 + 13.0f);
+	int zSub = rand() % 10 + 13;
 	if (rand() % 2 == 0)
 	{
 		zSub = -zSub;
@@ -131,26 +131,26 @@ void ObjectParticle3D::InitTitle(XMFLOAT3& emitter)
 {
 	each.position = ConvertXMFLOAT3toXMVECTOR(emitter);
 	each.rotation = GetRandom(90);
-	int xSub = (rand() % 10 + 5.0f);
+	int xSub = (rand() % 10 + 5);
 	if (rand() % 2 == 0)
 	{
 		xSub = -xSub;
 	}
 	each.position.m128_f32[0] += rand() % 40 - 20;
-	int ySub = (rand() % 5 + 5.0f);
+	int ySub = (rand() % 5 + 5);
 	if (rand() % 2 == 0)
 	{
 		ySub = -ySub;
 	}
 	each.position.m128_f32[1] += rand() % 20 - 10;
-	int zSub = (rand() % 10 + 5.0f);
+	int zSub = (rand() % 10 + 5);
 	if (rand() % 2 == 0)
 	{
 		zSub = -zSub;
 	}
 	each.ConstInit();
-	speed = GetRandom(2.0f);
-	acc = GetRandom(1.0f);
+	speed = GetRandom(2);
+	acc = GetRandom(1);
 	startPosition = ConvertXMVECTORtoXMFLOAT3(each.position);
 	speed.x = speed.x / 150.0f;
 	speed.y = speed.y / 150.0f;
@@ -166,17 +166,17 @@ void ObjectParticle3D::InitTitle(XMFLOAT3& emitter)
 
 void ObjectParticle3D::InitSwell(XMFLOAT3& emitter)
 {
-	time = Life * 2.0f;
+	time = Life * 2;
 	each.position = ConvertXMFLOAT3toXMVECTOR(emitter);
 	each.position.m128_f32[2] = 30.0f;
-	each.position.m128_f32[0] = rand() % 50 - 24;
-	each.position.m128_f32[1] = rand() % 50 - 24;
+	each.position.m128_f32[0] = static_cast<float>(rand() % 50 - 24);
+	each.position.m128_f32[1] = static_cast<float>(rand() % 50 - 24);
 	each.ConstInit();
-	speed.z = -rand() % 5 + 1;
-	acc.z = -rand() % 5 + 1;
+	speed.z = -static_cast<float>(rand() % 5 + 1);
+	acc.z = -static_cast<float>(rand() % 5 + 1);
 	speed.z = speed.z / 10.0f;
 	acc.z = acc.z / 400.0f;
-	addRotation = GetRandom(2.0f);
+	addRotation = GetRandom(2);
 }
 
 void ObjectParticle3D::InitTarget(XMFLOAT3& emitter)
@@ -198,9 +198,9 @@ void ObjectParticle3D::InitTornado(XMFLOAT3& emitter)
 	startPosition = {0, 0, 10};
 	each.ConstInit();
 	each.position.m128_f32[2] = 10;
-	speed.z = rand() % 10 + 5;
+	speed.z = static_cast<float>(rand() % 10 + 5);
 	speed.z = -speed.z / 100.0f;
-	angle = rand() % 360;
+	angle = static_cast<float>(rand() % 360);
 	easeTime = 1.0f;
 }
 

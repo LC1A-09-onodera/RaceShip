@@ -2,7 +2,7 @@
 #include "Seling.h"
 #include "../BaseDirectX/Input.h"
 #include "../Shader/ShaderManager.h"
-
+#include <algorithm>
 
 void Seling::ForceUpdate()
 {
@@ -36,7 +36,11 @@ void Seling::Init()
 	maxForce = { 0.7f, 0.7f, 0.7f };
 	frontDirection = { 0, 0 ,1.0f };
 	isShield = false;
-	enemy.Init(XMFLOAT3(0 ,0 ,10));
+	enemy.Init(XMFLOAT3(0, 0, 10));
+
+	playerShieldKey.KeyBoradInit(5, KeyCode::A, KeyCode::B, KeyCode::C, KeyCode::Space);
+	playerShieldKey.PadInit(2, PadKeyCode::Button01, PadKeyCode::ButtonRB);
+	
 }
 
 void Seling::Update()
@@ -47,56 +51,40 @@ void Seling::Update()
 
 	ForceAttach();
 
-	if (VoiceReciver::GetIsShot())
-	{
-		ShotInit();
-		VoiceReciver::SetIsShot(false);
-	}
+	//ShotInitAndUpdate();
 
-	if (isShot)
-	{
-		ShotUpdate();
-	}
+	//ShieldInitAndUpdate();
 
-	if (VoiceReciver::GetWall())
-	{
-		ShieldInit();
-		VoiceReciver::SetWall(false);
-	}
-
-	if (isShield)
-	{
-		ShieldUpdate();
-	}
-
-	enemy.Update(shieldPos);
+	enemy.Update(shieldPos, isShield);
 }
 
-void Seling::Draw()
+void Seling::Draw(bool isRCamera)
 {
-	seling.Update(&seling.each);
-	Draw3DObject(seling);
+	if (isRCamera)
+	{
+		seling.Update(&seling.each, isRCamera);
+		Draw3DObject(seling);
+	}
+	else if (!isRCamera)
+	{
+		seling.Update(&seling.each, isRCamera);
+		Draw3DObject(seling);
+	}
 
 	if (isShot)
 	{
 		shotModel.each.position = ConvertXMFLOAT3toXMVECTOR(shotPos);
-		shotModel.Update(&shotModel.each);
+		shotModel.Update(&shotModel.each, isRCamera);
 		Draw3DObject(shotModel);
 	}
 
 	if (isShield)
 	{
 		shieldModel.each.position = ConvertXMFLOAT3toXMVECTOR(shieldPos);
-		shieldModel.Update(&shieldModel.each);
+		shieldModel.Update(&shieldModel.each, isRCamera);
 		Draw3DObject(shieldModel);
 	}
-	else
-	{
-		shieldPos = {-100000, -1000000, -100000};
-		
-	}
-
-	enemy.Draw();
+	//enemy.Draw();
 }
 
 void Seling::ForceAttach()
@@ -110,29 +98,21 @@ void Seling::Move()
 {
 	if (VoiceReciver::GetRight() || Input::KeyTrigger(DIK_D))
 	{
-		angle += 30;
+		angle += addShieldRotaion;
 	}
 	if (VoiceReciver::GetLeft() || Input::KeyTrigger(DIK_A))
 	{
-		angle -= 30;
+		angle -= addShieldRotaion;
 	}
 	frontDirection = { ShlomonMath::Sin(angle), 0, ShlomonMath::Cos(angle) };
 
 	if (VoiceReciver::GetFront() || Input::Key(DIK_W))
 	{
-		AddForce(XMFLOAT3(frontDirection.x * 0.02f, frontDirection.y * 0.02f, frontDirection.z * 0.02f));
+		AddForce(XMFLOAT3(frontDirection.x * addForcePower, frontDirection.y * addForcePower, frontDirection.z * addForcePower));
 	}
 	if (VoiceReciver::GetBack() || Input::Key(DIK_S))
 	{
-		AddForce(XMFLOAT3(frontDirection.x * -0.02f, frontDirection.y * -0.02f, frontDirection.z * -0.02f));
-	}
-	if (Input::Key(DIK_R))
-	{
-		ShotInit();
-	}
-	if (Input::Key(DIK_R))
-	{
-		ShieldInit();
+		AddForce(XMFLOAT3(frontDirection.x * -addForcePower, frontDirection.y * -addForcePower, frontDirection.z * -addForcePower));
 	}
 	VoiceReciver::SetRight(false);
 	VoiceReciver::SetLeft(false);
@@ -151,9 +131,31 @@ void Seling::ShotUpdate()
 	shotPos.z += 0.1f;
 }
 
+void Seling::ShotInitAndUpdate()
+{
+	if (Input::Key(DIK_R))
+	{
+		ShotInit();
+	}
+	if (VoiceReciver::GetIsShot())
+	{
+		ShotInit();
+		VoiceReciver::SetIsShot(false);
+	}
+	if (isShot)
+	{
+		ShotUpdate();
+	}
+}
+
 void Seling::ShieldInit()
 {
 	isShield = true;
+	shieldTime = shieldMaxTime;
+	shieldModel.each.scale = { 0.01f, 0.01f, 0.01f };
+	scaleStart = { 0.02f, 0.02f, 0.01f };
+	scaleEnd = { 2.0f, 2.0f, 1.0f };
+	easeTime = 0.0f;
 }
 
 void Seling::ShieldUpdate()
@@ -162,10 +164,44 @@ void Seling::ShieldUpdate()
 	pos = ConvertXMVECTORtoXMFLOAT3(seling.each.position);
 	shieldModel.each.rotation.y = angle + 180;
 	XMFLOAT3 addPos;
-	const float R = 2.2f;
-	addPos = { frontDirection.x * R, 0, frontDirection.z * R };
+	addPos = { frontDirection.x * shieldR, 0, frontDirection.z * shieldR };
 	pos = pos + addPos;
 	shieldPos = pos;
+	shieldTime--;
+	easeTime += 0.05f;
+	if (easeTime <= 1.0f)
+	{
+		shieldModel.each.scale = ShlomonMath::EaseInQuad(scaleStart, scaleEnd, easeTime);
+	}
+	else
+	{
+		shieldModel.each.scale = ShlomonMath::EaseInQuad(scaleStart, scaleEnd, 1.0f);
+	}
+	if (shieldTime <= 0)
+	{
+		isShield = false;
+	}
+}
+
+void Seling::ShieldInitAndUpdate()
+{
+	if (playerShieldKey.GetKeyDown())
+	{
+		ShieldInit();
+	}
+	if (Input::Key(DIK_R))
+	{
+		ShieldInit();
+	}
+	if (VoiceReciver::GetWall())
+	{
+		ShieldInit();
+		VoiceReciver::SetWall(false);
+	}
+	if (isShield)
+	{
+		ShieldUpdate();
+	}
 }
 
 void ShieldModel::CreateModel(const char* name, HLSLShader& shader, bool smoothing)
@@ -253,15 +289,7 @@ void ShieldModel::CreateModel(const char* name, HLSLShader& shader, bool smoothi
 					AddAmoothData(indexPosition, (unsigned short)GetVertexCount() - 1);
 				}
 				mesh.indices.emplace_back((unsigned short)mesh.indices.size());
-				/*if (count > 3) {
-					const uint16_t index1 = mesh.vertices.size() - 4;
-					const uint16_t index2 = mesh.vertices.size() - 2;
-
-					mesh.indices.emplace_back(index1);
-					mesh.indices.emplace_back(index2);
-				}*/
 			}
-			//count = 0;
 		}
 	}
 

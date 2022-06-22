@@ -64,7 +64,7 @@ void SpriteCommon::Init(ComPtr<ID3DBlob> vsBlob, ComPtr<ID3DBlob> psBlob)
     descHeapDesc.NumDescriptors = ConstBufferNum + 1;*/
     //BaseDirectX::result = BaseDirectX::dev->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&basicDescHeap));
     //éÀâeçsóÒ
-    matProjection = XMMatrixOrthographicOffCenterLH(0.0f, window_width, window_height, 0.0f, 0.0f, 1.0f);
+    matProjection = XMMatrixOrthographicOffCenterLH(0.0f, static_cast<float>(window_width), static_cast<float>(window_height), 0.0f, 0.0f, 1.0f);
     D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
     descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;

@@ -2,12 +2,17 @@
 
 ID3D12Device *Light::device = nullptr;
 
+Light::~Light()
+{
+	//delete(device);
+}
+
 void Light::StaticInitialize(ID3D12Device* device)
 {
 	//再初期化チェック
 	assert(!Light::device);
 	assert(device);
-	Light::device = device;
+	Light::device = (device);
 }
 
 void Light::CreateBuff()
@@ -94,7 +99,7 @@ void Light::SetPointLightActive(int index, bool active)
 
 void Light::SetPointLightPos(int index, const XMFLOAT3& lightpos)
 {
-	assert(0 <= index && index < PointLightNum);
+	assert((0 <= index) && (index < PointLightNum));
 
 	pointLight[index].SetLightPos(lightpos);
 	dirty = true;
@@ -102,14 +107,14 @@ void Light::SetPointLightPos(int index, const XMFLOAT3& lightpos)
 
 void Light::SetPointLightColor(int index, const XMFLOAT3& lightcolor)
 {
-	assert(0 <= index & index < PointLightNum);
+	assert((0 <= index) && (index < PointLightNum));
 	pointLight[index].SetLightColor(lightcolor);
 	dirty = true;
 }
 
 void Light::SetPointLightAtten(int index, const XMFLOAT3& lightatten)
 {
-	assert(0 <= index & index < PointLightNum);
+	assert((0 <= index) && (index < PointLightNum));
 	pointLight[index].SetLightAtten(lightatten);
 	dirty = true;
 }

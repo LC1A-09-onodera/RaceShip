@@ -4,9 +4,8 @@
 #include "../imgui/imgui_impl_win32.h"
 #include "../BaseDirectX/BaseDirectX.h"
 #include "../Camera/Camera.h"
+#include "../LoadStage/StageObject.h"
 #include <stdarg.h>
-
-//#include "../BaseDirectX/GameScene.h"
 
 ComPtr<ID3D12DescriptorHeap> Imgui::imguiDescHeap;
 ComPtr<ID3D12DescriptorHeap> Imgui::heapForImgui;
@@ -19,7 +18,11 @@ std::string Imgui::test;
 std::string Imgui::ipv4Name;
 bool Imgui::isActive = true;
 float Imgui::volume = 1.0f;
-
+float Imgui::CameraR = 25.0f;
+float Imgui::CameraRotation = 270.0f;
+float Imgui::CameraHigh = 0.2f;
+bool Imgui::CameraControl = true;
+int Imgui::useWaterNum = 0;
 ComPtr<ID3D12DescriptorHeap> Imgui::CreateDescrriptorHeapForImgui()
 {
     ComPtr<ID3D12DescriptorHeap> ret;
@@ -144,11 +147,34 @@ void Imgui::EachInfo()
         ImGui::Text(test.c_str());
         ImGui::Text(ipv4Name.c_str());
         ImGui::SliderFloat("volume", &volume, 0, 100.0f);
+        ImGui::InputInt("WaterFaceType", &useWaterNum, 1, 1);
+        if (useWaterNum == 0)
+        {
+            ImGui::Text("water");
+        }
+        else if (useWaterNum == 1)
+        {
+            ImGui::Text("Normal");
+        }
+        else if (useWaterNum == 2)
+        {
+            ImGui::Text("notiong");
+        }
+        if (ImGui::Button("LoadStage"))
+        {
+            StageObjects::walls.LoadPosition();
+        }
     }
     else if (tab == ImguiType::CameraInfo)
     {
         ImGui::Text("eye:%.2f, %.2f, %.2f", Cameras::camera.eye.v.x, Cameras::camera.eye.v.y, Cameras::camera.eye.v.z);
         ImGui::Text("target:%.2f, %.2f, %.2f", Cameras::camera.target.v.x, Cameras::camera.target.v.y, Cameras::camera.target.v.z);
+        ImGui::Text("Reye:%.2f, %.2f, %.2f", Cameras::rCamera.eye.v.x, Cameras::rCamera.eye.v.y, Cameras::rCamera.eye.v.z);
+        ImGui::Text("Rtarget:%.2f, %.2f, %.2f", Cameras::rCamera.target.v.x, Cameras::rCamera.target.v.y, Cameras::rCamera.target.v.z);
+        ImGui::Checkbox("ImGuiCameraControl", &CameraControl);
+        ImGui::InputFloat("CameraLength:", &CameraR, 1.0f, 10.0f);
+        ImGui::InputFloat("CameraRotation:", &CameraRotation, 1.0f, 10.0f);
+        ImGui::InputFloat("CameraHigh:", &CameraHigh, 0.01f, 0.02f);
     }
     else if (tab == ImguiType::Debug)
     {
@@ -220,298 +246,4 @@ ImguiEnum::ImguiEnum(int count, ...)
 ImguiEnum::~ImguiEnum()
 {
     enums.clear();
-}
-
-const char* ImguiEnum::GetNames()
-{
-    if (enumCount == 1)
-    {
-        char str[11];
-        auto itr = enums.begin();
-        //文字数のカウント
-        int charCount = 0;
-        int enumCo = 1;
-        //全体を文字列化
-        for (; itr != enums.end(); ++itr)
-        {
-            //一個分のenumを元のにくっつける
-            for (int i = 0; i < itr->name.length(); i++)
-            {
-                str[charCount] = itr->name.c_str()[i];
-                charCount++;
-            }
-            //一個分のenumを元のにくっつける
-            for (int i = itr->name.length(); i < 9; i++)
-            {
-                str[charCount] = ' ';
-                charCount++;
-            }
-            enumCo++;
-            str[charCount] = '\0';
-            charCount++;
-        }
-        str[charCount] = '\0';
-        return str;
-    }
-    else if (enumCount == 2)
-    {
-        char str[21];
-        auto itr = enums.begin();
-        //文字数のカウント
-        int charCount = 0;
-        int enumCo = 1;
-        //全体を文字列化
-        for (; itr != enums.end(); ++itr)
-        {
-            //一個分のenumを元のにくっつける
-            for (int i = 0; i < itr->name.length(); i++)
-            {
-                str[charCount] = itr->name.c_str()[i];
-                charCount++;
-            }
-            //一個分のenumを元のにくっつける
-            for (int i = itr->name.length(); i < 9; i++)
-            {
-                str[charCount] = ' ';
-                charCount++;
-            }
-            enumCo++;
-            str[charCount] = '\0';
-            charCount++;
-        }
-        str[charCount] = '\0';
-        return str;
-    }
-    else if (enumCount == 3)
-    {
-        char str[31];
-        auto itr = enums.begin();
-        //文字数のカウント
-        int charCount = 0;
-        int enumCo = 1;
-        //全体を文字列化
-        for (; itr != enums.end(); ++itr)
-        {
-            //一個分のenumを元のにくっつける
-            for (int i = 0; i < itr->name.length(); i++)
-            {
-                str[charCount] = itr->name.c_str()[i];
-                charCount++;
-            }
-            //一個分のenumを元のにくっつける
-            for (int i = itr->name.length(); i < 9; i++)
-            {
-                str[charCount] = ' ';
-                charCount++;
-            }
-            enumCo++;
-            str[charCount] = '\0';
-            charCount++;
-        }
-        str[charCount] = '\0';
-        return str;
-    }
-    else if (enumCount == 4)
-    {
-        char str[41];
-        auto itr = enums.begin();
-        //文字数のカウント
-        int charCount = 0;
-        int enumCo = 1;
-        //全体を文字列化
-        for (; itr != enums.end(); ++itr)
-        {
-            //一個分のenumを元のにくっつける
-            for (int i = 0; i < itr->name.length(); i++)
-            {
-                str[charCount] = itr->name.c_str()[i];
-                charCount++;
-            }
-            //一個分のenumを元のにくっつける
-            for (int i = itr->name.length(); i < 9; i++)
-            {
-                str[charCount] = ' ';
-                charCount++;
-            }
-            enumCo++;
-            str[charCount] = '\0';
-            charCount++;
-        }
-        str[charCount] = '\0';
-        return str;
-    }
-    else if (enumCount == 5)
-    {
-        char str[51];
-        auto itr = enums.begin();
-        //文字数のカウント
-        int charCount = 0;
-        int enumCo = 1;
-        //全体を文字列化
-        for (; itr != enums.end(); ++itr)
-        {
-            //一個分のenumを元のにくっつける
-            for (int i = 0; i < itr->name.length(); i++)
-            {
-                str[charCount] = itr->name.c_str()[i];
-                charCount++;
-            }
-            //一個分のenumを元のにくっつける
-            for (int i = itr->name.length(); i < 9; i++)
-            {
-                str[charCount] = ' ';
-                charCount++;
-            }
-            enumCo++;
-            str[charCount] = '\0';
-            charCount++;
-        }
-        str[charCount] = '\0';
-        return str;
-    }
-    else if (enumCount == 6)
-    {
-        char str[61];
-        auto itr = enums.begin();
-        //文字数のカウント
-        int charCount = 0;
-        int enumCo = 1;
-        //全体を文字列化
-        for (; itr != enums.end(); ++itr)
-        {
-            //一個分のenumを元のにくっつける
-            for (int i = 0; i < itr->name.length(); i++)
-            {
-                str[charCount] = itr->name.c_str()[i];
-                charCount++;
-            }
-            //一個分のenumを元のにくっつける
-            for (int i = itr->name.length(); i < 9; i++)
-            {
-                str[charCount] = ' ';
-                charCount++;
-            }
-            enumCo++;
-            str[charCount] = '\0';
-            charCount++;
-        }
-        str[charCount] = '\0';
-        return str;
-    }
-    else if (enumCount == 7)
-    {
-        char str[70];
-        auto itr = enums.begin();
-        //文字数のカウント
-        int charCount = 0;
-        int enumCo = 1;
-        //全体を文字列化
-        for (; itr != enums.end(); ++itr)
-        {
-            //一個分のenumを元のにくっつける
-            for (int i = 0; i < itr->name.length(); i++)
-            {
-                str[charCount] = itr->name.c_str()[i];
-                charCount++;
-            }
-            //一個分のenumを元のにくっつける
-            for (int i = itr->name.length(); i < 10 * enumCo; i++)
-            {
-                str[charCount] = ' ';
-                charCount++;
-            }
-            enumCo++;
-            str[charCount] = '\0';
-            charCount++;
-        }
-        str[charCount] = '\0';
-        return str;
-    }
-    else if (enumCount == 8)
-    {
-        char str[80];
-        auto itr = enums.begin();
-        //文字数のカウント
-        int charCount = 0;
-        int enumCo = 1;
-        //全体を文字列化
-        for (; itr != enums.end(); ++itr)
-        {
-            //一個分のenumを元のにくっつける
-            for (int i = 0; i < itr->name.length(); i++)
-            {
-                str[charCount] = itr->name.c_str()[i];
-                charCount++;
-            }
-            //一個分のenumを元のにくっつける
-            for (int i = itr->name.length(); i < 10 * enumCo; i++)
-            {
-                str[charCount] = ' ';
-                charCount++;
-            }
-            enumCo++;
-            str[charCount] = '\0';
-            charCount++;
-        }
-        str[charCount] = '\0';
-        return str;
-    }
-    else if (enumCount == 9)
-    {
-        char str[90];
-        auto itr = enums.begin();
-        //文字数のカウント
-        int charCount = 0;
-        int enumCo = 1;
-        //全体を文字列化
-        for (; itr != enums.end(); ++itr)
-        {
-            //一個分のenumを元のにくっつける
-            for (int i = 0; i < itr->name.length(); i++)
-            {
-                str[charCount] = itr->name.c_str()[i];
-                charCount++;
-            }
-            //一個分のenumを元のにくっつける
-            for (int i = itr->name.length(); i < 10 * enumCo; i++)
-            {
-                str[charCount] = ' ';
-                charCount++;
-            }
-            enumCo++;
-            str[charCount] = '\0';
-            charCount++;
-        }
-        str[charCount] = '\0';
-        return str;
-    }
-    else if (enumCount == 10)
-    {
-        char str[100];
-        auto itr = enums.begin();
-        //文字数のカウント
-        int charCount = 0;
-        int enumCo = 1;
-        //全体を文字列化
-        for (; itr != enums.end(); ++itr)
-        {
-            //一個分のenumを元のにくっつける
-            for (int i = 0; i < itr->name.length(); i++)
-            {
-                str[charCount] = itr->name.c_str()[i];
-                charCount++;
-            }
-            //一個分のenumを元のにくっつける
-            for (int i = itr->name.length(); i < 10 * enumCo; i++)
-            {
-                str[charCount] = ' ';
-                charCount++;
-            }
-            enumCo++;
-            str[charCount] = '\0';
-            charCount++;
-        }
-        str[charCount] = '\0';
-        return str;
-    }
 }

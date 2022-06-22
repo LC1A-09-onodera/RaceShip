@@ -83,7 +83,6 @@ void Model::Init(int index)
 	mesh.ibView.Format = DXGI_FORMAT_R16_UINT;
 	//ibView.SizeInBytes = sizeIB;
 	each.ConstInit();
-
 	UINT descHadleIncSize = BaseDirectX::dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	cpuDescHandleCBV = BaseDirectX::basicDescHeap->GetCPUDescriptorHandleForHeapStart();
 	cpuDescHandleCBV.ptr += index * descHadleIncSize;
@@ -409,7 +408,6 @@ bool Model::InitializeGraphicsPipeline(HLSLShader& shader)
 
 	// 深度バッファのフォーマット
 	gpipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
-
 	// 頂点レイアウトの設定
 	gpipeline.InputLayout.pInputElementDescs = inputLayout;
 	gpipeline.InputLayout.NumElements = _countof(inputLayout);
@@ -709,7 +707,7 @@ void EachInfo::CreateConstBuff2()
 	//リソース設定
 	D3D12_RESOURCE_DESC resdesc{};
 	resdesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resdesc.Width = (sizeof(ConstBufferDataB2) + 0xff) & ~0xff;
+	resdesc.Width = (sizeof(ConstBufferDataB3) + 0xff) & ~0xff;
 	resdesc.Height = 1;
 	resdesc.DepthOrArraySize = 1;
 	resdesc.MipLevels = 1;

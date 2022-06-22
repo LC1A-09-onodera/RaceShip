@@ -11,13 +11,35 @@
 //#define CHECKINPUT_MOUSE (0x04) //マウスボタン入力を調べる
 //#define CHECKINPUT_ALL   (CHECKINPUT_KEY | CHECKINPUT_PAD | CHECKINPUT_MOUSE) //すべての入力を調べる
 
+enum class PadKeyCode
+{
+	ButtonNone = -1,
+	UpButton = 0,
+	DownButton,
+	LeftButton,
+	RightButton,
+	Button01,
+	Button02,
+	Button03,
+	Button04,
+	ButtonLB,
+	ButtonRB,
+	ButtonSelect,
+	ButtonPouse,
+	Button09,
+	Button10,
+	ButtonKindMax,
+};
+static const char PadKeyCodeString[] = "Up\0Down\0Left\0Right\0Button01\0Button02\0Button03\0Button04\0LB\0RB\0Slect\0Pouse\0Button09\0Button10\0\0";
+
 class DirectInput final
 {
 public:
 	/** @brief キーボタンの種類 */
 	enum ButtonKind
 	{
-		UpButton,
+		ButtonNone = -1,
+		UpButton = 0,
 		DownButton,
 		LeftButton,
 		RightButton,
@@ -48,6 +70,7 @@ public:
 	{
 		LPDIRECTINPUTDEVICE8* GamePadDevice;
 		int FindCount;
+		~DeviceEnumParameter();
 	};
 private:
 	// コンストラクタをprivateにする
@@ -106,6 +129,7 @@ public: // メンバ関数
 	* @param[in] button 判定したいボタンの種類
 	*/
 	static bool IsButtonPush(ButtonKind button);
+	static bool IsButtonPush(PadKeyCode button);
 	/**
 	* @brief ボタンが押された瞬間の判定関数
 	* @retval true：押した瞬間
@@ -113,6 +137,7 @@ public: // メンバ関数
 	* @param[in] button 判定したいボタンの種類
 	*/
 	static bool IsButtonUp(ButtonKind button);
+	static bool IsButtonUp(PadKeyCode button);
 	/**
 	* @brief ボタンを離した瞬間の判定関数
 	* @retval true：離した瞬間
@@ -120,6 +145,7 @@ public: // メンバ関数
 	* @param[in] button 判定したいボタンの種類
 	*/
 	bool IsButtonDown(ButtonKind button);
+	bool IsButtonDown(PadKeyCode button);
 	// 入力インターフェースの作成
 	bool CreateInputInterface();
 	// ゲームパッドデバイスの作成

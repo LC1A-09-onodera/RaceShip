@@ -8,8 +8,8 @@ Quaternion quaternion(float x, float y, float z, float w)
 
 Quaternion quaternion(Vec3& v, float angle)
 {
-    float Sin = sin(angle / 2.0f);
-    return quaternion(Sin * v.v.x, Sin * v.v.y, Sin * v.v.z, cos(angle / 2.0f));
+    float Sin = static_cast<float>(sin(angle / 2.0f));
+    return quaternion(Sin * v.v.x, Sin * v.v.y, Sin * v.v.z, static_cast<float>(cos(angle / 2.0f)));
 }
 
 float dot(const Quaternion& q1, const Quaternion& q2)
@@ -193,7 +193,7 @@ Quaternion quaternion(const Matrix4& m)
     float tr = m.r[0].m128_f32[0] + m.r[1].m128_f32[1] + m.r[2].m128_f32[2] + m.r[3].m128_f32[3];
     if (tr >= 1.0f)
     {
-        float fourD = 2.0f * sqrt(tr);
+        float fourD = 2.0f * static_cast<float>(sqrt(tr));
         result.x = (m.r[1].m128_f32[2] - m.r[2].m128_f32[1]) / fourD;
         result.y = (m.r[2].m128_f32[0] - m.r[0].m128_f32[2]) / fourD;
         result.z = (m.r[0].m128_f32[1] - m.r[1].m128_f32[0]) / fourD;
@@ -212,7 +212,7 @@ Quaternion quaternion(const Matrix4& m)
     int j = (i + 1) % 3;
     int k = (j + 1) % 3;
     tr = m.r[i].m128_f32[i] - m.r[j].m128_f32[j] - m.r[k].m128_f32[k] + 1.0f;
-    float fourD = 2.0f * sqrt(tr);
+    float fourD = 2.0f * static_cast<float>(sqrt(tr));
     float qa[4];
     qa[i] = fourD / 4.0f;
     qa[j] = (m.r[j].m128_f32[i] + m.r[i].m128_f32[j]) / fourD;

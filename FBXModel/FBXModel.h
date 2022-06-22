@@ -72,7 +72,7 @@ private:
 
 	string name;
 	vector<Node> nodes;
-	Node *meshNode = nullptr;
+	std::shared_ptr<Node> meshNode;
 	vector<VertexPosNormalUvSkin> vertices;
 	vector<unsigned short> indices;
 	XMFLOAT3 ambient = {1, 1, 1};

@@ -23,7 +23,7 @@ struct SoundData
 {
 	~SoundData();
 	WAVEFORMATEX wfex;
-	BYTE *pBuffer;
+	std::shared_ptr<BYTE> pBuffer;
 	unsigned int bufferSize;
 	IXAudio2SourceVoice *pSourceVoice;
 	XAUDIO2_BUFFER buf{};
@@ -50,6 +50,8 @@ void SoundPlayerWave(SoundData &soundData);
 void SoundStopWave(SoundData &soundData);
 //一度だけ鳴らす
 void SoundPlayOnce(SoundData &soundData);
+
+void SoundPlayLoop(SoundData &soundData);
 //-10000~10000の間.0に向かって収束していく.0がミュート
 void SoundVolume(SoundData &soundData, float volume);
 

@@ -1,6 +1,10 @@
 #include "Input.h"
 #include "../Rewired/Rewired.h"
 
+IDirectInput8* Input::dinput = nullptr;
+IDirectInputDevice8* Input::devkeyboard = nullptr;
+DirectInput* Input::directInput = DirectInput::GetInstance();
+
 void Input::Update()
 {
 	BaseDirectX::result = devkeyboard->Acquire();
@@ -32,6 +36,11 @@ void Input::Update()
 	{
 		mouseInput[VK_CANCEL] = true;
 	}
+}
+
+void Input::Init()
+{
+	//directInput.reset(DirectInput::GetInstance());
 }
 
 void Input::KeySet(WNDCLASSEX w, HWND hwnd)

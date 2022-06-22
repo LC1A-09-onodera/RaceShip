@@ -16,7 +16,7 @@ void FbxLoader::Initialize(ID3D12Device* dev)
 	assert(fbxManager == nullptr);
 	this->dev = dev;
 	fbxManager = FbxManager::Create();
-	FbxIOSettings *ios = FbxIOSettings::Create(fbxManager, IOSROOT);
+	FbxIOSettings* ios = FbxIOSettings::Create(fbxManager, IOSROOT);
 	fbxManager->SetIOSettings(ios);
 	fbxImporter = FbxImporter::Create(fbxManager, "");
 }
@@ -27,7 +27,7 @@ void FbxLoader::Finalize()
 	fbxManager->Destroy();
 }
 
-FBXModel *FbxLoader::LoadModelFromFile(const string &modelName)
+FBXModel* FbxLoader::LoadModelFromFile(const string& modelName)
 {
 	const string directoryPath = baseDirectory + modelName + "/";
 	const string fileName = modelName + ".fbx";
@@ -39,7 +39,7 @@ FBXModel *FbxLoader::LoadModelFromFile(const string &modelName)
 	FbxScene *fbxScene = FbxScene::Create(fbxManager, "fbxScene");
 	fbxImporter->Import(fbxScene);
 	//モデル作成
-	FBXModel *model = new FBXModel();
+	FBXModel* model = new FBXModel();
 	model->name = modelName;
 	//ノード数の獲得
 	int nodeCount = fbxScene->GetNodeCount();
@@ -57,16 +57,16 @@ void FbxLoader::ParseNodeRecursive(FBXModel* model, FbxNode* fbxNode, Node* pare
 {
 	//ノード追加
 	model->nodes.emplace_back();
-	Node &node = model->nodes.back();
+	Node& node = model->nodes.back();
 	//ノード名の取得
 	node.name = fbxNode->GetName();
 	//ローカル移動情報
 	FbxDouble3 rotation = fbxNode->LclRotation.Get();
 	FbxDouble3 scaling = fbxNode->LclScaling.Get();
 	FbxDouble3 translation = fbxNode->LclTranslation.Get();
-	node.rotation = {(float)rotation[0], (float)rotation[1], (float)rotation[2], 0.0f};
-	node.scaling = {(float)scaling[0], (float)scaling[1], (float)scaling[2], 0.0f};
-	node.translation = {(float)translation[0], (float)translation[1], (float)translation[2], 1.0f};
+	node.rotation = { (float)rotation[0], (float)rotation[1], (float)rotation[2], 0.0f };
+	node.scaling = { (float)scaling[0], (float)scaling[1], (float)scaling[2], 0.0f };
+	node.translation = { (float)translation[0], (float)translation[1], (float)translation[2], 1.0f };
 
 	node.rotation.m128_f32[0] = XMConvertToRadians(node.rotation.m128_f32[0]);
 	node.rotation.m128_f32[1] = XMConvertToRadians(node.rotation.m128_f32[1]);
@@ -89,16 +89,16 @@ void FbxLoader::ParseNodeRecursive(FBXModel* model, FbxNode* fbxNode, Node* pare
 		node.globalTransform *= parent->globalTransform;
 	}
 
-	FbxNodeAttribute *fbxnodeAtribute = fbxNode->GetNodeAttribute();
+	FbxNodeAttribute* fbxnodeAtribute = fbxNode->GetNodeAttribute();
 	if (fbxnodeAtribute)
 	{
 		if (fbxnodeAtribute->GetAttributeType() == FbxNodeAttribute::eMesh)
 		{
-			model->meshNode = &node;
+			model->meshNode.reset(&node);
 			ParsMesh(model, fbxNode);
 		}
 	}
-	
+
 	for (int i = 0; i < fbxNode->GetChildCount(); i++)
 	{
 		ParseNodeRecursive(model, fbxNode->GetChild(i));
@@ -108,7 +108,7 @@ void FbxLoader::ParseNodeRecursive(FBXModel* model, FbxNode* fbxNode, Node* pare
 
 void FbxLoader::ParsMesh(FBXModel* model, FbxNode* fbxNode)
 {
-	FbxMesh *fbxMesh = fbxNode->GetMesh();
+	FbxMesh* fbxMesh = fbxNode->GetMesh();
 	ParseMeshVertices(model, fbxMesh);
 	ParseMeshFaces(model, fbxMesh);
 	ParseMaterial(model, fbxNode);
@@ -117,15 +117,15 @@ void FbxLoader::ParsMesh(FBXModel* model, FbxNode* fbxNode)
 
 void FbxLoader::ParseMeshVertices(FBXModel* model, FbxMesh* fbxMesh)
 {
-	auto &vertices = model->vertices;
+	auto& vertices = model->vertices;
 
 	const int controlPosintsCount = fbxMesh->GetControlPointsCount();
 	FBXModel::VertexPosNormalUvSkin vert{};
 	model->vertices.resize(controlPosintsCount, vert);
-	FbxVector4 *pCoord = fbxMesh->GetControlPoints();
+	FbxVector4* pCoord = fbxMesh->GetControlPoints();
 	for (int i = 0; i < controlPosintsCount; i++)
 	{
-		FBXModel::VertexPosNormalUvSkin &vertex = vertices[i];
+		FBXModel::VertexPosNormalUvSkin& vertex = vertices[i];
 		vertex.pos.x = (float)pCoord[i][0];
 		vertex.pos.y = (float)pCoord[i][1];
 		vertex.pos.z = (float)pCoord[i][2];
@@ -134,8 +134,8 @@ void FbxLoader::ParseMeshVertices(FBXModel* model, FbxMesh* fbxMesh)
 
 void FbxLoader::ParseMeshFaces(FBXModel* model, FbxMesh* fbxMesh)
 {
-	auto &vertices = model->vertices;
-	auto &indices = model->indices;
+	auto& vertices = model->vertices;
+	auto& indices = model->indices;
 
 	assert(indices.size() == 0);
 	//面の数
@@ -153,7 +153,7 @@ void FbxLoader::ParseMeshFaces(FBXModel* model, FbxMesh* fbxMesh)
 			int index = fbxMesh->GetPolygonVertex(i, j);
 			assert(index >= 0);
 
-			FBXModel::VertexPosNormalUvSkin &vertex = vertices[index];
+			FBXModel::VertexPosNormalUvSkin& vertex = vertices[index];
 			FbxVector4 normal;
 			if (fbxMesh->GetPolygonVertexNormal(i, j, normal))
 			{
@@ -191,13 +191,13 @@ void FbxLoader::ParseMeshFaces(FBXModel* model, FbxMesh* fbxMesh)
 void FbxLoader::ParseMaterial(FBXModel* model, FbxNode* fbxNode)
 {
 	const int materialCount = fbxNode->GetMaterialCount();
-	if (materialCount > 0) 
+	if (materialCount > 0)
 	{
-		FbxSurfaceMaterial *material = fbxNode->GetMaterial(0);
+		FbxSurfaceMaterial* material = fbxNode->GetMaterial(0);
 		bool textureLoaded = false;
 		if (material)
 		{
-			FbxSurfaceLambert *lambert = static_cast<FbxSurfaceLambert *>(material);
+			FbxSurfaceLambert* lambert = static_cast<FbxSurfaceLambert*>(material);
 			//環境光
 			FbxPropertyT<FbxDouble3> ambient = lambert->Ambient;
 			model->ambient.x = (float)ambient.Get()[0];
@@ -213,10 +213,10 @@ void FbxLoader::ParseMaterial(FBXModel* model, FbxNode* fbxNode)
 			const FbxProperty diffuseProperty = material->FindProperty(FbxSurfaceMaterial::sDiffuse);
 			if (diffuseProperty.IsValid())
 			{
-				const FbxFileTexture *texture = diffuseProperty.GetSrcObject<FbxFileTexture>();
+				const FbxFileTexture* texture = diffuseProperty.GetSrcObject<FbxFileTexture>();
 				if (texture)
 				{
-					const char *filepath = texture->GetFileName();
+					const char* filepath = texture->GetFileName();
 					string path_str(filepath);
 					string name = ExtractFileName(path_str);
 					LoadTexture(model, baseDirectory + model->name + "/" + name);
@@ -235,8 +235,8 @@ void FbxLoader::LoadTexture(FBXModel* model, const std::string& fullPath)
 {
 	HRESULT result = S_FALSE;
 
-	TexMetadata &metadata = model->metadata;
-	ScratchImage &scrachImg = model->scratchImg;
+	TexMetadata& metadata = model->metadata;
+	ScratchImage& scrachImg = model->scratchImg;
 
 	wchar_t wfilepath[128];
 	MultiByteToWideChar(CP_ACP, 0, fullPath.c_str(), -1, wfilepath, _countof(wfilepath));
@@ -276,7 +276,7 @@ void FbxLoader::ConvertMatrixFromFbx(DirectX::XMMATRIX* dst, const FbxAMatrix& s
 
 void FbxLoader::ParseSkin(FBXModel* model, FbxMesh* fbxMesh)
 {
-	FbxSkin *fbxSkin = static_cast<FbxSkin *>(fbxMesh->GetDeformer(0, FbxDeformer::eSkin));
+	FbxSkin* fbxSkin = static_cast<FbxSkin*>(fbxMesh->GetDeformer(0, FbxDeformer::eSkin));
 	if (fbxSkin == nullptr)
 	{
 		for (int i = 0; i < model->vertices.size(); i++)
@@ -287,19 +287,19 @@ void FbxLoader::ParseSkin(FBXModel* model, FbxMesh* fbxMesh)
 		return;
 	}
 
-	std::vector<Bone> &bones = model->bones;
+	std::vector<Bone>& bones = model->bones;
 	int clusterCount = fbxSkin->GetClusterCount();
 	bones.reserve(clusterCount);
 
 	for (int i = 0; i < clusterCount; i++)
 	{
 		//ボーン情報
-		FbxCluster *fbxCluster = fbxSkin->GetCluster(i);
+		FbxCluster* fbxCluster = fbxSkin->GetCluster(i);
 		//ノードの名前の取得
-		const char *boneName = fbxCluster->GetLink()->GetName();
+		const char* boneName = fbxCluster->GetLink()->GetName();
 		//新しくボーンの追加、参照を得る
 		bones.emplace_back(Bone(boneName));
-		Bone &bone = bones.back();
+		Bone& bone = bones.back();
 
 		bone.fbxCuster = fbxCluster;
 		FbxAMatrix fbxMat;
@@ -319,28 +319,28 @@ void FbxLoader::ParseSkin(FBXModel* model, FbxMesh* fbxMesh)
 
 	for (int i = 0; i < clusterCount; i++)
 	{
-		FbxCluster *fbxCluster = fbxSkin->GetCluster(i);
+		FbxCluster* fbxCluster = fbxSkin->GetCluster(i);
 		int controlPositIndicesCount = fbxCluster->GetControlPointIndicesCount();
-		int *controlPointIndices = fbxCluster->GetControlPointIndices();
+		int* controlPointIndices = fbxCluster->GetControlPointIndices();
 
-		double *controlPointWeight = fbxCluster->GetControlPointWeights();
+		double* controlPointWeight = fbxCluster->GetControlPointWeights();
 
 		for (int j = 0; j < controlPositIndicesCount; j++)
 		{
 			int vertIndex = controlPointIndices[j];
 			float weight = (float)controlPointWeight[j];
-			weightLists[vertIndex].emplace_back(WeightSet{(UINT)i, weight});
+			weightLists[vertIndex].emplace_back(WeightSet{ (UINT)i, weight });
 		}
 	}
 
-	auto &vertices = model->vertices;
+	auto& vertices = model->vertices;
 	for (int i = 0; i < vertices.size(); i++)
 	{
-		auto &weightList = weightLists[i];
-		weightList.sort([](auto const &lhs, auto const &rhs)
-		{
-			return lhs.weight > rhs.weight;
-		});
+		auto& weightList = weightLists[i];
+		weightList.sort([](auto const& lhs, auto const& rhs)
+			{
+				return lhs.weight > rhs.weight;
+			});
 		int weightArrayIndex = 0;
 		for (auto& WeightSet : weightList)
 		{

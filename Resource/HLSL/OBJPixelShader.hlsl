@@ -20,10 +20,6 @@ float4 main(VSOutput input) : SV_TARGET
 	//ŠÂ‹«Œõ
 	float3 ambient = m_ambient;
 	float3 diffuse = dotlightnormal * m_diffuse;
-	//ƒgƒD[ƒ“
-    //diffuse.x = step(0.5, diffuse.x);
-    //diffuse.y = step(0.5, diffuse.y);
-    //diffuse.z = step(0.5, diffuse.z);
 	float3 specular = pow(saturate(dot(reflect, eyedir)), shininess) * m_specular;
 	shadecolor.rgb = (ambient + diffuse + specular) * lightcolor;
 	shadecolor.a = m_alpha;
@@ -77,6 +73,22 @@ float4 main(VSOutput input) : SV_TARGET
 			float3 specular = pow(saturate(dot(reflect, eyedir)), shininess) * m_specular;
 			//‘S‚Ä‚Ì‰ÁZ
 			shadecolor.rgb += atten * (diffuse + specular) * spotLights[i].lightcolor;
+		}
+	}
+	for (int i = 0; i < CIRCLESHADOW_NUM; i++)
+	{
+		if (circleShadows[i].active)
+		{
+			float3 casterv = circleShadows[i].casterPos - input.worldpos.xyz;
+			float d = dot(casterv, circleShadows[i].dir);
+			float atten = saturate(1.0f / (circleShadows[i].atten.x + circleShadows[i].atten.y * d + circleShadows[i].atten.z * d * d));
+			atten *= step(0, d);
+			float3 lightpos = circleShadows[i].casterPos + circleShadows[i].dir * circleShadows[i].distanceCasterLight;
+			float3 lightv = normalize(lightpos - input.worldpos.xyz);
+			float cos = dot(lightv, circleShadows[i].dir);
+			float angleatten = smoothstep(circleShadows[i].factorAngleCos.y, circleShadows[i].factorAngleCos.x, cos);
+			atten *= angleatten;
+			shadecolor.rgb -= atten;
 		}
 	}
 	float4 result;

@@ -94,10 +94,6 @@ namespace ShlomonLibrary
 		{
 			return '9';
 		}
-		else if (str == 10)
-		{
-			return '10';
-		}
 		else return 'a';
 	}
 }

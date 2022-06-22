@@ -59,19 +59,19 @@ void SoundLoad(const char *filename, SoundData &sound)
 
     SoundData sounddata = {};
     sounddata.wfex = format.fmt;
-    sounddata.pBuffer = reinterpret_cast<BYTE *>(pBuffer);
+    sounddata.pBuffer.reset(reinterpret_cast<BYTE *>(pBuffer));
     sounddata.bufferSize = data.size;
     sounddata.pSourceVoice = nullptr;
     BaseDirectX::result = Sound::xAudio2->CreateSourceVoice(&sounddata.pSourceVoice, &sounddata.wfex);
     assert(SUCCEEDED(BaseDirectX::result));
-    sounddata.buf.pAudioData = sounddata.pBuffer;
+    sounddata.buf.pAudioData = sounddata.pBuffer.get();
     sounddata.buf.AudioBytes = sounddata.bufferSize;
     sounddata.buf.Flags = XAUDIO2_END_OF_STREAM;
     sound = sounddata;
 }
 void SoundUnload(SoundData *sounddata)
 {
-    delete[] sounddata->pBuffer;
+    delete[] sounddata->pBuffer.get();
     sounddata->pBuffer = 0;
     sounddata->bufferSize = 0;
     sounddata->wfex = {};
@@ -93,9 +93,22 @@ void SoundPlayOnce(SoundData &soundData)
     BaseDirectX::result = Sound::xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
     assert(SUCCEEDED(BaseDirectX::result));
     XAUDIO2_BUFFER buf{};
-    buf.pAudioData = soundData.pBuffer;
+    buf.pAudioData = soundData.pBuffer.get();
     buf.AudioBytes = soundData.bufferSize;
     buf.Flags = XAUDIO2_END_OF_STREAM;
+    BaseDirectX::result = soundData.pSourceVoice->SubmitSourceBuffer(&soundData.buf);
+    BaseDirectX::result = soundData.pSourceVoice->Start();
+}
+void SoundPlayLoop(SoundData& soundData)
+{
+    IXAudio2SourceVoice* pSourceVoice = nullptr;
+    BaseDirectX::result = Sound::xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
+    assert(SUCCEEDED(BaseDirectX::result));
+    XAUDIO2_BUFFER buf{};
+    buf.pAudioData = soundData.pBuffer.get();
+    buf.AudioBytes = soundData.bufferSize;
+    buf.Flags = XAUDIO2_END_OF_STREAM;
+    buf.LoopCount = XAUDIO2_LOOP_INFINITE;
     BaseDirectX::result = soundData.pSourceVoice->SubmitSourceBuffer(&soundData.buf);
     BaseDirectX::result = soundData.pSourceVoice->Start();
 }
@@ -122,5 +135,5 @@ SoundControl* SoundControl::GetSound()
 
 SoundData::~SoundData()
 {
-    delete(pBuffer);
+    
 }

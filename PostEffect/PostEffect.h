@@ -20,12 +20,16 @@ public:
 	void CreateGraphicsPipelineState(HLSLShader &shader);
 
 	void CalcWeightGaussian(float* weightsTbl, int sizeOfWeightsTbl, float sigma);
-	
+	XMFLOAT3 pos = {0, 0, 0};
+	XMFLOAT3 scale = {1.0f, 1.0f, 1.0f};
+	XMFLOAT3 rotation = { 0, 0, 0 };
 	RenderTarget renderTarget;
 	static const int texNum = 1;
 	static UINT frameTime;
 	static float effectType;
 	ComPtr<ID3D12DescriptorHeap> descHeapSRV;
+	//デスクリプタレンジ
+	CD3DX12_DESCRIPTOR_RANGE descRangeSRV[1] = {};
 	//震度バッファ
 	ComPtr<ID3D12Resource> depthBuff;
 	//DST用デスクリプタヒープ
@@ -34,7 +38,7 @@ public:
 	ComPtr<ID3D12RootSignature> rootSignature;
 
 	static const int NumWeight = 8;
-	float weights[NumWeight];
+	float weights[NumWeight] = {};
 };
 
 

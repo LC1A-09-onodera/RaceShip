@@ -24,6 +24,7 @@
     <ProjectGuid>{75a8cc02-66a5-4e63-977b-54ab05ea9c63}</ProjectGuid>
     <RootNamespace>Shooting</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Employment</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -130,6 +131,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -147,6 +149,7 @@
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -197,6 +200,9 @@
     <ClInclude Include="Light\CircleShadow.h" />
     <ClInclude Include="Light\Light.h" />
     <ClInclude Include="Light\SpotLight.h" />
+    <ClInclude Include="LoadStage\LoadStage.h" />
+    <ClInclude Include="LoadStage\LoadStageUDP.h" />
+    <ClInclude Include="LoadStage\StageObject.h" />
     <ClInclude Include="Particle\Particle3D.h" />
     <ClInclude Include="Player\Seling.h" />
     <ClInclude Include="Player\WaterVertex.h" />
@@ -213,6 +219,7 @@
     <ClInclude Include="udp.h" />
     <ClInclude Include="VoiceUDPRecive\VoiceUDPRecive.h" />
     <ClInclude Include="VoiceUDPRecive\VoiceUDPSender.h" />
+    <ClInclude Include="WaterFace\WaterFace.h" />
     <ClInclude Include="WindowsAPI\WinAPI.h" />
   </ItemGroup>
   <ItemGroup>
@@ -243,6 +250,9 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="IpAddress\IpAddress.cpp" />
     <ClCompile Include="Light\Light.cpp" />
+    <ClCompile Include="LoadStage\LoadStage.cpp" />
+    <ClCompile Include="LoadStage\LoadStageUDP.cpp" />
+    <ClCompile Include="LoadStage\StageObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Particle\Particle3D.cpp" />
     <ClCompile Include="Player\Seling.cpp" />
@@ -258,6 +268,7 @@
     <ClCompile Include="udp.cpp" />
     <ClCompile Include="VoiceUDPRecive\VoiceUDPRecive.cpp" />
     <ClCompile Include="VoiceUDPRecive\VoiceUDPSender.cpp" />
+    <ClCompile Include="WaterFace\WaterFace.cpp" />
     <ClCompile Include="WindowsAPI\WinAPI.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -293,6 +304,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\NormalPlane.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Resource\HLSL\OBJHS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Hull</ShaderType>
@@ -461,6 +478,8 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Resource\HLSL\WireFrameGS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
@@ -486,6 +505,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Resource\HLSL\BSH.hlsli" />
     <None Include="Resource\HLSL\FBX.hlsli" />
     <None Include="Resource\HLSL\GeometryHeader.hlsli" />
@@ -498,5 +518,12 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\Microsoft.CognitiveServices.Speech.1.21.0\build\native\Microsoft.CognitiveServices.Speech.targets" Condition="Exists('packages\Microsoft.CognitiveServices.Speech.1.21.0\build\native\Microsoft.CognitiveServices.Speech.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>このプロジェクトは、このコンピューター上にない NuGet パッケージを参照しています。それらのパッケージをダウンロードするには、[NuGet パッケージの復元] を使用します。詳細については、http://go.microsoft.com/fwlink/?LinkID=322105 を参照してください。見つからないファイルは {0} です。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\Microsoft.CognitiveServices.Speech.1.21.0\build\native\Microsoft.CognitiveServices.Speech.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.CognitiveServices.Speech.1.21.0\build\native\Microsoft.CognitiveServices.Speech.targets'))" />
+  </Target>
 </Project>

@@ -4,6 +4,7 @@
 #include <d3dcompiler.h>
 #include "../BaseDirectX/Input.h"
 #include "../imgui/ImguiControl.h"
+#include "../Camera/Camera.h"
 #pragma comment (lib, "d3dcompiler.lib")
 
 using namespace DirectX;
@@ -82,7 +83,6 @@ void PostEffect::Initialize(HLSLShader& shader)
 	srvDesc.Texture2D.MipLevels = 1;
 	for (int i = 0; i < PostEffect::texNum; i++)
 	{
-		//BaseDirectX::dev->CreateShaderResourceView(texBuff[0].Get(), &srvDesc, descHeapSRV->GetCPUDescriptorHandleForHeapStart());
 		BaseDirectX::dev->CreateShaderResourceView(renderTarget.texBuff[i].Get(), &srvDesc, CD3DX12_CPU_DESCRIPTOR_HANDLE(descHeapSRV->GetCPUDescriptorHandleForHeapStart(), i, BaseDirectX::dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)));
 	}
 
@@ -117,13 +117,22 @@ void PostEffect::Draw()
 		BaseDirectX::dev->CreateShaderResourceView(renderTarget.texBuff[tex].Get(), &srvDesc, descHeapSRV->GetCPUDescriptorHandleForHeapStart());
 	}
 	//ワールド行列更新
+	const XMFLOAT3& cameraPos = Cameras::camera.eye.v;
+	XMMATRIX matScale, matRot, matTrans;
+	matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
+	matRot = XMMatrixIdentity();
+	matRot *= XMMatrixRotationZ(XMConvertToRadians(rotation.z));
+	matRot *= XMMatrixRotationX(XMConvertToRadians(rotation.x));
+	matRot *= XMMatrixRotationY(XMConvertToRadians(rotation.y));
+	matTrans = XMMatrixTranslation(pos.x, pos.y, pos.z);
 	matWorld = XMMatrixIdentity();
-	matWorld *= XMMatrixRotationZ(rotation);
-	matWorld *= XMMatrixTranslationFromVector(position);
+	matWorld *= matScale;
+	matWorld *= matRot;
+	matWorld *= matTrans;
 	//転送
 	PostEffectConstBuffer* constMap = nullptr;
 	BaseDirectX::result = constBuff->Map(0, nullptr, (void**)&constMap);
-	constMap->mat = matWorld * common.matProjection;
+	constMap->mat = matWorld * BaseDirectX::matProjection;
 	XMFLOAT4 weight0 = { weights[0], weights[1] ,weights[2] ,weights[3] };
 	XMFLOAT4 weight1 = { weights[4], weights[5] ,weights[6] ,weights[7] };
 	constMap->weight0 = weight0;
@@ -189,7 +198,7 @@ void PostEffect::PreDraw()
 	{
 		BaseDirectX::cmdList->ClearRenderTargetView(rtvH[i], renderTarget.clearColor, 0, nullptr);
 	}
-	BaseDirectX::cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0.0f, 0, nullptr);
+	BaseDirectX::cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 }
 
 void PostEffect::PostDraw()
@@ -253,12 +262,12 @@ void PostEffect::CreateGraphicsPipelineState(HLSLShader& shader)
 	gpipeline.SampleDesc.Count = 1;
 
 	//デスクリプタレンジ
-	CD3DX12_DESCRIPTOR_RANGE descRangeSRV[PostEffect::texNum];
+	//CD3DX12_DESCRIPTOR_RANGE descRangeSRV[PostEffect::texNum];
 	for (int i = 0; i < PostEffect::texNum; i++)
 	{
 		descRangeSRV[i].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, i);//テクスチャ1
 	}
-	CD3DX12_ROOT_PARAMETER rootparams[PostEffect::texNum + 1];
+	CD3DX12_ROOT_PARAMETER rootparams[PostEffect::texNum + 1]{};
 	rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);//定数バッファビューとして初期化
 	for (int i = 1; i <= PostEffect::texNum; i++)
 	{
@@ -300,9 +309,9 @@ void PostEffect::CalcWeightGaussian(float* weightsTbl, int sizeOfWeightsTbl, flo
 
 void PostEffects::Init()
 {
-	postWater.Initialize(ShaderManager::postWater);
+	/*postWater.Initialize(ShaderManager::postWater);
 	postBlur.Initialize(ShaderManager::postBlur);
-	postMosaic.Initialize(ShaderManager::postMosaic);
+	postMosaic.Initialize(ShaderManager::postMosaic);*/
 	postNormal.Initialize(ShaderManager::postNormal);
 }
 
@@ -343,10 +352,12 @@ void PostEffects::Draw()
 	}
 	else if (type == PostEffectType::Mosaic)
 	{
+		postMosaic.pos.x = 700;
 		postMosaic.Draw();
 	}
 	else if (type == PostEffectType::Blur)
 	{
+
 		postBlur.Draw();
 	}
 	else

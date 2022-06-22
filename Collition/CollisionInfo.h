@@ -15,6 +15,11 @@ public:
 		this->collider = collider;
 		this->inter = inter;
 	}
+	~CollisionInfo()
+	{
+		/*delete(model);
+		delete(collider);*/
+	};
 	Model * model;
 	BaseCollider *collider = nullptr;
 	XMVECTOR inter;

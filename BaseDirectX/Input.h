@@ -10,8 +10,8 @@
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
 
-static IDirectInput8* dinput = nullptr;
-static IDirectInputDevice8* devkeyboard = nullptr;
+
+
 static BYTE keys[256] = {};
 static BYTE oldkeys[256] = {};
 static LPDIRECTINPUT8 g_lpDI;
@@ -20,7 +20,7 @@ static DIDEVCAPS g_diDevCaps;
 static POINT mousePos{};
 static bool mouseInput[10] = { false, false, false, false , false , false , false , false , false , false };
 static bool oldMouseInput[10] = { false,false, false , false , false , false , false , false , false , false };
-static DirectInput* directInput = DirectInput::GetInstance();/////////////////////
+
 
 enum class KeyCode
 {
@@ -70,27 +70,9 @@ enum class KeyCode
 	RightArrow = DIK_RIGHTARROW,
 	LeftArrow = DIK_LEFTARROW,
 	KeyCodeMax = 45,
+
 };
 static const char KeyCodeString[] = "A\0B\0C\0D\0E\0F\0G\0H\0I\0J\0K\0L\0M\0N\0O\0P\0Q\0R\0S\0T\0U\0V\0W\0X\0Y\0Z\0Key1\0Key2\0Key3\0Key4\0Key5\0Key6\0Key7\0Key8\0Key9\0Key0\0Tab\0Space\0LShift\0RShift\0Up\0Down\0Right\0Left\0\0";
-enum class PadKeyCode
-{
-	UpButton,
-	DownButton,
-	LeftButton,
-	RightButton,
-	Button01,
-	Button02,
-	Button03,
-	Button04,
-	ButtonLB,
-	ButtonRB,
-	ButtonSelect,
-	ButtonPouse,
-	Button09,
-	Button10,
-	ButtonKindMax,
-};
-static const char PadKeyCodeString[] = "Up\0Down\0Left\0Right\0Button01\0Button02\0Button03\0Button04\0LB\0RB\0Slect\0Pouse\0Button09\0Button10\0\0";
 
 enum class MouseButton
 {
@@ -103,6 +85,10 @@ static const char MouseCode[] = "LButton\0RButton\0\0";
 class Input
 {
 public:
+	static IDirectInput8 *dinput;
+	static IDirectInputDevice8 *devkeyboard;
+	static DirectInput *directInput;/////////////////////
+	static void Init();
 	static void Update();
 
 	static void KeySet(WNDCLASSEX w, HWND hwnd);

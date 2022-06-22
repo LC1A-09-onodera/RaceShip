@@ -9,6 +9,7 @@
 #include "../Player/Seling.h"
 #include "../Enemy/selingEnemy.h"
 #include "../Rewired/Rewired.h"
+#include "../WaterFace/WaterFace.h"
 
 enum GameSceneName { TITLE, SELECT, GAME, END, RESULT };
 
@@ -40,7 +41,7 @@ public:
 	void LightUpdate();
 
 public://シーンで使うもの
-	Light *light;
+	std::shared_ptr<Light> light;
 	PostEffect post;
 	float pointLightPos[3] = { 0, 1, 0 };
 	float pointLightColor[3] = { 1, 1, 1 };
@@ -61,8 +62,11 @@ public://シーンで使うもの
 	Model sample;
 	EachInfo playerPos;
 	EachInfo rPlayerPos;
-	Model water;
 
 	Seling seling;
-	Rewired playerShieldKey;
+	Seling rSeling;
+	WaterFace waterFace;
+	WaterFace normalWater;
+	Model world;
+	Model rWorld;
 };

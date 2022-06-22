@@ -8,7 +8,7 @@ class ObjectParticle : public Model
 class ObjectParticle3D
 {
 public:
-	enum ParticleType
+	enum class ParticleType
 	{
 		Exprotion,
 		Converge,
@@ -23,16 +23,16 @@ public:
 private:
 	const int Life = 120;
 
-	XMFLOAT3 speed;
-	XMFLOAT3 acc;
-	XMFLOAT3 addRotation;
-	XMFLOAT3 startPosition;
-	XMFLOAT3 endPosition;
+	XMFLOAT3 speed = { 0, 0, 0 };
+	XMFLOAT3 acc = { 0, 0, 0 };
+	XMFLOAT3 addRotation = { 0, 0, 0 };
+	XMFLOAT3 startPosition = { 0, 0, 0 };
+	XMFLOAT3 endPosition = { 0, 0, 0 };
 	const float addTime = 0.002f;
-	float easeTime;
-	bool isSize;
-	ParticleType type;
-	float angle;
+	float easeTime = 0.0f;
+	bool isSize = false;
+	ParticleType type = ParticleType::Exprotion;
+	float angle = 0.0f;
 public:
 	EachInfo each;
 	void Add(XMFLOAT3& emitter, ParticleType type);
@@ -42,9 +42,9 @@ public:
 	void InitConverge(XMFLOAT3& emitter);
 	void InitTitle(XMFLOAT3& emitter);
 	void InitSwell(XMFLOAT3& emitter);
-	void InitTarget(XMFLOAT3 &emitter);
-	void InitTornado(XMFLOAT3 &emitter);
-	void InitBorn(XMFLOAT3 &emitter);
+	void InitTarget(XMFLOAT3& emitter);
+	void InitTornado(XMFLOAT3& emitter);
+	void InitBorn(XMFLOAT3& emitter);
 	void InitLink();
 	void UpdateExprotion();
 	void UpdateConverge();
@@ -54,7 +54,7 @@ public:
 	void UpdateTornado();
 	void UpdateBorn();
 	void UpdateLink();
-	int time;
+	int time = 0;
 };
 
 class ObjectParticleInfo

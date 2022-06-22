@@ -2,6 +2,7 @@
 #include "../3DModel/Model.h"
 #include "../DX12operator.h"
 #include "../Enemy/selingEnemy.h"
+#include "../Rewired/Rewired.h"
 
 class ShieldModel : public Model
 {
@@ -13,7 +14,7 @@ public:
 
 class Seling
 {
-	Model seling;
+	
 	int nowNumber;
 	XMFLOAT3 frontDirection;
 	float angle;
@@ -30,10 +31,20 @@ class Seling
 	ShieldModel shieldModel;
 	bool isShield;
 	XMFLOAT3 shieldPos;
+	XMFLOAT3 scaleStart;
+	XMFLOAT3 scaleEnd;
+	float easeTime;
+	int shieldTime;
+	const int shieldMaxTime = 180;
 
 	Enemy enemy;
+	Rewired playerShieldKey;
 
+	const float addShieldRotaion = 30.0f;
+	const float shieldR = 2.2f;
+	const float addForcePower = 0.02f;
 public:
+	Model seling;
 	void AddForce(XMFLOAT3& force)
 	{
 		if (this->addForce.x < maxForce.x && this->addForce.x > -maxForce.x)
@@ -58,7 +69,7 @@ public:
 	void LoadModel();
 	void Init();
 	void Update();
-	void Draw();
+	void Draw(bool isRCamera = false);
 
 	void ForceAttach();
 	void Move();
@@ -72,8 +83,10 @@ public:
 	//弾が出る
 	void ShotInit();
 	void ShotUpdate();
+	void ShotInitAndUpdate();
 
 	//シールドが出る
 	void ShieldInit();
 	void ShieldUpdate();
+	void ShieldInitAndUpdate();
 };
