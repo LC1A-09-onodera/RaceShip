@@ -11,6 +11,8 @@
 #include "../Shader/ShaderManager.h"
 #include "../3DObjectParticle/3DObjectParticle.h"
 #include "../Sound/Sound.h"
+#include "../LoadStage/LoadStage.h"
+#include "../LoadStage/StageObject.h"
 
 GameScene::GameScene()
 {
@@ -93,6 +95,9 @@ void GameScene::Init()
 	PostEffects::Init();
 	ObjectParticles::LoadModels();
 
+	LoadStage::LoadStages("test.txt");
+	StageObjects::walls.wallModel.CreateModel("MapWall", ShaderManager::playerShader);
+	StageObjects::walls.LoadPosition();
 	seling.LoadModel();
 	seling.Init();
 	rSeling.LoadModel();
@@ -124,6 +129,7 @@ void GameScene::TitleUpdate()
 	rSeling.Update();
 	waterFace.Update();
 	normalWater.Update();
+
 	VoiceReciver::VoiceUDPUpdate();
 	ObjectParticles::Update();
 	LightUpdate();
@@ -183,6 +189,7 @@ void GameScene::TitleDraw()
 	seling.Draw(true);
 	world.each.rotation.y = 180;
 	world.Update();
+	StageObjects::Draw();
 	Draw3DObject(world);
 	ObjectParticles::Draw();
 	XMVECTOR sample = { 0, 0, 2.0f, 1.0 };

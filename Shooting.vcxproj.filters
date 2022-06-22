@@ -79,6 +79,12 @@
     <Filter Include="WaterFace">
       <UniqueIdentifier>{d6a1824b-bac7-4497-a1df-f5f0e63fd461}</UniqueIdentifier>
     </Filter>
+    <Filter Include="LoadStage">
+      <UniqueIdentifier>{cd77b0a7-98ac-47a4-a623-bcf63bd071ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LoadStageUDP">
+      <UniqueIdentifier>{48a4bf11-25eb-4d7d-a45b-622bab829178}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -255,6 +261,15 @@
     <ClInclude Include="WaterFace\WaterFace.h">
       <Filter>WaterFace</Filter>
     </ClInclude>
+    <ClInclude Include="LoadStage\LoadStage.h">
+      <Filter>LoadStage</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadStage\StageObject.h">
+      <Filter>LoadStage</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadStage\LoadStageUDP.h">
+      <Filter>LoadStageUDP</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -389,6 +404,15 @@
     <ClCompile Include="WaterFace\WaterFace.cpp">
       <Filter>WaterFace</Filter>
     </ClCompile>
+    <ClCompile Include="LoadStage\LoadStage.cpp">
+      <Filter>LoadStage</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadStage\StageObject.cpp">
+      <Filter>LoadStage</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadStage\LoadStageUDP.cpp">
+      <Filter>LoadStageUDP</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\HLSL\OBJPixelShader.hlsl" />
@@ -418,6 +442,7 @@
     <FxCompile Include="Resource\HLSL\PostMosaicPS.hlsl" />
     <FxCompile Include="Resource\HLSL\PostWaterPS.hlsl" />
     <FxCompile Include="Resource\HLSL\WaterSamplePS.hlsl" />
+    <FxCompile Include="Resource\HLSL\NormalPlane.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\HLSL\BSH.hlsli" />

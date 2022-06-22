@@ -265,8 +265,8 @@ void Box2D::Update(XMFLOAT3 position)
 bool Collision::CollisionBoxAndBox(Box2D box1, Box2D box2)
 {
 	float distanceZ, distanceX;
-	distanceZ = fabs(static_cast<double>(box1.center.z) - static_cast<double>(box2.center.z));
-	distanceX = fabs(static_cast<double>(box1.center.x) - static_cast<double>(box2.center.x));
+	distanceZ = static_cast<float>(fabs(static_cast<double>(box1.center.z) - static_cast<double>(box2.center.z)));
+	distanceX = static_cast<float>(fabs(static_cast<double>(box1.center.x) - static_cast<double>(box2.center.x)));
 	float addRX, addRZ;
 	addRZ = box1.RZ + box2.RZ;
 	addRX = box1.RX + box2.RX;

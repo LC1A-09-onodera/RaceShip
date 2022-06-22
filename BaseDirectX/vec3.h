@@ -20,7 +20,7 @@ public:
 		return sqrtf(this->v.x * this->v.x + this->v.y * this->v.y + this->v.z * this->v.z);
 	};
 
-	Vec3& nomalize()
+	Vec3 nomalize()
 	{
 		Vec3 v;
 		v.v.x = this->v.x / length();

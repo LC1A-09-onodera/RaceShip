@@ -4,6 +4,7 @@
 #include "../imgui/imgui_impl_win32.h"
 #include "../BaseDirectX/BaseDirectX.h"
 #include "../Camera/Camera.h"
+#include "../LoadStage/StageObject.h"
 #include <stdarg.h>
 
 ComPtr<ID3D12DescriptorHeap> Imgui::imguiDescHeap;
@@ -159,7 +160,10 @@ void Imgui::EachInfo()
         {
             ImGui::Text("notiong");
         }
-
+        if (ImGui::Button("LoadStage"))
+        {
+            StageObjects::walls.LoadPosition();
+        }
     }
     else if (tab == ImguiType::CameraInfo)
     {
@@ -169,7 +173,7 @@ void Imgui::EachInfo()
         ImGui::Text("Rtarget:%.2f, %.2f, %.2f", Cameras::rCamera.target.v.x, Cameras::rCamera.target.v.y, Cameras::rCamera.target.v.z);
         ImGui::Checkbox("ImGuiCameraControl", &CameraControl);
         ImGui::InputFloat("CameraLength:", &CameraR, 1.0f, 10.0f);
-        ImGui::InputFloat("CameraRotation:", & CameraRotation, 1.0f, 10.0f);
+        ImGui::InputFloat("CameraRotation:", &CameraRotation, 1.0f, 10.0f);
         ImGui::InputFloat("CameraHigh:", &CameraHigh, 0.01f, 0.02f);
     }
     else if (tab == ImguiType::Debug)

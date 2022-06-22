@@ -72,9 +72,9 @@ void WindowsAPI::CheckMsg()
 void WindowsAPI::Update()
 {
     auto hdc = GetDC(hwnd);
-    rate = GetDeviceCaps(hdc, VREFRESH);
+    rate = static_cast<float>(GetDeviceCaps(hdc, VREFRESH));
     intarval = 0;
-    intarval = rate / 60.0f;
+    intarval = static_cast<int>(rate / 60.0f);
     if (msg.message == WM_QUIT)
     {
         Qite = true;

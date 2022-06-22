@@ -28,8 +28,8 @@ Matrix4 Scale(const Vec3& s)
 
 Matrix4 RotX(float angle)
 {
-	float sind = sin(angle);
-	float cosd = cos(angle);
+	float sind = static_cast<float>(sin(angle));
+	float cosd = static_cast<float>(cos(angle));
 
 	Matrix4 result
 	{
@@ -43,8 +43,8 @@ Matrix4 RotX(float angle)
 
 Matrix4 RotY(float angle)
 {
-	float sind = sin(angle);
-	float cosd = cos(angle);
+	float sind = static_cast<float>(sin(angle));
+	float cosd = static_cast<float>(cos(angle));
 	Matrix4 result
 	{
 		cosd,0.0f,-sind,0.0f,
@@ -57,8 +57,8 @@ Matrix4 RotY(float angle)
 
 Matrix4 RotZ(float angle)
 {
-	float sind = sin(angle);
-	float cosd = cos(angle);
+	float sind = static_cast<float>(sin(angle));
+	float cosd = static_cast<float>(cos(angle));
 	Matrix4 result
 	{
 		cosd,sind,0.0f,0.0f,

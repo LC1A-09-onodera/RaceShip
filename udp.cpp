@@ -8,7 +8,7 @@ void UDPStruct::SetPortNum(int port)
 void UDPStruct::StartUp()
 {
 	WSAStartup(MAKEWORD(2, 0), &wsaData);//MAKEWORD(2, 0)はバージョン
-	sock = socket(AF_INET, SOCK_DGRAM, 0);//AF_INETはIPv4、SOCK_DGRAMはUDP通信、0は？
+	sock = static_cast<int>(socket(AF_INET, SOCK_DGRAM, 0));//AF_INETはIPv4、SOCK_DGRAMはUDP通信、0は？
 
 	addr.sin_family = AF_INET;  //IPv4
 	addr.sin_port = htons(port);   //通信ポート番号設定
