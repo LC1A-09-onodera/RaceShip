@@ -162,7 +162,7 @@ void Imgui::EachInfo()
         }
         if (ImGui::Button("LoadStage"))
         {
-            StageObjects::walls.LoadPosition();
+            StageObjects::LoadFile();
         }
     }
     else if (tab == ImguiType::CameraInfo)

@@ -94,17 +94,22 @@ void GameScene::Init()
 	//ポストエフェクトの初期化
 	PostEffects::Init();
 	ObjectParticles::LoadModels();
-
+	Rewired::KeyCodeString::KeyCodeStringInit();
+	
+	jumpKey.LoadKey("RewiredTest.txt");
+	
 	LoadStage::LoadStages("test.txt");
 	StageObjects::walls.wallModel.CreateModel("MapWall", ShaderManager::playerShader);
 	StageObjects::walls.LoadPosition();
+	StageObjects::goals.goalModel.CreateModel("goal", ShaderManager::playerShader);
+	StageObjects::goals.LoadPosition();
 	seling.LoadModel();
 	seling.Init();
 	rSeling.LoadModel();
 	rSeling.Init();
 
 	VoiceReciver::StartUp();
-	EnemyModels::LoadModels();
+	//EnemyModels::LoadModels();
 
 	waterFace.LoadModel(ShaderManager::waterShader, PostEffects::postNormal);
 	waterFace.Init();
@@ -129,6 +134,11 @@ void GameScene::TitleUpdate()
 	rSeling.Update();
 	waterFace.Update();
 	normalWater.Update();
+
+	if (jumpKey.GetKeyDown())
+	{
+		int a = 0;
+	}
 
 	VoiceReciver::VoiceUDPUpdate();
 	ObjectParticles::Update();

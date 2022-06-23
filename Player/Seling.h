@@ -37,30 +37,17 @@ class Seling
 	int shieldTime;
 	const int shieldMaxTime = 180;
 
-	Enemy enemy;
-	Rewired playerShieldKey;
+	bool isGoal;
+
+	//Enemy enemy;
 
 	const float addShieldRotaion = 30.0f;
 	const float shieldR = 2.2f;
 	const float addForcePower = 0.02f;
+	const float MaxForce = 1.0f;
 public:
 	Model seling;
-	void AddForce(XMFLOAT3& force)
-	{
-		if (this->addForce.x < maxForce.x && this->addForce.x > -maxForce.x)
-		{
-			this->addForce.x = this->addForce.x + force.x;
-		}
-		if (this->addForce.y < maxForce.y && this->addForce.y > -maxForce.y)
-		{
-			this->addForce.y = this->addForce.y + force.y;
-		}
-		if (this->addForce.z < maxForce.z && this->addForce.z > -maxForce.z)
-		{
-			this->addForce.z = this->addForce.z + force.z;
-		}
-		isMoveForce = true;
-	}
+	void AddForce(XMFLOAT3& force);
 	XMFLOAT3 GetDirection()
 	{
 		return Normalize(frontDirection);
@@ -89,4 +76,7 @@ public:
 	void ShieldInit();
 	void ShieldUpdate();
 	void ShieldInitAndUpdate();
+
+	void HitWall();
+	void HitGoal();
 };

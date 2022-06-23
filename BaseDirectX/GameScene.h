@@ -69,4 +69,6 @@ public://ƒV[ƒ“‚Åg‚¤‚à‚Ì
 	WaterFace normalWater;
 	Model world;
 	Model rWorld;
+
+	Rewired::RewiredKeys jumpKey;
 };

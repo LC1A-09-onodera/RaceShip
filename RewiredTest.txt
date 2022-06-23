@@ -1,0 +1,4 @@
+KeyBoard A
+KeyBoard B
+XboxPad PadUp
+XboxPad PadAa

@@ -2,7 +2,7 @@
 #include "Seling.h"
 #include "../BaseDirectX/Input.h"
 #include "../Shader/ShaderManager.h"
-#include <algorithm>
+#include "../LoadStage/StageObject.h"
 
 void Seling::ForceUpdate()
 {
@@ -36,11 +36,8 @@ void Seling::Init()
 	maxForce = { 0.7f, 0.7f, 0.7f };
 	frontDirection = { 0, 0 ,1.0f };
 	isShield = false;
-	enemy.Init(XMFLOAT3(0, 0, 10));
 
-	playerShieldKey.KeyBoradInit(5, KeyCode::A, KeyCode::B, KeyCode::C, KeyCode::Space);
-	playerShieldKey.PadInit(2, PadKeyCode::Button01, PadKeyCode::ButtonRB);
-	
+
 }
 
 void Seling::Update()
@@ -49,13 +46,17 @@ void Seling::Update()
 
 	ForceUpdate();
 
+	HitWall();
+
+	HitGoal();
+
 	ForceAttach();
 
 	//ShotInitAndUpdate();
 
 	//ShieldInitAndUpdate();
 
-	enemy.Update(shieldPos, isShield);
+	//enemy.Update(shieldPos, isShield);
 }
 
 void Seling::Draw(bool isRCamera)
@@ -85,6 +86,47 @@ void Seling::Draw(bool isRCamera)
 		Draw3DObject(shieldModel);
 	}
 	//enemy.Draw();
+}
+
+void Seling::AddForce(XMFLOAT3& force)
+{
+	if (this->addForce.x < maxForce.x && this->addForce.x > -maxForce.x)
+	{
+		this->addForce.x = this->addForce.x + force.x;
+		if (addForce.x > MaxForce)
+		{
+			addForce.x = MaxForce;
+		}
+		else if (addForce.x < -MaxForce)
+		{
+			addForce.x = -MaxForce;
+		}
+	}
+	if (this->addForce.y < maxForce.y && this->addForce.y > -maxForce.y)
+	{
+		this->addForce.y = this->addForce.y + force.y;
+		if (addForce.y > MaxForce)
+		{
+			addForce.y = MaxForce;
+		}
+		else if (addForce.y < -MaxForce)
+		{
+			addForce.y = -MaxForce;
+		}
+	}
+	if (this->addForce.z < maxForce.z && this->addForce.z > -maxForce.z)
+	{
+		this->addForce.z = this->addForce.z + force.z;
+		if (addForce.z > MaxForce)
+		{
+			addForce.z = MaxForce;
+		}
+		else if (addForce.z < -MaxForce)
+		{
+			addForce.z = -MaxForce;
+		}
+	}
+	isMoveForce = true;
 }
 
 void Seling::ForceAttach()
@@ -185,10 +227,10 @@ void Seling::ShieldUpdate()
 
 void Seling::ShieldInitAndUpdate()
 {
-	if (playerShieldKey.GetKeyDown())
+	/*if (playerShieldKey.GetKeyDown())
 	{
 		ShieldInit();
-	}
+	}*/
 	if (Input::Key(DIK_R))
 	{
 		ShieldInit();
@@ -201,6 +243,31 @@ void Seling::ShieldInitAndUpdate()
 	if (isShield)
 	{
 		ShieldUpdate();
+	}
+}
+
+void Seling::HitWall()
+{
+	/*for (auto itr = StageObjects::walls.wallsPos.begin(); itr != StageObjects::walls.wallsPos.end(); ++itr)
+	{
+		if (Lenght(seling.each.position, itr->position) <= 2.0f)
+		{
+			XMFLOAT3 vec = ConvertXMVECTORtoXMFLOAT3( itr->position - seling.each.position );
+			vec = Normalize(vec);
+			const float rezist = 4.0f;
+			addForce = { addForce.x * vec.x / rezist, addForce.y * vec.y / rezist, addForce.z * vec.z / rezist };
+		}
+	}*/
+}
+
+void Seling::HitGoal()
+{
+	for (auto itr = StageObjects::goals.goalsPos.begin(); itr != StageObjects::goals.goalsPos.end(); ++itr)
+	{
+		if (Lenght(seling.each.position, itr->position) <= 3.0f)
+		{
+			isGoal = true;
+		}
 	}
 }
 
