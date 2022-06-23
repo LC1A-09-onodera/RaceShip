@@ -3,13 +3,9 @@
 #include "../Camera/Camera.h"
 
 WallObject StageObjects::walls;
+GoalObject StageObjects::goals;
+EnemyObject StageObjects::enemys;
 
-list<WallObjectEach> WallObject::wallsPos;
-WallModel WallObject::wallModel;
-list<GoalObjectEach> GoalObject::goalsPos;
-GoalModel GoalObject::goalModel;
-list<EnemyObjectEach> EnemyObject::enemysPos;
-EnemyModel EnemyObject::enemyModel;
 void WallObject::LoadPosition()
 {
 	for (auto itr = LoadStage::wallPosition.begin(); itr != LoadStage::wallPosition.end(); ++itr)
@@ -18,8 +14,14 @@ void WallObject::LoadPosition()
 		each.ConstInit();
 		each.position.m128_f32[0] = itr->x;
 		each.position.m128_f32[2] = itr->y;
-		each.scale = {2.0f, 4.0f, 2.0f};
+		each.scale = { 2.0f, 4.0f, 2.0f };
 		wallsPos.push_back(each);
+		WallObjectEach eachR;
+		eachR.ConstInit();
+		eachR.position.m128_f32[0] = itr->x;
+		eachR.position.m128_f32[2] = itr->y;
+		eachR.scale = { 2.0f, 4.0f, 2.0f };
+		rWallsPos.push_back(eachR);
 	}
 }
 
@@ -27,24 +29,42 @@ void StageObjects::LoadFile()
 {
 	LoadStage::wallPosition.clear();
 	walls.wallsPos.clear();
+	walls.rWallsPos.clear();
 	LoadStage::goalPosition.clear();
 	goals.goalsPos.clear();
+	goals.rGoalsPos.clear();
 	LoadStage::LoadStages("test.txt");
 	walls.LoadPosition();
 	goals.LoadPosition();
 }
 
-void StageObjects::Draw()
+void StageObjects::Draw(bool isRCamera)
 {
-	for (auto itr = walls.wallsPos.begin(); itr != walls.wallsPos.end(); ++itr)
+	if (isRCamera)
 	{
-		walls.wallModel.Update(&(*itr));
-		Draw3DObject(walls.wallModel);
+		for (auto itr = walls.rWallsPos.begin(); itr != walls.rWallsPos.end(); ++itr)
+		{
+			walls.wallModel.Update(&(*itr), isRCamera);
+			Draw3DObject(walls.wallModel);
+		}
+		for (auto itr = goals.rGoalsPos.begin(); itr != goals.rGoalsPos.end(); ++itr)
+		{
+			goals.goalModel.Update(&(*itr), isRCamera);
+			Draw3DObject(goals.goalModel);
+		}
 	}
-	for (auto itr = goals.goalsPos.begin(); itr != goals.goalsPos.end(); ++itr)
+	else
 	{
-		goals.goalModel.Update(&(*itr));
-		Draw3DObject(goals.goalModel);
+		for (auto itr = walls.wallsPos.begin(); itr != walls.wallsPos.end(); ++itr)
+		{
+			walls.wallModel.Update(&(*itr), isRCamera);
+			Draw3DObject(walls.wallModel);
+		}
+		for (auto itr = goals.goalsPos.begin(); itr != goals.goalsPos.end(); ++itr)
+		{
+			goals.goalModel.Update(&(*itr), isRCamera);
+			Draw3DObject(goals.goalModel);
+		}
 	}
 }
 
@@ -314,5 +334,11 @@ void GoalObject::LoadPosition()
 		each.position.m128_f32[2] = itr->y;
 		each.scale = { 2.0f, 4.0f, 2.0f };
 		goalsPos.push_back(each);
+		GoalObjectEach eachR;
+		eachR.ConstInit();
+		eachR.position.m128_f32[0] = itr->x;
+		eachR.position.m128_f32[2] = itr->y;
+		eachR.scale = { 2.0f, 4.0f, 2.0f };
+		rGoalsPos.push_back(eachR);
 	}
 }

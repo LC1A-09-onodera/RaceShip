@@ -71,7 +71,7 @@ void GameScene::Init()
 	Cameras::camera.Update();
 
 	Cameras::rCamera.Init();
-	Cameras::rCamera.eye = { 0, 0, -15.0f };
+	Cameras::rCamera.eye = { 0, -10, -15.0f };
 	Cameras::rCamera.target = { 0, 0, 0 };
 	Cameras::rCamera.Update();
 	//Imgui‚Ì‰Šú‰»
@@ -119,14 +119,15 @@ void GameScene::Init()
 	world.each.scale = { 40.0f, 40.0f, 40.0f };
 	rWorld.CreateModel("SphereW", ShaderManager::playerShader);
 	rWorld.each.scale = { 40.0f, 40.0f, 40.0f };
+	Cameras::rCamera.isRCamera = true;
 }
 
 void GameScene::TitleUpdate()
 {
 	Cameras::camera.Update();
-	Cameras::rCamera.eye.v.x = Cameras::camera.eye.v.x;
-	Cameras::rCamera.eye.v.y = -Cameras::camera.eye.v.y;
-	Cameras::rCamera.eye.v.z = Cameras::camera.eye.v.z;
+	Cameras::rCamera.eye.v.x = 0;
+	Cameras::rCamera.eye.v.y = -100;
+	Cameras::rCamera.eye.v.z = -25.0f;
 	Cameras::rCamera.target = Cameras::camera.target;
 	Cameras::rCamera.Update();
 
@@ -142,10 +143,7 @@ void GameScene::TitleUpdate()
 
 	VoiceReciver::VoiceUDPUpdate();
 	ObjectParticles::Update();
-	LightUpdate();
 	Sound::Updete(Imgui::volume);
-	light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
-	LightUpdate();
 }
 
 void GameScene::SelectUpdate()
@@ -179,13 +177,14 @@ void GameScene::TitleDraw()
 {
 	//PostEffect‚ÌPreDraw
 	PostEffects::PreDraw();
-	//seling.Draw(true);
-	rSeling.seling.each.position = { -seling.seling.each.position.m128_f32[0], -seling.seling.each.position.m128_f32[1], seling.seling.each.position.m128_f32[2], 1.0f };
-	rSeling.seling.each.rotation.x = 180;
+
+	light->SetLightDir(XMFLOAT3(Cameras::rCamera.GetTargetDirection()));
+	LightUpdate();
+
 	rSeling.Draw(true);
-	rWorld.each.rotation.x = 180;
-	rWorld.Update();
+	rWorld.Update(nullptr, true);
 	Draw3DObject(rWorld);
+	StageObjects::Draw(true);
 	ObjectParticles::Draw();
 
 	BaseDirectX::clearColor[0] = 0.0f;
@@ -196,19 +195,25 @@ void GameScene::TitleDraw()
 
 	//PostEffect‚ÌDraw
 	//PostEffects::Draw();
-	seling.Draw(true);
+
+	light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
+	LightUpdate();
+
+	seling.Draw();
 	world.each.rotation.y = 180;
 	world.Update();
-	StageObjects::Draw();
+	StageObjects::Draw(false);
 	Draw3DObject(world);
 	ObjectParticles::Draw();
 	XMVECTOR sample = { 0, 0, 2.0f, 1.0 };
 	if (Imgui::useWaterNum == 0)
 	{
+		waterFace.waterModel.each.rotation.y = 180;
 		waterFace.Draw(PostEffects::postNormal, sample/*seling.seling.each.position*/);
 	}
 	else if (Imgui::useWaterNum == 1)
 	{
+		normalWater.waterModel.each.rotation.y = 180;
 		normalWater.Draw(PostEffects::postNormal, sample/*seling.seling.each.position*/);
 	}
 	PostEffects::PostDraw();

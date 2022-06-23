@@ -6,10 +6,7 @@ class WaterVertex
 {
 	XMFLOAT3 vertPosition;
 	int number;
-	
-	
+
 	//隣のチェック
 	void CheckNeighbour();
-
-	
 };

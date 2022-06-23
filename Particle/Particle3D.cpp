@@ -989,7 +989,7 @@ void ParticleControl::Update()
 	
 	for (int i = 0; i < 10; i++)
 	{
-		numbers[i]->Update(Cameras::camera.eye.v, Cameras::camera.target.v, Cameras::camera.up.v);
+		//numbers[i]->Update(Cameras::camera.eye.v, Cameras::camera.target.v, Cameras::camera.up.v);
 	}
 }
 
@@ -1001,7 +1001,7 @@ void ParticleControl::Init()
 		assert(0);
 	}
 	
-	numbers[0].reset(numbers[0]->Create(L"Resource/Img/number_0.png"));
+	/*numbers[0].reset(numbers[0]->Create(L"Resource/Img/number_0.png"));
 	numbers[1].reset(numbers[0]->Create(L"Resource/Img/number_1.png"));
 	numbers[2].reset(numbers[0]->Create(L"Resource/Img/number_2.png"));
 	numbers[3].reset(numbers[0]->Create(L"Resource/Img/number_3.png"));
@@ -1010,10 +1010,10 @@ void ParticleControl::Init()
 	numbers[6].reset(numbers[0]->Create(L"Resource/Img/number_6.png"));
 	numbers[7].reset(numbers[0]->Create(L"Resource/Img/number_7.png"));
 	numbers[8].reset(numbers[0]->Create(L"Resource/Img/number_8.png"));
-	numbers[9].reset(numbers[0]->Create(L"Resource/Img/number_9.png"));
+	numbers[9].reset(numbers[0]->Create(L"Resource/Img/number_9.png"));*/
 	for (int i = 0; i < 10; i++)
 	{
-		numbers[i]->alpha = 0.0f;
+		//numbers[i]->alpha = 0.0f;
 	}
 }
 
@@ -1021,6 +1021,6 @@ void ParticleControl::Draw()
 {
 	for (int i = 0; i < 10; i++)
 	{
-		ParticleDraw(BaseDirectX::cmdList.Get(), numbers[i].get());
+		//ParticleDraw(BaseDirectX::cmdList.Get(), numbers[i].get());
 	}
 }

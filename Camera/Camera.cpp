@@ -45,7 +45,10 @@ void Camera::Init()
 void Camera::Update()
 {
 	ShakeUpdate();
-	CameraTargetRot();
+	if (!isRCamera)
+	{
+		CameraTargetRot();
+	}
 	//ƒrƒ…[•ÏŠ·s—ñ‚ğì‚è’¼‚·
 	//matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 	XMVECTOR eyePosition = XMLoadFloat3(&eye.v);

@@ -15,9 +15,10 @@ public:
 class WallObject
 {
 public:
-	static list<WallObjectEach> wallsPos;
-	static WallModel wallModel;
-	static void LoadPosition();
+	list<WallObjectEach> wallsPos;
+	list<WallObjectEach> rWallsPos;
+	WallModel wallModel;
+	void LoadPosition();
 };
 
 class GoalObjectEach : public EachInfo
@@ -34,9 +35,10 @@ public:
 class GoalObject
 {
 public:
-	static list<GoalObjectEach> goalsPos;
-	static GoalModel goalModel;
-	static void LoadPosition();
+	list<GoalObjectEach> goalsPos;
+	list<GoalObjectEach> rGoalsPos;
+	GoalModel goalModel;
+	void LoadPosition();
 };
 
 class EnemyObjectEach : public EachInfo
@@ -53,9 +55,10 @@ public:
 class EnemyObject
 {
 public:
-	static list<EnemyObjectEach> enemysPos;
-	static EnemyModel enemyModel;
-	static void LoadPosition();
+	list<EnemyObjectEach> enemysPos;
+	list<EnemyObjectEach> rEnemysPos;
+	EnemyModel enemyModel;
+	void LoadPosition();
 };
 
 class StageObjects
@@ -65,5 +68,5 @@ public:
 	static GoalObject goals;
 	static EnemyObject enemys;
 	static void LoadFile();
-	static void Draw();
+	static void Draw(bool isRCamera = false);
 };

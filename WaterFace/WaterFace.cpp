@@ -4,7 +4,7 @@
 
 void WaterFace::LoadModel(HLSLShader &useShader, PostEffect& postEffect)
 {
-	waterModel.CreateModel("Plane", useShader, postEffect);
+	waterModel.CreateModel("Plane2", useShader, postEffect);
 }
 
 void WaterFace::Init()
@@ -12,7 +12,8 @@ void WaterFace::Init()
 	waterModel.each.ConstInit();
 	waterModel.each.position = { 0, -1.0f, 0, 1 };
 	waterModel.each.rotation = { 0, 180, 0};
-	waterModel.each.scale = {30, 1, 30};
+	float scaleSample = 0.09f;
+	waterModel.each.scale = { scaleSample, scaleSample, scaleSample };
 }
 
 void WaterFace::Update()

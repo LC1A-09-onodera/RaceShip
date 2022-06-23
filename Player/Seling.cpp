@@ -36,8 +36,7 @@ void Seling::Init()
 	maxForce = { 0.7f, 0.7f, 0.7f };
 	frontDirection = { 0, 0 ,1.0f };
 	isShield = false;
-
-
+	addForce = {0, 0 ,0};
 }
 
 void Seling::Update()

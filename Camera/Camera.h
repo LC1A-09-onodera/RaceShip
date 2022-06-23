@@ -47,6 +47,8 @@ public:
 	float cameraAngleHorizonal;
 	float cameraAngleVertical;
 
+	bool isRCamera = false;
+
 	void Init();
 	void Update();
 	void EyeMove(Vec3 moveAmount);
