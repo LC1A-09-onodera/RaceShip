@@ -18,26 +18,17 @@ void Camera::CameraTargetRot()
 		rotation.z = ShlomonMath::Sin(rotationXZ);
 		rotation.y = Imgui::CameraHigh;
 		Normalize(rotation);
-		eye.v.x = target.v.x + rotation.x * targetR;
-		eye.v.y = target.v.y + rotation.y * targetR;
-		eye.v.z = target.v.z + rotation.z * targetR;
+		eye.x = target.x + rotation.x * targetR;
+		eye.y = target.y + rotation.y * targetR;
+		eye.z = target.z + rotation.z * targetR;
 	}
 }
 
-void Camera::Init()
+void Camera::Init(XMFLOAT3& eye, XMFLOAT3& target)
 {
-	eye.v = { 0.0f, 0.0f, -100.0f };
+	eye = { 0.0f, 0.0f, -100.0f };
 	target = { 0.0f, 20.0f, 0.0f };
 	up = { 0.0f, 1.0f, 0.0f };
-	eyePos = eye;
-	cameraUp = up;
-
-	rotM = XMMatrixIdentity();
-
-	vv0 = { 0, 0, -1, 0 };
-
-	cameraAngleHorizonal = 0.0f;
-	cameraAngleVertical = 0.0f;
 
 	Update();
 }
@@ -51,9 +42,9 @@ void Camera::Update()
 	}
 	//ビュー変換行列を作り直す
 	//matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
-	XMVECTOR eyePosition = XMLoadFloat3(&eye.v);
-	XMVECTOR targetPosition = XMLoadFloat3(&target.v);
-	XMVECTOR upVector = XMLoadFloat3(&up.v);
+	XMVECTOR eyePosition = XMLoadFloat3(&eye);
+	XMVECTOR targetPosition = XMLoadFloat3(&target);
+	XMVECTOR upVector = XMLoadFloat3(&up);
 	//z軸
 	XMVECTOR cameraAxisZ = XMVectorSubtract(targetPosition, eyePosition);
 
@@ -108,121 +99,15 @@ void Camera::Update()
 	matBillboardY.r[3] = XMVectorSet(0, 0, 0, 1);
 }
 
-void Camera::EyeMove(Vec3 moveAmount)
-{
-	Update();
-}
-
 void Camera::EyeAndTargetMove(XMFLOAT3 moveAmount)
 {
-	eye.v.x += moveAmount.x;
-	eye.v.y += moveAmount.y;
-	eye.v.z += moveAmount.z;
-	target.v.x += moveAmount.x;
-	target.v.y += moveAmount.y;
-	target.v.z += moveAmount.z;
+	eye.x += moveAmount.x;
+	eye.y += moveAmount.y;
+	eye.z += moveAmount.z;
+	target.x += moveAmount.x;
+	target.y += moveAmount.y;
+	target.z += moveAmount.z;
 
-	Update();
-}
-
-void Camera::TargetMove(XMFLOAT3 moveAmount)
-{
-	target.v.x += moveAmount.x;
-	target.v.y += moveAmount.y;
-	target.v.z += moveAmount.z;
-	Update();
-}
-
-void Camera::eyeMoveCircleHorizonal(XMFLOAT3 Amount)
-{
-	target.v = Amount;
-	target.v.y = Amount.y + 8;
-
-	rotM = XMMatrixRotationY(cameraAngleHorizonal);
-	vv0 = XMVector3TransformNormal(vv0, rotM);
-
-	eye.v.x = target.v.x + vv0.m128_f32[0];
-	eye.v.y = target.v.y + vv0.m128_f32[1];
-	eye.v.z = target.v.z + vv0.m128_f32[2];
-	Update();
-}
-
-void Camera::eyeMoveCircleVertical(XMFLOAT3 Amount)
-{
-	target.v = Amount;
-	target.v.y = Amount.y + 8;
-
-	rotM = XMMatrixRotationX(cameraAngleVertical);
-	vv0 = XMVector3TransformNormal(vv0, rotM);
-
-	eye.v.x = target.v.x + vv0.m128_f32[0];
-	eye.v.y = target.v.y + vv0.m128_f32[1];
-	eye.v.z = target.v.z + vv0.m128_f32[2];
-	Update();
-}
-
-void Camera::SetTarget(const XMFLOAT3& target)
-{
-	Camera::target.v = target;
-}
-
-void Camera::QuaternionRotation(const float& RightAngle, const float& UpAngle)
-{
-	const float ROT_UNIT = 0.02f;
-	cameraUpAngle = 0.0f;
-	cameraRightAngle = 0.0f;
-	if (RightAngle != NULL)
-	{
-		cameraRightAngle += RightAngle;
-	}
-	if (UpAngle != NULL)
-	{
-		cameraRightAngle += UpAngle;
-	}
-
-	if (Input::directInput->rightStickX() > 0 || Input::Key(DIK_RIGHT))
-	{
-		cameraRightAngle = -ROT_UNIT;
-	}
-
-	if (Input::directInput->rightStickX() < 0 || Input::Key(DIK_LEFT))
-	{
-		cameraRightAngle = ROT_UNIT;
-	}
-
-	/*if (directInput->rightStickY() < 0 || Input::Key(DIK_DOWN))
-	{
-		cameraUpAngle = -ROT_UNIT;
-	}
-
-	if (directInput->rightStickY() > 0 || Input::Key(DIK_UP))
-	{
-		cameraUpAngle = ROT_UNIT;
-	}*/
-	Quaternion qCameraRghtAngle = quaternion(cameraUp, cameraRightAngle);
-	Vec3 cameraSide = cameraUp.cross(target - eyePos).nomalize();
-	Quaternion qCameraUpAngle = quaternion(cameraSide, cameraUpAngle);
-
-	Quaternion q = qCameraRghtAngle * qCameraUpAngle;
-
-	Quaternion qCameraPosition = quaternion(eyePos.v.x, eyePos.v.y, eyePos.v.z, 0.0f);
-
-	Quaternion qq = Conjugate(q);
-
-	qCameraPosition = q * qCameraPosition * qq;
-
-	eyePos = { qCameraPosition.x,qCameraPosition.y,qCameraPosition.z };
-
-	//上方向ベクトル
-	Quaternion qCameraUp = quaternion(cameraUp.v.x, cameraUp.v.y, cameraUp.v.z, 0.0f);
-	qCameraUp = q * qCameraUp * qq;
-
-	cameraUp = GetAxis(qCameraUp);
-
-	eye.v.x += ((eyePos.v.x + target.v.x) - eye.v.x) / 1;
-	eye.v.y += ((eyePos.v.y + target.v.y) - eye.v.y) / 1;
-	eye.v.z += ((eyePos.v.z + target.v.z) - eye.v.z) / 1;
-	up = cameraUp;
 	Update();
 }
 
@@ -234,24 +119,24 @@ void Camera::ShakeUpdate()
 	int random = rand() % 3;
 	if (random == 0)
 	{
-		eye.v.x += shakePower;
-		target.v.x += shakePower;
+		eye.x += shakePower;
+		target.x += shakePower;
 	}
 	else if (random == 1)
 	{
-		eye.v.x += -shakePower;
-		target.v.x += -shakePower;
+		eye.x += -shakePower;
+		target.x += -shakePower;
 	}
 	random = rand() % 3;
 	if (random == 0)
 	{
-		eye.v.z += shakePower;
-		target.v.z += shakePower;
+		eye.z += shakePower;
+		target.z += shakePower;
 	}
 	else if (random == 1)
 	{
-		eye.v.z += -shakePower;
-		target.v.z += -shakePower;
+		eye.z += -shakePower;
+		target.z += -shakePower;
 	}
 	shakePower -= 0.5f;
 	if (shakePower <= 0)
@@ -271,18 +156,18 @@ void Camera::SetShake(float shakePower)
 	isShake = true;
 }
 
-void Camera::SetTarget(XMFLOAT3 target)
+void Camera::SetTarget(XMFLOAT3 &target)
 {
-	this->target.v = target;
+	this->target = target;
 }
 
 XMFLOAT3 Camera::GetTargetDirection()
 {
 	XMFLOAT3 dire;
 	XMFLOAT3 sub;
-	sub.x = target.v.x - eye.v.x;
-	sub.y = target.v.y - eye.v.y;
-	sub.z = target.v.z - eye.v.z;
+	sub.x = target.x - eye.x;
+	sub.y = target.y - eye.y;
+	sub.z = target.z - eye.z;
 	float leg = TargetLength();
 	dire.x = sub.x / leg;
 	dire.y = sub.y / leg;
@@ -324,7 +209,7 @@ XMFLOAT3 Camera::EyeToMouseVec()
 	XMFLOAT3 mouse;
 	mouse = GetMousePosition();
 	XMFLOAT3 eyePos;
-	eyePos = Camera::eye.v;
+	eyePos = Camera::eye;
 	XMFLOAT3 result;
 	result = mouse - eyePos;
 	return Normalize(result);
@@ -334,7 +219,7 @@ XMFLOAT3 Camera::MousePosition(float z)
 {
 	XMFLOAT3 mouseVec = EyeToMouseVec();
 	float count;
-	count = z - Camera::eye.v.z / mouseVec.z;
+	count = z - Camera::eye.z / mouseVec.z;
 	float x;
 	x = mouseVec.x * count;
 	float y;
@@ -347,9 +232,9 @@ float Camera::TargetLength()
 {
 	float lenght;
 	XMFLOAT3 sub;
-	sub.x = target.v.x - eye.v.x;
-	sub.y = target.v.y - eye.v.y;
-	sub.z = target.v.z - eye.v.z;
+	sub.x = target.x - eye.x;
+	sub.y = target.y - eye.y;
+	sub.z = target.z - eye.z;
 	lenght = sqrtf((sub.x * sub.x) + (sub.y * sub.y) + (sub.z * sub.z));
 	return lenght;
 }
