@@ -2,10 +2,10 @@
 #include <DirectXMath.h>
 #include <d3dcompiler.h>
 #include <d3dx12.h>
-#include "../PointLight.h"
+#include "../Light/PointLight.h"
 #include "../Light/SpotLight.h"
 #include "../Light/CircleShadow.h"
-#include "../DX12operator.h"
+#include "../BaseDirectX/DX12operator.h"
 
 using namespace Microsoft::WRL;
 using namespace DirectX;

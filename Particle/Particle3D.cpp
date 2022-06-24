@@ -1,7 +1,7 @@
 #include "Particle3D.h"
 #include "../BaseDirectX/viewport.h"
 #include "../Camera/Camera.h"
-#include "../DX12operator.h"
+#include "../BaseDirectX/DX12operator.h"
 #include "../BaseDirectX/Library.h"
 
 //const XMFLOAT3 operator+(const XMFLOAT3 &lhs, const XMFLOAT3 &rhs)

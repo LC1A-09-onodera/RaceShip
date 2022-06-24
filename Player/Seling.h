@@ -1,6 +1,6 @@
 #pragma once
 #include "../3DModel/Model.h"
-#include "../DX12operator.h"
+#include "../BaseDirectX/DX12operator.h"
 #include "../Enemy/selingEnemy.h"
 #include "../Rewired/Rewired.h"
 
