@@ -65,19 +65,13 @@ void GameScene::Init()
 	//SRVのアドレス確保
 	BaseDirectX::GetAdress();
 	//カメラ初期化
-	Cameras::camera.Init();
-	Cameras::camera.eye = { 0, 10, -15.0f };
-	Cameras::camera.target = { 0, 0, 0 };
-	Cameras::camera.Update();
-
-	Cameras::rCamera.Init();
-	Cameras::rCamera.eye = { 0, -10, -15.0f };
-	Cameras::rCamera.target = { 0, 0, 0 };
-	Cameras::rCamera.Update();
+	Cameras::camera.Init(XMFLOAT3(0, 10, -15.0f), XMFLOAT3(0, 0, 0));
+	Cameras::rCamera.Init(XMFLOAT3(0, -10, -15.0f), XMFLOAT3(0, 0, 0));
 	//Imguiの初期化
 	Imgui::Init();
 	//ライトの初期化
 	Light::StaticInitialize(BaseDirectX::dev.Get());
+	//シェーダーのロード
 	ShaderManager::LoadShaders();
 	// 3Dパーティクル静的初期化
 	ParticleControl::Init();
@@ -93,11 +87,14 @@ void GameScene::Init()
 	Model::SetLight(light.get());
 	//ポストエフェクトの初期化
 	PostEffects::Init();
+	//3Dオブジェクトのパーティクルロード
 	ObjectParticles::LoadModels();
+	//Rewiredの要素初期化
 	Rewired::KeyCodeString::KeyCodeStringInit();
 	
 	jumpKey.LoadKey("RewiredTest.txt");
 	
+	//ステージをテキストからロード
 	LoadStage::LoadStages("test.txt");
 	StageObjects::walls.wallModel.CreateModel("MapWall", ShaderManager::playerShader);
 	StageObjects::walls.LoadPosition();
@@ -108,6 +105,8 @@ void GameScene::Init()
 	rSeling.LoadModel();
 	rSeling.Init();
 
+	//ボイスコマンドの通信受付スタート
+	//送信側はまた違うアプリケーションで行う
 	VoiceReciver::StartUp();
 	//EnemyModels::LoadModels();
 
@@ -125,9 +124,9 @@ void GameScene::Init()
 void GameScene::TitleUpdate()
 {
 	Cameras::camera.Update();
-	Cameras::rCamera.eye.v.x = 0;
-	Cameras::rCamera.eye.v.y = -100;
-	Cameras::rCamera.eye.v.z = -25.0f;
+	Cameras::rCamera.eye.x = Cameras::camera.eye.x;
+	Cameras::rCamera.eye.y = -Cameras::camera.eye.y;
+	Cameras::rCamera.eye.z = Cameras::camera.eye.z;
 	Cameras::rCamera.target = Cameras::camera.target;
 	Cameras::rCamera.Update();
 
@@ -169,7 +168,7 @@ void GameScene::EndUpdate()
 	if (Input::KeyTrigger(DIK_SPACE) || Input::directInput->IsButtonPush(DirectInput::ButtonKind::Button01))
 	{
 		SceneNum = TITLE;
-		Cameras::camera.Init();
+		Cameras::camera.Init(XMFLOAT3(0, 10, -15.0f), XMFLOAT3(0, 0, 0));
 	}
 }
 
@@ -205,15 +204,16 @@ void GameScene::TitleDraw()
 	StageObjects::Draw(false);
 	Draw3DObject(world);
 	ObjectParticles::Draw();
+
 	XMVECTOR sample = { 0, 0, 2.0f, 1.0 };
 	if (Imgui::useWaterNum == 0)
 	{
-		waterFace.waterModel.each.rotation.y = 180;
+		//waterFace.waterModel.each.rotation.y = 180;
 		waterFace.Draw(PostEffects::postNormal, sample/*seling.seling.each.position*/);
 	}
 	else if (Imgui::useWaterNum == 1)
 	{
-		normalWater.waterModel.each.rotation.y = 180;
+		//normalWater.waterModel.each.rotation.y = 180;
 		normalWater.Draw(PostEffects::postNormal, sample/*seling.seling.each.position*/);
 	}
 	PostEffects::PostDraw();

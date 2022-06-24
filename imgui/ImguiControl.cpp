@@ -167,10 +167,10 @@ void Imgui::EachInfo()
     }
     else if (tab == ImguiType::CameraInfo)
     {
-        ImGui::Text("eye:%.2f, %.2f, %.2f", Cameras::camera.eye.v.x, Cameras::camera.eye.v.y, Cameras::camera.eye.v.z);
-        ImGui::Text("target:%.2f, %.2f, %.2f", Cameras::camera.target.v.x, Cameras::camera.target.v.y, Cameras::camera.target.v.z);
-        ImGui::Text("Reye:%.2f, %.2f, %.2f", Cameras::rCamera.eye.v.x, Cameras::rCamera.eye.v.y, Cameras::rCamera.eye.v.z);
-        ImGui::Text("Rtarget:%.2f, %.2f, %.2f", Cameras::rCamera.target.v.x, Cameras::rCamera.target.v.y, Cameras::rCamera.target.v.z);
+        ImGui::Text("eye:%.2f, %.2f, %.2f", Cameras::camera.eye.x, Cameras::camera.eye.y, Cameras::camera.eye.z);
+        ImGui::Text("target:%.2f, %.2f, %.2f", Cameras::camera.target.x, Cameras::camera.target.y, Cameras::camera.target.z);
+        ImGui::Text("Reye:%.2f, %.2f, %.2f", Cameras::rCamera.eye.x, Cameras::rCamera.eye.y, Cameras::rCamera.eye.z);
+        ImGui::Text("Rtarget:%.2f, %.2f, %.2f", Cameras::rCamera.target.x, Cameras::rCamera.target.y, Cameras::rCamera.target.z);
         ImGui::Checkbox("ImGuiCameraControl", &CameraControl);
         ImGui::InputFloat("CameraLength:", &CameraR, 1.0f, 10.0f);
         ImGui::InputFloat("CameraRotation:", &CameraRotation, 1.0f, 10.0f);

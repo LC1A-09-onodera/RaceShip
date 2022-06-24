@@ -74,7 +74,7 @@ void WallModel::Update(WallObjectEach* each, bool rCamera)
 	{
 		this->each = *each;
 		XMMATRIX matScale, matRot, matTrans;
-		const XMFLOAT3& cameraPos = Cameras::camera.eye.v;
+		const XMFLOAT3& cameraPos = Cameras::camera.eye;
 		matScale = XMMatrixScaling(this->each.scale.x, this->each.scale.y, this->each.scale.z);
 		matRot = XMMatrixIdentity();
 		matRot *= XMMatrixRotationZ(XMConvertToRadians(this->each.rotation.z));
@@ -119,7 +119,7 @@ void WallModel::Update(WallObjectEach* each, bool rCamera)
 			{
 				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::matProjection;
 				constMap0->world = matWorld;
-				constMap0->cameraPos = Cameras::rCamera.eye.v;
+				constMap0->cameraPos = Cameras::rCamera.eye;
 			}
 
 			this->each.constBuff0->Unmap(0, nullptr);
@@ -136,7 +136,7 @@ void WallModel::Update(WallObjectEach* each, bool rCamera)
 	else
 	{
 		XMMATRIX matScale, matRot, matTrans;
-		const XMFLOAT3& cameraPos = Cameras::camera.eye.v;
+		const XMFLOAT3& cameraPos = Cameras::camera.eye;
 		matScale = XMMatrixScaling(this->each.scale.x, this->each.scale.y, this->each.scale.z);
 		matRot = XMMatrixIdentity();
 		matRot *= XMMatrixRotationZ(XMConvertToRadians(this->each.rotation.z));
@@ -181,7 +181,7 @@ void WallModel::Update(WallObjectEach* each, bool rCamera)
 			{
 				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::matProjection;
 				constMap0->world = matWorld;
-				constMap0->cameraPos = Cameras::rCamera.eye.v;
+				constMap0->cameraPos = Cameras::rCamera.eye;
 			}
 			this->each.constBuff0->Unmap(0, nullptr);
 		}
@@ -202,7 +202,7 @@ void GoalModel::Update(GoalObjectEach* each, bool rCamera)
 	{
 		this->each = *each;
 		XMMATRIX matScale, matRot, matTrans;
-		const XMFLOAT3& cameraPos = Cameras::camera.eye.v;
+		const XMFLOAT3& cameraPos = Cameras::camera.eye;
 		matScale = XMMatrixScaling(this->each.scale.x, this->each.scale.y, this->each.scale.z);
 		matRot = XMMatrixIdentity();
 		matRot *= XMMatrixRotationZ(XMConvertToRadians(this->each.rotation.z));
@@ -247,7 +247,7 @@ void GoalModel::Update(GoalObjectEach* each, bool rCamera)
 			{
 				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::matProjection;
 				constMap0->world = matWorld;
-				constMap0->cameraPos = Cameras::rCamera.eye.v;
+				constMap0->cameraPos = Cameras::rCamera.eye;
 			}
 
 			this->each.constBuff0->Unmap(0, nullptr);
@@ -264,7 +264,7 @@ void GoalModel::Update(GoalObjectEach* each, bool rCamera)
 	else
 	{
 		XMMATRIX matScale, matRot, matTrans;
-		const XMFLOAT3& cameraPos = Cameras::camera.eye.v;
+		const XMFLOAT3& cameraPos = Cameras::camera.eye;
 		matScale = XMMatrixScaling(this->each.scale.x, this->each.scale.y, this->each.scale.z);
 		matRot = XMMatrixIdentity();
 		matRot *= XMMatrixRotationZ(XMConvertToRadians(this->each.rotation.z));
@@ -309,7 +309,7 @@ void GoalModel::Update(GoalObjectEach* each, bool rCamera)
 			{
 				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::matProjection;
 				constMap0->world = matWorld;
-				constMap0->cameraPos = Cameras::rCamera.eye.v;
+				constMap0->cameraPos = Cameras::rCamera.eye;
 			}
 			this->each.constBuff0->Unmap(0, nullptr);
 		}

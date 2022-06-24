@@ -996,7 +996,7 @@ void ParticleControl::Update()
 void ParticleControl::Init()
 {
 	// 3Dパーティクル静的初期化
-	if (!ParticleManager::StaticInitialize(BaseDirectX::dev.Get(), window_width, window_height, Cameras::camera.eye.v, Cameras::camera.target.v, Cameras::camera.up.v))
+	if (!ParticleManager::StaticInitialize(BaseDirectX::dev.Get(), window_width, window_height, Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up))
 	{
 		assert(0);
 	}
