@@ -1,5 +1,5 @@
 #include "CollisionPrimitive.h"
-#include "../DX12operator.h"
+#include "../BaseDirectX/DX12operator.h"
 
 using namespace DirectX;
 

@@ -207,7 +207,6 @@
     <ClInclude Include="LoadStage\StageObject.h" />
     <ClInclude Include="Particle\Particle3D.h" />
     <ClInclude Include="Player\Seling.h" />
-    <ClInclude Include="Player\WaterVertex.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="PostEffect\PostEffect.h" />
     <ClInclude Include="RenderTarget\RenderTarget.h" />
@@ -218,7 +217,7 @@
     <ClInclude Include="Sprite\Sprite.h" />
     <ClInclude Include="Sprite\SpriteCommon.h" />
     <ClInclude Include="Texture\Texture.h" />
-    <ClInclude Include="udp.h" />
+    <ClInclude Include="UDP\udp.h" />
     <ClInclude Include="VoiceUDPRecive\VoiceUDPRecive.h" />
     <ClInclude Include="VoiceUDPRecive\VoiceUDPSender.h" />
     <ClInclude Include="WaterFace\WaterFace.h" />
@@ -267,7 +266,7 @@
     <ClCompile Include="Sprite\Sprite.cpp" />
     <ClCompile Include="Sprite\SpriteCommon.cpp" />
     <ClCompile Include="Texture\Texture.cpp" />
-    <ClCompile Include="udp.cpp" />
+    <ClCompile Include="UDP\udp.cpp" />
     <ClCompile Include="VoiceUDPRecive\VoiceUDPRecive.cpp" />
     <ClCompile Include="VoiceUDPRecive\VoiceUDPSender.cpp" />
     <ClCompile Include="WaterFace\WaterFace.cpp" />

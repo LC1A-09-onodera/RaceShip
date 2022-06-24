@@ -85,6 +85,9 @@
     <Filter Include="LoadStageUDP">
       <UniqueIdentifier>{48a4bf11-25eb-4d7d-a45b-622bab829178}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Player">
+      <UniqueIdentifier>{74a57aab-5887-47e5-9222-e0f14eb613e1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -240,15 +243,6 @@
     <ClInclude Include="IpAddress\IpAddress.h">
       <Filter>Udp</Filter>
     </ClInclude>
-    <ClInclude Include="udp.h">
-      <Filter>Udp</Filter>
-    </ClInclude>
-    <ClInclude Include="Player\Seling.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Player\WaterVertex.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="3DObjectParticle\3DObjectParticle.h">
       <Filter>ObjectParticle</Filter>
     </ClInclude>
@@ -269,6 +263,12 @@
     </ClInclude>
     <ClInclude Include="LoadStage\LoadStageUDP.h">
       <Filter>LoadStageUDP</Filter>
+    </ClInclude>
+    <ClInclude Include="Player\Seling.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="UDP\udp.h">
+      <Filter>Udp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -335,9 +335,6 @@
     <ClCompile Include="Particle\Particle3D.cpp">
       <Filter>Particle</Filter>
     </ClCompile>
-    <ClCompile Include="BaseDirectX\Input.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="BaseDirectX\DirectInput.cpp">
       <Filter>BaseDirectx</Filter>
     </ClCompile>
@@ -386,12 +383,6 @@
     <ClCompile Include="IpAddress\IpAddress.cpp">
       <Filter>Udp</Filter>
     </ClCompile>
-    <ClCompile Include="udp.cpp">
-      <Filter>Udp</Filter>
-    </ClCompile>
-    <ClCompile Include="Player\Seling.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="3DObjectParticle\3DObjectParitcle.cpp">
       <Filter>ObjectParticle</Filter>
     </ClCompile>
@@ -412,6 +403,15 @@
     </ClCompile>
     <ClCompile Include="LoadStage\LoadStageUDP.cpp">
       <Filter>LoadStageUDP</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseDirectX\Input.cpp">
+      <Filter>BaseDirectx</Filter>
+    </ClCompile>
+    <ClCompile Include="Player\Seling.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="UDP\udp.cpp">
+      <Filter>Udp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

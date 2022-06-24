@@ -1,5 +1,5 @@
 #include "3DObjectParticle.h"
-#include "../DX12operator.h"
+#include "../BaseDirectX/DX12operator.h"
 #include "../Shader/ShaderManager.h"
 #include "../WindowsAPI/WinAPI.h"
 
