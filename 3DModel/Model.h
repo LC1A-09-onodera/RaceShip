@@ -7,7 +7,6 @@
 #include <unordered_map>
 #include "../Light/Light.h"
 #include "../Shader/Shader.h"
-#include "../Collition/CollisionInfo.h"
 
 using namespace std;
 class BaseCollider;
@@ -78,12 +77,6 @@ struct Vertex
 	XMFLOAT2 uv;
 };
 
-class BaseObject
-{
-	Vertex *vert;
-	unsigned short *indices;
-};
-
 class Mesh
 {
 public:
@@ -122,16 +115,14 @@ public:
 	virtual ~Model();
 	//virtual bool Initialize();
 
-	static void SetLight(Light *light);
+	static void SetLight(shared_ptr<Light> light);
 	Mesh mesh;
 	D3D12_CPU_DESCRIPTOR_HANDLE cpuDescHandleCBV;
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuDescHandleCBV;
 	EachInfo each;
 	XMMATRIX matWorld;
-	//Object3d *parent = nullptr;
-	static Light *light;
-	//const char *name = nullptr;
-	BaseCollider *collider = nullptr;
+	static shared_ptr<Light> light;
+	shared_ptr<BaseCollider> collider = nullptr;
 	//----基本いるもの-----------
 	float radi = 2.0f;
 	bool billboard = false;
@@ -159,6 +150,8 @@ public:
 	void CreateModel(const char *name, HLSLShader &shader, bool smoothing = false);
 	//void Update();
 	virtual void Update(EachInfo *each = nullptr, bool rCamera = false);
+	void SendVertex();
+	void CalcMatrix();
 	//スムージング
 	unordered_map<unsigned short, vector<unsigned short>> smoothData;
 	inline size_t GetVertexCount();
@@ -173,7 +166,6 @@ public:
 	ComPtr<ID3DBlob> LoadShader(LPCWSTR VshaderName = L"", LPCSTR Vtarget = "", ComPtr<ID3DBlob> sBlob = nullptr /*, LPCWSTR PshaderName = L"", LPCSTR Ptarget = "", ComPtr<ID3DBlob> psBlob = nullptr, LPCWSTR GshaderName = L"", LPCSTR Gtarget = "", ComPtr<ID3DBlob> gsBlob = nullptr*/);
 	const XMMATRIX &GetMatWorld() { return matWorld; }
 	void SetCollider(BaseCollider *collider);
-	virtual void OnCollision(const CollisionInfo &info){}
 	inline const std::vector<Vertex> &GetVertices(){return mesh.vertices;}
 	inline const std::vector<unsigned short> &GetIndices(){return mesh.indices;}
 };

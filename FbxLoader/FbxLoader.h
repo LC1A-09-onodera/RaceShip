@@ -13,7 +13,6 @@ public:
 	/// </summary>
 	/// <returns>インスタンス</returns>
 	static FbxLoader* GetInstance();
-
 	void Initialize(ID3D12Device* dev);
 	void Finalize();
 	FBXModel* LoadModelFromFile(const std::string& modelName);

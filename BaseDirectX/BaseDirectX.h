@@ -9,7 +9,6 @@
 #include <vector>
 #include <xaudio2.h>
 #include <fstream>
-#include "vec3.h"
 #include "../WindowsAPI/WinAPI.h"
 
 using namespace Microsoft::WRL;
@@ -42,6 +41,7 @@ struct PeraVertex
 class BaseDirectX
 {
 public:
+	~BaseDirectX();
 	static XMFLOAT4 backColor;
 	static HRESULT result;
 	static ComPtr<ID3D12Device> dev;

@@ -21,7 +21,7 @@ public:
 class WaterFaceModel : public Model
 {
 public:
-	WaterEachInfo each;
+	WaterEachInfo eachData;
 	ComPtr<ID3D12Resource> depthBuff;
 	ComPtr<ID3D12DescriptorHeap> descHeapRTV;
 	ComPtr<ID3D12DescriptorHeap> descHeapDSV;
@@ -36,8 +36,6 @@ public:
 	void PostDraw();
 	void Draw(WaterEachInfo&each, PostEffect& postEffect);
 };
-
-
 
 class WaterFace
 {

@@ -6,7 +6,6 @@
 #include "viewport.h"
 #include "../Particle/Particle3D.h"
 #include "../imgui/ImguiControl.h"
-#include "vec3.h"
 #include "../FBXObject/FBXObject.h"
 #include "../Shader/ShaderManager.h"
 #include "../3DObjectParticle/3DObjectParticle.h"
@@ -84,7 +83,7 @@ void GameScene::Init()
 	//ライト初期化
 	light.reset(Light::Create());
 	//モデルすべてにライトを適用
-	Model::SetLight(light.get());
+	Model::SetLight(light);
 	//ポストエフェクトの初期化
 	PostEffects::Init();
 	//3Dオブジェクトのパーティクルロード
@@ -205,7 +204,7 @@ void GameScene::TitleDraw()
 	Draw3DObject(world);
 	ObjectParticles::Draw();
 
-	XMVECTOR sample = { 0, 0, 2.0f, 1.0 };
+	XMVECTOR sample = { 0, 0.0f, 0.0f, 1.0 };
 	if (Imgui::useWaterNum == 0)
 	{
 		//waterFace.waterModel.each.rotation.y = 180;

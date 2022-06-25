@@ -9,10 +9,10 @@ void WaterFace::LoadModel(HLSLShader &useShader, PostEffect& postEffect)
 
 void WaterFace::Init()
 {
-	waterModel.each.ConstInit();
-	waterModel.each.position = { 0, -1.0f, 0, 1 };
-	waterModel.each.rotation = { 0, 180, 0};
-	float scaleSample = 0.09f;
+	waterModel.eachData.ConstInit();
+	waterModel.eachData.position = { 0, 0.0f, 0.0f, 1 };
+	waterModel.eachData.rotation = { 0, 0, 0};
+	float scaleSample = 18.0f;
 	waterModel.each.scale = { scaleSample, scaleSample, scaleSample };
 }
 
@@ -23,9 +23,10 @@ void WaterFace::Update()
 
 void WaterFace::Draw(PostEffect& postEffect, XMVECTOR& selingPos)
 {
-	waterModel.each.position = selingPos;
-	waterModel.each.position.m128_f32[1] -= 1.0f;
-	waterModel.Draw(waterModel.each, postEffect);
+	waterModel.eachData.position = selingPos;
+	waterModel.eachData.position.m128_f32[1] = 0.0f;
+	waterModel.eachData.position.m128_f32[2] = 0.0f;
+	waterModel.Draw(waterModel.eachData, postEffect);
 }
 
 void WaterFaceModel::CreateModel(const char* name, HLSLShader& shader, PostEffect& postEffect, bool smoothing)
@@ -130,6 +131,8 @@ void WaterFaceModel::CreateModel(const char* name, HLSLShader& shader, PostEffec
 		CalculateSmoothedVertexNormals();
 	};
 	Init(1);
+	eachData.ConstInit();
+	
 	file.close();
 }
 
@@ -381,46 +384,20 @@ void WaterFaceModel::InitializeGraphicsPipeline(HLSLShader& shader, PostEffect& 
 
 void WaterFaceModel::Update()
 {
-	XMMATRIX matScale, matRot, matTrans;
-	const XMFLOAT3& cameraPos = Cameras::camera.eye.v;
-	matScale = XMMatrixScaling(each.scale.x, this->each.scale.y, this->each.scale.z);
-	matRot = XMMatrixIdentity();
-	matRot *= XMMatrixRotationZ(XMConvertToRadians(this->each.rotation.z));
-	matRot *= XMMatrixRotationX(XMConvertToRadians(this->each.rotation.x));
-	matRot *= XMMatrixRotationY(XMConvertToRadians(this->each.rotation.y));
-	matTrans = XMMatrixTranslation(this->each.position.m128_f32[0], this->each.position.m128_f32[1], this->each.position.m128_f32[2]);
-	matWorld = XMMatrixIdentity();
-	matWorld *= matScale;
-	matWorld *= matRot;
-	matWorld *= matTrans;
+	CalcMatrix();
 
-	Vertex* vertMap = nullptr;
-	BaseDirectX::result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
-	if (SUCCEEDED(BaseDirectX::result))
-	{
-		copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
-		mesh.vertBuff->Unmap(0, nullptr);    // ƒ}ƒbƒv‚ð‰ðœ
-	}
+	SendVertex();
 
 	WaterConstBuff0* constMap0 = nullptr;
-	if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
+	if (SUCCEEDED(this->eachData.constBuff0->Map(0, nullptr, (void**)&constMap0)))
 	{
 		constMap0->viewproj = Cameras::camera.matView * BaseDirectX::matProjection;
 		constMap0->world = matWorld;
-		constMap0->cameraPos = cameraPos;
+		constMap0->cameraPos = Cameras::camera.eye;
 		constMap0->frameTime = frameTime;
 		frameTime++;
-		this->each.constBuff0->Unmap(0, nullptr);
+		this->eachData.constBuff0->Unmap(0, nullptr);
 	}
-
-	/*ConstBufferDataB1* constMap1 = nullptr;
-	BaseDirectX::result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
-	constMap1->ambient = material.ambient;
-	constMap1->diffuse = material.diffuse;
-	constMap1->specular = material.specular;
-	constMap1->alpha = material.alpha;
-	this->each.constBuff1->Unmap(0, nullptr);*/
-
 }
 
 void WaterFaceModel::PreDraw()

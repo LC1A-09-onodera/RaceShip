@@ -60,6 +60,11 @@ float BaseDirectX::angle = 0.0f;
 //XMFLOAT3 BaseDirectX::up;
 
 
+BaseDirectX::~BaseDirectX()
+{
+	delete(tmpAdapter);
+}
+
 void BaseDirectX::DebugLayerOn()
 {
 

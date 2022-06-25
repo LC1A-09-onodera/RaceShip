@@ -1,8 +1,8 @@
 #include "Input.h"
 #include "../Rewired/Rewired.h"
 
-IDirectInput8* Input::dinput = nullptr;
-IDirectInputDevice8* Input::devkeyboard = nullptr;
+std::shared_ptr<IDirectInput8> Input::dinput = nullptr;
+IDirectInputDevice8 *Input::devkeyboard = nullptr;
 DirectInput* Input::directInput = DirectInput::GetInstance();
 
 void Input::Update()

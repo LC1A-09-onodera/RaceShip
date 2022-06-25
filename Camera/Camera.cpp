@@ -1,6 +1,5 @@
 #include "Camera.h"
 #include "../BaseDirectX/Input.h"
-#include "../BaseDirectX/Quaternion.h"
 #include "../BaseDirectX/viewport.h"
 #include "../imgui/ImguiControl.h"
 

@@ -2,11 +2,6 @@
 
 ID3D12Device *Light::device = nullptr;
 
-Light::~Light()
-{
-	//delete(device);
-}
-
 void Light::StaticInitialize(ID3D12Device* device)
 {
 	//再初期化チェック

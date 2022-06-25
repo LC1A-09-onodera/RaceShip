@@ -10,7 +10,6 @@ namespace Rewired
 
 	class KeyCodeString
 	{
-		~KeyCodeString();
 	public:
 		static void KeyCodeStringInit();
 		//Keyborad

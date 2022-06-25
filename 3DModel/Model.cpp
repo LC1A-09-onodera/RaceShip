@@ -1,17 +1,12 @@
 #include "Model.h"
 #include "../Camera/Camera.h"
-#include "../Collition/BaseCollision.h"
-#include "../Collition/CollisionManager.h"
 
 using namespace std;
-Light* Model::light = nullptr;
+shared_ptr<Light> Model::light = nullptr;
+
 Model::~Model()
 {
-	if (collider)
-	{
-		CollisionManager::GetInstance()->RemoveCollider(collider);
-		delete collider;
-	}
+	
 }
 inline size_t Model::GetVertexCount()
 {
@@ -44,7 +39,7 @@ void Model::CalculateSmoothedVertexNormals()
 	}
 }
 
-void Model::SetLight(Light* light)
+void Model::SetLight(shared_ptr<Light> light)
 {
 	Model::light = light;
 }
@@ -207,37 +202,11 @@ void Model::Update(EachInfo* each, bool rCamera)
 	if (each != nullptr)
 	{
 		this->each = *each;
-		XMMATRIX matScale, matRot, matTrans;
-		const XMFLOAT3& cameraPos = Cameras::camera.eye.v;
-		matScale = XMMatrixScaling(this->each.scale.x, this->each.scale.y, this->each.scale.z);
-		matRot = XMMatrixIdentity();
-		matRot *= XMMatrixRotationZ(XMConvertToRadians(this->each.rotation.z));
-		matRot *= XMMatrixRotationX(XMConvertToRadians(this->each.rotation.x));
-		matRot *= XMMatrixRotationY(XMConvertToRadians(this->each.rotation.y));
-		matTrans = XMMatrixTranslation(this->each.position.m128_f32[0], this->each.position.m128_f32[1], this->each.position.m128_f32[2]);
-		matWorld = XMMatrixIdentity();
+		
+		CalcMatrix();
 
-		//ビルボード
-		//if (billboard)
-		//{
-		//    matWorld *= BaseDirectX::matBillboard;//ビルボードをかける
-		//}
-		//ビルボードY
-		//if (billboard)
-		//{
-		//    matWorld *= Camera::matBillboardY;//ビルボードをかける
-		//}
-		matWorld *= matScale;
-		matWorld *= matRot;
-		matWorld *= matTrans;
+		SendVertex();
 
-		Vertex* vertMap = nullptr;
-		BaseDirectX::result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
-		if (SUCCEEDED(BaseDirectX::result))
-		{
-			copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
-			mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
-		}
 
 		ConstBufferDataB0* constMap0 = nullptr;
 		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
@@ -247,13 +216,13 @@ void Model::Update(EachInfo* each, bool rCamera)
 			{
 				constMap0->viewproj = Cameras::camera.matView * BaseDirectX::matProjection;
 				constMap0->world = matWorld;
-				constMap0->cameraPos = cameraPos;
+				constMap0->cameraPos = Cameras::camera.eye;
 			}
 			else
 			{
 				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::matProjection;
 				constMap0->world = matWorld;
-				constMap0->cameraPos = Cameras::rCamera.eye.v;
+				constMap0->cameraPos = Cameras::rCamera.eye;
 			}
 
 			this->each.constBuff0->Unmap(0, nullptr);
@@ -266,44 +235,12 @@ void Model::Update(EachInfo* each, bool rCamera)
 		constMap1->specular = material.specular;
 		constMap1->alpha = material.alpha;
 		this->each.constBuff1->Unmap(0, nullptr);
-		if (collider)
-		{
-			collider->Update();
-		}
 	}
 	else
 	{
-		XMMATRIX matScale, matRot, matTrans;
-		const XMFLOAT3& cameraPos = Cameras::camera.eye.v;
-		matScale = XMMatrixScaling(this->each.scale.x, this->each.scale.y, this->each.scale.z);
-		matRot = XMMatrixIdentity();
-		matRot *= XMMatrixRotationZ(XMConvertToRadians(this->each.rotation.z));
-		matRot *= XMMatrixRotationX(XMConvertToRadians(this->each.rotation.x));
-		matRot *= XMMatrixRotationY(XMConvertToRadians(this->each.rotation.y));
-		matTrans = XMMatrixTranslation(this->each.position.m128_f32[0], this->each.position.m128_f32[1], this->each.position.m128_f32[2]);
-		matWorld = XMMatrixIdentity();
+		CalcMatrix();
 
-		//ビルボード
-		//if (billboard)
-		//{
-		//    matWorld *= BaseDirectX::matBillboard;//ビルボードをかける
-		//}
-		//ビルボードY
-		//if (billboard)
-		//{
-		//    matWorld *= Camera::matBillboardY;//ビルボードをかける
-		//}
-		matWorld *= matScale;
-		matWorld *= matRot;
-		matWorld *= matTrans;
-
-		Vertex* vertMap = nullptr;
-		BaseDirectX::result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
-		if (SUCCEEDED(BaseDirectX::result))
-		{
-			copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
-			mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
-		}
+		SendVertex();
 
 		ConstBufferDataB0* constMap0 = nullptr;
 		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
@@ -313,13 +250,13 @@ void Model::Update(EachInfo* each, bool rCamera)
 			{
 				constMap0->viewproj = Cameras::camera.matView * BaseDirectX::matProjection;
 				constMap0->world = matWorld;
-				constMap0->cameraPos = cameraPos;
+				constMap0->cameraPos = Cameras::camera.eye;
 			}
 			else
 			{
 				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::matProjection;
 				constMap0->world = matWorld;
-				constMap0->cameraPos = Cameras::rCamera.eye.v;
+				constMap0->cameraPos = Cameras::rCamera.eye;
 			}
 			this->each.constBuff0->Unmap(0, nullptr);
 		}
@@ -331,11 +268,45 @@ void Model::Update(EachInfo* each, bool rCamera)
 		constMap1->specular = material.specular;
 		constMap1->alpha = material.alpha;
 		this->each.constBuff1->Unmap(0, nullptr);
-		if (collider)
-		{
-			collider->Update();
-		}
 	}
+}
+
+void Model::SendVertex()
+{
+	Vertex* vertMap = nullptr;
+	BaseDirectX::result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
+	if (SUCCEEDED(BaseDirectX::result))
+	{
+		copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
+		mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
+	}
+}
+
+void Model::CalcMatrix()
+{
+	XMMATRIX matScale, matRot, matTrans;
+	const XMFLOAT3& cameraPos = Cameras::camera.eye;
+	matScale = XMMatrixScaling(this->each.scale.x, this->each.scale.y, this->each.scale.z);
+	matRot = XMMatrixIdentity();
+	matRot *= XMMatrixRotationZ(XMConvertToRadians(this->each.rotation.z));
+	matRot *= XMMatrixRotationX(XMConvertToRadians(this->each.rotation.x));
+	matRot *= XMMatrixRotationY(XMConvertToRadians(this->each.rotation.y));
+	matTrans = XMMatrixTranslation(this->each.position.m128_f32[0], this->each.position.m128_f32[1], this->each.position.m128_f32[2]);
+	matWorld = XMMatrixIdentity();
+
+	//ビルボード
+	//if (billboard)
+	//{
+	//    matWorld *= BaseDirectX::matBillboard;//ビルボードをかける
+	//}
+	//ビルボードY
+	//if (billboard)
+	//{
+	//    matWorld *= Camera::matBillboardY;//ビルボードをかける
+	//}
+	matWorld *= matScale;
+	matWorld *= matRot;
+	matWorld *= matTrans;
 }
 
 bool Model::InitializeGraphicsPipeline(HLSLShader& shader)
@@ -670,13 +641,6 @@ bool CiycleColition(const XMFLOAT3& object1, const XMFLOAT3& object2, float radi
 	}
 
 	return false;
-}
-void Model::SetCollider(BaseCollider* collider)
-{
-	collider->SetModel(this);
-	this->collider = collider;
-	CollisionManager::GetInstance()->AddCollider(collider);
-	collider->Update();
 }
 
 void EachInfo::CreateConstBuff0()

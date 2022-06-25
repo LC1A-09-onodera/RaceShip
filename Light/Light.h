@@ -19,7 +19,7 @@ private:
 	static const int CircleShadowNum = 1;
 	
 public:
-	~Light();
+	
 	struct ConstBufferData
 	{
 		XMVECTOR lightv;	//ライトの方向ベクトル
