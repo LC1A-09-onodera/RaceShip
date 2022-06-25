@@ -328,10 +328,6 @@ public:
 	ParticleControl(const ParticleControl &obj) = delete;
 	ParticleControl &operator=(const ParticleControl &obj) = delete;
 	static std::shared_ptr<ParticleIndi> attackEffect;
-	static std::shared_ptr<ParticleIndi> expEffect;
-	static std::shared_ptr<ParticleIndi> flashEffect;
-	static std::shared_ptr<ParticleIndi> rockOnEffect;
-	static std::shared_ptr<ParticleIndi> numbers[10];
 	static void Update();
 	static void Init();
 	static void Draw();

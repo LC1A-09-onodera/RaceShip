@@ -33,21 +33,19 @@ void WaterFaceModel::CreateModel(const char* name, HLSLShader& shader, PostEffec
 {
 	InitializeDescriptorHeap();
 	InitializeGraphicsPipeline(shader, postEffect);
+
 	ifstream file;
 	const string modelname = name;
 	const string filename = modelname + ".obj";
 	const string directoryPath = "Resource/Model/" + modelname + "/";
 	file.open(directoryPath + filename);
-
 	if (file.fail())
 	{
 		assert(0);
 	}
-
 	vector<XMFLOAT3> pos;
 	vector<XMFLOAT3> normal;
 	vector<XMFLOAT2> uv;
-
 	string line;
 	while (getline(file, line))
 	{
@@ -114,25 +112,16 @@ void WaterFaceModel::CreateModel(const char* name, HLSLShader& shader, PostEffec
 					AddAmoothData(indexPosition, (unsigned short)GetVertexCount() - 1);
 				}
 				mesh.indices.emplace_back((unsigned short)mesh.indices.size());
-				/*if (count > 3) {
-					const uint16_t index1 = mesh.vertices.size() - 4;
-					const uint16_t index2 = mesh.vertices.size() - 2;
-
-					mesh.indices.emplace_back(index1);
-					mesh.indices.emplace_back(index2);
-				}*/
 			}
-			//count = 0;
 		}
 	}
-
 	if (smoothing)
 	{
 		CalculateSmoothedVertexNormals();
 	};
-	Init(1);
-	eachData.ConstInit();
-	
+
+	Init(this, this->eachData);
+
 	file.close();
 }
 

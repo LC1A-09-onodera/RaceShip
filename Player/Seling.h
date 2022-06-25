@@ -9,7 +9,6 @@ class ShieldModel : public Model
 public:
 	
 	bool InitializeGraphicsPipeline(HLSLShader& shader);
-	void CreateModel(const char* name, HLSLShader& shader, bool smoothing);
 };
 
 class Seling
@@ -60,12 +59,6 @@ public:
 
 	void ForceAttach();
 	void Move();
-
-	//ã‰º‚·‚é“®‚«
-	void VerticalWaterResist();
-	void HolizontalWaterResist();
-
-	void CreateSimpleHarmonicMotion();
 
 	//’e‚ªo‚é
 	void ShotInit();

@@ -44,157 +44,60 @@ void Model::SetLight(shared_ptr<Light> light)
 	Model::light = light;
 }
 
-void Model::Init(int index)
-{
-	UINT sizeVB = static_cast<UINT>(sizeof(Vertex) * mesh.vertices.size());
-	UINT sizeIB = static_cast<UINT>(sizeof(unsigned short) * mesh.indices.size());
-	&CD3DX12_RESOURCE_DESC::Buffer(sizeVB);
-	&CD3DX12_RESOURCE_DESC::Buffer(sizeIB);
-	mesh.vbView.SizeInBytes = sizeVB;
-	mesh.ibView.SizeInBytes = sizeIB;
-	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizeVB), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&mesh.vertBuff));
-	Vertex* vertMap = nullptr;
-	BaseDirectX::result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
-	if (SUCCEEDED(BaseDirectX::result))
-	{
-		copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
-		mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
-	}
-	//インデックスバッファの生成
-	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizeIB), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&mesh.indexBuff));
-	unsigned short* indexMap = nullptr;
-	BaseDirectX::result = mesh.indexBuff->Map(0, nullptr, (void**)&indexMap);
-	if (SUCCEEDED(BaseDirectX::result))
-	{
-		copy(mesh.indices.begin(), mesh.indices.end(), indexMap);
-		mesh.indexBuff->Unmap(0, nullptr);
-	}
-
-	// GPU上のバッファに対応した仮想メモリを取得
-	mesh.vbView.BufferLocation = mesh.vertBuff->GetGPUVirtualAddress();
-	//vbView.SizeInBytes = sizeVB;
-	mesh.vbView.StrideInBytes = sizeof(Vertex);
-	mesh.ibView.BufferLocation = mesh.indexBuff->GetGPUVirtualAddress();
-	mesh.ibView.Format = DXGI_FORMAT_R16_UINT;
-	//ibView.SizeInBytes = sizeIB;
-	each.ConstInit();
-	UINT descHadleIncSize = BaseDirectX::dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	cpuDescHandleCBV = BaseDirectX::basicDescHeap->GetCPUDescriptorHandleForHeapStart();
-	cpuDescHandleCBV.ptr += index * descHadleIncSize;
-
-	gpuDescHandleCBV = BaseDirectX::basicDescHeap->GetGPUDescriptorHandleForHeapStart();
-	gpuDescHandleCBV.ptr += index * descHadleIncSize;
-
-	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc{};
-	cbvDesc.BufferLocation = each.constBuff0->GetGPUVirtualAddress();
-	cbvDesc.SizeInBytes = (UINT)each.constBuff0->GetDesc().Width;
-	BaseDirectX::dev->CreateConstantBufferView(&cbvDesc, cpuDescHandleCBV);
+//void Model::Init()
+//{
+	//UINT sizeVB = static_cast<UINT>(sizeof(Vertex) * mesh.vertices.size());
+	//UINT sizeIB = static_cast<UINT>(sizeof(unsigned short) * mesh.indices.size());
+	//&CD3DX12_RESOURCE_DESC::Buffer(sizeVB);
+	//&CD3DX12_RESOURCE_DESC::Buffer(sizeIB);
+	//mesh.vbView.SizeInBytes = sizeVB;
+	//mesh.ibView.SizeInBytes = sizeIB;
+	//BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizeVB), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&mesh.vertBuff));
+	//Vertex* vertMap = nullptr;
+	//BaseDirectX::result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
+	//if (SUCCEEDED(BaseDirectX::result))
+	//{
+	//	copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
+	//	mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
+	//}
+	////インデックスバッファの生成
+	//BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizeIB), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&mesh.indexBuff));
+	//unsigned short* indexMap = nullptr;
+	//BaseDirectX::result = mesh.indexBuff->Map(0, nullptr, (void**)&indexMap);
+	//if (SUCCEEDED(BaseDirectX::result))
+	//{
+	//	copy(mesh.indices.begin(), mesh.indices.end(), indexMap);
+	//	mesh.indexBuff->Unmap(0, nullptr);
+	//}
+	//// GPU上のバッファに対応した仮想メモリを取得
+	//mesh.vbView.BufferLocation = mesh.vertBuff->GetGPUVirtualAddress();
+	////vbView.SizeInBytes = sizeVB;
+	//mesh.vbView.StrideInBytes = sizeof(Vertex);
+	//mesh.ibView.BufferLocation = mesh.indexBuff->GetGPUVirtualAddress();
+	//mesh.ibView.Format = DXGI_FORMAT_R16_UINT;
+	////ibView.SizeInBytes = sizeIB;
+	//ConstInit(each);
+	//UINT descHadleIncSize = BaseDirectX::dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	//cpuDescHandleCBV = BaseDirectX::basicDescHeap->GetCPUDescriptorHandleForHeapStart();
+	//cpuDescHandleCBV.ptr += descHadleIncSize;
+	//gpuDescHandleCBV = BaseDirectX::basicDescHeap->GetGPUDescriptorHandleForHeapStart();
+	//gpuDescHandleCBV.ptr += descHadleIncSize;
+	//D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc{};
+	//cbvDesc.BufferLocation = each.constBuff0->GetGPUVirtualAddress();
+	//cbvDesc.SizeInBytes = (UINT)each.constBuff0->GetDesc().Width;
+	//BaseDirectX::dev->CreateConstantBufferView(&cbvDesc, cpuDescHandleCBV);
 	//name = typeid(*this).name();
-}
+//}
 
 void Model::CreateModel(const char* name, HLSLShader& shader, bool smoothing)
 {
 	InitializeDescriptorHeap();
+
 	InitializeGraphicsPipeline(shader);
-	ifstream file;
-	const string modelname = name;
-	const string filename = modelname + ".obj";
-	const string directoryPath = "Resource/Model/" + modelname + "/";
-	file.open(directoryPath + filename);
 
-	if (file.fail())
-	{
-		assert(0);
-	}
+	LoadFileContents(name, smoothing);
 
-	vector<XMFLOAT3> pos;
-	vector<XMFLOAT3> normal;
-	vector<XMFLOAT2> uv;
-
-	string line;
-	while (getline(file, line))
-	{
-		istringstream line_stream(line);
-
-		string key;
-		getline(line_stream, key, ' ');
-
-		if (key == "mtllib")
-		{   //マテリアル
-			string filename;
-			line_stream >> filename;
-			LoadMaterial(directoryPath, filename);
-		}
-		if (key == "v")
-		{   //座標読み込み
-			XMFLOAT3 position{};
-			line_stream >> position.x;
-			line_stream >> position.y;
-			line_stream >> position.z;
-
-			pos.emplace_back(position);//追加
-		}
-		if (key == "vt")
-		{
-			XMFLOAT2 texcood{};//UV受け取る
-			line_stream >> texcood.x;
-			line_stream >> texcood.y;
-
-			texcood.y = 1.0f - texcood.y;//ｖを反転
-			uv.emplace_back(texcood);
-
-		}
-		if (key == "vn")
-		{   //法線
-			XMFLOAT3 normals{};
-			line_stream >> normals.x;
-			line_stream >> normals.y;
-			line_stream >> normals.z;
-			normal.emplace_back(normals);
-		}
-		if (key == "f")
-		{   //インデックス
-			string index_string;
-			while (getline(line_stream, index_string, ' '))
-			{
-				//count += 1;
-				istringstream index_stream(index_string);
-				unsigned short indexPosition, indexNormal, indexTexcood;
-				index_stream >> indexPosition;
-				index_stream.seekg(1, ios_base::cur);
-				index_stream >> indexTexcood;
-				index_stream.seekg(1, ios_base::cur);
-				index_stream >> indexNormal;
-
-				Vertex verte{};
-				verte.pos = pos[indexPosition - 1];
-				verte.normal = normal[indexNormal - 1];
-				verte.uv = uv[indexTexcood - 1];
-
-				mesh.vertices.emplace_back(verte);
-				if (smoothing)
-				{
-					AddAmoothData(indexPosition, (unsigned short)GetVertexCount() - 1);
-				}
-				mesh.indices.emplace_back((unsigned short)mesh.indices.size());
-				/*if (count > 3) {
-					const uint16_t index1 = mesh.vertices.size() - 4;
-					const uint16_t index2 = mesh.vertices.size() - 2;
-
-					mesh.indices.emplace_back(index1);
-					mesh.indices.emplace_back(index2);
-				}*/
-			}
-			//count = 0;
-		}
-	}
-
-	if (smoothing)
-	{
-		CalculateSmoothedVertexNormals();
-	};
-	Init(1);
-	file.close();
+	Init(this, this->each);
 }
 
 void Model::Update(EachInfo* each, bool rCamera)
@@ -307,6 +210,101 @@ void Model::CalcMatrix()
 	matWorld *= matScale;
 	matWorld *= matRot;
 	matWorld *= matTrans;
+}
+
+void Model::LoadFileContents(const char* name, bool smoothing)
+{
+	ifstream file;
+	const string modelname = name;
+	const string filename = modelname + ".obj";
+	const string directoryPath = "Resource/Model/" + modelname + "/";
+	file.open(directoryPath + filename);
+
+	if (file.fail())
+	{
+		assert(0);
+	}
+
+	vector<XMFLOAT3> pos;
+	vector<XMFLOAT3> normal;
+	vector<XMFLOAT2> uv;
+
+	string line;
+	while (getline(file, line))
+	{
+		istringstream line_stream(line);
+
+		string key;
+		getline(line_stream, key, ' ');
+
+		if (key == "mtllib")
+		{   //マテリアル
+			string filename;
+			line_stream >> filename;
+			LoadMaterial(directoryPath, filename);
+		}
+		if (key == "v")
+		{   //座標読み込み
+			XMFLOAT3 position{};
+			line_stream >> position.x;
+			line_stream >> position.y;
+			line_stream >> position.z;
+
+			pos.emplace_back(position);//追加
+		}
+		if (key == "vt")
+		{
+			XMFLOAT2 texcood{};//UV受け取る
+			line_stream >> texcood.x;
+			line_stream >> texcood.y;
+
+			texcood.y = 1.0f - texcood.y;//ｖを反転
+			uv.emplace_back(texcood);
+
+		}
+		if (key == "vn")
+		{   //法線
+			XMFLOAT3 normals{};
+			line_stream >> normals.x;
+			line_stream >> normals.y;
+			line_stream >> normals.z;
+			normal.emplace_back(normals);
+		}
+		if (key == "f")
+		{   //インデックス
+			string index_string;
+			while (getline(line_stream, index_string, ' '))
+			{
+				//count += 1;
+				istringstream index_stream(index_string);
+				unsigned short indexPosition, indexNormal, indexTexcood;
+				index_stream >> indexPosition;
+				index_stream.seekg(1, ios_base::cur);
+				index_stream >> indexTexcood;
+				index_stream.seekg(1, ios_base::cur);
+				index_stream >> indexNormal;
+
+				Vertex verte{};
+				verte.pos = pos[indexPosition - 1];
+				verte.normal = normal[indexNormal - 1];
+				verte.uv = uv[indexTexcood - 1];
+
+				mesh.vertices.emplace_back(verte);
+				if (smoothing)
+				{
+					AddAmoothData(indexPosition, (unsigned short)GetVertexCount() - 1);
+				}
+				mesh.indices.emplace_back((unsigned short)mesh.indices.size());
+			}
+		}
+	}
+
+	if (smoothing)
+	{
+		CalculateSmoothedVertexNormals();
+	};
+
+	file.close();
 }
 
 bool Model::InitializeGraphicsPipeline(HLSLShader& shader)
@@ -643,46 +641,43 @@ bool CiycleColition(const XMFLOAT3& object1, const XMFLOAT3& object2, float radi
 	return false;
 }
 
-void EachInfo::CreateConstBuff0()
-{
-	D3D12_HEAP_PROPERTIES heapprop{};
-	heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
-	//リソース設定
-	D3D12_RESOURCE_DESC resdesc{};
-	resdesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resdesc.Width = (sizeof(ConstBufferDataB0) + 0xff) & ~0xff;
-	resdesc.Height = 1;
-	resdesc.DepthOrArraySize = 1;
-	resdesc.MipLevels = 1;
-	resdesc.SampleDesc.Count = 1;
-	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff0));
-}
-
-void EachInfo::CreateConstBuff1()
-{
-	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff1));
-}
-
-void EachInfo::CreateConstBuff2()
-{
-	D3D12_HEAP_PROPERTIES heapprop{};
-	heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
-	//リソース設定
-	D3D12_RESOURCE_DESC resdesc{};
-	resdesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resdesc.Width = (sizeof(ConstBufferDataB3) + 0xff) & ~0xff;
-	resdesc.Height = 1;
-	resdesc.DepthOrArraySize = 1;
-	resdesc.MipLevels = 1;
-	resdesc.SampleDesc.Count = 1;
-	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff2));
-}
-
-void EachInfo::ConstInit()
-{
-	CreateConstBuff0();
-	CreateConstBuff1();
-	CreateConstBuff2();
-}
+//void EachInfo::CreateConstBuff0()
+//{
+//	D3D12_HEAP_PROPERTIES heapprop{};
+//	heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
+//	//リソース設定
+//	D3D12_RESOURCE_DESC resdesc{};
+//	resdesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+//	resdesc.Width = (sizeof(ConstBufferDataB0) + 0xff) & ~0xff;
+//	resdesc.Height = 1;
+//	resdesc.DepthOrArraySize = 1;
+//	resdesc.MipLevels = 1;
+//	resdesc.SampleDesc.Count = 1;
+//	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+//	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff0));
+//}
+//void EachInfo::CreateConstBuff1()
+//{
+//	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff1));
+//}
+//void EachInfo::CreateConstBuff2()
+//{
+//	D3D12_HEAP_PROPERTIES heapprop{};
+//	heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
+//	//リソース設定
+//	D3D12_RESOURCE_DESC resdesc{};
+//	resdesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+//	resdesc.Width = (sizeof(ConstBufferDataB3) + 0xff) & ~0xff;
+//	resdesc.Height = 1;
+//	resdesc.DepthOrArraySize = 1;
+//	resdesc.MipLevels = 1;
+//	resdesc.SampleDesc.Count = 1;
+//	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+//	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff2));
+//}
+//void EachInfo::ConstInit()
+//{
+//	CreateConstBuff0();
+//	CreateConstBuff1();
+//	CreateConstBuff2();
+//}

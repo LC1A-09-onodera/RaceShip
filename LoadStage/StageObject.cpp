@@ -11,13 +11,13 @@ void WallObject::LoadPosition()
 	for (auto itr = LoadStage::wallPosition.begin(); itr != LoadStage::wallPosition.end(); ++itr)
 	{
 		WallObjectEach each;
-		each.ConstInit();
+		ConstInit(each);
 		each.position.m128_f32[0] = itr->x;
 		each.position.m128_f32[2] = itr->y;
 		each.scale = { 2.0f, 4.0f, 2.0f };
 		wallsPos.push_back(each);
 		WallObjectEach eachR;
-		eachR.ConstInit();
+		ConstInit(eachR);
 		eachR.position.m128_f32[0] = itr->x;
 		eachR.position.m128_f32[2] = itr->y;
 		eachR.scale = { 2.0f, 4.0f, 2.0f };
@@ -329,13 +329,13 @@ void GoalObject::LoadPosition()
 	for (auto itr = LoadStage::goalPosition.begin(); itr != LoadStage::goalPosition.end(); ++itr)
 	{
 		GoalObjectEach each;
-		each.ConstInit();
+		ConstInit(each);
 		each.position.m128_f32[0] = itr->x;
 		each.position.m128_f32[2] = itr->y;
 		each.scale = { 2.0f, 4.0f, 2.0f };
 		goalsPos.push_back(each);
 		GoalObjectEach eachR;
-		eachR.ConstInit();
+		ConstInit(eachR);
 		eachR.position.m128_f32[0] = itr->x;
 		eachR.position.m128_f32[2] = itr->y;
 		eachR.scale = { 2.0f, 4.0f, 2.0f };

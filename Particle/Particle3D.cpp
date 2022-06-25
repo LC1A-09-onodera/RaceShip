@@ -30,10 +30,6 @@ XMMATRIX ParticleManager::matBillboard = XMMatrixIdentity();
 XMMATRIX ParticleManager::matBillboardY = XMMatrixIdentity();
 
 std::shared_ptr<ParticleIndi> ParticleControl::attackEffect = nullptr;
-std::shared_ptr<ParticleIndi> ParticleControl::expEffect = nullptr;
-std::shared_ptr<ParticleIndi> ParticleControl::flashEffect = nullptr;
-std::shared_ptr<ParticleIndi>  ParticleControl::rockOnEffect = nullptr;
-std::shared_ptr<ParticleIndi> ParticleControl::numbers[10];
 
 bool ParticleManager::StaticInitialize(ID3D12Device *device,  int window_width, int window_height,XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up)
 {

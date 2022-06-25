@@ -28,9 +28,9 @@ public:
 	XMMATRIX matBillboard;
 	//Y軸ビルボード
 	XMMATRIX matBillboardY;
-
+	//Imguiからの操作を受け付ける
 	bool isControl = true;
-
+	//反対方向のカメラかどうか
 	bool isRCamera = false;
 	
 	void CameraTargetRot();
