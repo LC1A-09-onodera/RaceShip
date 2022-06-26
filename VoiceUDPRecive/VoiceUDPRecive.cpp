@@ -4,7 +4,7 @@
 #include "../imgui/ImguiControl.h"
 #include "../3DObjectParticle/3DObjectParticle.h"
 
-UDPStruct VoiceReciver::udp;
+UDPClass VoiceReciver::udp;
 bool VoiceReciver::isShot;
 
 bool VoiceReciver::isFront;

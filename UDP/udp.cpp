@@ -1,11 +1,11 @@
 #include "udp.h"
 
-void UDPStruct::SetPortNum(int port)
+void UDPClass::SetPortNum(int port)
 {
 	this->port = port;
 }
 
-void UDPStruct::StartUp()
+void UDPClass::StartUp()
 {
 	WSAStartup(MAKEWORD(2, 0), &wsaData);//MAKEWORD(2, 0)はバージョン
 	sock = static_cast<int>(socket(AF_INET, SOCK_DGRAM, 0));//AF_INETはIPv4、SOCK_DGRAMはUDP通信、0は？
@@ -18,7 +18,7 @@ void UDPStruct::StartUp()
 	ioctlsocket(sock, FIONBIO, &val);
 }
 
-void UDPStruct::Recive()
+void UDPClass::Recive()
 {
 	char buf[100];
 	memset(buf, 0, 100);
@@ -26,7 +26,7 @@ void UDPStruct::Recive()
 	tex = buf;
 }
 
-void UDPStruct::EndRecive()
+void UDPClass::EndRecive()
 {
 	closesocket(sock);
 	WSACleanup();

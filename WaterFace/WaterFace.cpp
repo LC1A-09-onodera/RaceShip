@@ -120,7 +120,7 @@ void WaterFaceModel::CreateModel(const char* name, HLSLShader& shader, PostEffec
 		CalculateSmoothedVertexNormals();
 	};
 
-	Init(this, this->eachData);
+	ConstBufferInit(this, this->eachData);
 
 	file.close();
 }

@@ -211,7 +211,7 @@ public:
 	inline const std::vector<unsigned short> &GetIndices(){return mesh.indices;}
 };
 template <typename T, typename U>
-void Init(T *model, U &eachInfo)
+void ConstBufferInit(T *model, U &eachInfo)
 {
 	if (model == nullptr) return;
 	UINT sizeVB = static_cast<UINT>(sizeof(Vertex) * model->mesh.vertices.size());
