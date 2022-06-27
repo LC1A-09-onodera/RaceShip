@@ -159,6 +159,16 @@ void Rewired::KeyCodeString::KeyCodeStringInit()
 	pair<string, KeyCode> X = { "X", KeyCode::X };
 	pair<string, KeyCode> Y = { "Y", KeyCode::Y };
 	pair<string, KeyCode> Z = { "Z", KeyCode::Z };
+	pair<string, KeyCode> Num1 = { "1", KeyCode::Key1 };
+	pair<string, KeyCode> Num2 = { "2", KeyCode::Key2 };
+	pair<string, KeyCode> Num3 = { "3", KeyCode::Key3 };
+	pair<string, KeyCode> Num4 = { "4", KeyCode::Key4 };
+	pair<string, KeyCode> Num5 = { "5", KeyCode::Key5 };
+	pair<string, KeyCode> Num6 = { "6", KeyCode::Key6 };
+	pair<string, KeyCode> Num7 = { "7", KeyCode::Key7 };
+	pair<string, KeyCode> Num8 = { "8", KeyCode::Key8 };
+	pair<string, KeyCode> Num9 = { "9", KeyCode::Key9 };
+	pair<string, KeyCode> Num0 = { "0", KeyCode::Key0 };
 	keyboardKeys.push_back(A);
 	keyboardKeys.push_back(B);
 	keyboardKeys.push_back(C);
@@ -185,6 +195,16 @@ void Rewired::KeyCodeString::KeyCodeStringInit()
 	keyboardKeys.push_back(X);
 	keyboardKeys.push_back(Y);
 	keyboardKeys.push_back(Z);
+	keyboardKeys.push_back(Num1);
+	keyboardKeys.push_back(Num2);
+	keyboardKeys.push_back(Num3);
+	keyboardKeys.push_back(Num4);
+	keyboardKeys.push_back(Num5);
+	keyboardKeys.push_back(Num6);
+	keyboardKeys.push_back(Num7);
+	keyboardKeys.push_back(Num8);
+	keyboardKeys.push_back(Num9);
+	keyboardKeys.push_back(Num0);
 
 	pair<string, PadKeyCode> PadUp = { "PadUp", PadKeyCode::UpButton };
 	pair<string, PadKeyCode> PadDown = { "PadDown", PadKeyCode::DownButton };
