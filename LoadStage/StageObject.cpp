@@ -11,13 +11,13 @@ void WallObject::LoadPosition()
 	for (auto itr = LoadStage::wallPosition.begin(); itr != LoadStage::wallPosition.end(); ++itr)
 	{
 		WallObjectEach each;
-		each.ConstInit();
+		ConstInit(each);
 		each.position.m128_f32[0] = itr->x;
 		each.position.m128_f32[2] = itr->y;
 		each.scale = { 2.0f, 4.0f, 2.0f };
 		wallsPos.push_back(each);
 		WallObjectEach eachR;
-		eachR.ConstInit();
+		ConstInit(eachR);
 		eachR.position.m128_f32[0] = itr->x;
 		eachR.position.m128_f32[2] = itr->y;
 		eachR.scale = { 2.0f, 4.0f, 2.0f };
@@ -73,37 +73,9 @@ void WallModel::Update(WallObjectEach* each, bool rCamera)
 	if (each != nullptr)
 	{
 		this->each = *each;
-		XMMATRIX matScale, matRot, matTrans;
-		const XMFLOAT3& cameraPos = Cameras::camera.eye.v;
-		matScale = XMMatrixScaling(this->each.scale.x, this->each.scale.y, this->each.scale.z);
-		matRot = XMMatrixIdentity();
-		matRot *= XMMatrixRotationZ(XMConvertToRadians(this->each.rotation.z));
-		matRot *= XMMatrixRotationX(XMConvertToRadians(this->each.rotation.x));
-		matRot *= XMMatrixRotationY(XMConvertToRadians(this->each.rotation.y));
-		matTrans = XMMatrixTranslation(this->each.position.m128_f32[0], this->each.position.m128_f32[1], this->each.position.m128_f32[2]);
-		matWorld = XMMatrixIdentity();
+		CalcMatrix(this, each);
 
-		//ビルボード
-		//if (billboard)
-		//{
-		//    matWorld *= BaseDirectX::matBillboard;//ビルボードをかける
-		//}
-		//ビルボードY
-		//if (billboard)
-		//{
-		//    matWorld *= Camera::matBillboardY;//ビルボードをかける
-		//}
-		matWorld *= matScale;
-		matWorld *= matRot;
-		matWorld *= matTrans;
-
-		Vertex* vertMap = nullptr;
-		BaseDirectX::result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
-		if (SUCCEEDED(BaseDirectX::result))
-		{
-			copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
-			mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
-		}
+		SendVertex();
 
 		ConstBufferDataB0* constMap0 = nullptr;
 		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
@@ -113,13 +85,13 @@ void WallModel::Update(WallObjectEach* each, bool rCamera)
 			{
 				constMap0->viewproj = Cameras::camera.matView * BaseDirectX::matProjection;
 				constMap0->world = matWorld;
-				constMap0->cameraPos = cameraPos;
+				constMap0->cameraPos = Cameras::camera.eye;
 			}
 			else
 			{
 				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::matProjection;
 				constMap0->world = matWorld;
-				constMap0->cameraPos = Cameras::rCamera.eye.v;
+				constMap0->cameraPos = Cameras::rCamera.eye;
 			}
 
 			this->each.constBuff0->Unmap(0, nullptr);
@@ -135,37 +107,9 @@ void WallModel::Update(WallObjectEach* each, bool rCamera)
 	}
 	else
 	{
-		XMMATRIX matScale, matRot, matTrans;
-		const XMFLOAT3& cameraPos = Cameras::camera.eye.v;
-		matScale = XMMatrixScaling(this->each.scale.x, this->each.scale.y, this->each.scale.z);
-		matRot = XMMatrixIdentity();
-		matRot *= XMMatrixRotationZ(XMConvertToRadians(this->each.rotation.z));
-		matRot *= XMMatrixRotationX(XMConvertToRadians(this->each.rotation.x));
-		matRot *= XMMatrixRotationY(XMConvertToRadians(this->each.rotation.y));
-		matTrans = XMMatrixTranslation(this->each.position.m128_f32[0], this->each.position.m128_f32[1], this->each.position.m128_f32[2]);
-		matWorld = XMMatrixIdentity();
+		CalcMatrix(this, each);
 
-		//ビルボード
-		//if (billboard)
-		//{
-		//    matWorld *= BaseDirectX::matBillboard;//ビルボードをかける
-		//}
-		//ビルボードY
-		//if (billboard)
-		//{
-		//    matWorld *= Camera::matBillboardY;//ビルボードをかける
-		//}
-		matWorld *= matScale;
-		matWorld *= matRot;
-		matWorld *= matTrans;
-
-		Vertex* vertMap = nullptr;
-		BaseDirectX::result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
-		if (SUCCEEDED(BaseDirectX::result))
-		{
-			copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
-			mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
-		}
+		SendVertex();
 
 		ConstBufferDataB0* constMap0 = nullptr;
 		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
@@ -175,13 +119,13 @@ void WallModel::Update(WallObjectEach* each, bool rCamera)
 			{
 				constMap0->viewproj = Cameras::camera.matView * BaseDirectX::matProjection;
 				constMap0->world = matWorld;
-				constMap0->cameraPos = cameraPos;
+				constMap0->cameraPos = Cameras::camera.eye;
 			}
 			else
 			{
 				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::matProjection;
 				constMap0->world = matWorld;
-				constMap0->cameraPos = Cameras::rCamera.eye.v;
+				constMap0->cameraPos = Cameras::rCamera.eye;
 			}
 			this->each.constBuff0->Unmap(0, nullptr);
 		}
@@ -202,7 +146,7 @@ void GoalModel::Update(GoalObjectEach* each, bool rCamera)
 	{
 		this->each = *each;
 		XMMATRIX matScale, matRot, matTrans;
-		const XMFLOAT3& cameraPos = Cameras::camera.eye.v;
+		const XMFLOAT3& cameraPos = Cameras::camera.eye;
 		matScale = XMMatrixScaling(this->each.scale.x, this->each.scale.y, this->each.scale.z);
 		matRot = XMMatrixIdentity();
 		matRot *= XMMatrixRotationZ(XMConvertToRadians(this->each.rotation.z));
@@ -247,7 +191,7 @@ void GoalModel::Update(GoalObjectEach* each, bool rCamera)
 			{
 				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::matProjection;
 				constMap0->world = matWorld;
-				constMap0->cameraPos = Cameras::rCamera.eye.v;
+				constMap0->cameraPos = Cameras::rCamera.eye;
 			}
 
 			this->each.constBuff0->Unmap(0, nullptr);
@@ -264,7 +208,7 @@ void GoalModel::Update(GoalObjectEach* each, bool rCamera)
 	else
 	{
 		XMMATRIX matScale, matRot, matTrans;
-		const XMFLOAT3& cameraPos = Cameras::camera.eye.v;
+		const XMFLOAT3& cameraPos = Cameras::camera.eye;
 		matScale = XMMatrixScaling(this->each.scale.x, this->each.scale.y, this->each.scale.z);
 		matRot = XMMatrixIdentity();
 		matRot *= XMMatrixRotationZ(XMConvertToRadians(this->each.rotation.z));
@@ -309,7 +253,7 @@ void GoalModel::Update(GoalObjectEach* each, bool rCamera)
 			{
 				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::matProjection;
 				constMap0->world = matWorld;
-				constMap0->cameraPos = Cameras::rCamera.eye.v;
+				constMap0->cameraPos = Cameras::rCamera.eye;
 			}
 			this->each.constBuff0->Unmap(0, nullptr);
 		}
@@ -329,13 +273,13 @@ void GoalObject::LoadPosition()
 	for (auto itr = LoadStage::goalPosition.begin(); itr != LoadStage::goalPosition.end(); ++itr)
 	{
 		GoalObjectEach each;
-		each.ConstInit();
+		ConstInit(each);
 		each.position.m128_f32[0] = itr->x;
 		each.position.m128_f32[2] = itr->y;
 		each.scale = { 2.0f, 4.0f, 2.0f };
 		goalsPos.push_back(each);
 		GoalObjectEach eachR;
-		eachR.ConstInit();
+		ConstInit(eachR);
 		eachR.position.m128_f32[0] = itr->x;
 		eachR.position.m128_f32[2] = itr->y;
 		eachR.scale = { 2.0f, 4.0f, 2.0f };

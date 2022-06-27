@@ -24,7 +24,7 @@ void Seling::ForceUpdate()
 
 void Seling::LoadModel()
 {
-	seling.CreateModel("seling", ShaderManager::playerShader, false);
+	seling.CreateModel("Triangle", ShaderManager::playerShader, false);
 	shotModel.CreateModel("maru", ShaderManager::playerShader, false);
 	shieldModel.CreateModel("shield", ShaderManager::shieldShader, false);
 	shieldModel.each.scale = { 2.0f, 2.0f, 1.0f };
@@ -36,7 +36,7 @@ void Seling::Init()
 	maxForce = { 0.7f, 0.7f, 0.7f };
 	frontDirection = { 0, 0 ,1.0f };
 	isShield = false;
-	addForce = {0, 0 ,0};
+	addForce = { 0, 0 ,0 };
 }
 
 void Seling::Update()
@@ -247,16 +247,29 @@ void Seling::ShieldInitAndUpdate()
 
 void Seling::HitWall()
 {
-	/*for (auto itr = StageObjects::walls.wallsPos.begin(); itr != StageObjects::walls.wallsPos.end(); ++itr)
+	for (auto itr = StageObjects::walls.wallsPos.begin(); itr != StageObjects::walls.wallsPos.end(); ++itr)
 	{
 		if (Lenght(seling.each.position, itr->position) <= 2.0f)
 		{
-			XMFLOAT3 vec = ConvertXMVECTORtoXMFLOAT3( itr->position - seling.each.position );
+			XMFLOAT3 vec = ConvertXMVECTORtoXMFLOAT3(itr->position - seling.each.position);
 			vec = Normalize(vec);
-			const float rezist = 4.0f;
-			addForce = { addForce.x * vec.x / rezist, addForce.y * vec.y / rezist, addForce.z * vec.z / rezist };
+			const float rezist = 7.0f;
+			bool blockR = itr->position.m128_f32[0] > seling.each.position.m128_f32[0];
+			bool blockFront = itr->position.m128_f32[2] > seling.each.position.m128_f32[2];
+			bool hitRight = blockR && addForce.x > 0;
+			bool hitLeft = !blockR && addForce.x < 0;
+			bool hitFront = blockFront && addForce.z > 0;
+			bool hitBack = !blockFront && addForce.z < 0;
+			if (hitRight || hitLeft)
+			{
+				addForce.x = -addForce.x / rezist;
+			}
+			if (hitFront || hitBack)
+			{
+				addForce.z = -addForce.z / rezist;
+			}
 		}
-	}*/
+	}
 }
 
 void Seling::HitGoal()
@@ -268,103 +281,6 @@ void Seling::HitGoal()
 			isGoal = true;
 		}
 	}
-}
-
-void ShieldModel::CreateModel(const char* name, HLSLShader& shader, bool smoothing)
-{
-	InitializeDescriptorHeap();
-	InitializeGraphicsPipeline(shader);
-	ifstream file;
-	const string modelname = name;
-	const string filename = modelname + ".obj";
-	const string directoryPath = "Resource/Model/" + modelname + "/";
-	file.open(directoryPath + filename);
-
-	if (file.fail())
-	{
-		assert(0);
-	}
-
-	vector<XMFLOAT3> pos;
-	vector<XMFLOAT3> normal;
-	vector<XMFLOAT2> uv;
-
-	string line;
-	while (getline(file, line))
-	{
-		istringstream line_stream(line);
-
-		string key;
-		getline(line_stream, key, ' ');
-
-		if (key == "mtllib")
-		{   //マテリアル
-			string filename;
-			line_stream >> filename;
-			LoadMaterial(directoryPath, filename);
-		}
-		if (key == "v")
-		{   //座標読み込み
-			XMFLOAT3 position{};
-			line_stream >> position.x;
-			line_stream >> position.y;
-			line_stream >> position.z;
-
-			pos.emplace_back(position);//追加
-		}
-		if (key == "vt")
-		{
-			XMFLOAT2 texcood{};//UV受け取る
-			line_stream >> texcood.x;
-			line_stream >> texcood.y;
-
-			texcood.y = 1.0f - texcood.y;//ｖを反転
-			uv.emplace_back(texcood);
-
-		}
-		if (key == "vn")
-		{   //法線
-			XMFLOAT3 normals{};
-			line_stream >> normals.x;
-			line_stream >> normals.y;
-			line_stream >> normals.z;
-			normal.emplace_back(normals);
-		}
-		if (key == "f")
-		{   //インデックス
-			string index_string;
-			while (getline(line_stream, index_string, ' '))
-			{
-				//count += 1;
-				istringstream index_stream(index_string);
-				unsigned short indexPosition, indexNormal, indexTexcood;
-				index_stream >> indexPosition;
-				index_stream.seekg(1, ios_base::cur);
-				index_stream >> indexTexcood;
-				index_stream.seekg(1, ios_base::cur);
-				index_stream >> indexNormal;
-
-				Vertex verte{};
-				verte.pos = pos[indexPosition - 1];
-				verte.normal = normal[indexNormal - 1];
-				verte.uv = uv[indexTexcood - 1];
-
-				mesh.vertices.emplace_back(verte);
-				if (smoothing)
-				{
-					AddAmoothData(indexPosition, (unsigned short)GetVertexCount() - 1);
-				}
-				mesh.indices.emplace_back((unsigned short)mesh.indices.size());
-			}
-		}
-	}
-
-	if (smoothing)
-	{
-		CalculateSmoothedVertexNormals();
-	};
-	Init(1);
-	file.close();
 }
 
 bool ShieldModel::InitializeGraphicsPipeline(HLSLShader& shader)
@@ -397,14 +313,6 @@ bool ShieldModel::InitializeGraphicsPipeline(HLSLShader& shader)
 	// グラフィックスパイプラインの流れを設定
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline{};
 	gpipeline.VS = CD3DX12_SHADER_BYTECODE(shader.vsBlob.Get());
-	/*if (shader.hsBlob != nullptr)
-	{
-		gpipeline.HS = CD3DX12_SHADER_BYTECODE(shader.hsBlob.Get());
-	}
-	if (shader.dsBlob != nullptr)
-	{
-		gpipeline.DS = CD3DX12_SHADER_BYTECODE(shader.dsBlob.Get());
-	}*/
 	if (shader.gsBlob != nullptr)
 	{
 		gpipeline.GS = CD3DX12_SHADER_BYTECODE(shader.gsBlob.Get());
@@ -415,8 +323,6 @@ bool ShieldModel::InitializeGraphicsPipeline(HLSLShader& shader)
 	gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
 	// ラスタライザステート
 	gpipeline.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	//gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-	//gpipeline.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
 	// デプスステンシルステート
 	gpipeline.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 
@@ -445,7 +351,6 @@ bool ShieldModel::InitializeGraphicsPipeline(HLSLShader& shader)
 
 	// 図形の形状設定（三角形）
 	gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	//gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
 	gpipeline.NumRenderTargets = 1;	// 描画対象は1つ
 	gpipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA

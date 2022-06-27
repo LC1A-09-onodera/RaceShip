@@ -11,7 +11,7 @@ class VoiceReciver
 	static bool isPouse;
 	static bool isWall;
 public:
-	static UDPStruct udp;
+	static UDPClass udp;
 
 	//ƒoƒgƒ‹‚Æ‚©‚ÉŽg‚¦‚»‚¤
 	static bool GetIsShot() { return isShot; }

@@ -117,7 +117,7 @@ void PostEffect::Draw()
 		BaseDirectX::dev->CreateShaderResourceView(renderTarget.texBuff[tex].Get(), &srvDesc, descHeapSRV->GetCPUDescriptorHandleForHeapStart());
 	}
 	//ワールド行列更新
-	const XMFLOAT3& cameraPos = Cameras::camera.eye.v;
+	const XMFLOAT3& cameraPos = Cameras::camera.eye;
 	XMMATRIX matScale, matRot, matTrans;
 	matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
 	matRot = XMMatrixIdentity();

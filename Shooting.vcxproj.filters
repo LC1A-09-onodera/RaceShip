@@ -25,9 +25,6 @@
     <Filter Include="Particle">
       <UniqueIdentifier>{5b1a87c9-3c86-4ba6-a5ec-5edea41c4ae3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Collition">
-      <UniqueIdentifier>{96988a27-66e6-4b57-8a00-55c8bf070939}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Texture">
       <UniqueIdentifier>{2f57b39f-ad77-47cc-a379-35737c3781f2}</UniqueIdentifier>
     </Filter>
@@ -117,21 +114,6 @@
     <ClInclude Include="BaseDirectX\GameScene.h">
       <Filter>GameScene</Filter>
     </ClInclude>
-    <ClInclude Include="Collition\BaseCollision.h">
-      <Filter>Collition</Filter>
-    </ClInclude>
-    <ClInclude Include="Collition\CollisionAttribute.h">
-      <Filter>Collition</Filter>
-    </ClInclude>
-    <ClInclude Include="Collition\CollisionInfo.h">
-      <Filter>Collition</Filter>
-    </ClInclude>
-    <ClInclude Include="Collition\CollisionPrimitive.h">
-      <Filter>Collition</Filter>
-    </ClInclude>
-    <ClInclude Include="Collition\CollistionType.h">
-      <Filter>Collition</Filter>
-    </ClInclude>
     <ClInclude Include="Sprite\Sprite.h">
       <Filter>Sprite</Filter>
     </ClInclude>
@@ -148,12 +130,6 @@
       <Filter>BaseDirectx</Filter>
     </ClInclude>
     <ClInclude Include="BaseDirectX\ResouceBarrier.h">
-      <Filter>BaseDirectx</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseDirectX\vec2.h">
-      <Filter>BaseDirectx</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseDirectX\vec3.h">
       <Filter>BaseDirectx</Filter>
     </ClInclude>
     <ClInclude Include="BaseDirectX\viewport.h">
@@ -183,13 +159,7 @@
     <ClInclude Include="BaseDirectX\DirectInput.h">
       <Filter>BaseDirectx</Filter>
     </ClInclude>
-    <ClInclude Include="DX12operator.h">
-      <Filter>BaseDirectx</Filter>
-    </ClInclude>
     <ClInclude Include="Light\Light.h">
-      <Filter>Light</Filter>
-    </ClInclude>
-    <ClInclude Include="PointLight.h">
       <Filter>Light</Filter>
     </ClInclude>
     <ClInclude Include="Light\SpotLight.h">
@@ -200,24 +170,6 @@
     </ClInclude>
     <ClInclude Include="RenderTarget\RenderTarget.h">
       <Filter>RenderTarget</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseDirectX\Matrix4.h">
-      <Filter>BaseDirectx</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseDirectX\Quaternion.h">
-      <Filter>BaseDirectx</Filter>
-    </ClInclude>
-    <ClInclude Include="Collition\SphereCollider.h">
-      <Filter>Collition</Filter>
-    </ClInclude>
-    <ClInclude Include="Collition\CollisionManager.h">
-      <Filter>Collition</Filter>
-    </ClInclude>
-    <ClInclude Include="Collition\RaycastHit.h">
-      <Filter>Collition</Filter>
-    </ClInclude>
-    <ClInclude Include="Collition\MeshCollider.h">
-      <Filter>Collition</Filter>
     </ClInclude>
     <ClInclude Include="PostEffect\PostEffect.h">
       <Filter>PostEffect</Filter>
@@ -270,6 +222,12 @@
     <ClInclude Include="UDP\udp.h">
       <Filter>Udp</Filter>
     </ClInclude>
+    <ClInclude Include="BaseDirectX\DX12operator.h">
+      <Filter>BaseDirectx</Filter>
+    </ClInclude>
+    <ClInclude Include="Light\PointLight.h">
+      <Filter>Light</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -298,9 +256,6 @@
     </ClCompile>
     <ClCompile Include="BaseDirectX\GameScene.cpp">
       <Filter>GameScene</Filter>
-    </ClCompile>
-    <ClCompile Include="Collition\CollisionPrimitive.cpp">
-      <Filter>Collition</Filter>
     </ClCompile>
     <ClCompile Include="Sprite\Sprite.cpp">
       <Filter>Sprite</Filter>
@@ -341,23 +296,8 @@
     <ClCompile Include="Light\Light.cpp">
       <Filter>Light</Filter>
     </ClCompile>
-    <ClCompile Include="BaseDirectX\Matrix4.cpp">
-      <Filter>BaseDirectx</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseDirectX\Quaternion.cpp">
-      <Filter>BaseDirectx</Filter>
-    </ClCompile>
     <ClCompile Include="RenderTarget\RenderTarget.cpp">
       <Filter>RenderTarget</Filter>
-    </ClCompile>
-    <ClCompile Include="Collition\CollisionManager.cpp">
-      <Filter>Collition</Filter>
-    </ClCompile>
-    <ClCompile Include="Collition\SphereCollider.cpp">
-      <Filter>Collition</Filter>
-    </ClCompile>
-    <ClCompile Include="Collition\MeshCollider.cpp">
-      <Filter>Collition</Filter>
     </ClCompile>
     <ClCompile Include="PostEffect\PostEffect.cpp">
       <Filter>PostEffect</Filter>

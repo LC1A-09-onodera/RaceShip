@@ -85,7 +85,7 @@ static const char MouseCode[] = "LButton\0RButton\0\0";
 class Input
 {
 public:
-	static IDirectInput8 *dinput;
+	static std::shared_ptr<IDirectInput8> dinput;
 	static IDirectInputDevice8 *devkeyboard;
 	static DirectInput *directInput;/////////////////////
 	static void Init();

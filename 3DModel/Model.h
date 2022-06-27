@@ -7,7 +7,6 @@
 #include <unordered_map>
 #include "../Light/Light.h"
 #include "../Shader/Shader.h"
-#include "../Collition/CollisionInfo.h"
 
 using namespace std;
 class BaseCollider;
@@ -78,12 +77,6 @@ struct Vertex
 	XMFLOAT2 uv;
 };
 
-class BaseObject
-{
-	Vertex *vert;
-	unsigned short *indices;
-};
-
 class Mesh
 {
 public:
@@ -109,11 +102,53 @@ public:
 	XMFLOAT3 scale = { 1,1,1 };
 	XMFLOAT3 rotation = { 0,0,0 };
 	XMVECTOR position = { 0,0,0 };
-	void CreateConstBuff0();
-	void CreateConstBuff1();
-	void CreateConstBuff2();
-	void ConstInit();
 };
+
+template <typename T>
+void CreateConstBuff0(T &each)
+{
+	D3D12_HEAP_PROPERTIES heapprop{};
+	heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
+	//リソース設定
+	D3D12_RESOURCE_DESC resdesc{};
+	resdesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	resdesc.Width = (sizeof(typeid(each)) + 0xff) & ~0xff;
+	resdesc.Height = 1;
+	resdesc.DepthOrArraySize = 1;
+	resdesc.MipLevels = 1;
+	resdesc.SampleDesc.Count = 1;
+	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&each.constBuff0));
+};
+template <typename T>
+void CreateConstBuff1(T &each)
+{
+	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&each.constBuff1));
+};
+template <typename T>
+void CreateConstBuff2(T& each)
+{
+	D3D12_HEAP_PROPERTIES heapprop{};
+	heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
+	//リソース設定
+	D3D12_RESOURCE_DESC resdesc{};
+	resdesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	resdesc.Width = (sizeof(typeid(each)) + 0xff) & ~0xff;
+	resdesc.Height = 1;
+	resdesc.DepthOrArraySize = 1;
+	resdesc.MipLevels = 1;
+	resdesc.SampleDesc.Count = 1;
+	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&each.constBuff2));
+};
+template <typename T>
+void ConstInit(T &each)
+{
+	CreateConstBuff0(each);
+	CreateConstBuff1(each);
+	CreateConstBuff2(each);
+};
+
 class Model
 {
 public:
@@ -122,16 +157,14 @@ public:
 	virtual ~Model();
 	//virtual bool Initialize();
 
-	static void SetLight(Light *light);
+	static void SetLight(shared_ptr<Light> light);
 	Mesh mesh;
 	D3D12_CPU_DESCRIPTOR_HANDLE cpuDescHandleCBV;
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuDescHandleCBV;
 	EachInfo each;
 	XMMATRIX matWorld;
-	//Object3d *parent = nullptr;
-	static Light *light;
-	//const char *name = nullptr;
-	BaseCollider *collider = nullptr;
+	static shared_ptr<Light> light;
+	shared_ptr<BaseCollider> collider = nullptr;
 	//----基本いるもの-----------
 	float radi = 2.0f;
 	bool billboard = false;
@@ -154,11 +187,12 @@ public:
 	Material material;
 	//マテリアルの数
 	int materialCount = 0;
-
-	void Init(int index);
 	void CreateModel(const char *name, HLSLShader &shader, bool smoothing = false);
 	//void Update();
-	virtual void Update(EachInfo *each = nullptr, bool rCamera = false);
+	virtual void Update(EachInfo *each, bool rCamera = false);
+	void SendVertex();
+	
+	void LoadFileContents(const char* name, bool smoothing = false);
 	//スムージング
 	unordered_map<unsigned short, vector<unsigned short>> smoothData;
 	inline size_t GetVertexCount();
@@ -170,13 +204,89 @@ public:
 	bool LoadTexture(const string &directPath, const string &filename);
 	bool InitializeDescriptorHeap();
 	void LoadMaterial(const string &directoryPath, const string &filename);
-	ComPtr<ID3DBlob> LoadShader(LPCWSTR VshaderName = L"", LPCSTR Vtarget = "", ComPtr<ID3DBlob> sBlob = nullptr /*, LPCWSTR PshaderName = L"", LPCSTR Ptarget = "", ComPtr<ID3DBlob> psBlob = nullptr, LPCWSTR GshaderName = L"", LPCSTR Gtarget = "", ComPtr<ID3DBlob> gsBlob = nullptr*/);
 	const XMMATRIX &GetMatWorld() { return matWorld; }
-	void SetCollider(BaseCollider *collider);
-	virtual void OnCollision(const CollisionInfo &info){}
 	inline const std::vector<Vertex> &GetVertices(){return mesh.vertices;}
 	inline const std::vector<unsigned short> &GetIndices(){return mesh.indices;}
 };
+template <typename T, typename U>
+void ConstBufferInit(T *model, U &eachInfo)
+{
+	if (model == nullptr) return;
+	UINT sizeVB = static_cast<UINT>(sizeof(Vertex) * model->mesh.vertices.size());
+	UINT sizeIB = static_cast<UINT>(sizeof(unsigned short) * model->mesh.indices.size());
+	&CD3DX12_RESOURCE_DESC::Buffer(sizeVB);
+	&CD3DX12_RESOURCE_DESC::Buffer(sizeIB);
+	model->mesh.vbView.SizeInBytes = sizeVB;
+	model->mesh.ibView.SizeInBytes = sizeIB;
+	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizeVB), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&model->mesh.vertBuff));
+	Vertex* vertMap = nullptr;
+	BaseDirectX::result = model->mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
+	if (SUCCEEDED(BaseDirectX::result))
+	{
+		copy(model->mesh.vertices.begin(), model->mesh.vertices.end(), vertMap);
+		model->mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
+	}
+	//インデックスバッファの生成
+	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizeIB), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&model->mesh.indexBuff));
+	unsigned short* indexMap = nullptr;
+	BaseDirectX::result = model->mesh.indexBuff->Map(0, nullptr, (void**)&indexMap);
+	if (SUCCEEDED(BaseDirectX::result))
+	{
+		copy(model->mesh.indices.begin(), model->mesh.indices.end(), indexMap);
+		model->mesh.indexBuff->Unmap(0, nullptr);
+	}
+
+	// GPU上のバッファに対応した仮想メモリを取得
+	model->mesh.vbView.BufferLocation = model->mesh.vertBuff->GetGPUVirtualAddress();
+	//vbView.SizeInBytes = sizeVB;
+	model->mesh.vbView.StrideInBytes = sizeof(Vertex);
+	model->mesh.ibView.BufferLocation = model->mesh.indexBuff->GetGPUVirtualAddress();
+	model->mesh.ibView.Format = DXGI_FORMAT_R16_UINT;
+	//ibView.SizeInBytes = sizeIB;
+
+	ConstInit(eachInfo);
+	
+	UINT descHadleIncSize = BaseDirectX::dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	model->cpuDescHandleCBV = BaseDirectX::basicDescHeap->GetCPUDescriptorHandleForHeapStart();
+	model->cpuDescHandleCBV.ptr += descHadleIncSize;
+
+	model->gpuDescHandleCBV = BaseDirectX::basicDescHeap->GetGPUDescriptorHandleForHeapStart();
+	model->gpuDescHandleCBV.ptr += descHadleIncSize;
+
+	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc{};
+	cbvDesc.BufferLocation = eachInfo.constBuff0->GetGPUVirtualAddress();
+	cbvDesc.SizeInBytes = static_cast<UINT>(eachInfo.constBuff0->GetDesc().Width);
+	
+	BaseDirectX::dev->CreateConstantBufferView(&cbvDesc, model->cpuDescHandleCBV);
+}
+template <typename T, typename U>
+void CalcMatrix(T *model, U *eachInfo)
+{
+	if (model == nullptr) return;
+	if (eachInfo == nullptr) return;
+	XMMATRIX matScale, matRot, matTrans;
+	matScale = XMMatrixScaling(eachInfo->scale.x, eachInfo->scale.y, eachInfo->scale.z);
+	matRot = XMMatrixIdentity();
+	matRot *= XMMatrixRotationZ(XMConvertToRadians(eachInfo->rotation.x));
+	matRot *= XMMatrixRotationX(XMConvertToRadians(eachInfo->rotation.y));
+	matRot *= XMMatrixRotationY(XMConvertToRadians(eachInfo->rotation.z));
+	matTrans = XMMatrixTranslation(eachInfo->position.m128_f32[0], eachInfo->position.m128_f32[1], eachInfo->position.m128_f32[2]);
+	model->matWorld = XMMatrixIdentity();
+
+	//ビルボード
+	//if (billboard)
+	//{
+	//    matWorld *= BaseDirectX::matBillboard;//ビルボードをかける
+	//}
+	//ビルボードY
+	//if (billboard)
+	//{
+	//    matWorld *= Camera::matBillboardY;//ビルボードをかける
+	//}
+	model->matWorld *= matScale;
+	model->matWorld *= matRot;
+	model->matWorld *= matTrans;
+}
 void Set3DDraw(const Model &model, bool triangle = true);
 void Draw3DObject(const Model &model, int texNum = -1, bool triangle = true);
 bool ObjectColition(Model& object1, Model& object2);

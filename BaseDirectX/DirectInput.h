@@ -1,6 +1,7 @@
 #pragma once
 #define DIRECTINPUT_VERSION 0x0800 //DirectInputのバージョン指定
 #include <dinput.h>
+#include <memory>
 //#include "./WindowsAPI/WinAPI.h"
 
 #pragma comment(lib, "dinput8.lib")
@@ -68,7 +69,7 @@ public:
 	//ゲームパッドデバイスの作成-デバイス列挙の結果を受け取る構造体
 	struct DeviceEnumParameter
 	{
-		LPDIRECTINPUTDEVICE8* GamePadDevice;
+		LPDIRECTINPUTDEVICE8 *GamePadDevice;
 		int FindCount;
 		~DeviceEnumParameter();
 	};

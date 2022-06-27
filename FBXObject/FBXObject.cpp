@@ -45,7 +45,7 @@ void FBXObject::Update()
 
 	const XMMATRIX &matViewProjection = Cameras::camera.matView;
 	const XMMATRIX &modelTransform = model->GetModelTransform();
-	const XMFLOAT3 &cameraPos = Cameras::camera.eye.v;
+	const XMFLOAT3 &cameraPos = Cameras::camera.eye;
 
 	HRESULT result;
 	ConstBufferDataTransform *constMap = nullptr;

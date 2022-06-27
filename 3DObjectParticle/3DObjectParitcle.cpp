@@ -86,7 +86,7 @@ void ObjectParticle3D::InitExprotion(XMFLOAT3& emitter)
 {
 	time = Life;
 	each.position = ConvertXMFLOAT3toXMVECTOR(emitter);
-	each.ConstInit();
+	ConstInit(each);
 	
 	speed = GetRandom(2);
 	acc = GetRandom(1);
@@ -119,7 +119,7 @@ void ObjectParticle3D::InitConverge(XMFLOAT3& emitter)
 		zSub = -zSub;
 	}
 	each.position.m128_f32[2] = emitter.x + zSub;
-	each.ConstInit();
+	ConstInit(each);
 	startPosition = ConvertXMVECTORtoXMFLOAT3(each.position);
 	each.scale = { 0.2f, 0.2f, 0.2f };
 	endPosition = emitter;
@@ -148,7 +148,7 @@ void ObjectParticle3D::InitTitle(XMFLOAT3& emitter)
 	{
 		zSub = -zSub;
 	}
-	each.ConstInit();
+	ConstInit(each);
 	speed = GetRandom(2);
 	acc = GetRandom(1);
 	startPosition = ConvertXMVECTORtoXMFLOAT3(each.position);
@@ -171,7 +171,7 @@ void ObjectParticle3D::InitSwell(XMFLOAT3& emitter)
 	each.position.m128_f32[2] = 30.0f;
 	each.position.m128_f32[0] = static_cast<float>(rand() % 50 - 24);
 	each.position.m128_f32[1] = static_cast<float>(rand() % 50 - 24);
-	each.ConstInit();
+	ConstInit(each);
 	speed.z = -static_cast<float>(rand() % 5 + 1);
 	acc.z = -static_cast<float>(rand() % 5 + 1);
 	speed.z = speed.z / 10.0f;
@@ -183,7 +183,7 @@ void ObjectParticle3D::InitTarget(XMFLOAT3& emitter)
 {
 	time = 1;
 	each.position = ConvertXMFLOAT3toXMVECTOR(emitter);
-	each.ConstInit();
+	ConstInit(each);
 	endPosition = XMFLOAT3(-5, -5, 3);
 	speed.x = (rand() % 3 + 1) / 10.0f;
 	speed.y = (rand() % 3 + 1) / 10.0f;
@@ -196,7 +196,7 @@ void ObjectParticle3D::InitTornado(XMFLOAT3& emitter)
 	time = 1;
 	//each.position = ConvertXMFLOAT3toXMVECTOR(emitter);
 	startPosition = {0, 0, 10};
-	each.ConstInit();
+	ConstInit(each);
 	each.position.m128_f32[2] = 10;
 	speed.z = static_cast<float>(rand() % 10 + 5);
 	speed.z = -speed.z / 100.0f;
@@ -207,7 +207,7 @@ void ObjectParticle3D::InitTornado(XMFLOAT3& emitter)
 void ObjectParticle3D::InitBorn(XMFLOAT3& emitter)
 {
 	time = 1;
-	each.ConstInit();
+	ConstInit(each);
 	each.position = ConvertXMFLOAT3toXMVECTOR(emitter);
 	
 	each.scale = {0.1f, 0.1f, 0.1f};

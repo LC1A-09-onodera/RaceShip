@@ -1,22 +1,18 @@
 #include "Model.h"
 #include "../Camera/Camera.h"
-#include "../Collition/BaseCollision.h"
-#include "../Collition/CollisionManager.h"
 
 using namespace std;
-Light* Model::light = nullptr;
+shared_ptr<Light> Model::light = nullptr;
+
 Model::~Model()
 {
-	if (collider)
-	{
-		CollisionManager::GetInstance()->RemoveCollider(collider);
-		delete collider;
-	}
+	
 }
 inline size_t Model::GetVertexCount()
 {
 	return mesh.vertices.size();
 }
+
 void Model::AddAmoothData(unsigned short indexPosition, unsigned short indexVertex)
 {
 	smoothData[indexPosition].emplace_back(indexVertex);
@@ -44,20 +40,97 @@ void Model::CalculateSmoothedVertexNormals()
 	}
 }
 
-void Model::SetLight(Light* light)
+void Model::SetLight(shared_ptr<Light> light)
 {
 	Model::light = light;
 }
 
-void Model::Init(int index)
+void Model::CreateModel(const char* name, HLSLShader& shader, bool smoothing)
 {
-	UINT sizeVB = static_cast<UINT>(sizeof(Vertex) * mesh.vertices.size());
-	UINT sizeIB = static_cast<UINT>(sizeof(unsigned short) * mesh.indices.size());
-	&CD3DX12_RESOURCE_DESC::Buffer(sizeVB);
-	&CD3DX12_RESOURCE_DESC::Buffer(sizeIB);
-	mesh.vbView.SizeInBytes = sizeVB;
-	mesh.ibView.SizeInBytes = sizeIB;
-	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizeVB), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&mesh.vertBuff));
+	InitializeDescriptorHeap();
+
+	InitializeGraphicsPipeline(shader);
+
+	LoadFileContents(name, smoothing);
+
+	ConstBufferInit(this, this->each);
+}
+
+void Model::Update(EachInfo* each, bool rCamera)
+{
+	if (each != nullptr)
+	{
+		this->each = *each;
+		
+		CalcMatrix(this, each);
+
+		SendVertex();
+
+		ConstBufferDataB0* constMap0 = nullptr;
+		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
+		{
+			//constMap0->mat = matWorld * Camera::matView * BaseDirectX::matProjection;
+			if (!rCamera)
+			{
+				constMap0->viewproj = Cameras::camera.matView * BaseDirectX::matProjection;
+				constMap0->world = matWorld;
+				constMap0->cameraPos = Cameras::camera.eye;
+			}
+			else
+			{
+				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::matProjection;
+				constMap0->world = matWorld;
+				constMap0->cameraPos = Cameras::rCamera.eye;
+			}
+
+			this->each.constBuff0->Unmap(0, nullptr);
+		}
+
+		ConstBufferDataB1* constMap1 = nullptr;
+		BaseDirectX::result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
+		constMap1->ambient = material.ambient;
+		constMap1->diffuse = material.diffuse;
+		constMap1->specular = material.specular;
+		constMap1->alpha = material.alpha;
+		this->each.constBuff1->Unmap(0, nullptr);
+	}
+	else
+	{
+		CalcMatrix(this, each);
+
+		SendVertex();
+
+		ConstBufferDataB0* constMap0 = nullptr;
+		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
+		{
+			//constMap0->mat = matWorld * Camera::matView * BaseDirectX::matProjection;
+			if (!rCamera)
+			{
+				constMap0->viewproj = Cameras::camera.matView * BaseDirectX::matProjection;
+				constMap0->world = matWorld;
+				constMap0->cameraPos = Cameras::camera.eye;
+			}
+			else
+			{
+				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::matProjection;
+				constMap0->world = matWorld;
+				constMap0->cameraPos = Cameras::rCamera.eye;
+			}
+			this->each.constBuff0->Unmap(0, nullptr);
+		}
+
+		ConstBufferDataB1* constMap1 = nullptr;
+		BaseDirectX::result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
+		constMap1->ambient = material.ambient;
+		constMap1->diffuse = material.diffuse;
+		constMap1->specular = material.specular;
+		constMap1->alpha = material.alpha;
+		this->each.constBuff1->Unmap(0, nullptr);
+	}
+}
+
+void Model::SendVertex()
+{
 	Vertex* vertMap = nullptr;
 	BaseDirectX::result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
 	if (SUCCEEDED(BaseDirectX::result))
@@ -65,42 +138,10 @@ void Model::Init(int index)
 		copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
 		mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
 	}
-	//インデックスバッファの生成
-	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizeIB), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&mesh.indexBuff));
-	unsigned short* indexMap = nullptr;
-	BaseDirectX::result = mesh.indexBuff->Map(0, nullptr, (void**)&indexMap);
-	if (SUCCEEDED(BaseDirectX::result))
-	{
-		copy(mesh.indices.begin(), mesh.indices.end(), indexMap);
-		mesh.indexBuff->Unmap(0, nullptr);
-	}
-
-	// GPU上のバッファに対応した仮想メモリを取得
-	mesh.vbView.BufferLocation = mesh.vertBuff->GetGPUVirtualAddress();
-	//vbView.SizeInBytes = sizeVB;
-	mesh.vbView.StrideInBytes = sizeof(Vertex);
-	mesh.ibView.BufferLocation = mesh.indexBuff->GetGPUVirtualAddress();
-	mesh.ibView.Format = DXGI_FORMAT_R16_UINT;
-	//ibView.SizeInBytes = sizeIB;
-	each.ConstInit();
-	UINT descHadleIncSize = BaseDirectX::dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	cpuDescHandleCBV = BaseDirectX::basicDescHeap->GetCPUDescriptorHandleForHeapStart();
-	cpuDescHandleCBV.ptr += index * descHadleIncSize;
-
-	gpuDescHandleCBV = BaseDirectX::basicDescHeap->GetGPUDescriptorHandleForHeapStart();
-	gpuDescHandleCBV.ptr += index * descHadleIncSize;
-
-	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc{};
-	cbvDesc.BufferLocation = each.constBuff0->GetGPUVirtualAddress();
-	cbvDesc.SizeInBytes = (UINT)each.constBuff0->GetDesc().Width;
-	BaseDirectX::dev->CreateConstantBufferView(&cbvDesc, cpuDescHandleCBV);
-	//name = typeid(*this).name();
 }
 
-void Model::CreateModel(const char* name, HLSLShader& shader, bool smoothing)
+void Model::LoadFileContents(const char* name, bool smoothing)
 {
-	InitializeDescriptorHeap();
-	InitializeGraphicsPipeline(shader);
 	ifstream file;
 	const string modelname = name;
 	const string filename = modelname + ".obj";
@@ -182,15 +223,7 @@ void Model::CreateModel(const char* name, HLSLShader& shader, bool smoothing)
 					AddAmoothData(indexPosition, (unsigned short)GetVertexCount() - 1);
 				}
 				mesh.indices.emplace_back((unsigned short)mesh.indices.size());
-				/*if (count > 3) {
-					const uint16_t index1 = mesh.vertices.size() - 4;
-					const uint16_t index2 = mesh.vertices.size() - 2;
-
-					mesh.indices.emplace_back(index1);
-					mesh.indices.emplace_back(index2);
-				}*/
 			}
-			//count = 0;
 		}
 	}
 
@@ -198,144 +231,8 @@ void Model::CreateModel(const char* name, HLSLShader& shader, bool smoothing)
 	{
 		CalculateSmoothedVertexNormals();
 	};
-	Init(1);
+
 	file.close();
-}
-
-void Model::Update(EachInfo* each, bool rCamera)
-{
-	if (each != nullptr)
-	{
-		this->each = *each;
-		XMMATRIX matScale, matRot, matTrans;
-		const XMFLOAT3& cameraPos = Cameras::camera.eye.v;
-		matScale = XMMatrixScaling(this->each.scale.x, this->each.scale.y, this->each.scale.z);
-		matRot = XMMatrixIdentity();
-		matRot *= XMMatrixRotationZ(XMConvertToRadians(this->each.rotation.z));
-		matRot *= XMMatrixRotationX(XMConvertToRadians(this->each.rotation.x));
-		matRot *= XMMatrixRotationY(XMConvertToRadians(this->each.rotation.y));
-		matTrans = XMMatrixTranslation(this->each.position.m128_f32[0], this->each.position.m128_f32[1], this->each.position.m128_f32[2]);
-		matWorld = XMMatrixIdentity();
-
-		//ビルボード
-		//if (billboard)
-		//{
-		//    matWorld *= BaseDirectX::matBillboard;//ビルボードをかける
-		//}
-		//ビルボードY
-		//if (billboard)
-		//{
-		//    matWorld *= Camera::matBillboardY;//ビルボードをかける
-		//}
-		matWorld *= matScale;
-		matWorld *= matRot;
-		matWorld *= matTrans;
-
-		Vertex* vertMap = nullptr;
-		BaseDirectX::result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
-		if (SUCCEEDED(BaseDirectX::result))
-		{
-			copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
-			mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
-		}
-
-		ConstBufferDataB0* constMap0 = nullptr;
-		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
-		{
-			//constMap0->mat = matWorld * Camera::matView * BaseDirectX::matProjection;
-			if (!rCamera)
-			{
-				constMap0->viewproj = Cameras::camera.matView * BaseDirectX::matProjection;
-				constMap0->world = matWorld;
-				constMap0->cameraPos = cameraPos;
-			}
-			else
-			{
-				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::matProjection;
-				constMap0->world = matWorld;
-				constMap0->cameraPos = Cameras::rCamera.eye.v;
-			}
-
-			this->each.constBuff0->Unmap(0, nullptr);
-		}
-
-		ConstBufferDataB1* constMap1 = nullptr;
-		BaseDirectX::result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
-		constMap1->ambient = material.ambient;
-		constMap1->diffuse = material.diffuse;
-		constMap1->specular = material.specular;
-		constMap1->alpha = material.alpha;
-		this->each.constBuff1->Unmap(0, nullptr);
-		if (collider)
-		{
-			collider->Update();
-		}
-	}
-	else
-	{
-		XMMATRIX matScale, matRot, matTrans;
-		const XMFLOAT3& cameraPos = Cameras::camera.eye.v;
-		matScale = XMMatrixScaling(this->each.scale.x, this->each.scale.y, this->each.scale.z);
-		matRot = XMMatrixIdentity();
-		matRot *= XMMatrixRotationZ(XMConvertToRadians(this->each.rotation.z));
-		matRot *= XMMatrixRotationX(XMConvertToRadians(this->each.rotation.x));
-		matRot *= XMMatrixRotationY(XMConvertToRadians(this->each.rotation.y));
-		matTrans = XMMatrixTranslation(this->each.position.m128_f32[0], this->each.position.m128_f32[1], this->each.position.m128_f32[2]);
-		matWorld = XMMatrixIdentity();
-
-		//ビルボード
-		//if (billboard)
-		//{
-		//    matWorld *= BaseDirectX::matBillboard;//ビルボードをかける
-		//}
-		//ビルボードY
-		//if (billboard)
-		//{
-		//    matWorld *= Camera::matBillboardY;//ビルボードをかける
-		//}
-		matWorld *= matScale;
-		matWorld *= matRot;
-		matWorld *= matTrans;
-
-		Vertex* vertMap = nullptr;
-		BaseDirectX::result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
-		if (SUCCEEDED(BaseDirectX::result))
-		{
-			copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
-			mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
-		}
-
-		ConstBufferDataB0* constMap0 = nullptr;
-		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
-		{
-			//constMap0->mat = matWorld * Camera::matView * BaseDirectX::matProjection;
-			if (!rCamera)
-			{
-				constMap0->viewproj = Cameras::camera.matView * BaseDirectX::matProjection;
-				constMap0->world = matWorld;
-				constMap0->cameraPos = cameraPos;
-			}
-			else
-			{
-				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::matProjection;
-				constMap0->world = matWorld;
-				constMap0->cameraPos = Cameras::rCamera.eye.v;
-			}
-			this->each.constBuff0->Unmap(0, nullptr);
-		}
-
-		ConstBufferDataB1* constMap1 = nullptr;
-		BaseDirectX::result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
-		constMap1->ambient = material.ambient;
-		constMap1->diffuse = material.diffuse;
-		constMap1->specular = material.specular;
-		constMap1->alpha = material.alpha;
-		this->each.constBuff1->Unmap(0, nullptr);
-		if (collider)
-		{
-			collider->Update();
-		}
-	}
 }
 
 bool Model::InitializeGraphicsPipeline(HLSLShader& shader)
@@ -670,55 +567,4 @@ bool CiycleColition(const XMFLOAT3& object1, const XMFLOAT3& object2, float radi
 	}
 
 	return false;
-}
-void Model::SetCollider(BaseCollider* collider)
-{
-	collider->SetModel(this);
-	this->collider = collider;
-	CollisionManager::GetInstance()->AddCollider(collider);
-	collider->Update();
-}
-
-void EachInfo::CreateConstBuff0()
-{
-	D3D12_HEAP_PROPERTIES heapprop{};
-	heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
-	//リソース設定
-	D3D12_RESOURCE_DESC resdesc{};
-	resdesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resdesc.Width = (sizeof(ConstBufferDataB0) + 0xff) & ~0xff;
-	resdesc.Height = 1;
-	resdesc.DepthOrArraySize = 1;
-	resdesc.MipLevels = 1;
-	resdesc.SampleDesc.Count = 1;
-	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff0));
-}
-
-void EachInfo::CreateConstBuff1()
-{
-	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff1));
-}
-
-void EachInfo::CreateConstBuff2()
-{
-	D3D12_HEAP_PROPERTIES heapprop{};
-	heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
-	//リソース設定
-	D3D12_RESOURCE_DESC resdesc{};
-	resdesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resdesc.Width = (sizeof(ConstBufferDataB3) + 0xff) & ~0xff;
-	resdesc.Height = 1;
-	resdesc.DepthOrArraySize = 1;
-	resdesc.MipLevels = 1;
-	resdesc.SampleDesc.Count = 1;
-	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff2));
-}
-
-void EachInfo::ConstInit()
-{
-	CreateConstBuff0();
-	CreateConstBuff1();
-	CreateConstBuff2();
 }

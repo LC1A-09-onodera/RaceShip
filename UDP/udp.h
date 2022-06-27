@@ -4,7 +4,7 @@
 #pragma comment(lib, "ws2_32.lib")
 #pragma warning(disable:4996)
 
-class UDPStruct
+class UDPClass
 {
 	WSAData wsaData;
 	u_short port;
