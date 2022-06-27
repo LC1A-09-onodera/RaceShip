@@ -73,37 +73,9 @@ void WallModel::Update(WallObjectEach* each, bool rCamera)
 	if (each != nullptr)
 	{
 		this->each = *each;
-		XMMATRIX matScale, matRot, matTrans;
-		const XMFLOAT3& cameraPos = Cameras::camera.eye;
-		matScale = XMMatrixScaling(this->each.scale.x, this->each.scale.y, this->each.scale.z);
-		matRot = XMMatrixIdentity();
-		matRot *= XMMatrixRotationZ(XMConvertToRadians(this->each.rotation.z));
-		matRot *= XMMatrixRotationX(XMConvertToRadians(this->each.rotation.x));
-		matRot *= XMMatrixRotationY(XMConvertToRadians(this->each.rotation.y));
-		matTrans = XMMatrixTranslation(this->each.position.m128_f32[0], this->each.position.m128_f32[1], this->each.position.m128_f32[2]);
-		matWorld = XMMatrixIdentity();
+		CalcMatrix(this, each);
 
-		//ビルボード
-		//if (billboard)
-		//{
-		//    matWorld *= BaseDirectX::matBillboard;//ビルボードをかける
-		//}
-		//ビルボードY
-		//if (billboard)
-		//{
-		//    matWorld *= Camera::matBillboardY;//ビルボードをかける
-		//}
-		matWorld *= matScale;
-		matWorld *= matRot;
-		matWorld *= matTrans;
-
-		Vertex* vertMap = nullptr;
-		BaseDirectX::result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
-		if (SUCCEEDED(BaseDirectX::result))
-		{
-			copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
-			mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
-		}
+		SendVertex();
 
 		ConstBufferDataB0* constMap0 = nullptr;
 		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
@@ -113,7 +85,7 @@ void WallModel::Update(WallObjectEach* each, bool rCamera)
 			{
 				constMap0->viewproj = Cameras::camera.matView * BaseDirectX::matProjection;
 				constMap0->world = matWorld;
-				constMap0->cameraPos = cameraPos;
+				constMap0->cameraPos = Cameras::camera.eye;
 			}
 			else
 			{
@@ -135,37 +107,9 @@ void WallModel::Update(WallObjectEach* each, bool rCamera)
 	}
 	else
 	{
-		XMMATRIX matScale, matRot, matTrans;
-		const XMFLOAT3& cameraPos = Cameras::camera.eye;
-		matScale = XMMatrixScaling(this->each.scale.x, this->each.scale.y, this->each.scale.z);
-		matRot = XMMatrixIdentity();
-		matRot *= XMMatrixRotationZ(XMConvertToRadians(this->each.rotation.z));
-		matRot *= XMMatrixRotationX(XMConvertToRadians(this->each.rotation.x));
-		matRot *= XMMatrixRotationY(XMConvertToRadians(this->each.rotation.y));
-		matTrans = XMMatrixTranslation(this->each.position.m128_f32[0], this->each.position.m128_f32[1], this->each.position.m128_f32[2]);
-		matWorld = XMMatrixIdentity();
+		CalcMatrix(this, each);
 
-		//ビルボード
-		//if (billboard)
-		//{
-		//    matWorld *= BaseDirectX::matBillboard;//ビルボードをかける
-		//}
-		//ビルボードY
-		//if (billboard)
-		//{
-		//    matWorld *= Camera::matBillboardY;//ビルボードをかける
-		//}
-		matWorld *= matScale;
-		matWorld *= matRot;
-		matWorld *= matTrans;
-
-		Vertex* vertMap = nullptr;
-		BaseDirectX::result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
-		if (SUCCEEDED(BaseDirectX::result))
-		{
-			copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
-			mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
-		}
+		SendVertex();
 
 		ConstBufferDataB0* constMap0 = nullptr;
 		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
@@ -175,7 +119,7 @@ void WallModel::Update(WallObjectEach* each, bool rCamera)
 			{
 				constMap0->viewproj = Cameras::camera.matView * BaseDirectX::matProjection;
 				constMap0->world = matWorld;
-				constMap0->cameraPos = cameraPos;
+				constMap0->cameraPos = Cameras::camera.eye;
 			}
 			else
 			{

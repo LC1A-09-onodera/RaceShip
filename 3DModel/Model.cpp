@@ -12,6 +12,7 @@ inline size_t Model::GetVertexCount()
 {
 	return mesh.vertices.size();
 }
+
 void Model::AddAmoothData(unsigned short indexPosition, unsigned short indexVertex)
 {
 	smoothData[indexPosition].emplace_back(indexVertex);
@@ -61,10 +62,9 @@ void Model::Update(EachInfo* each, bool rCamera)
 	{
 		this->each = *each;
 		
-		CalcMatrix();
+		CalcMatrix(this, each);
 
 		SendVertex();
-
 
 		ConstBufferDataB0* constMap0 = nullptr;
 		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
@@ -96,7 +96,7 @@ void Model::Update(EachInfo* each, bool rCamera)
 	}
 	else
 	{
-		CalcMatrix();
+		CalcMatrix(this, each);
 
 		SendVertex();
 
@@ -138,33 +138,6 @@ void Model::SendVertex()
 		copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
 		mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
 	}
-}
-
-void Model::CalcMatrix()
-{
-	XMMATRIX matScale, matRot, matTrans;
-	const XMFLOAT3& cameraPos = Cameras::camera.eye;
-	matScale = XMMatrixScaling(this->each.scale.x, this->each.scale.y, this->each.scale.z);
-	matRot = XMMatrixIdentity();
-	matRot *= XMMatrixRotationZ(XMConvertToRadians(this->each.rotation.z));
-	matRot *= XMMatrixRotationX(XMConvertToRadians(this->each.rotation.x));
-	matRot *= XMMatrixRotationY(XMConvertToRadians(this->each.rotation.y));
-	matTrans = XMMatrixTranslation(this->each.position.m128_f32[0], this->each.position.m128_f32[1], this->each.position.m128_f32[2]);
-	matWorld = XMMatrixIdentity();
-
-	//ビルボード
-	//if (billboard)
-	//{
-	//    matWorld *= BaseDirectX::matBillboard;//ビルボードをかける
-	//}
-	//ビルボードY
-	//if (billboard)
-	//{
-	//    matWorld *= Camera::matBillboardY;//ビルボードをかける
-	//}
-	matWorld *= matScale;
-	matWorld *= matRot;
-	matWorld *= matTrans;
 }
 
 void Model::LoadFileContents(const char* name, bool smoothing)
@@ -595,44 +568,3 @@ bool CiycleColition(const XMFLOAT3& object1, const XMFLOAT3& object2, float radi
 
 	return false;
 }
-
-//void EachInfo::CreateConstBuff0()
-//{
-//	D3D12_HEAP_PROPERTIES heapprop{};
-//	heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
-//	//リソース設定
-//	D3D12_RESOURCE_DESC resdesc{};
-//	resdesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-//	resdesc.Width = (sizeof(ConstBufferDataB0) + 0xff) & ~0xff;
-//	resdesc.Height = 1;
-//	resdesc.DepthOrArraySize = 1;
-//	resdesc.MipLevels = 1;
-//	resdesc.SampleDesc.Count = 1;
-//	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-//	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff0));
-//}
-//void EachInfo::CreateConstBuff1()
-//{
-//	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff1));
-//}
-//void EachInfo::CreateConstBuff2()
-//{
-//	D3D12_HEAP_PROPERTIES heapprop{};
-//	heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
-//	//リソース設定
-//	D3D12_RESOURCE_DESC resdesc{};
-//	resdesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-//	resdesc.Width = (sizeof(ConstBufferDataB3) + 0xff) & ~0xff;
-//	resdesc.Height = 1;
-//	resdesc.DepthOrArraySize = 1;
-//	resdesc.MipLevels = 1;
-//	resdesc.SampleDesc.Count = 1;
-//	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-//	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff2));
-//}
-//void EachInfo::ConstInit()
-//{
-//	CreateConstBuff0();
-//	CreateConstBuff1();
-//	CreateConstBuff2();
-//}

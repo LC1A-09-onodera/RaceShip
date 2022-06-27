@@ -13,7 +13,7 @@ void WaterFace::Init()
 	waterModel.eachData.position = { 0, 0.0f, 0.0f, 1 };
 	waterModel.eachData.rotation = { 0, 0, 0};
 	float scaleSample = 18.0f;
-	waterModel.each.scale = { scaleSample, scaleSample, scaleSample };
+	waterModel.eachData.scale = { scaleSample, scaleSample, scaleSample };
 }
 
 void WaterFace::Update()
@@ -24,8 +24,6 @@ void WaterFace::Update()
 void WaterFace::Draw(PostEffect& postEffect, XMVECTOR& selingPos)
 {
 	waterModel.eachData.position = selingPos;
-	waterModel.eachData.position.m128_f32[1] = 0.0f;
-	waterModel.eachData.position.m128_f32[2] = 0.0f;
 	waterModel.Draw(waterModel.eachData, postEffect);
 }
 
@@ -373,7 +371,7 @@ void WaterFaceModel::InitializeGraphicsPipeline(HLSLShader& shader, PostEffect& 
 
 void WaterFaceModel::Update()
 {
-	CalcMatrix();
+	CalcMatrix(this, &eachData);
 
 	SendVertex();
 

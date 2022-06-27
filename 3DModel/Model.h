@@ -189,9 +189,9 @@ public:
 	int materialCount = 0;
 	void CreateModel(const char *name, HLSLShader &shader, bool smoothing = false);
 	//void Update();
-	virtual void Update(EachInfo *each = nullptr, bool rCamera = false);
+	virtual void Update(EachInfo *each, bool rCamera = false);
 	void SendVertex();
-	void CalcMatrix();
+	
 	void LoadFileContents(const char* name, bool smoothing = false);
 	//スムージング
 	unordered_map<unsigned short, vector<unsigned short>> smoothData;
@@ -204,9 +204,7 @@ public:
 	bool LoadTexture(const string &directPath, const string &filename);
 	bool InitializeDescriptorHeap();
 	void LoadMaterial(const string &directoryPath, const string &filename);
-	ComPtr<ID3DBlob> LoadShader(LPCWSTR VshaderName = L"", LPCSTR Vtarget = "", ComPtr<ID3DBlob> sBlob = nullptr /*, LPCWSTR PshaderName = L"", LPCSTR Ptarget = "", ComPtr<ID3DBlob> psBlob = nullptr, LPCWSTR GshaderName = L"", LPCSTR Gtarget = "", ComPtr<ID3DBlob> gsBlob = nullptr*/);
 	const XMMATRIX &GetMatWorld() { return matWorld; }
-	void SetCollider(BaseCollider *collider);
 	inline const std::vector<Vertex> &GetVertices(){return mesh.vertices;}
 	inline const std::vector<unsigned short> &GetIndices(){return mesh.indices;}
 };
@@ -257,10 +255,38 @@ void ConstBufferInit(T *model, U &eachInfo)
 
 	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc{};
 	cbvDesc.BufferLocation = eachInfo.constBuff0->GetGPUVirtualAddress();
-	cbvDesc.SizeInBytes = (UINT)eachInfo.constBuff0->GetDesc().Width;
+	cbvDesc.SizeInBytes = static_cast<UINT>(eachInfo.constBuff0->GetDesc().Width);
 	
 	BaseDirectX::dev->CreateConstantBufferView(&cbvDesc, model->cpuDescHandleCBV);
-};
+}
+template <typename T, typename U>
+void CalcMatrix(T *model, U *eachInfo)
+{
+	if (model == nullptr) return;
+	if (eachInfo == nullptr) return;
+	XMMATRIX matScale, matRot, matTrans;
+	matScale = XMMatrixScaling(eachInfo->scale.x, eachInfo->scale.y, eachInfo->scale.z);
+	matRot = XMMatrixIdentity();
+	matRot *= XMMatrixRotationZ(XMConvertToRadians(eachInfo->rotation.x));
+	matRot *= XMMatrixRotationX(XMConvertToRadians(eachInfo->rotation.y));
+	matRot *= XMMatrixRotationY(XMConvertToRadians(eachInfo->rotation.z));
+	matTrans = XMMatrixTranslation(eachInfo->position.m128_f32[0], eachInfo->position.m128_f32[1], eachInfo->position.m128_f32[2]);
+	model->matWorld = XMMatrixIdentity();
+
+	//ビルボード
+	//if (billboard)
+	//{
+	//    matWorld *= BaseDirectX::matBillboard;//ビルボードをかける
+	//}
+	//ビルボードY
+	//if (billboard)
+	//{
+	//    matWorld *= Camera::matBillboardY;//ビルボードをかける
+	//}
+	model->matWorld *= matScale;
+	model->matWorld *= matRot;
+	model->matWorld *= matTrans;
+}
 void Set3DDraw(const Model &model, bool triangle = true);
 void Draw3DObject(const Model &model, int texNum = -1, bool triangle = true);
 bool ObjectColition(Model& object1, Model& object2);

@@ -24,7 +24,7 @@ void Seling::ForceUpdate()
 
 void Seling::LoadModel()
 {
-	seling.CreateModel("seling", ShaderManager::playerShader, false);
+	seling.CreateModel("Triangle", ShaderManager::playerShader, false);
 	shotModel.CreateModel("maru", ShaderManager::playerShader, false);
 	shieldModel.CreateModel("shield", ShaderManager::shieldShader, false);
 	shieldModel.each.scale = { 2.0f, 2.0f, 1.0f };
@@ -36,7 +36,7 @@ void Seling::Init()
 	maxForce = { 0.7f, 0.7f, 0.7f };
 	frontDirection = { 0, 0 ,1.0f };
 	isShield = false;
-	addForce = {0, 0 ,0};
+	addForce = { 0, 0 ,0 };
 }
 
 void Seling::Update()
@@ -247,16 +247,29 @@ void Seling::ShieldInitAndUpdate()
 
 void Seling::HitWall()
 {
-	/*for (auto itr = StageObjects::walls.wallsPos.begin(); itr != StageObjects::walls.wallsPos.end(); ++itr)
+	for (auto itr = StageObjects::walls.wallsPos.begin(); itr != StageObjects::walls.wallsPos.end(); ++itr)
 	{
 		if (Lenght(seling.each.position, itr->position) <= 2.0f)
 		{
-			XMFLOAT3 vec = ConvertXMVECTORtoXMFLOAT3( itr->position - seling.each.position );
+			XMFLOAT3 vec = ConvertXMVECTORtoXMFLOAT3(itr->position - seling.each.position);
 			vec = Normalize(vec);
-			const float rezist = 4.0f;
-			addForce = { addForce.x * vec.x / rezist, addForce.y * vec.y / rezist, addForce.z * vec.z / rezist };
+			const float rezist = 7.0f;
+			bool blockR = itr->position.m128_f32[0] > seling.each.position.m128_f32[0];
+			bool blockFront = itr->position.m128_f32[2] > seling.each.position.m128_f32[2];
+			bool hitRight = blockR && addForce.x > 0;
+			bool hitLeft = !blockR && addForce.x < 0;
+			bool hitFront = blockFront && addForce.z > 0;
+			bool hitBack = !blockFront && addForce.z < 0;
+			if (hitRight || hitLeft)
+			{
+				addForce.x = -addForce.x / rezist;
+			}
+			if (hitFront || hitBack)
+			{
+				addForce.z = -addForce.z / rezist;
+			}
 		}
-	}*/
+	}
 }
 
 void Seling::HitGoal()

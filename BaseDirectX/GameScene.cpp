@@ -178,9 +178,8 @@ void GameScene::TitleDraw()
 
 	light->SetLightDir(XMFLOAT3(Cameras::rCamera.GetTargetDirection()));
 	LightUpdate();
-
 	rSeling.Draw(true);
-	rWorld.Update(nullptr, true);
+	rWorld.Update(&rWorld.each, true);
 	Draw3DObject(rWorld);
 	StageObjects::Draw(true);
 	ObjectParticles::Draw();
@@ -198,13 +197,13 @@ void GameScene::TitleDraw()
 	LightUpdate();
 
 	seling.Draw();
-	world.each.rotation.y = 180;
-	world.Update();
+	//world.each.rotation.y = 180;
+	world.Update(&world.each, false);
 	StageObjects::Draw(false);
 	Draw3DObject(world);
 	ObjectParticles::Draw();
 
-	XMVECTOR sample = { 0, 0.0f, 0.0f, 1.0 };
+	XMVECTOR sample = { 0, -3.0f, 0.0f, 1.0 };
 	if (Imgui::useWaterNum == 0)
 	{
 		//waterFace.waterModel.each.rotation.y = 180;
