@@ -21,7 +21,7 @@ GameScene::GameScene()
 GameScene::~GameScene()
 {
 	VoiceReciver::EndRecive();
-	
+
 }
 
 void GameScene::SceneManageUpdateAndDraw()
@@ -31,6 +31,9 @@ void GameScene::SceneManageUpdateAndDraw()
 	light->Update();
 	switch (SceneNum)
 	{
+	case OP:
+		OPUpdate();
+		OPDraw();
 	case TITLE:
 		TitleUpdate();
 		TitleDraw();
@@ -90,9 +93,9 @@ void GameScene::Init()
 	ObjectParticles::LoadModels();
 	//Rewiredの要素初期化
 	Rewired::KeyCodeString::KeyCodeStringInit();
-	
+
 	jumpKey.LoadKey("RewiredTest.txt");
-	
+
 	//ステージをテキストからロード
 	LoadStage::LoadStages("test.txt");
 	StageObjects::walls.wallModel.CreateModel("MapWall", ShaderManager::playerShader);
@@ -122,6 +125,22 @@ void GameScene::Init()
 
 void GameScene::TitleUpdate()
 {
+	if (Input::KeyTrigger(DIK_SPACE))
+	{
+		SceneNum = GAME;
+	}
+}
+
+void GameScene::SelectUpdate()
+{
+	if (Input::KeyTrigger(DIK_SPACE))
+	{
+		SceneNum = GAME;
+	}
+}
+
+void GameScene::GameUpdate()
+{
 	Cameras::camera.Update();
 	Cameras::rCamera.eye.x = Cameras::camera.eye.x;
 	Cameras::rCamera.eye.y = -Cameras::camera.eye.y;
@@ -144,21 +163,18 @@ void GameScene::TitleUpdate()
 	Sound::Updete(Imgui::volume);
 }
 
-void GameScene::SelectUpdate()
-{
-	if (Input::KeyTrigger(DIK_SPACE))
-	{
-		SceneNum = GAME;
-	}
-}
-
-void GameScene::GameUpdate()
-{
-
-}
-
 void GameScene::ResultUpdate()
 {
+
+}
+
+void GameScene::OPUpdate()
+{
+	if (opAnimationTime > MaxOPAnimationTime)
+	{
+		SceneNum = TITLE;
+	}
+	opAnimationTime++;
 
 }
 
@@ -171,50 +187,47 @@ void GameScene::EndUpdate()
 	}
 }
 
+void GameScene::PreWaterFaceDraw()
+{
+	if (Imgui::effectType < 0)
+	{
+		light->SetLightDir(XMFLOAT3(Cameras::rCamera.GetTargetDirection()));
+		LightUpdate();
+		rSeling.Draw(true);
+		rWorld.Update(&rWorld.each, true);
+		Draw3DObject(rWorld);
+		StageObjects::Draw(true);
+		ObjectParticles::Draw();
+	}
+	else
+	{
+		light->SetLightDir(XMFLOAT3(Cameras::rCamera.GetTargetDirection()));
+		LightUpdate();
+		rSeling.Draw(false);
+		rWorld.Update(&rWorld.each, false);
+		Draw3DObject(rWorld);
+		StageObjects::Draw(false);
+		ObjectParticles::Draw();
+	}
+}
+
+void GameScene::PostWaterFaceDraw()
+{
+	light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
+	LightUpdate();
+	seling.Draw();
+	world.Update(&world.each, false);
+	StageObjects::Draw(false);
+	Draw3DObject(world);
+	ObjectParticles::Draw();
+}
+
 void GameScene::TitleDraw()
 {
 	//PostEffectのPreDraw
 	PostEffects::PreDraw();
 
-	light->SetLightDir(XMFLOAT3(Cameras::rCamera.GetTargetDirection()));
-	LightUpdate();
-	rSeling.Draw(true);
-	rWorld.Update(&rWorld.each, true);
-	Draw3DObject(rWorld);
-	StageObjects::Draw(true);
-	ObjectParticles::Draw();
-
-	BaseDirectX::clearColor[0] = 0.0f;
-	BaseDirectX::clearColor[1] = 0.0f;
-	BaseDirectX::clearColor[2] = 0.0f;
-	BaseDirectX::clearColor[3] = 0.0f;
 	BaseDirectX::UpdateFront();
-
-	//PostEffectのDraw
-	//PostEffects::Draw();
-
-	light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
-	LightUpdate();
-
-	seling.Draw();
-	//world.each.rotation.y = 180;
-	world.Update(&world.each, false);
-	StageObjects::Draw(false);
-	Draw3DObject(world);
-	ObjectParticles::Draw();
-
-	XMVECTOR sample = { 0, -2.0f, 0.0f, 1.0 };
-	if (Imgui::useWaterNum == 0)
-	{
-		//waterFace.waterModel.each.rotation.y = 180;
-		waterFace.Draw(PostEffects::postNormal, sample/*seling.seling.each.position*/);
-	}
-	else if (Imgui::useWaterNum == 1)
-	{
-		//normalWater.waterModel.each.rotation.y = 180;
-		normalWater.Draw(PostEffects::postNormal, sample/*seling.seling.each.position*/);
-	}
-	PostEffects::PostDraw();
 
 	Imgui::DrawImGui();
 	//描画コマンドここまで
@@ -225,12 +238,9 @@ void GameScene::SelectDraw()
 {
 	//PostEffectのPreDraw
 	PostEffects::PreDraw();
-	Draw3DObject(sample);
-	BaseDirectX::clearColor[0] = 0.0f;
-	BaseDirectX::clearColor[1] = 0.0f;
-	BaseDirectX::clearColor[2] = 0.0f;
-	BaseDirectX::clearColor[3] = 0.0f;
+
 	BaseDirectX::UpdateFront();
+
 	//PostEffectのDraw
 	PostEffects::Draw();
 	PostEffects::PostDraw();
@@ -244,17 +254,75 @@ void GameScene::GameDraw()
 {
 	//PostEffectのPreDraw
 	PostEffects::PreDraw();
-	Draw3DObject(sample);
-	BaseDirectX::clearColor[0] = 0.0f;
-	BaseDirectX::clearColor[1] = 0.0f;
-	BaseDirectX::clearColor[2] = 0.0f;
-	BaseDirectX::clearColor[3] = 0.0f;
+
+	PreWaterFaceDraw();
+
 	BaseDirectX::UpdateFront();
+
 	//PostEffectのDraw
+	//PostEffects::Draw();
+
+	PostWaterFaceDraw();
+
+	XMVECTOR sample = { 0, -2.0f, 0.0f, 1.0 };
+	if (Imgui::useWaterNum == 0)
+	{
+		PostEffect waterFaceTarget;
+		if (PostEffects::type == PostEffects::PostEffectType::Normal)
+		{
+			waterFaceTarget = PostEffects::postNormal;
+		}
+		else if (PostEffects::type == PostEffects::PostEffectType::Water)
+		{
+			waterFaceTarget = PostEffects::postWater;
+		}
+		else if (PostEffects::type == PostEffects::PostEffectType::Mosaic)
+		{
+			waterFaceTarget = PostEffects::postMosaic;
+		}
+		else if (PostEffects::type == PostEffects::PostEffectType::Blur)
+		{
+			waterFaceTarget = PostEffects::postBlur;
+		}
+		else
+		{
+			waterFaceTarget = PostEffects::postNormal;
+		}
+		waterFace.Draw(waterFaceTarget, sample/*seling.seling.each.position*/);
+	}
+	else if (Imgui::useWaterNum == 1)
+	{
+		PostEffect waterFaceTarget;
+		if (PostEffects::type == PostEffects::PostEffectType::Normal)
+		{
+			waterFaceTarget = PostEffects::postNormal;
+		}
+		else if (PostEffects::type == PostEffects::PostEffectType::Water)
+		{
+			waterFaceTarget = PostEffects::postWater;
+		}
+		else if (PostEffects::type == PostEffects::PostEffectType::Mosaic)
+		{
+			waterFaceTarget = PostEffects::postMosaic;
+		}
+		else if (PostEffects::type == PostEffects::PostEffectType::Blur)
+		{
+			waterFaceTarget = PostEffects::postBlur;
+		}
+		else
+		{
+			waterFaceTarget = PostEffects::postNormal;
+		}
+		normalWater.Draw(waterFaceTarget, sample/*seling.seling.each.position*/);
+	}
+	if (seling.GetIsGoal())
+	{
+		SceneNum = END;
+	}
 	PostEffects::Draw();
 	PostEffects::PostDraw();
-	Imgui::DrawImGui();
 
+	Imgui::DrawImGui();
 	//描画コマンドここまで
 	BaseDirectX::UpdateBack();
 }
@@ -276,6 +344,10 @@ void GameScene::ResultDraw()
 
 	//描画コマンドここまで
 	BaseDirectX::UpdateBack();
+}
+
+void GameScene::OPDraw()
+{
 }
 
 void GameScene::EndDraw()

@@ -51,6 +51,7 @@ public:
 	{
 		return Normalize(frontDirection);
 	}
+	bool GetIsGoal() { return isGoal; }
 	void ForceUpdate();
 	void LoadModel();
 	void Init();

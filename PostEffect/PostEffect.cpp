@@ -309,9 +309,9 @@ void PostEffect::CalcWeightGaussian(float* weightsTbl, int sizeOfWeightsTbl, flo
 
 void PostEffects::Init()
 {
-	/*postWater.Initialize(ShaderManager::postWater);
+	postWater.Initialize(ShaderManager::postWater);
 	postBlur.Initialize(ShaderManager::postBlur);
-	postMosaic.Initialize(ShaderManager::postMosaic);*/
+	postMosaic.Initialize(ShaderManager::postMosaic);
 	postNormal.Initialize(ShaderManager::postNormal);
 }
 
@@ -342,6 +342,7 @@ void PostEffects::PreDraw()
 
 void PostEffects::Draw()
 {
+	if (Imgui::effectType < 0) return;
 	if (type == PostEffectType::Normal)
 	{
 		postNormal.Draw();
@@ -352,7 +353,6 @@ void PostEffects::Draw()
 	}
 	else if (type == PostEffectType::Mosaic)
 	{
-		postMosaic.pos.x = 700;
 		postMosaic.Draw();
 	}
 	else if (type == PostEffectType::Blur)

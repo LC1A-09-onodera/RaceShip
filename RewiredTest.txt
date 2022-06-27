@@ -2,4 +2,4 @@ KeyBoard A
 KeyBoard B
 KeyBoard 1
 XboxPad PadUp
-XboxPad PadAa
+XboxPad PadA

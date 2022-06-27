@@ -9,7 +9,7 @@
 
 ComPtr<ID3D12DescriptorHeap> Imgui::imguiDescHeap;
 ComPtr<ID3D12DescriptorHeap> Imgui::heapForImgui;
-int Imgui::effectType;
+int Imgui::effectType = -1;
 Imgui::ImguiType Imgui::tab;
 Imgui::DebugType Imgui::debugType;
 int Imgui::playerCombo = 0;

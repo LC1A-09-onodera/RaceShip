@@ -11,7 +11,7 @@
 #include "../Rewired/Rewired.h"
 #include "../WaterFace/WaterFace.h"
 
-enum GameSceneName { TITLE, SELECT, GAME, END, RESULT };
+enum GameSceneName { TITLE, SELECT, GAME, END, RESULT, OP };
 
 class GameScene
 {
@@ -22,25 +22,24 @@ private:
 	void EndUpdate();
 	void SelectUpdate();
 	void ResultUpdate();
+
+	void OPUpdate();
 	//描画
 	void GameDraw();
 	void TitleDraw();
 	void EndDraw();
 	void SelectDraw();
 	void ResultDraw();
+
+	void OPDraw();
+
+	void PreWaterFaceDraw();
+	void PostWaterFaceDraw();
 	int SceneNum = TITLE;
 
-public:
-	GameScene();
-	~GameScene();
-	//シーン切り替え
-	void SceneManageUpdateAndDraw();
-	//初期化
-	void Init();
-
-	void LightUpdate();
-
-public://シーンで使うもの
+	int opAnimationTime;
+	const int MaxOPAnimationTime = 120;
+	
 	std::shared_ptr<Light> light;
 	PostEffect post;
 	float pointLightPos[3] = { 0, 1, 0 };
@@ -71,4 +70,16 @@ public://シーンで使うもの
 	Model rWorld;
 
 	Rewired::RewiredKeys jumpKey;
+public:
+	GameScene();
+	~GameScene();
+	//シーン切り替え
+	void SceneManageUpdateAndDraw();
+	//初期化
+	void Init();
+
+	void LightUpdate();
+
+public://シーンで使うもの
+	
 };
