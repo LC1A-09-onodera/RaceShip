@@ -203,7 +203,7 @@ void GameScene::TitleDraw()
 	Draw3DObject(world);
 	ObjectParticles::Draw();
 
-	XMVECTOR sample = { 0, -3.0f, 0.0f, 1.0 };
+	XMVECTOR sample = { 0, -2.0f, 0.0f, 1.0 };
 	if (Imgui::useWaterNum == 0)
 	{
 		//waterFace.waterModel.each.rotation.y = 180;
