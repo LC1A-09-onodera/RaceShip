@@ -6,6 +6,7 @@
 #include <dxgi1_6.h>
 #include <DirectXMath.h>
 #include <d3dcompiler.h>
+
 #include <DirectXTex.h>
 #include "../BaseDirectX/Input.h"
 #include <wrl.h>
@@ -63,20 +64,20 @@ public:
 	XMFLOAT2 texSize = {100,100};
 
 	//スプライトの生成
-	void CreateSprite(const wchar_t* graph, XMFLOAT3 position, ComPtr<ID3D12Resource> texBuff = nullptr, bool back = false, bool TexSize = true);
-	void CreateSprite(Tex tex, XMFLOAT3 position, ComPtr<ID3D12Resource> texBuff = nullptr, bool back = false, bool TexSize = true);
+	void CreateSprite(BaseDirectX& baseDirectX, const wchar_t* graph, XMFLOAT3 position, ComPtr<ID3D12Resource> texBuff = nullptr, bool back = false, bool TexSize = true);
+	void CreateSprite(BaseDirectX& baseDirectX, Tex tex, XMFLOAT3 position, ComPtr<ID3D12Resource> texBuff = nullptr, bool back = false, bool TexSize = true);
 	//スプライト用パイプラインの設定コマンド
 	
 	//スプライト用描画コマンド
 	//描画毎フレーム処理
-	void SpriteDraw();
+	void SpriteDraw(BaseDirectX& baseDirectX);
 	//座標変更
-	void Move();
+	void Move(BaseDirectX& baseDirectX);
 	//表示サイズの変更
-	void ChangeSize(float wid,float hei);
-	void ChangeSizeOther(float wid, float hei);
+	void ChangeSize(BaseDirectX& baseDirectX, float wid,float hei);
+	void ChangeSizeOther(BaseDirectX& baseDirectX, float wid, float hei);
 	
 	//毎フレーム処理
 	private:
-	void SpritePipelineEdit();
+	void SpritePipelineEdit(BaseDirectX& baseDirectX);
 };

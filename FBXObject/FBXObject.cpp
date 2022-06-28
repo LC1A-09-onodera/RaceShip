@@ -8,7 +8,7 @@
 using namespace Microsoft::WRL;
 using namespace DirectX;
 
-ID3D12Device *FBXObject::dev = nullptr;
+ID3D12Device* FBXObject::dev = nullptr;
 ComPtr<ID3D12RootSignature> FBXObject::rootSignature;
 ComPtr<ID3D12PipelineState> FBXObject::pipelineState;
 
@@ -18,8 +18,8 @@ void FBXObject::Initialize()
 	result = dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataTransform) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuffTrabsform));
 	result = dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataSkin) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBufferSkin));
 	frameTime.SetTime(0, 0, 0, 1, 0, FbxTime::EMode::eFrames60);
-	ConstBufferDataSkin *constMapSkin = nullptr;
-	result = constBufferSkin->Map(0, nullptr, (void **)&constMapSkin);
+	ConstBufferDataSkin* constMapSkin = nullptr;
+	result = constBufferSkin->Map(0, nullptr, (void**)&constMapSkin);
 	for (int i = 0; i < MAX_BONES; i++)
 	{
 		constMapSkin->bones[i] = XMMatrixIdentity();
@@ -27,7 +27,7 @@ void FBXObject::Initialize()
 	constBufferSkin->Unmap(0, nullptr);
 }
 
-void FBXObject::Update()
+void FBXObject::Update(BaseDirectX& baseDirectX)
 {
 	XMMATRIX matScale, matRot, matTrans;
 
@@ -43,16 +43,16 @@ void FBXObject::Update()
 	matWorld *= matRot;
 	matWorld *= matTrans;
 
-	const XMMATRIX &matViewProjection = Cameras::camera.matView;
-	const XMMATRIX &modelTransform = model->GetModelTransform();
-	const XMFLOAT3 &cameraPos = Cameras::camera.eye;
+	const XMMATRIX& matViewProjection = Cameras::camera.matView;
+	const XMMATRIX& modelTransform = model->GetModelTransform();
+	const XMFLOAT3& cameraPos = Cameras::camera.eye;
 
 	HRESULT result;
-	ConstBufferDataTransform *constMap = nullptr;
-	result = constBuffTrabsform->Map(0, nullptr, (void **)&constMap);
+	ConstBufferDataTransform* constMap = nullptr;
+	result = constBuffTrabsform->Map(0, nullptr, (void**)&constMap);
 	if (SUCCEEDED(result))
 	{
-		constMap->viewproj = Cameras::camera.matView * BaseDirectX::matProjection;
+		constMap->viewproj = Cameras::camera.matView * baseDirectX.matProjection;
 		constMap->world = matWorld;
 		constMap->cameraPos = cameraPos;
 		constBuffTrabsform->Unmap(0, nullptr);
@@ -66,9 +66,9 @@ void FBXObject::Update()
 			currentTime = startTime;
 		}
 	}
-	std::vector<Bone> &bones = model->GetBornes();
-	ConstBufferDataSkin *constMapSkin = nullptr;
-	result = constBufferSkin->Map(0, nullptr, (void **)&constMapSkin);
+	std::vector<Bone>& bones = model->GetBornes();
+	ConstBufferDataSkin* constMapSkin = nullptr;
+	result = constBufferSkin->Map(0, nullptr, (void**)&constMapSkin);
 	for (int i = 0; i < bones.size(); i++)
 	{
 		XMMATRIX matCurrentPose;
@@ -95,13 +95,13 @@ void FBXObject::Draw(ID3D12GraphicsCommandList* cmdList)
 
 void FBXObject::PlayAnimation()
 {
-	FbxScene *fbxScene = model->GetFbxScene();
+	FbxScene* fbxScene = model->GetFbxScene();
 	//0番のアニメーション取得
-	FbxAnimStack *animstack = fbxScene->GetSrcObject<FbxAnimStack>(0);
+	FbxAnimStack* animstack = fbxScene->GetSrcObject<FbxAnimStack>(0);
 	//アニメーションの名前取得
-	const char *animstackname = animstack->GetName();
+	const char* animstackname = animstack->GetName();
 	//アニメーションの時間情報
-	FbxTakeInfo *takeinfo = fbxScene->GetTakeInfo(animstackname);
+	FbxTakeInfo* takeinfo = fbxScene->GetTakeInfo(animstackname);
 	//開始時間取得
 	startTime = takeinfo->mLocalTimeSpan.GetStart();
 	//終了時間取得
@@ -169,17 +169,17 @@ void FBXObject::CreateGraphicsPipeline()
 
 	// 頂点レイアウト
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		{ // xy座標(1行で書いたほうが見やすい)
+		{ // xy座標
 			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
 			D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
-		{ // 法線ベクトル(1行で書いたほうが見やすい)
+		{ // 法線ベクトル
 			"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
 			D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
-		{ // uv座標(1行で書いたほうが見やすい)
+		{ // uv座標
 			"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
 			D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0

@@ -22,7 +22,7 @@ PostEffect::PostEffect()
 	frameTime = 0;
 }
 
-void PostEffect::Initialize(HLSLShader& shader)
+void PostEffect::Initialize(HLSLShader& shader, BaseDirectX& baseDirectX)
 {
 	HRESULT result;
 	/*VertexPosUv Spritevertices[] = {
@@ -37,20 +37,20 @@ void PostEffect::Initialize(HLSLShader& shader)
 		{{ +1.0f, -1.0f, 0.0f}, {1.0f, 1.0f}},
 		{{ +1.0f, +1.0f, 0.0f}, {1.0f, 0.0f}},
 	};
-	CreateGraphicsPipelineState(shader);
+	CreateGraphicsPipelineState(shader, baseDirectX);
 
 	int sizevb = sizeof(Spritevertices);
 
 	//頂点マップ
-	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizevb), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertBuff));
+	result = baseDirectX.dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizevb), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertBuff));
 	VertexPosUv* vertMap = nullptr;
-	BaseDirectX::result = vertBuff->Map(0, nullptr, (void**)&vertMap);
+	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
 	memcpy(vertMap, Spritevertices, sizeof(Spritevertices));
 	vertBuff->Unmap(0, nullptr);
 	vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
 	vbView.SizeInBytes = sizeof(Spritevertices);
 	vbView.StrideInBytes = sizeof(Spritevertices[0]);
-	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(PostEffectConstBuffer) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff));
+	result = baseDirectX.dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(PostEffectConstBuffer) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff));
 
 	//ガウスブラー用
 	CalcWeightGaussian(weights, NumWeight, 8.0f);
@@ -58,7 +58,7 @@ void PostEffect::Initialize(HLSLShader& shader)
 	XMFLOAT4 weight1 = { weights[4], weights[5] ,weights[6] ,weights[7] };
 	//定数マップ
 	PostEffectConstBuffer* constMap = nullptr;
-	BaseDirectX::result = constBuff->Map(0, nullptr, (void**)&constMap);
+	result = constBuff->Map(0, nullptr, (void**)&constMap);
 	constMap->mat = XMMatrixIdentity();
 	constMap->weight0 = weight0;
 	constMap->weight1 = weight1;
@@ -66,14 +66,14 @@ void PostEffect::Initialize(HLSLShader& shader)
 	constBuff->Unmap(0, nullptr);
 
 	//テクスチャバッファの作成
-	renderTarget.TexInit();
+	renderTarget.TexInit(baseDirectX);
 	//SRV用デスクリプタヒープ
 	D3D12_DESCRIPTOR_HEAP_DESC srvDescHeapDesc = {};
 	srvDescHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	srvDescHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	srvDescHeapDesc.NumDescriptors = PostEffect::texNum;//mulchTerxter用に2に変更
 
-	result = BaseDirectX::dev->CreateDescriptorHeap(&srvDescHeapDesc, IID_PPV_ARGS(&descHeapSRV));
+	result = baseDirectX.dev->CreateDescriptorHeap(&srvDescHeapDesc, IID_PPV_ARGS(&descHeapSRV));
 	assert(SUCCEEDED(result));
 	//SRV
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -83,27 +83,27 @@ void PostEffect::Initialize(HLSLShader& shader)
 	srvDesc.Texture2D.MipLevels = 1;
 	for (int i = 0; i < PostEffect::texNum; i++)
 	{
-		BaseDirectX::dev->CreateShaderResourceView(renderTarget.texBuff[i].Get(), &srvDesc, CD3DX12_CPU_DESCRIPTOR_HANDLE(descHeapSRV->GetCPUDescriptorHandleForHeapStart(), i, BaseDirectX::dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)));
+		baseDirectX.dev->CreateShaderResourceView(renderTarget.texBuff[i].Get(), &srvDesc, CD3DX12_CPU_DESCRIPTOR_HANDLE(descHeapSRV->GetCPUDescriptorHandleForHeapStart(), i, baseDirectX.dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)));
 	}
 
-	renderTarget.RTVInit();
+	renderTarget.RTVInit(baseDirectX);
 	//深度バッファ
 	CD3DX12_RESOURCE_DESC depthResDesc = CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_D32_FLOAT, WindowsAPI::window_width, WindowsAPI::window_height, 1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
-	result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE, &depthResDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &CD3DX12_CLEAR_VALUE(DXGI_FORMAT_D32_FLOAT, 1.0f, 0), IID_PPV_ARGS(&depthBuff));
+	result = baseDirectX.dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE, &depthResDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &CD3DX12_CLEAR_VALUE(DXGI_FORMAT_D32_FLOAT, 1.0f, 0), IID_PPV_ARGS(&depthBuff));
 	assert(SUCCEEDED(result));
 	//DSV
 	D3D12_DESCRIPTOR_HEAP_DESC DescHeapDesc{};
 	DescHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 	DescHeapDesc.NumDescriptors = RenderTarget::renderNum;
-	result = BaseDirectX::dev->CreateDescriptorHeap(&DescHeapDesc, IID_PPV_ARGS(&descHeapDSV));
+	result = baseDirectX.dev->CreateDescriptorHeap(&DescHeapDesc, IID_PPV_ARGS(&descHeapDSV));
 	assert(SUCCEEDED(result));
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
 	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-	BaseDirectX::dev->CreateDepthStencilView(depthBuff.Get(), &dsvDesc, descHeapDSV->GetCPUDescriptorHandleForHeapStart());
+	baseDirectX.dev->CreateDepthStencilView(depthBuff.Get(), &dsvDesc, descHeapDSV->GetCPUDescriptorHandleForHeapStart());
 }
 
-void PostEffect::Draw()
+void PostEffect::Draw(BaseDirectX &baseDirectX)
 {
 	if (Input::KeyTrigger(DIK_0))
 	{
@@ -114,7 +114,7 @@ void PostEffect::Draw()
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MipLevels = 1;
-		BaseDirectX::dev->CreateShaderResourceView(renderTarget.texBuff[tex].Get(), &srvDesc, descHeapSRV->GetCPUDescriptorHandleForHeapStart());
+		baseDirectX.dev->CreateShaderResourceView(renderTarget.texBuff[tex].Get(), &srvDesc, descHeapSRV->GetCPUDescriptorHandleForHeapStart());
 	}
 	//ワールド行列更新
 	const XMFLOAT3& cameraPos = Cameras::camera.eye;
@@ -131,8 +131,9 @@ void PostEffect::Draw()
 	matWorld *= matTrans;
 	//転送
 	PostEffectConstBuffer* constMap = nullptr;
-	BaseDirectX::result = constBuff->Map(0, nullptr, (void**)&constMap);
-	constMap->mat = matWorld * BaseDirectX::matProjection;
+	HRESULT result;
+	result = constBuff->Map(0, nullptr, (void**)&constMap);
+	constMap->mat = matWorld * baseDirectX.matProjection;
 	XMFLOAT4 weight0 = { weights[0], weights[1] ,weights[2] ,weights[3] };
 	XMFLOAT4 weight1 = { weights[4], weights[5] ,weights[6] ,weights[7] };
 	constMap->weight0 = weight0;
@@ -142,20 +143,20 @@ void PostEffect::Draw()
 	constBuff->Unmap(0, nullptr);
 
 	//パイプラインステート設定
-	BaseDirectX::cmdList->SetPipelineState(pipelineState.Get());
+	baseDirectX.cmdList->SetPipelineState(pipelineState.Get());
 	//ルートシグネチャ
-	BaseDirectX::cmdList->SetGraphicsRootSignature(rootSignature.Get());
+	baseDirectX.cmdList->SetGraphicsRootSignature(rootSignature.Get());
 	//プリミティブ形状
-	BaseDirectX::cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	baseDirectX.cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 	// 頂点バッファの設定
-	BaseDirectX::cmdList->IASetVertexBuffers(0, 1, &this->vbView);
+	baseDirectX.cmdList->IASetVertexBuffers(0, 1, &this->vbView);
 
 	ID3D12DescriptorHeap* ppHeaps[] = { descHeapSRV.Get() };
 	// デスクリプタヒープをセット
-	BaseDirectX::cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
+	baseDirectX.cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 	// 定数バッファビューをセット
-	BaseDirectX::cmdList->SetGraphicsRootConstantBufferView(0, this->constBuff->GetGPUVirtualAddress());
+	baseDirectX.cmdList->SetGraphicsRootConstantBufferView(0, this->constBuff->GetGPUVirtualAddress());
 	// シェーダリソースビューをセット
 	//いちまいの時
 	//BaseDirectX::cmdList->SetGraphicsRootDescriptorTable(1, descHeapSRV->GetGPUDescriptorHandleForHeapStart());
@@ -163,27 +164,27 @@ void PostEffect::Draw()
 	//mulchTexの時
 	for (int i = 0; i < texNum; i++)
 	{
-		BaseDirectX::cmdList->SetGraphicsRootDescriptorTable(i + 1, CD3DX12_GPU_DESCRIPTOR_HANDLE(descHeapSRV->GetGPUDescriptorHandleForHeapStart(), i, BaseDirectX::dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)));
+		baseDirectX.cmdList->SetGraphicsRootDescriptorTable(i + 1, CD3DX12_GPU_DESCRIPTOR_HANDLE(descHeapSRV->GetGPUDescriptorHandleForHeapStart(), i, baseDirectX.dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)));
 	}
 	// 描画コマンド
-	BaseDirectX::cmdList->DrawInstanced(4, 1, 0, 0);
+	baseDirectX.cmdList->DrawInstanced(4, 1, 0, 0);
 }
 
-void PostEffect::PreDraw()
+void PostEffect::PreDraw(BaseDirectX & baseDirectX)
 {
 	for (int i = 0; i < RenderTarget::renderNum; i++)
 	{
-		BaseDirectX::cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(renderTarget.texBuff[i].Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET));
+		baseDirectX.cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(renderTarget.texBuff[i].Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET));
 	}
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvH[RenderTarget::renderNum];
 	for (int i = 0; i < RenderTarget::renderNum; i++)
 	{
 		//rtvH[i] = descHeapRTV->GetCPUDescriptorHandleForHeapStart();
-		rtvH[i] = CD3DX12_CPU_DESCRIPTOR_HANDLE(renderTarget.descHeapRTV->GetCPUDescriptorHandleForHeapStart(), i, BaseDirectX::dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
+		rtvH[i] = CD3DX12_CPU_DESCRIPTOR_HANDLE(renderTarget.descHeapRTV->GetCPUDescriptorHandleForHeapStart(), i, baseDirectX.dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
 	}
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvH = descHeapDSV->GetCPUDescriptorHandleForHeapStart();
 	//BaseDirectX::cmdList->OMSetRenderTargets(2, rtvH, false, &dsvH);
-	BaseDirectX::cmdList->OMSetRenderTargets(RenderTarget::renderNum, rtvH, false, &dsvH);
+	baseDirectX.cmdList->OMSetRenderTargets(RenderTarget::renderNum, rtvH, false, &dsvH);
 
 	CD3DX12_VIEWPORT viewports[RenderTarget::renderNum];
 	CD3DX12_RECT scissorRects[RenderTarget::renderNum];
@@ -192,24 +193,24 @@ void PostEffect::PreDraw()
 		viewports[i] = CD3DX12_VIEWPORT(0.0f, 0.0f, WindowsAPI::window_width, WindowsAPI::window_height);
 		scissorRects[i] = CD3DX12_RECT(0, 0, WindowsAPI::window_width, WindowsAPI::window_height);
 	}
-	BaseDirectX::cmdList->RSSetViewports(RenderTarget::renderNum, viewports);
-	BaseDirectX::cmdList->RSSetScissorRects(RenderTarget::renderNum, scissorRects);
+	baseDirectX.cmdList->RSSetViewports(RenderTarget::renderNum, viewports);
+	baseDirectX.cmdList->RSSetScissorRects(RenderTarget::renderNum, scissorRects);
 	for (int i = 0; i < RenderTarget::renderNum; i++)
 	{
-		BaseDirectX::cmdList->ClearRenderTargetView(rtvH[i], renderTarget.clearColor, 0, nullptr);
+		baseDirectX.cmdList->ClearRenderTargetView(rtvH[i], renderTarget.clearColor, 0, nullptr);
 	}
-	BaseDirectX::cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	baseDirectX.cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 }
 
-void PostEffect::PostDraw()
+void PostEffect::PostDraw(BaseDirectX & baseDirectX)
 {
 	for (int i = 0; i < RenderTarget::renderNum; i++)
 	{
-		BaseDirectX::cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(renderTarget.texBuff[i].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
+		baseDirectX.cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(renderTarget.texBuff[i].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
 	}
 }
 
-void PostEffect::CreateGraphicsPipelineState(HLSLShader& shader)
+void PostEffect::CreateGraphicsPipelineState(HLSLShader& shader, BaseDirectX &baseDirectX)
 {
 	HRESULT result = S_FALSE;
 	ComPtr<ID3DBlob> errorBlob;
@@ -281,10 +282,10 @@ void PostEffect::CreateGraphicsPipelineState(HLSLShader& shader)
 	ComPtr<ID3DBlob> rootSigBlob;
 	result = D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
 	assert(SUCCEEDED(result));
-	result = BaseDirectX::dev->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
+	result = baseDirectX.dev->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
 	assert(SUCCEEDED(result));
 	gpipeline.pRootSignature = rootSignature.Get();
-	result = BaseDirectX::dev->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelineState));
+	result = baseDirectX.dev->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelineState));
 	assert(SUCCEEDED(result));
 }
 
@@ -307,85 +308,85 @@ void PostEffect::CalcWeightGaussian(float* weightsTbl, int sizeOfWeightsTbl, flo
 	}
 }
 
-void PostEffects::Init()
+void PostEffects::Init(BaseDirectX &baseDirectX)
 {
 	/*postWater.Initialize(ShaderManager::postWater);
 	postBlur.Initialize(ShaderManager::postBlur);
 	postMosaic.Initialize(ShaderManager::postMosaic);*/
-	postNormal.Initialize(ShaderManager::postNormal);
+	postNormal.Initialize(ShaderManager::postNormal, baseDirectX);
 }
 
-void PostEffects::PreDraw()
+void PostEffects::PreDraw(BaseDirectX& baseDirectX)
 {
 	type = (PostEffectType)Imgui::effectType;
 	if (type == PostEffectType::Normal)
 	{
-		postNormal.PreDraw();
+		postNormal.PreDraw(baseDirectX);
 	}
 	else if (type == PostEffectType::Water)
 	{
-		postWater.PreDraw();
+		postWater.PreDraw(baseDirectX);
 	}
 	else if (type == PostEffectType::Mosaic)
 	{
-		postMosaic.PreDraw();
+		postMosaic.PreDraw(baseDirectX);
 	}
 	else if (type == PostEffectType::Blur)
 	{
-		postBlur.PreDraw();
+		postBlur.PreDraw(baseDirectX);
 	}
 	else
 	{
-		postNormal.PreDraw();
+		postNormal.PreDraw(baseDirectX);
 	}
 }
 
-void PostEffects::Draw()
+void PostEffects::Draw(BaseDirectX& baseDirectX)
 {
 	if (type == PostEffectType::Normal)
 	{
-		postNormal.Draw();
+		postNormal.Draw(baseDirectX);
 	}
 	else if (type == PostEffectType::Water)
 	{
-		postWater.Draw();
+		postWater.Draw(baseDirectX);
 	}
 	else if (type == PostEffectType::Mosaic)
 	{
 		postMosaic.pos.x = 700;
-		postMosaic.Draw();
+		postMosaic.Draw(baseDirectX);
 	}
 	else if (type == PostEffectType::Blur)
 	{
 
-		postBlur.Draw();
+		postBlur.Draw(baseDirectX);
 	}
 	else
 	{
-		postNormal.Draw();
+		postNormal.Draw(baseDirectX);
 	}
 }
 
-void PostEffects::PostDraw()
+void PostEffects::PostDraw(BaseDirectX& baseDirectX)
 {
 	if (type == PostEffectType::Normal)
 	{
-		postNormal.PostDraw();
+		postNormal.PostDraw(baseDirectX);
 	}
 	else if (type == PostEffectType::Water)
 	{
-		postWater.PostDraw();
+		postWater.PostDraw(baseDirectX);
 	}
 	else if (type == PostEffectType::Mosaic)
 	{
-		postMosaic.PostDraw();
+		postMosaic.PostDraw(baseDirectX);
 	}
 	else if (type == PostEffectType::Blur)
 	{
-		postBlur.PostDraw();
+		postBlur.PostDraw(baseDirectX);
 	}
 	else
 	{
-		postNormal.PostDraw();
+		postNormal.PostDraw(baseDirectX);
 	}
 }

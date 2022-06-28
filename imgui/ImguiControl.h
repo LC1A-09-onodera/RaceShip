@@ -1,6 +1,7 @@
 #pragma once
 #include <d3dx12.h>
 #include <DirectXMath.h>
+#include "../BaseDirectX/BaseDirectX.h"
 using namespace Microsoft::WRL;
 using namespace DirectX;
 
@@ -28,10 +29,10 @@ private:
     static ComPtr<ID3D12DescriptorHeap> heapForImgui;
 public:
     
-    static ComPtr<ID3D12DescriptorHeap> CreateDescrriptorHeapForImgui();
+    static ComPtr<ID3D12DescriptorHeap> CreateDescrriptorHeapForImgui(BaseDirectX& baseDirectX);
     static ComPtr<ID3D12DescriptorHeap> GetHeapForImgui();
-    static void DrawImGui();
-    static void Init();
+    static void DrawImGui(BaseDirectX& baseDirectX);
+    static void Init(BaseDirectX& baseDirectX);
     static void GetAndDrawInfo(const int &intOriginal, int& imguiInfo);
     static void GetAndDrawInfo(const float &floatOriginal, float& imguiInfo);
     static void GetAndDrawInfo(const XMFLOAT3 &xmfloat3Original, XMFLOAT3& imguiInfo);
@@ -40,7 +41,7 @@ public:
     static void ChangeInfo(XMFLOAT3 &xmfloat3Original, XMFLOAT3& imguiInfo);
 
     static void CreateMenuBar();
-    static void EachInfo();
+    static void EachInfo(BaseDirectX& baseDirectX);
     static void DebugUpdate();
 
     static bool isActive;

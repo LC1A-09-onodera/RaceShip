@@ -35,16 +35,16 @@ private:
 	float angle = 0.0f;
 public:
 	EachInfo each;
-	void Add(XMFLOAT3& emitter, ParticleType type);
+	void Add(BaseDirectX& baseDirectX, XMFLOAT3& emitter, ParticleType type);
 	void Update();
-	void Draw(ObjectParticle& object);
-	void InitExprotion(XMFLOAT3& emitter);
-	void InitConverge(XMFLOAT3& emitter);
-	void InitTitle(XMFLOAT3& emitter);
-	void InitSwell(XMFLOAT3& emitter);
-	void InitTarget(XMFLOAT3& emitter);
-	void InitTornado(XMFLOAT3& emitter);
-	void InitBorn(XMFLOAT3& emitter);
+	void Draw(BaseDirectX& baseDirectX, ObjectParticle& object);
+	void InitExprotion(BaseDirectX& baseDirectX, XMFLOAT3& emitter);
+	void InitConverge(BaseDirectX& baseDirectX, XMFLOAT3& emitter);
+	void InitTitle(BaseDirectX& baseDirectX, XMFLOAT3& emitter);
+	void InitSwell(BaseDirectX& baseDirectX, XMFLOAT3& emitter);
+	void InitTarget(BaseDirectX& baseDirectX, XMFLOAT3& emitter);
+	void InitTornado(BaseDirectX& baseDirectX, XMFLOAT3& emitter);
+	void InitBorn(BaseDirectX& baseDirectX, XMFLOAT3& emitter);
 	void InitLink();
 	void UpdateExprotion();
 	void UpdateConverge();
@@ -63,9 +63,9 @@ public:
 	list<ObjectParticle3D> particles;
 	list<list<ObjectParticle3D>::iterator> deleteItr;
 	ObjectParticle object;
-	void Init(XMFLOAT3& emitter, int count, ObjectParticle3D::ParticleType type);
+	void Init(BaseDirectX& baseDirectX, XMFLOAT3& emitter, int count, ObjectParticle3D::ParticleType type);
 	void Update();
-	void Draw(ObjectParticle& object);
+	void Draw(BaseDirectX &baseDirectX, ObjectParticle& object);
 	void DeleteAllParticle();
 
 };
@@ -74,8 +74,8 @@ class ObjectParticles
 {
 public:
 	static ObjectParticleInfo triangle;
-	static void LoadModels();
+	static void LoadModels(BaseDirectX& baseDirectX);
 	static void Update();
-	static void Draw();
+	static void Draw(BaseDirectX& baseDirectX);
 	static void DeleteAllParticles();
 };

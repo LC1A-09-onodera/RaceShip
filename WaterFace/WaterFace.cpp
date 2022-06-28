@@ -2,14 +2,15 @@
 #include "../Shader/ShaderManager.h"
 #include "../Camera/Camera.h"
 
-void WaterFace::LoadModel(HLSLShader &useShader, PostEffect& postEffect)
+void WaterFace::LoadModel(BaseDirectX& baseDirectX, HLSLShader &useShader, PostEffect& postEffect)
 {
-	waterModel.CreateModel("Plane2", useShader, postEffect);
+	waterModel.CreateModel(baseDirectX, "Plane2", useShader, postEffect);
+	Init(baseDirectX);
 }
 
-void WaterFace::Init()
+void WaterFace::Init(BaseDirectX& baseDirectX)
 {
-	waterModel.eachData.ConstInit();
+	waterModel.eachData.ConstInit(baseDirectX);
 	waterModel.eachData.position = { 0, 0.0f, 0.0f, 1 };
 	waterModel.eachData.rotation = { 0, 0, 0};
 	float scaleSample = 18.0f;
@@ -21,16 +22,16 @@ void WaterFace::Update()
 	
 }
 
-void WaterFace::Draw(PostEffect& postEffect, XMVECTOR& selingPos)
+void WaterFace::Draw(BaseDirectX& baseDirectX, PostEffect& postEffect, XMVECTOR& selingPos)
 {
 	waterModel.eachData.position = selingPos;
-	waterModel.Draw(waterModel.eachData, postEffect);
+	waterModel.Draw(baseDirectX, waterModel.eachData, postEffect);
 }
 
-void WaterFaceModel::CreateModel(const char* name, HLSLShader& shader, PostEffect& postEffect, bool smoothing)
+void WaterFaceModel::CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& shader, PostEffect& postEffect, bool smoothing)
 {
-	InitializeDescriptorHeap();
-	InitializeGraphicsPipeline(shader, postEffect);
+	InitializeDescriptorHeap(baseDirectX);
+	InitializeGraphicsPipeline(baseDirectX, shader, postEffect);
 
 	ifstream file;
 	const string modelname = name;
@@ -56,7 +57,7 @@ void WaterFaceModel::CreateModel(const char* name, HLSLShader& shader, PostEffec
 		{   //マテリアル
 			string filename;
 			line_stream >> filename;
-			LoadMaterial(directoryPath, filename, postEffect);
+			LoadMaterial(baseDirectX, directoryPath, filename, postEffect);
 		}
 		if (key == "v")
 		{   //座標読み込み
@@ -118,12 +119,12 @@ void WaterFaceModel::CreateModel(const char* name, HLSLShader& shader, PostEffec
 		CalculateSmoothedVertexNormals();
 	};
 
-	ConstBufferInit(this, this->eachData);
+	ConstBufferInit(baseDirectX, this, this->eachData);
 
 	file.close();
 }
 
-bool WaterFaceModel::LoadTexture(const string& directPath, const string& filename, PostEffect& postEffect)
+bool WaterFaceModel::LoadTexture(BaseDirectX &baseDirectX, const string& directPath, const string& filename, PostEffect& postEffect)
 {
 	HRESULT result = S_FALSE;
 
@@ -154,7 +155,7 @@ bool WaterFaceModel::LoadTexture(const string& directPath, const string& filenam
 	);
 
 	// テクスチャ用バッファの生成
-	result = BaseDirectX::dev->CreateCommittedResource(
+	result = baseDirectX.dev->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0),
 		D3D12_HEAP_FLAG_NONE,
 		&texresDesc,
@@ -190,11 +191,11 @@ bool WaterFaceModel::LoadTexture(const string& directPath, const string& filenam
 	srvDesc.Texture2D.MipLevels = 1;
 
 	//BaseDirectX::dev->CreateShaderResourceView(texbuff.Get(), &srvDesc, cpuDescHandleSRV[materialCount]);
-	BaseDirectX::dev->CreateShaderResourceView(postEffect.renderTarget.texBuff[0].Get(), &srvDesc, cpuDescHandleSRV);
+	baseDirectX.dev->CreateShaderResourceView(postEffect.renderTarget.texBuff[0].Get(), &srvDesc, cpuDescHandleSRV);
 	return true;
 }
 
-void WaterFaceModel::LoadMaterial(const string& directoryPath, const string& filename, PostEffect& postEffect)
+void WaterFaceModel::LoadMaterial(BaseDirectX& baseDirectX, const string& directoryPath, const string& filename, PostEffect& postEffect)
 {
 	ifstream file;
 	file.open(directoryPath + filename);
@@ -244,14 +245,14 @@ void WaterFaceModel::LoadMaterial(const string& directoryPath, const string& fil
 		if (key == "map_Kd")
 		{
 			line_striam >> material.texFilename;
-			LoadTexture(directoryPath, material.texFilename, postEffect);
+			LoadTexture(baseDirectX, directoryPath, material.texFilename, postEffect);
 		}
 	}
 	materialCount += 1;
 	file.close();
 }
 
-void WaterFaceModel::InitializeGraphicsPipeline(HLSLShader& shader, PostEffect& postEffect)
+void WaterFaceModel::InitializeGraphicsPipeline(BaseDirectX &baseDirectX, HLSLShader& shader, PostEffect& postEffect)
 {
 	HRESULT result = S_FALSE;
 	ComPtr<ID3DBlob> errorBlob; // エラーオブジェクト
@@ -360,25 +361,25 @@ void WaterFaceModel::InitializeGraphicsPipeline(HLSLShader& shader, PostEffect& 
 	// バージョン自動判定のシリアライズ
 	result = D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
 	// ルートシグネチャの生成
-	result = BaseDirectX::dev->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
+	result = baseDirectX.dev->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
 
 	//gpipeline.pRootSignature = postEffect.rootSignature.Get();
 	gpipeline.pRootSignature = rootsignature.Get();
 
 	// グラフィックスパイプラインの生成-------------------------
-	result = BaseDirectX::dev->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelinestate));
+	result = baseDirectX.dev->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelinestate));
 }
 
-void WaterFaceModel::Update()
+void WaterFaceModel::Update(BaseDirectX &baseDirectX)
 {
 	CalcMatrix(this, &eachData);
 
-	SendVertex();
+	SendVertex(baseDirectX);
 
 	WaterConstBuff0* constMap0 = nullptr;
 	if (SUCCEEDED(this->eachData.constBuff0->Map(0, nullptr, (void**)&constMap0)))
 	{
-		constMap0->viewproj = Cameras::camera.matView * BaseDirectX::matProjection;
+		constMap0->viewproj = Cameras::camera.matView * baseDirectX.matProjection;
 		constMap0->world = matWorld;
 		constMap0->cameraPos = Cameras::camera.eye;
 		constMap0->frameTime = frameTime;
@@ -396,29 +397,29 @@ void WaterFaceModel::PostDraw()
 
 }
 
-void WaterFaceModel::Draw(WaterEachInfo& each, PostEffect& postEffect)
+void WaterFaceModel::Draw(BaseDirectX& baseDirectX, WaterEachInfo& each, PostEffect& postEffect)
 {
-	Update();
-	BaseDirectX::cmdList->IASetIndexBuffer(&mesh.ibView);
+	Update(baseDirectX);
+	baseDirectX.cmdList->IASetIndexBuffer(&mesh.ibView);
 	//BaseDirectX::cmdList->SetPipelineState(postEffect.pipelineState.Get());
-	BaseDirectX::cmdList->SetPipelineState(pipelinestate.Get());
+	baseDirectX.cmdList->SetPipelineState(pipelinestate.Get());
 	//BaseDirectX::cmdList->SetGraphicsRootSignature(postEffect.rootSignature.Get());
-	BaseDirectX::cmdList->SetGraphicsRootSignature(rootsignature.Get());
-	BaseDirectX::cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	BaseDirectX::cmdList->IASetVertexBuffers(0, 1, &mesh.vbView);
-	BaseDirectX::cmdList->IASetIndexBuffer(&mesh.ibView);
+	baseDirectX.cmdList->SetGraphicsRootSignature(rootsignature.Get());
+	baseDirectX.cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	baseDirectX.cmdList->IASetVertexBuffers(0, 1, &mesh.vbView);
+	baseDirectX.cmdList->IASetIndexBuffer(&mesh.ibView);
 	//ID3D12DescriptorHeap* ppHeap[] = { postEffect.descHeapSRV.Get() };
 	ID3D12DescriptorHeap* ppHeap[] = { descHeap.Get() };
-	BaseDirectX::cmdList->SetDescriptorHeaps(_countof(ppHeap), ppHeap);
-	BaseDirectX::cmdList->SetGraphicsRootConstantBufferView(0, each.constBuff0->GetGPUVirtualAddress());
+	baseDirectX.cmdList->SetDescriptorHeaps(_countof(ppHeap), ppHeap);
+	baseDirectX.cmdList->SetGraphicsRootConstantBufferView(0, each.constBuff0->GetGPUVirtualAddress());
 	//Model::light->Draw(BaseDirectX::cmdList.Get(), 3);
-	BaseDirectX::cmdList->SetGraphicsRootConstantBufferView(1, each.constBuff1->GetGPUVirtualAddress());
+	baseDirectX.cmdList->SetGraphicsRootConstantBufferView(1, each.constBuff1->GetGPUVirtualAddress());
 	//BaseDirectX::cmdList->SetGraphicsRootDescriptorTable(1, postEffect.descHeapSRV->GetGPUDescriptorHandleForHeapStart());
-	BaseDirectX::cmdList->SetGraphicsRootDescriptorTable(2, gpuDescHandleSRV);
-	BaseDirectX::cmdList->DrawIndexedInstanced((UINT)mesh.indices.size(), 1, 0, 0, 0);
+	baseDirectX.cmdList->SetGraphicsRootDescriptorTable(2, gpuDescHandleSRV);
+	baseDirectX.cmdList->DrawIndexedInstanced((UINT)mesh.indices.size(), 1, 0, 0, 0);
 }
 
-void WaterEachInfo::CreateConstBuff0()
+void WaterEachInfo::CreateConstBuff0(BaseDirectX &baseDirectX)
 {
 	D3D12_HEAP_PROPERTIES heapprop{};
 	heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -431,15 +432,15 @@ void WaterEachInfo::CreateConstBuff0()
 	resdesc.MipLevels = 1;
 	resdesc.SampleDesc.Count = 1;
 	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff0));
+	baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff0));
 }
 
-void WaterEachInfo::CreateConstBuff1()
+void WaterEachInfo::CreateConstBuff1(BaseDirectX& baseDirectX)
 {
-	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff1));
+	baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff1));
 }
 
-void WaterEachInfo::CreateConstBuff2()
+void WaterEachInfo::CreateConstBuff2(BaseDirectX& baseDirectX)
 {
 	D3D12_HEAP_PROPERTIES heapprop{};
 	heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -452,12 +453,12 @@ void WaterEachInfo::CreateConstBuff2()
 	resdesc.MipLevels = 1;
 	resdesc.SampleDesc.Count = 1;
 	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	BaseDirectX::result = BaseDirectX::dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff2));
+	baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff2));
 }
 
-void WaterEachInfo::ConstInit()
+void WaterEachInfo::ConstInit(BaseDirectX& baseDirectX)
 {
-	CreateConstBuff0();
-	CreateConstBuff1();
-	CreateConstBuff2();
+	CreateConstBuff0(baseDirectX);
+	CreateConstBuff1(baseDirectX);
+	CreateConstBuff2(baseDirectX);
 }

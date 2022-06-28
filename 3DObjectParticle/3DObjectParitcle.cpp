@@ -5,41 +5,41 @@
 
 ObjectParticleInfo ObjectParticles::triangle;
 
-void ObjectParticle3D::Add(XMFLOAT3& emitter, ParticleType type)
+void ObjectParticle3D::Add(BaseDirectX& baseDirectX, XMFLOAT3& emitter, ParticleType type)
 {
 	if (type == ParticleType::Exprotion)
 	{
-		InitExprotion(emitter);
+		InitExprotion(baseDirectX, emitter);
 		this->type = type;
 	}
 	else if (type == ParticleType::Converge)
 	{
-		InitConverge(emitter);
+		InitConverge(baseDirectX, emitter);
 		this->type = type;
 	}
 	else if (type == ParticleType::TITLE)
 	{
-		InitTitle(emitter);
+		InitTitle(baseDirectX, emitter);
 		this->type = type;
 	}
 	else if (type == ParticleType::Swell)
 	{
-		InitSwell(emitter);
+		InitSwell(baseDirectX, emitter);
 		this->type = type;
 	}
 	else if (type == ParticleType::Target)
 	{
-		InitTarget(emitter);
+		InitTarget(baseDirectX, emitter);
 		this->type = type;
 	}
 	else if (type == ParticleType::Tornado)
 	{
-		InitTornado(emitter);
+		InitTornado(baseDirectX, emitter);
 		this->type = type;
 	}
 	else if (type == ParticleType::Born)
 	{
-		InitBorn(emitter);
+		InitBorn(baseDirectX, emitter);
 		this->type = type;
 	}
 }
@@ -76,17 +76,17 @@ void ObjectParticle3D::Update()
 	}
 }
 
-void ObjectParticle3D::Draw(ObjectParticle& object)
+void ObjectParticle3D::Draw(BaseDirectX& baseDirectX, ObjectParticle& object)
 {
-	object.Update(&each);
-	Draw3DObject(object);
+	object.Update(baseDirectX, &each);
+	Draw3DObject(baseDirectX, object);
 }
 
-void ObjectParticle3D::InitExprotion(XMFLOAT3& emitter)
+void ObjectParticle3D::InitExprotion(BaseDirectX &baseDirectX, XMFLOAT3& emitter)
 {
 	time = Life;
 	each.position = ConvertXMFLOAT3toXMVECTOR(emitter);
-	ConstInit(each);
+	ConstInit(each, baseDirectX.dev);
 	
 	speed = GetRandom(2);
 	acc = GetRandom(1);
@@ -99,7 +99,7 @@ void ObjectParticle3D::InitExprotion(XMFLOAT3& emitter)
 	addRotation = GetRandom(2);
 }
 
-void ObjectParticle3D::InitConverge(XMFLOAT3& emitter)
+void ObjectParticle3D::InitConverge(BaseDirectX& baseDirectX, XMFLOAT3& emitter)
 {
 	int xSub = rand() % 10 + 13;
 	if (rand() % 2 == 0)
@@ -119,7 +119,7 @@ void ObjectParticle3D::InitConverge(XMFLOAT3& emitter)
 		zSub = -zSub;
 	}
 	each.position.m128_f32[2] = emitter.x + zSub;
-	ConstInit(each);
+	ConstInit(each, baseDirectX.dev);
 	startPosition = ConvertXMVECTORtoXMFLOAT3(each.position);
 	each.scale = { 0.2f, 0.2f, 0.2f };
 	endPosition = emitter;
@@ -127,7 +127,7 @@ void ObjectParticle3D::InitConverge(XMFLOAT3& emitter)
 	time = 1;
 }
 
-void ObjectParticle3D::InitTitle(XMFLOAT3& emitter)
+void ObjectParticle3D::InitTitle(BaseDirectX& baseDirectX, XMFLOAT3& emitter)
 {
 	each.position = ConvertXMFLOAT3toXMVECTOR(emitter);
 	each.rotation = GetRandom(90);
@@ -148,7 +148,7 @@ void ObjectParticle3D::InitTitle(XMFLOAT3& emitter)
 	{
 		zSub = -zSub;
 	}
-	ConstInit(each);
+	ConstInit(each, baseDirectX.dev);
 	speed = GetRandom(2);
 	acc = GetRandom(1);
 	startPosition = ConvertXMVECTORtoXMFLOAT3(each.position);
@@ -164,14 +164,14 @@ void ObjectParticle3D::InitTitle(XMFLOAT3& emitter)
 	time = 600;
 }
 
-void ObjectParticle3D::InitSwell(XMFLOAT3& emitter)
+void ObjectParticle3D::InitSwell(BaseDirectX& baseDirectX, XMFLOAT3& emitter)
 {
 	time = Life * 2;
 	each.position = ConvertXMFLOAT3toXMVECTOR(emitter);
 	each.position.m128_f32[2] = 30.0f;
 	each.position.m128_f32[0] = static_cast<float>(rand() % 50 - 24);
 	each.position.m128_f32[1] = static_cast<float>(rand() % 50 - 24);
-	ConstInit(each);
+	ConstInit(each, baseDirectX.dev);
 	speed.z = -static_cast<float>(rand() % 5 + 1);
 	acc.z = -static_cast<float>(rand() % 5 + 1);
 	speed.z = speed.z / 10.0f;
@@ -179,11 +179,11 @@ void ObjectParticle3D::InitSwell(XMFLOAT3& emitter)
 	addRotation = GetRandom(2);
 }
 
-void ObjectParticle3D::InitTarget(XMFLOAT3& emitter)
+void ObjectParticle3D::InitTarget(BaseDirectX& baseDirectX, XMFLOAT3& emitter)
 {
 	time = 1;
 	each.position = ConvertXMFLOAT3toXMVECTOR(emitter);
-	ConstInit(each);
+	ConstInit(each, baseDirectX.dev);
 	endPosition = XMFLOAT3(-5, -5, 3);
 	speed.x = (rand() % 3 + 1) / 10.0f;
 	speed.y = (rand() % 3 + 1) / 10.0f;
@@ -191,12 +191,12 @@ void ObjectParticle3D::InitTarget(XMFLOAT3& emitter)
 	easeTime = 1.0f;
 }
 
-void ObjectParticle3D::InitTornado(XMFLOAT3& emitter)
+void ObjectParticle3D::InitTornado(BaseDirectX& baseDirectX, XMFLOAT3& emitter)
 {
 	time = 1;
 	//each.position = ConvertXMFLOAT3toXMVECTOR(emitter);
 	startPosition = {0, 0, 10};
-	ConstInit(each);
+	ConstInit(each, baseDirectX.dev);
 	each.position.m128_f32[2] = 10;
 	speed.z = static_cast<float>(rand() % 10 + 5);
 	speed.z = -speed.z / 100.0f;
@@ -204,10 +204,10 @@ void ObjectParticle3D::InitTornado(XMFLOAT3& emitter)
 	easeTime = 1.0f;
 }
 
-void ObjectParticle3D::InitBorn(XMFLOAT3& emitter)
+void ObjectParticle3D::InitBorn(BaseDirectX& baseDirectX, XMFLOAT3& emitter)
 {
 	time = 1;
-	ConstInit(each);
+	ConstInit(each, baseDirectX.dev);
 	each.position = ConvertXMFLOAT3toXMVECTOR(emitter);
 	
 	each.scale = {0.1f, 0.1f, 0.1f};
@@ -345,12 +345,12 @@ void ObjectParticle3D::UpdateBorn()
 	}
 }
 
-void ObjectParticleInfo::Init(XMFLOAT3& emitter, int count, ObjectParticle3D::ParticleType type)
+void ObjectParticleInfo::Init(BaseDirectX& baseDirectX, XMFLOAT3& emitter, int count, ObjectParticle3D::ParticleType type)
 {
 	for (int i = 0; i < count; i++)
 	{
 		ObjectParticle3D element;
-		element.Add(emitter, type);
+		element.Add(baseDirectX, emitter, type);
 		particles.push_back(element);
 	}
 }
@@ -372,11 +372,11 @@ void ObjectParticleInfo::Update()
 	deleteItr.clear();
 }
 
-void ObjectParticleInfo::Draw(ObjectParticle& object)
+void ObjectParticleInfo::Draw(BaseDirectX &baseDirectX, ObjectParticle& object)
 {
 	for (auto itr = particles.begin(); itr != particles.end(); ++itr)
 	{
-		itr->Draw(object);
+		itr->Draw(baseDirectX, object);
 	}
 }
 
@@ -386,9 +386,9 @@ void ObjectParticleInfo::DeleteAllParticle()
 	deleteItr.clear();
 }
 
-void ObjectParticles::LoadModels()
+void ObjectParticles::LoadModels(BaseDirectX &baseDirectX)
 {
-	triangle.object.CreateModel("Triangle", ShaderManager::playerShader);
+	triangle.object.CreateModel(baseDirectX, "Triangle", ShaderManager::playerShader);
 }
 
 void ObjectParticles::Update()
@@ -396,9 +396,9 @@ void ObjectParticles::Update()
 	triangle.Update();
 }
 
-void ObjectParticles::Draw()
+void ObjectParticles::Draw(BaseDirectX& baseDirectX)
 {
-	triangle.Draw(triangle.object);
+	triangle.Draw(baseDirectX, triangle.object);
 }
 
 void ObjectParticles::DeleteAllParticles()

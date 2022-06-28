@@ -5,15 +5,15 @@ std::shared_ptr<IDirectInput8> Input::dinput = nullptr;
 IDirectInputDevice8 *Input::devkeyboard = nullptr;
 DirectInput* Input::directInput = DirectInput::GetInstance();
 
-void Input::Update()
+void Input::Update(BaseDirectX &baseDirectX)
 {
-	BaseDirectX::result = devkeyboard->Acquire();
+	baseDirectX.result = devkeyboard->Acquire();
 	for (int i = 0; i < 256; i++)
 	{
 		oldkeys[i] = keys[i];
 		keys[i] = 0;
 	}
-	BaseDirectX::result = devkeyboard->GetDeviceState(sizeof(keys), keys);
+	baseDirectX.result = devkeyboard->GetDeviceState(sizeof(keys), keys);
 
 	directInput->UpdateInput();////////////////////////////////
 
@@ -43,21 +43,19 @@ void Input::Init()
 	//directInput.reset(DirectInput::GetInstance());
 }
 
-void Input::KeySet(WNDCLASSEX w, HWND hwnd)
+void Input::KeySet(BaseDirectX& baseDirectX, WNDCLASSEX w, HWND hwnd)
 {
 	
 	directInput->InputInit(w.hInstance,hwnd);//////////////////////////
 
-	BaseDirectX::result = DirectInput8Create(w.hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void **)&dinput, nullptr);
-
-	BaseDirectX::result = dinput->CreateDevice(GUID_SysKeyboard, &devkeyboard, NULL);
-
-	BaseDirectX::result = devkeyboard->SetDataFormat(&c_dfDIKeyboard);
+	baseDirectX.result = DirectInput8Create(w.hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void **)&dinput, nullptr);
+	baseDirectX.result = dinput->CreateDevice(GUID_SysKeyboard, &devkeyboard, NULL);
+	baseDirectX.result = devkeyboard->SetDataFormat(&c_dfDIKeyboard);
 
 	//画面が手前にあるときのみキーボード入力を受け付ける
 	//デバイスをこのアプリだけで占有しない
 	//ウィルス等キーの無効化
-	BaseDirectX::result = devkeyboard->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+	baseDirectX.result = devkeyboard->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 }
 
 bool Input::Key(BYTE key)

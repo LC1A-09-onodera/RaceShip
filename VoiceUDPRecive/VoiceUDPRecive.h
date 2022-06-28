@@ -1,5 +1,6 @@
 #pragma once
 #include "../UDP/udp.h"
+#include "../BaseDirectX/BaseDirectX.h"
 
 class VoiceReciver
 {
@@ -33,9 +34,9 @@ public:
 	static bool GetPouse() { return isPouse; }
 	static void SetPouse(bool pouse) { VoiceReciver::isPouse = pouse; }
 
-	static void VoiceUDPUpdate();
+	static void VoiceUDPUpdate(BaseDirectX &baseDirectX);
 	static void StartUp();
-	static void ReciveData();
+	static void ReciveData(BaseDirectX& baseDirectX);
 	static void EndRecive();
 	static void LoadText();
 };

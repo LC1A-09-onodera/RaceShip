@@ -11,7 +11,6 @@
 #pragma comment(lib,"dxguid.lib")
 
 
-
 static BYTE keys[256] = {};
 static BYTE oldkeys[256] = {};
 static LPDIRECTINPUT8 g_lpDI;
@@ -89,9 +88,9 @@ public:
 	static IDirectInputDevice8 *devkeyboard;
 	static DirectInput *directInput;/////////////////////
 	static void Init();
-	static void Update();
+	static void Update(BaseDirectX& baseDirectX);
 
-	static void KeySet(WNDCLASSEX w, HWND hwnd);
+	static void KeySet(BaseDirectX& baseDirectX, WNDCLASSEX w, HWND hwnd);
 
 	static bool Key(BYTE key);
 	static bool Key(KeyCode key);

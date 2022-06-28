@@ -10,6 +10,6 @@ public:
 	static const float clearColor[4];
 	//RTV用デスクリプタヒープ
 	ComPtr<ID3D12DescriptorHeap> descHeapRTV;
-	void TexInit();
-	void RTVInit();
+	void TexInit(BaseDirectX& baseDirectX);
+	void RTVInit(BaseDirectX& baseDirectX);
 };

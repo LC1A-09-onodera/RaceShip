@@ -41,6 +41,7 @@ public:
 	void LightUpdate();
 
 public://ƒV[ƒ“‚Åg‚¤‚à‚Ì
+	BaseDirectX baseDirectX;
 	std::shared_ptr<Light> light;
 	PostEffect post;
 	float pointLightPos[3] = { 0, 1, 0 };

@@ -36,22 +36,22 @@ public:
 	static ComPtr<IXAudio2> xAudio2;
 	static IXAudio2MasteringVoice *masterVoice;
 	//初期化
-	static void CreateVoice();
+	static void CreateVoice(BaseDirectX& baseDirectX);
 	static void Updete(float volume);
 };
 
 //サウンド読み込み
-void SoundLoad(const char *filename, SoundData &sound);
+void SoundLoad(BaseDirectX& baseDirectX, const char *filename, SoundData &sound);
 //サウンドの削除
 void SoundUnload(SoundData *sounddata);
 //サウンド再生
-void SoundPlayerWave(SoundData &soundData);
+void SoundPlayerWave(BaseDirectX& baseDirectX, SoundData &soundData);
 //サウンドを止める
-void SoundStopWave(SoundData &soundData);
+void SoundStopWave(BaseDirectX& baseDirectX, SoundData &soundData);
 //一度だけ鳴らす
-void SoundPlayOnce(SoundData &soundData);
+void SoundPlayOnce(BaseDirectX& baseDirectX, SoundData &soundData);
 
-void SoundPlayLoop(SoundData &soundData);
+void SoundPlayLoop(BaseDirectX& baseDirectX, SoundData &soundData);
 //-10000~10000の間.0に向かって収束していく.0がミュート
 void SoundVolume(SoundData &soundData, float volume);
 

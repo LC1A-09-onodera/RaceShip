@@ -2,7 +2,6 @@
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_dx12.h"
 #include "../imgui/imgui_impl_win32.h"
-#include "../BaseDirectX/BaseDirectX.h"
 #include "../Camera/Camera.h"
 #include "../LoadStage/StageObject.h"
 #include <stdarg.h>
@@ -23,7 +22,7 @@ float Imgui::CameraRotation = 270.0f;
 float Imgui::CameraHigh = 0.2f;
 bool Imgui::CameraControl = true;
 int Imgui::useWaterNum = 0;
-ComPtr<ID3D12DescriptorHeap> Imgui::CreateDescrriptorHeapForImgui()
+ComPtr<ID3D12DescriptorHeap> Imgui::CreateDescrriptorHeapForImgui(BaseDirectX& baseDirectX)
 {
     ComPtr<ID3D12DescriptorHeap> ret;
     D3D12_DESCRIPTOR_HEAP_DESC desc = {};
@@ -31,7 +30,7 @@ ComPtr<ID3D12DescriptorHeap> Imgui::CreateDescrriptorHeapForImgui()
     desc.NodeMask = 0;
     desc.NumDescriptors = 1;
     desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-    BaseDirectX::dev->CreateDescriptorHeap(&desc, IID_PPV_ARGS(ret.ReleaseAndGetAddressOf()));
+    baseDirectX.dev->CreateDescriptorHeap(&desc, IID_PPV_ARGS(ret.ReleaseAndGetAddressOf()));
     return ret;
 }
 
@@ -40,7 +39,7 @@ ComPtr<ID3D12DescriptorHeap> Imgui::GetHeapForImgui()
     return imguiDescHeap;
 }
 
-void Imgui::DrawImGui()
+void Imgui::DrawImGui(BaseDirectX& baseDirectX)
 {
     if (!isActive) return;
     ImGui_ImplDX12_NewFrame();
@@ -49,17 +48,17 @@ void Imgui::DrawImGui()
     ImGui::Begin("InfomationAndEdit", nullptr, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
     ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
     CreateMenuBar();
-    EachInfo();
+    EachInfo(baseDirectX);
     ImGui::End();
     ImGui::Render();
-    BaseDirectX::cmdList->SetDescriptorHeaps(1, GetHeapForImgui().GetAddressOf());
-    ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), BaseDirectX::cmdList.Get());
+    baseDirectX.cmdList->SetDescriptorHeaps(1, GetHeapForImgui().GetAddressOf());
+    ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), baseDirectX.cmdList.Get());
 }
 
-void Imgui::Init()
+void Imgui::Init(BaseDirectX& baseDirectX)
 {
     //imgui
-    imguiDescHeap = CreateDescrriptorHeapForImgui();
+    imguiDescHeap = CreateDescrriptorHeapForImgui(baseDirectX);
     if (imguiDescHeap == nullptr)
     {
         return;
@@ -76,7 +75,7 @@ void Imgui::Init()
         assert(0);
         return;
     }
-    blnResult = ImGui_ImplDX12_Init(BaseDirectX::dev.Get(), 3, DXGI_FORMAT_R8G8B8A8_UNORM, GetHeapForImgui().Get(), GetHeapForImgui()->GetCPUDescriptorHandleForHeapStart(), GetHeapForImgui()->GetGPUDescriptorHandleForHeapStart());
+    blnResult = ImGui_ImplDX12_Init(baseDirectX.dev.Get(), 3, DXGI_FORMAT_R8G8B8A8_UNORM, GetHeapForImgui().Get(), GetHeapForImgui()->GetCPUDescriptorHandleForHeapStart(), GetHeapForImgui()->GetGPUDescriptorHandleForHeapStart());
 }
 
 void Imgui::ChangeInfo(int& intOriginal, int& imguiInfo)
@@ -139,7 +138,7 @@ void Imgui::CreateMenuBar()
     }
 }
 
-void Imgui::EachInfo()
+void Imgui::EachInfo(BaseDirectX& baseDirectX)
 {
     if (tab == ImguiType::Status)
     {
@@ -162,7 +161,7 @@ void Imgui::EachInfo()
         }
         if (ImGui::Button("LoadStage"))
         {
-            StageObjects::LoadFile();
+            StageObjects::LoadFile(baseDirectX);
         }
     }
     else if (tab == ImguiType::CameraInfo)
