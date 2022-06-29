@@ -14,9 +14,9 @@ bool VoiceReciver::isLeft;
 bool VoiceReciver::isPouse;
 bool VoiceReciver::isWall;
 
-void VoiceReciver::VoiceUDPUpdate()
+void VoiceReciver::VoiceUDPUpdate(BaseDirectX &baseDirectX)
 {
-	ReciveData();
+	ReciveData(baseDirectX);
 }
 
 void VoiceReciver::StartUp()
@@ -25,7 +25,7 @@ void VoiceReciver::StartUp()
 	udp.StartUp();
 }
 
-void VoiceReciver::ReciveData()
+void VoiceReciver::ReciveData(BaseDirectX &baseDirectX)
 {
 	udp.Recive();
 	std::string text = udp.GetResult();
@@ -44,7 +44,7 @@ void VoiceReciver::ReciveData()
 	}
 	else if (text == "Explosion")
 	{
-		ObjectParticles::triangle.Init(XMFLOAT3(0, 0, 0), 10, ObjectParticle3D::ParticleType::Exprotion);
+		ObjectParticles::triangle.Init(baseDirectX, XMFLOAT3(0, 0, 0), 10, ObjectParticle3D::ParticleType::Exprotion);
 	}
 	else if (text == "Shot")
 	{

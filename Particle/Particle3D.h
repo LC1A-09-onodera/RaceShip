@@ -329,6 +329,6 @@ public:
 	ParticleControl &operator=(const ParticleControl &obj) = delete;
 	static std::shared_ptr<ParticleIndi> attackEffect;
 	static void Update();
-	static void Init();
+	static void Init(BaseDirectX &baseDirectX);
 	static void Draw();
 };

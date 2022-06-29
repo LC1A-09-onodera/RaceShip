@@ -8,35 +8,35 @@ class ShieldModel : public Model
 {
 public:
 	
-	bool InitializeGraphicsPipeline(HLSLShader& shader);
+	bool InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& shader);
 };
 
 class Seling
 {
 	
 	int nowNumber;
-	XMFLOAT3 frontDirection;
+	XMFLOAT3 frontDirection = { 0.0f ,0.0f , 0.0f };
 	float angle;
 
 	bool isMoveForce;
-	XMFLOAT3 addForce;
-	XMFLOAT3 subForce;
-	XMFLOAT3 maxForce;
+	XMFLOAT3 addForce = { 0.0f ,0.0f , 0.0f};
+	XMFLOAT3 subForce = { 0.0f ,0.0f , 0.0f};
+	XMFLOAT3 maxForce = { 0.0f ,0.0f , 0.0f};
 
 	Model shotModel;
-	XMFLOAT3 shotPos;
+	XMFLOAT3 shotPos = { 0.0f ,0.0f , 0.0f };
 	bool isShot;
 
 	ShieldModel shieldModel;
 	bool isShield;
-	XMFLOAT3 shieldPos;
-	XMFLOAT3 scaleStart;
-	XMFLOAT3 scaleEnd;
-	float easeTime;
-	int shieldTime;
+	XMFLOAT3 shieldPos = { 0.0f ,0.0f , 0.0f};
+	XMFLOAT3 scaleStart = { 0.0f ,0.0f , 0.0f };
+	XMFLOAT3 scaleEnd = { 0.0f ,0.0f , 0.0f };
+	float easeTime = 0;
+	int shieldTime = 0;
 	const int shieldMaxTime = 180;
 
-	bool isGoal;
+	bool isGoal = false;
 
 	//Enemy enemy;
 
@@ -53,10 +53,10 @@ public:
 	}
 	bool GetIsGoal() { return isGoal; }
 	void ForceUpdate();
-	void LoadModel();
+	void LoadModel(BaseDirectX &baseDirectX);
 	void Init();
 	void Update();
-	void Draw(bool isRCamera = false);
+	void Draw(BaseDirectX& baseDirectX, bool isRCamera = false);
 
 	void ForceAttach();
 	void Move();

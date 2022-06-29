@@ -1,6 +1,6 @@
 #pragma once
 #include "../FBXModel/FBXModel.h"
-//#include <Windows.h>
+#include "../BaseDirectX/BaseDirectX.h"
 #include <wrl.h>
 #include <d3d12.h>
 #include <d3dx12.h>
@@ -30,7 +30,7 @@ public:
 		XMMATRIX bones[MAX_BONES];
 	};
 	void Initialize();
-	void Update();
+	void Update(BaseDirectX& baseDirectX);
 	void Draw(ID3D12GraphicsCommandList *cmdList);
 	void SetModel(FBXModel* model){this->model = model;}
 	void PlayAnimation();

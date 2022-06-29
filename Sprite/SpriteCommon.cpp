@@ -16,7 +16,7 @@ SpriteCommon::SpriteCommon()
 	
 }
 
-void SpriteCommon::Init(ComPtr<ID3DBlob> vsBlob, ComPtr<ID3DBlob> psBlob)
+void SpriteCommon::Init(BaseDirectX &baseDirectX, ComPtr<ID3DBlob> vsBlob, ComPtr<ID3DBlob> psBlob)
 {
     SpriteCommon::inputLayout[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,D3D12_APPEND_ALIGNED_ELEMENT,D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
     SpriteCommon::inputLayout[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,D3D12_APPEND_ALIGNED_ELEMENT,D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
@@ -69,7 +69,7 @@ void SpriteCommon::Init(ComPtr<ID3DBlob> vsBlob, ComPtr<ID3DBlob> psBlob)
     descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
     descHeapDesc.NumDescriptors = SRVCount;
-    BaseDirectX::result = BaseDirectX::dev->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&DescHeap));
+    baseDirectX.result = baseDirectX.dev->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&DescHeap));
 
 }
 
@@ -78,6 +78,6 @@ HRESULT SpriteCommon::LoadSprtieGraph(UINT texNumber, const wchar_t *filename)
     //âÊëúÉfÅ[É^
     TexMetadata metadata{};
     ScratchImage scratchImg{};
-    BaseDirectX::result = LoadFromWICFile(filename, WIC_FLAGS_NONE, &metadata, scratchImg);
+    HRESULT result = LoadFromWICFile(filename, WIC_FLAGS_NONE, &metadata, scratchImg);
     return S_OK;
 }

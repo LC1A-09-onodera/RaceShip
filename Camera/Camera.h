@@ -1,4 +1,5 @@
 #include <DirectXMath.h>
+#include "../BaseDirectX/BaseDirectX.h"
 #include "../BaseDirectX/DX12operator.h"
 using namespace DirectX;
 
@@ -42,9 +43,9 @@ public:
 	void SetShake(float shakePower);
 	void SetTarget(XMFLOAT3 &target);
 	XMFLOAT3 GetTargetDirection();
-	XMFLOAT3 GetMousePosition();
-	XMFLOAT3 EyeToMouseVec();
-	XMFLOAT3 MousePosition(float z);
+	XMFLOAT3 GetMousePosition(BaseDirectX &baseDirectX);
+	XMFLOAT3 EyeToMouseVec(BaseDirectX& baseDirectX);
+	XMFLOAT3 MousePosition(BaseDirectX& baseDirectX, float z);
 };
 
 class Cameras

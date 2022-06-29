@@ -12,10 +12,10 @@ class WaterEachInfo : public EachInfo
 {
 public:
 	UINT frame;
-	void CreateConstBuff0();
-	void CreateConstBuff1();
-	void CreateConstBuff2();
-	void ConstInit();
+	void CreateConstBuff0(BaseDirectX& baseDirectX);
+	void CreateConstBuff1(BaseDirectX& baseDirectX);
+	void CreateConstBuff2(BaseDirectX& baseDirectX);
+	void ConstInit(BaseDirectX& baseDirectX);
 };
 
 class WaterFaceModel : public Model
@@ -27,14 +27,14 @@ public:
 	ComPtr<ID3D12DescriptorHeap> descHeapDSV;
 	UINT frameTime = 0;
 	//EachInfo each;
-	void CreateModel(const char* name, HLSLShader& shader,PostEffect &postEffect, bool smoothing = false);
-	bool LoadTexture(const string& directPath, const string& filename, PostEffect &postEffect);
-	void LoadMaterial(const string& directoryPath, const string& filename, PostEffect& postEffect);
-	void InitializeGraphicsPipeline(HLSLShader& shader, PostEffect &postEffect);
-	void Update();
+	void CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& shader,PostEffect &postEffect, bool smoothing = false);
+	bool LoadTexture(BaseDirectX& baseDirectX, const string& directPath, const string& filename, PostEffect &postEffect);
+	void LoadMaterial(BaseDirectX& baseDirectX, const string& directoryPath, const string& filename, PostEffect& postEffect);
+	void InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& shader, PostEffect &postEffect);
+	void Update(BaseDirectX& baseDirectX);
 	void PreDraw();
 	void PostDraw();
-	void Draw(WaterEachInfo&each, PostEffect& postEffect);
+	void Draw(BaseDirectX& baseDirectX, WaterEachInfo&each, PostEffect& postEffect);
 };
 
 class WaterFace
@@ -42,8 +42,8 @@ class WaterFace
 public:
 	WaterFaceModel waterModel;
 
-	void LoadModel(HLSLShader &useShader, PostEffect &postEffect);
-	void Init();
+	void LoadModel(BaseDirectX& baseDirectX, HLSLShader &useShader, PostEffect &postEffect);
+	void Init(BaseDirectX& baseDirectX);
 	void Update();
-	void Draw(PostEffect& postEffect, XMVECTOR &selingPos);
+	void Draw(BaseDirectX& baseDirectX, PostEffect& postEffect, XMVECTOR &selingPos);
 };

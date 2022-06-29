@@ -9,7 +9,7 @@ class WallObjectEach : public EachInfo
 class WallModel : public Model
 {
 public:
-	void Update(WallObjectEach *each = nullptr, bool rCamera = false);
+	void Update(BaseDirectX& baseDirectX, WallObjectEach *each = nullptr, bool rCamera = false);
 };
 
 class WallObject
@@ -18,7 +18,7 @@ public:
 	list<WallObjectEach> wallsPos;
 	list<WallObjectEach> rWallsPos;
 	WallModel wallModel;
-	void LoadPosition();
+	void LoadPosition(BaseDirectX &baseDirectX);
 };
 
 class GoalObjectEach : public EachInfo
@@ -29,7 +29,7 @@ class GoalObjectEach : public EachInfo
 class GoalModel : public Model
 {
 public:
-	void Update(GoalObjectEach* each = nullptr, bool rCamera = false);
+	void Update(BaseDirectX& baseDirectX, GoalObjectEach* each = nullptr, bool rCamera = false);
 };
 
 class GoalObject
@@ -38,7 +38,7 @@ public:
 	list<GoalObjectEach> goalsPos;
 	list<GoalObjectEach> rGoalsPos;
 	GoalModel goalModel;
-	void LoadPosition();
+	void LoadPosition(BaseDirectX& baseDirectX);
 };
 
 class EnemyObjectEach : public EachInfo
@@ -49,7 +49,7 @@ class EnemyObjectEach : public EachInfo
 class EnemyModel : public Model
 {
 public:
-	void Update(EnemyObjectEach* each = nullptr, bool rCamera = false);
+	void Update(BaseDirectX& baseDirectX, EnemyObjectEach* each = nullptr, bool rCamera = false);
 };
 
 class EnemyObject
@@ -58,7 +58,7 @@ public:
 	list<EnemyObjectEach> enemysPos;
 	list<EnemyObjectEach> rEnemysPos;
 	EnemyModel enemyModel;
-	void LoadPosition();
+	void LoadPosition(BaseDirectX& baseDirectX);
 };
 
 class StageObjects
@@ -67,6 +67,7 @@ public:
 	static WallObject walls;
 	static GoalObject goals;
 	static EnemyObject enemys;
-	static void LoadFile();
-	static void Draw(bool isRCamera = false);
+	static void LoadFile(BaseDirectX& baseDirectX);
+	static void LoadModel(BaseDirectX &baseDirectX);
+	static void Draw(BaseDirectX &baseDirectX, bool isRCamera = false);
 };

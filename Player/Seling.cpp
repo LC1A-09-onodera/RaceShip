@@ -22,12 +22,14 @@ void Seling::ForceUpdate()
 	}
 }
 
-void Seling::LoadModel()
+
+void Seling::LoadModel(BaseDirectX& baseDirectX)
 {
-	seling.CreateModel("Triangle", ShaderManager::playerShader, false);
-	shotModel.CreateModel("maru", ShaderManager::playerShader, false);
-	shieldModel.CreateModel("shield", ShaderManager::shieldShader, false);
+	seling.CreateModel(baseDirectX, "Triangle", ShaderManager::playerShader, false);
+	shotModel.CreateModel(baseDirectX, "maru", ShaderManager::playerShader, false);
+	shieldModel.CreateModel(baseDirectX, "shield", ShaderManager::shieldShader, false);
 	shieldModel.each.scale = { 2.0f, 2.0f, 1.0f };
+	Init();
 }
 
 void Seling::Init()
@@ -58,31 +60,31 @@ void Seling::Update()
 	//enemy.Update(shieldPos, isShield);
 }
 
-void Seling::Draw(bool isRCamera)
+void Seling::Draw(BaseDirectX& baseDirectX, bool isRCamera)
 {
 	if (isRCamera)
 	{
-		seling.Update(&seling.each, isRCamera);
-		Draw3DObject(seling);
+		seling.Update(baseDirectX ,&seling.each, isRCamera);
+		Draw3DObject(baseDirectX, seling);
 	}
 	else if (!isRCamera)
 	{
-		seling.Update(&seling.each, isRCamera);
-		Draw3DObject(seling);
+		seling.Update(baseDirectX ,&seling.each, isRCamera);
+		Draw3DObject(baseDirectX, seling);
 	}
 
 	if (isShot)
 	{
 		shotModel.each.position = ConvertXMFLOAT3toXMVECTOR(shotPos);
-		shotModel.Update(&shotModel.each, isRCamera);
-		Draw3DObject(shotModel);
+		shotModel.Update(baseDirectX ,&shotModel.each, isRCamera);
+		Draw3DObject(baseDirectX, shotModel);
 	}
 
 	if (isShield)
 	{
 		shieldModel.each.position = ConvertXMFLOAT3toXMVECTOR(shieldPos);
-		shieldModel.Update(&shieldModel.each, isRCamera);
-		Draw3DObject(shieldModel);
+		shieldModel.Update(baseDirectX ,&shieldModel.each, isRCamera);
+		Draw3DObject(baseDirectX, shieldModel);
 	}
 	//enemy.Draw();
 }
@@ -283,7 +285,7 @@ void Seling::HitGoal()
 	}
 }
 
-bool ShieldModel::InitializeGraphicsPipeline(HLSLShader& shader)
+bool ShieldModel::InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& shader)
 {
 	HRESULT result = S_FALSE;
 	ComPtr<ID3DBlob> errorBlob; // エラーオブジェクト
@@ -378,7 +380,7 @@ bool ShieldModel::InitializeGraphicsPipeline(HLSLShader& shader)
 	// バージョン自動判定のシリアライズ
 	result = D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
 	// ルートシグネチャの生成
-	result = BaseDirectX::dev->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
+	result = baseDirectX.dev->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
 	if (FAILED(result)) {
 		return result;
 	}
@@ -386,7 +388,7 @@ bool ShieldModel::InitializeGraphicsPipeline(HLSLShader& shader)
 	gpipeline.pRootSignature = rootsignature.Get();
 
 	// グラフィックスパイプラインの生成-------------------------
-	result = BaseDirectX::dev->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelinestate));
+	result = baseDirectX.dev->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelinestate));
 
 	if (FAILED(result)) {
 		return result;

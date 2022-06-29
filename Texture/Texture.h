@@ -6,10 +6,10 @@
 #include <dxgi1_6.h>
 #include <DirectXMath.h>
 #include <d3dcompiler.h>
+
 #include <DirectXTex.h>
-//#include "ResouceBarrier.h"
+
 #include "../BaseDirectX/Input.h"
-//#include "viewport.h"
 #include "../WindowsAPI/WinAPI.h"
 #include <wrl.h>
 #include <d3dx12.h>
@@ -28,7 +28,7 @@ class Tex
 public:
     ComPtr<ID3D12Resource> texbuff;
     int texNum = 0;
-    void LoadGraph(const wchar_t *graph);
+    void LoadGraph(BaseDirectX& baseDirectX, const wchar_t *graph);
     int Get();
 };
 

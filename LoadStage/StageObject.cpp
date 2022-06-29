@@ -1,23 +1,24 @@
 #include "StageObject.h"
 #include "LoadStage.h"
 #include "../Camera/Camera.h"
+#include "../Shader/ShaderManager.h"
 
 WallObject StageObjects::walls;
 GoalObject StageObjects::goals;
 EnemyObject StageObjects::enemys;
 
-void WallObject::LoadPosition()
+void WallObject::LoadPosition(BaseDirectX& baseDirectX)
 {
 	for (auto itr = LoadStage::wallPosition.begin(); itr != LoadStage::wallPosition.end(); ++itr)
 	{
 		WallObjectEach each;
-		ConstInit(each);
+		ConstInit(each, baseDirectX.dev);
 		each.position.m128_f32[0] = itr->x;
 		each.position.m128_f32[2] = itr->y;
 		each.scale = { 2.0f, 4.0f, 2.0f };
 		wallsPos.push_back(each);
 		WallObjectEach eachR;
-		ConstInit(eachR);
+		ConstInit(eachR, baseDirectX.dev);
 		eachR.position.m128_f32[0] = itr->x;
 		eachR.position.m128_f32[2] = itr->y;
 		eachR.scale = { 2.0f, 4.0f, 2.0f };
@@ -25,7 +26,7 @@ void WallObject::LoadPosition()
 	}
 }
 
-void StageObjects::LoadFile()
+void StageObjects::LoadFile(BaseDirectX &baseDirectX)
 {
 	LoadStage::wallPosition.clear();
 	walls.wallsPos.clear();
@@ -34,48 +35,56 @@ void StageObjects::LoadFile()
 	goals.goalsPos.clear();
 	goals.rGoalsPos.clear();
 	LoadStage::LoadStages("test.txt");
-	walls.LoadPosition();
-	goals.LoadPosition();
+	walls.LoadPosition(baseDirectX);
+	goals.LoadPosition(baseDirectX);
 }
 
-void StageObjects::Draw(bool isRCamera)
+void StageObjects::LoadModel(BaseDirectX& baseDirectX)
+{
+	walls.wallModel.CreateModel(baseDirectX, "MapWall", ShaderManager::playerShader);
+	walls.LoadPosition(baseDirectX);
+	goals.goalModel.CreateModel(baseDirectX, "goal", ShaderManager::playerShader);
+	goals.LoadPosition(baseDirectX);
+}
+
+void StageObjects::Draw(BaseDirectX &baseDirectX, bool isRCamera)
 {
 	if (isRCamera)
 	{
 		for (auto itr = walls.rWallsPos.begin(); itr != walls.rWallsPos.end(); ++itr)
 		{
-			walls.wallModel.Update(&(*itr), isRCamera);
-			Draw3DObject(walls.wallModel);
+			walls.wallModel.Update(baseDirectX ,&(*itr), isRCamera);
+			Draw3DObject(baseDirectX, walls.wallModel);
 		}
 		for (auto itr = goals.rGoalsPos.begin(); itr != goals.rGoalsPos.end(); ++itr)
 		{
-			goals.goalModel.Update(&(*itr), isRCamera);
-			Draw3DObject(goals.goalModel);
+			goals.goalModel.Update(baseDirectX, &(*itr), isRCamera);
+			Draw3DObject(baseDirectX, goals.goalModel);
 		}
 	}
 	else
 	{
 		for (auto itr = walls.wallsPos.begin(); itr != walls.wallsPos.end(); ++itr)
 		{
-			walls.wallModel.Update(&(*itr), isRCamera);
-			Draw3DObject(walls.wallModel);
+			walls.wallModel.Update(baseDirectX ,&(*itr), isRCamera);
+			Draw3DObject(baseDirectX, walls.wallModel);
 		}
 		for (auto itr = goals.goalsPos.begin(); itr != goals.goalsPos.end(); ++itr)
 		{
-			goals.goalModel.Update(&(*itr), isRCamera);
-			Draw3DObject(goals.goalModel);
+			goals.goalModel.Update(baseDirectX, &(*itr), isRCamera);
+			Draw3DObject(baseDirectX, goals.goalModel);
 		}
 	}
 }
 
-void WallModel::Update(WallObjectEach* each, bool rCamera)
+void WallModel::Update(BaseDirectX& baseDirectX, WallObjectEach* each, bool rCamera)
 {
 	if (each != nullptr)
 	{
 		this->each = *each;
 		CalcMatrix(this, each);
 
-		SendVertex();
+		SendVertex(baseDirectX);
 
 		ConstBufferDataB0* constMap0 = nullptr;
 		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
@@ -83,13 +92,13 @@ void WallModel::Update(WallObjectEach* each, bool rCamera)
 			//constMap0->mat = matWorld * Camera::matView * BaseDirectX::matProjection;
 			if (!rCamera)
 			{
-				constMap0->viewproj = Cameras::camera.matView * BaseDirectX::matProjection;
+				constMap0->viewproj = Cameras::camera.matView * baseDirectX.matProjection;
 				constMap0->world = matWorld;
 				constMap0->cameraPos = Cameras::camera.eye;
 			}
 			else
 			{
-				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::matProjection;
+				constMap0->viewproj = Cameras::rCamera.matView * baseDirectX.matProjection;
 				constMap0->world = matWorld;
 				constMap0->cameraPos = Cameras::rCamera.eye;
 			}
@@ -98,7 +107,7 @@ void WallModel::Update(WallObjectEach* each, bool rCamera)
 		}
 
 		ConstBufferDataB1* constMap1 = nullptr;
-		BaseDirectX::result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
+		baseDirectX.result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
 		constMap1->ambient = material.ambient;
 		constMap1->diffuse = material.diffuse;
 		constMap1->specular = material.specular;
@@ -109,7 +118,7 @@ void WallModel::Update(WallObjectEach* each, bool rCamera)
 	{
 		CalcMatrix(this, each);
 
-		SendVertex();
+		SendVertex(baseDirectX);
 
 		ConstBufferDataB0* constMap0 = nullptr;
 		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
@@ -117,13 +126,13 @@ void WallModel::Update(WallObjectEach* each, bool rCamera)
 			//constMap0->mat = matWorld * Camera::matView * BaseDirectX::matProjection;
 			if (!rCamera)
 			{
-				constMap0->viewproj = Cameras::camera.matView * BaseDirectX::matProjection;
+				constMap0->viewproj = Cameras::camera.matView * baseDirectX.matProjection;
 				constMap0->world = matWorld;
 				constMap0->cameraPos = Cameras::camera.eye;
 			}
 			else
 			{
-				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::matProjection;
+				constMap0->viewproj = Cameras::rCamera.matView * baseDirectX.matProjection;
 				constMap0->world = matWorld;
 				constMap0->cameraPos = Cameras::rCamera.eye;
 			}
@@ -131,7 +140,7 @@ void WallModel::Update(WallObjectEach* each, bool rCamera)
 		}
 
 		ConstBufferDataB1* constMap1 = nullptr;
-		BaseDirectX::result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
+		baseDirectX.result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
 		constMap1->ambient = material.ambient;
 		constMap1->diffuse = material.diffuse;
 		constMap1->specular = material.specular;
@@ -140,7 +149,7 @@ void WallModel::Update(WallObjectEach* each, bool rCamera)
 	}
 }
 
-void GoalModel::Update(GoalObjectEach* each, bool rCamera)
+void GoalModel::Update(BaseDirectX& baseDirectX, GoalObjectEach* each, bool rCamera)
 {
 	if (each != nullptr)
 	{
@@ -170,8 +179,8 @@ void GoalModel::Update(GoalObjectEach* each, bool rCamera)
 		matWorld *= matTrans;
 
 		Vertex* vertMap = nullptr;
-		BaseDirectX::result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
-		if (SUCCEEDED(BaseDirectX::result))
+		baseDirectX.result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
+		if (SUCCEEDED(baseDirectX.result))
 		{
 			copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
 			mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
@@ -183,13 +192,13 @@ void GoalModel::Update(GoalObjectEach* each, bool rCamera)
 			//constMap0->mat = matWorld * Camera::matView * BaseDirectX::matProjection;
 			if (!rCamera)
 			{
-				constMap0->viewproj = Cameras::camera.matView * BaseDirectX::matProjection;
+				constMap0->viewproj = Cameras::camera.matView * baseDirectX.matProjection;
 				constMap0->world = matWorld;
 				constMap0->cameraPos = cameraPos;
 			}
 			else
 			{
-				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::matProjection;
+				constMap0->viewproj = Cameras::rCamera.matView * baseDirectX.matProjection;
 				constMap0->world = matWorld;
 				constMap0->cameraPos = Cameras::rCamera.eye;
 			}
@@ -198,7 +207,7 @@ void GoalModel::Update(GoalObjectEach* each, bool rCamera)
 		}
 
 		ConstBufferDataB1* constMap1 = nullptr;
-		BaseDirectX::result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
+		baseDirectX.result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
 		constMap1->ambient = material.ambient;
 		constMap1->diffuse = material.diffuse;
 		constMap1->specular = material.specular;
@@ -232,8 +241,8 @@ void GoalModel::Update(GoalObjectEach* each, bool rCamera)
 		matWorld *= matTrans;
 
 		Vertex* vertMap = nullptr;
-		BaseDirectX::result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
-		if (SUCCEEDED(BaseDirectX::result))
+		baseDirectX.result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
+		if (SUCCEEDED(baseDirectX.result))
 		{
 			copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
 			mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
@@ -245,13 +254,13 @@ void GoalModel::Update(GoalObjectEach* each, bool rCamera)
 			//constMap0->mat = matWorld * Camera::matView * BaseDirectX::matProjection;
 			if (!rCamera)
 			{
-				constMap0->viewproj = Cameras::camera.matView * BaseDirectX::matProjection;
+				constMap0->viewproj = Cameras::camera.matView * baseDirectX.matProjection;
 				constMap0->world = matWorld;
 				constMap0->cameraPos = cameraPos;
 			}
 			else
 			{
-				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::matProjection;
+				constMap0->viewproj = Cameras::rCamera.matView * baseDirectX.matProjection;
 				constMap0->world = matWorld;
 				constMap0->cameraPos = Cameras::rCamera.eye;
 			}
@@ -259,7 +268,7 @@ void GoalModel::Update(GoalObjectEach* each, bool rCamera)
 		}
 
 		ConstBufferDataB1* constMap1 = nullptr;
-		BaseDirectX::result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
+		baseDirectX.result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
 		constMap1->ambient = material.ambient;
 		constMap1->diffuse = material.diffuse;
 		constMap1->specular = material.specular;
@@ -268,18 +277,18 @@ void GoalModel::Update(GoalObjectEach* each, bool rCamera)
 	}
 }
 
-void GoalObject::LoadPosition()
+void GoalObject::LoadPosition(BaseDirectX& baseDirectX)
 {
 	for (auto itr = LoadStage::goalPosition.begin(); itr != LoadStage::goalPosition.end(); ++itr)
 	{
 		GoalObjectEach each;
-		ConstInit(each);
+		ConstInit(each, baseDirectX.dev);
 		each.position.m128_f32[0] = itr->x;
 		each.position.m128_f32[2] = itr->y;
 		each.scale = { 2.0f, 4.0f, 2.0f };
 		goalsPos.push_back(each);
 		GoalObjectEach eachR;
-		ConstInit(eachR);
+		ConstInit(eachR, baseDirectX.dev);
 		eachR.position.m128_f32[0] = itr->x;
 		eachR.position.m128_f32[2] = itr->y;
 		eachR.scale = { 2.0f, 4.0f, 2.0f };

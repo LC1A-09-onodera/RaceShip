@@ -174,7 +174,7 @@ XMFLOAT3 Camera::GetTargetDirection()
 	return dire;
 }
 
-XMFLOAT3 Camera::GetMousePosition()
+XMFLOAT3 Camera::GetMousePosition(BaseDirectX &baseDirectX)
 {
 	//スクリーン系
 	POINT mouse = WindowsAPI::GetMousePos();
@@ -191,7 +191,7 @@ XMFLOAT3 Camera::GetMousePosition()
 	//ビュー座標
 	XMVECTOR mousePosition;
 	XMMATRIX invProj, invView;
-	invProj = XMMatrixInverse(nullptr, BaseDirectX::matProjection);
+	invProj = XMMatrixInverse(nullptr, baseDirectX.matProjection);
 	invView = XMMatrixInverse(nullptr, Camera::matView);
 	mousePosition = XMLoadFloat3(&XMFLOAT3(mouseFloat.x, mouseFloat.y, 0));
 	mousePosition = XMVector3Transform(mousePosition, invProj);
@@ -203,10 +203,10 @@ XMFLOAT3 Camera::GetMousePosition()
 	return result;
 }
 
-XMFLOAT3 Camera::EyeToMouseVec()
+XMFLOAT3 Camera::EyeToMouseVec(BaseDirectX& baseDirectX)
 {
 	XMFLOAT3 mouse;
-	mouse = GetMousePosition();
+	mouse = GetMousePosition(baseDirectX);
 	XMFLOAT3 eyePos;
 	eyePos = Camera::eye;
 	XMFLOAT3 result;
@@ -214,9 +214,9 @@ XMFLOAT3 Camera::EyeToMouseVec()
 	return Normalize(result);
 }
 
-XMFLOAT3 Camera::MousePosition(float z)
+XMFLOAT3 Camera::MousePosition(BaseDirectX& baseDirectX, float z)
 {
-	XMFLOAT3 mouseVec = EyeToMouseVec();
+	XMFLOAT3 mouseVec = EyeToMouseVec(baseDirectX);
 	float count;
 	count = z - Camera::eye.z / mouseVec.z;
 	float x;

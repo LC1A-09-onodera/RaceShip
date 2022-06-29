@@ -37,6 +37,18 @@ private:
 	void PostWaterFaceDraw();
 	int SceneNum = TITLE;
 
+public:
+	GameScene();
+	~GameScene();
+	//シーン切り替え
+	void SceneManageUpdateAndDraw();
+	//初期化
+	void Init();
+
+	void LightUpdate();
+
+public://シーンで使うもの
+	BaseDirectX baseDirectX;
 	int opAnimationTime;
 	const int MaxOPAnimationTime = 120;
 	
@@ -70,16 +82,4 @@ private:
 	Model rWorld;
 
 	Rewired::RewiredKeys jumpKey;
-public:
-	GameScene();
-	~GameScene();
-	//シーン切り替え
-	void SceneManageUpdateAndDraw();
-	//初期化
-	void Init();
-
-	void LightUpdate();
-
-public://シーンで使うもの
-	
 };

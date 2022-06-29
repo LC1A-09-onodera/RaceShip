@@ -5,64 +5,69 @@
 #include "../imgui/imgui_impl_dx12.h"
 #include "../imgui/imgui_impl_win32.h"
 
-HRESULT BaseDirectX::result;
-ComPtr<ID3D12Device> BaseDirectX::dev;
-ComPtr<IDXGIFactory6> BaseDirectX::dxgiFactory;
-ComPtr<IDXGISwapChain4> BaseDirectX::swapchain;
-ComPtr<ID3D12CommandAllocator> BaseDirectX::cmdAllocator;
-ComPtr<ID3D12GraphicsCommandList> BaseDirectX::cmdList;
-ComPtr<ID3D12CommandQueue> BaseDirectX::cmdQueue;
-ComPtr<ID3D12DescriptorHeap> BaseDirectX::rtvHeaps;
-vector<IDXGIAdapter1*> BaseDirectX::adapters;
-D3D_FEATURE_LEVEL BaseDirectX::levels[4];
-D3D_FEATURE_LEVEL BaseDirectX::featureLevel;
-IDXGIAdapter1* BaseDirectX::tmpAdapter = nullptr;
-D3D12_COMMAND_QUEUE_DESC BaseDirectX::cmdQueueDesc;
-DXGI_SWAP_CHAIN_DESC1 BaseDirectX::swapchainDesc;
-ComPtr<IDXGISwapChain1> BaseDirectX::swapchain1;
-ComPtr<ID3D12Fence> BaseDirectX::fence;
-UINT64  BaseDirectX::fenceVal = 0;
-vector<ComPtr<ID3D12Resource>> BaseDirectX::backBuffers;
-D3D12_DESCRIPTOR_HEAP_DESC BaseDirectX::heapDesc;
-ComPtr<ID3D12Resource> BaseDirectX::depthBuffer;
-CD3DX12_RESOURCE_DESC BaseDirectX::depthResDesc = CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_D32_FLOAT, window_width, window_height, 1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
-D3D12_DESCRIPTOR_HEAP_DESC BaseDirectX::dsvHeapDesc{};
-ComPtr<ID3D12DescriptorHeap> BaseDirectX::dsvHeap;
-D3D12_DEPTH_STENCIL_VIEW_DESC BaseDirectX::dsvDesc{};
-D3D12_CPU_DESCRIPTOR_HANDLE BaseDirectX::dsvH;
-D3D12_GRAPHICS_PIPELINE_STATE_DESC BaseDirectX::gpipeline{};
-XMMATRIX BaseDirectX::matProjection;
-ComPtr<ID3DBlob> BaseDirectX::vsBlob;
-ComPtr<ID3DBlob> BaseDirectX::psBlob;
-ComPtr<ID3DBlob> BaseDirectX::errorBlob;
-D3D12_INPUT_ELEMENT_DESC BaseDirectX::inputLayout[3];
-CD3DX12_DESCRIPTOR_RANGE BaseDirectX::descRangeCRV;
-CD3DX12_DESCRIPTOR_RANGE BaseDirectX::descRangeSRV;
-CD3DX12_ROOT_PARAMETER BaseDirectX::rootparam[2];
-ComPtr<ID3D12PipelineState> BaseDirectX::pipelinestate;
-ComPtr<ID3D12RootSignature> BaseDirectX::rootsignature;
-//const int BaseDirectX::ObjectNum;
-const int BaseDirectX::TexBufferNum;
-D3D12_CPU_DESCRIPTOR_HANDLE BaseDirectX::cpuDescHandleSRV[TexBufferNum];
-D3D12_GPU_DESCRIPTOR_HANDLE BaseDirectX::gpuDescHandleSRV[TexBufferNum];
-//テクスチャサンプラー
-D3D12_STATIC_SAMPLER_DESC BaseDirectX::samplerDesc;
-ComPtr<ID3D12DescriptorHeap> BaseDirectX::basicDescHeap;
-float BaseDirectX::clearColor[4];
-
-//XMMATRIX BaseDirectX::matView;
-//XMMATRIX BaseDirectX::matBillboard = XMMatrixIdentity();
-//XMMATRIX BaseDirectX::matBillboardY = XMMatrixIdentity();
+//HRESULT BaseDirectX::result;
+//ComPtr<ID3D12Device> BaseDirectX::dev;
+//ComPtr<IDXGIFactory6> BaseDirectX::dxgiFactory;
+//ComPtr<IDXGISwapChain4> BaseDirectX::swapchain;
+//ComPtr<ID3D12CommandAllocator> BaseDirectX::cmdAllocator;
+//ComPtr<ID3D12GraphicsCommandList> BaseDirectX::cmdList;
+//ComPtr<ID3D12CommandQueue> BaseDirectX::cmdQueue;
+//ComPtr<ID3D12DescriptorHeap> BaseDirectX::rtvHeaps;
+//vector<IDXGIAdapter1*> BaseDirectX::adapters;
+//D3D_FEATURE_LEVEL BaseDirectX::levels[4];
+//D3D_FEATURE_LEVEL BaseDirectX::featureLevel;
+//IDXGIAdapter1* BaseDirectX::tmpAdapter = nullptr;
+//D3D12_COMMAND_QUEUE_DESC BaseDirectX::cmdQueueDesc;
+//DXGI_SWAP_CHAIN_DESC1 BaseDirectX::swapchainDesc;
+//ComPtr<IDXGISwapChain1> BaseDirectX::swapchain1;
+//ComPtr<ID3D12Fence> BaseDirectX::fence;
+//UINT64  BaseDirectX::fenceVal = 0;
+//vector<ComPtr<ID3D12Resource>> BaseDirectX::backBuffers;
+//D3D12_DESCRIPTOR_HEAP_DESC BaseDirectX::heapDesc;
+//ComPtr<ID3D12Resource> BaseDirectX::depthBuffer;
+//CD3DX12_RESOURCE_DESC BaseDirectX::depthResDesc = CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_D32_FLOAT, window_width, window_height, 1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
+//D3D12_DESCRIPTOR_HEAP_DESC BaseDirectX::dsvHeapDesc{};
+//ComPtr<ID3D12DescriptorHeap> BaseDirectX::dsvHeap;
+//D3D12_DEPTH_STENCIL_VIEW_DESC BaseDirectX::dsvDesc{};
+//D3D12_CPU_DESCRIPTOR_HANDLE BaseDirectX::dsvH;
+//D3D12_GRAPHICS_PIPELINE_STATE_DESC BaseDirectX::gpipeline{};
+//XMMATRIX BaseDirectX::matProjection;
+//ComPtr<ID3DBlob> BaseDirectX::vsBlob;
+//ComPtr<ID3DBlob> BaseDirectX::psBlob;
+//ComPtr<ID3DBlob> BaseDirectX::errorBlob;
+//D3D12_INPUT_ELEMENT_DESC BaseDirectX::inputLayout[3];
+//CD3DX12_DESCRIPTOR_RANGE BaseDirectX::descRangeCRV;
+//CD3DX12_DESCRIPTOR_RANGE BaseDirectX::descRangeSRV;
+//CD3DX12_ROOT_PARAMETER BaseDirectX::rootparam[2];
+//ComPtr<ID3D12PipelineState> BaseDirectX::pipelinestate;
+//ComPtr<ID3D12RootSignature> BaseDirectX::rootsignature;
+////const int BaseDirectX::ObjectNum;
+//const int BaseDirectX::TexBufferNum;
+//D3D12_CPU_DESCRIPTOR_HANDLE BaseDirectX::cpuDescHandleSRV[TexBufferNum];
+//D3D12_GPU_DESCRIPTOR_HANDLE BaseDirectX::gpuDescHandleSRV[TexBufferNum];
+////テクスチャサンプラー
+//D3D12_STATIC_SAMPLER_DESC BaseDirectX::samplerDesc;
+//ComPtr<ID3D12DescriptorHeap> BaseDirectX::basicDescHeap;
+//float BaseDirectX::clearColor[4];
 //
-float BaseDirectX::angle = 0.0f;
-//XMFLOAT3 BaseDirectX::eye;
-//XMFLOAT3 BaseDirectX::target;
-//XMFLOAT3 BaseDirectX::up;
+////XMMATRIX BaseDirectX::matView;
+////XMMATRIX BaseDirectX::matBillboard = XMMatrixIdentity();
+////XMMATRIX BaseDirectX::matBillboardY = XMMatrixIdentity();
+////
+//float BaseDirectX::angle = 0.0f;
+////XMFLOAT3 BaseDirectX::eye;
+////XMFLOAT3 BaseDirectX::target;
+////XMFLOAT3 BaseDirectX::up;
 
+
+BaseDirectX::BaseDirectX()
+{
+	
+}
 
 BaseDirectX::~BaseDirectX()
 {
-	delete(tmpAdapter);
+	
 }
 
 void BaseDirectX::DebugLayerOn()
@@ -163,7 +168,7 @@ void BaseDirectX::Set()
 		dev->CreateRenderTargetView(backBuffers[i].Get(), nullptr, handle);
 	}
 	result = dev->CreateFence(fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
-
+	depthResDesc = CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_D32_FLOAT, window_width, window_height, 1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
 	result = dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE, &depthResDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &CD3DX12_CLEAR_VALUE(DXGI_FORMAT_D32_FLOAT, 1.0f, 0), IID_PPV_ARGS(&depthBuffer));
 	//result = dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(vert))
 	dsvHeapDesc.NumDescriptors = 1;
@@ -272,7 +277,7 @@ void BaseDirectX::Set()
 	CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc{};
 	rootSignatureDesc.Init_1_0(_countof(BaseDirectX::rootparam), BaseDirectX::rootparam, 1, &samplerDesc, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 	ComPtr<ID3DBlob> rootSigBlob;
-	BaseDirectX::result = D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &BaseDirectX::errorBlob);
+	BaseDirectX::result = D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
 	BaseDirectX::result = BaseDirectX::dev->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
 	/*if (FAILED(result))
 	{
@@ -296,7 +301,7 @@ void BaseDirectX::UpdateFront()
 	UINT bbIndex = BaseDirectX::swapchain->GetCurrentBackBufferIndex();
 	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(backBuffers[bbIndex].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvH = rtvHeaps->GetCPUDescriptorHandleForHeapStart();
-	rtvH.ptr += bbIndex * dev->GetDescriptorHandleIncrementSize(heapDesc.Type);
+	rtvH.ptr += static_cast<SIZE_T>(bbIndex) * static_cast<SIZE_T>(dev->GetDescriptorHandleIncrementSize(heapDesc.Type));
 	dsvH = dsvHeap->GetCPUDescriptorHandleForHeapStart();
 	BaseDirectX::cmdList->OMSetRenderTargets(1, &rtvH, false, &dsvH);
 	BaseDirectX::cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
@@ -354,7 +359,7 @@ void BaseDirectX::GetAdress()
 	{
 		cpuDescHandleSRV[i] = basicDescHeap->GetCPUDescriptorHandleForHeapStart();
 		gpuDescHandleSRV[i] = basicDescHeap->GetGPUDescriptorHandleForHeapStart();
-		cpuDescHandleSRV[i].ptr += i * dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-		gpuDescHandleSRV[i].ptr += i * dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+		cpuDescHandleSRV[i].ptr += static_cast<UINT64>(i) * static_cast<UINT64>(dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+		gpuDescHandleSRV[i].ptr += static_cast<UINT64>(i) * static_cast<UINT64>(dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
 	}
 }
