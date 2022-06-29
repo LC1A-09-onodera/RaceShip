@@ -70,9 +70,6 @@
     <Filter Include="ObjectParticle">
       <UniqueIdentifier>{2dadbc1d-a189-461b-ba54-2171fe6f6edf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Enemy">
-      <UniqueIdentifier>{c8b45bfe-6935-4a63-8945-348a1cff3460}</UniqueIdentifier>
-    </Filter>
     <Filter Include="WaterFace">
       <UniqueIdentifier>{d6a1824b-bac7-4497-a1df-f5f0e63fd461}</UniqueIdentifier>
     </Filter>
@@ -198,9 +195,6 @@
     <ClInclude Include="3DObjectParticle\3DObjectParticle.h">
       <Filter>ObjectParticle</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy\selingEnemy.h">
-      <Filter>Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="Rewired\Rewired.h">
       <Filter>BaseDirectx</Filter>
     </ClInclude>
@@ -325,9 +319,6 @@
     </ClCompile>
     <ClCompile Include="3DObjectParticle\3DObjectParitcle.cpp">
       <Filter>ObjectParticle</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemy\selingEnemy.cpp">
-      <Filter>Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Rewired\Rewired.cpp">
       <Filter>BaseDirectx</Filter>

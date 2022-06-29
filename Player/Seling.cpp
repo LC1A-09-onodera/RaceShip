@@ -8,13 +8,9 @@ void Seling::ForceUpdate()
 {
 	if (!isMoveForce) return;
 
-	subForce.x = -(addForce.x / 50);
-	subForce.y = -(addForce.y / 50);
-	subForce.z = -(addForce.z / 50);
-
-	addForce.x += subForce.x;
-	addForce.y += subForce.y;
-	addForce.z += subForce.z;
+	addForce.x += -(addForce.x / subForce);
+	addForce.y += -(addForce.y / subForce);
+	addForce.z += -(addForce.z / subForce);
 
 	if (Lenght(addForce) < 0.05f)
 	{
@@ -26,18 +22,12 @@ void Seling::ForceUpdate()
 void Seling::LoadModel(BaseDirectX& baseDirectX)
 {
 	seling.CreateModel(baseDirectX, "Triangle", ShaderManager::playerShader, false);
-	shotModel.CreateModel(baseDirectX, "maru", ShaderManager::playerShader, false);
-	shieldModel.CreateModel(baseDirectX, "shield", ShaderManager::shieldShader, false);
-	shieldModel.each.scale = { 2.0f, 2.0f, 1.0f };
 	Init();
 }
 
 void Seling::Init()
 {
-	subForce = { 0.01f, 0.01f, 0.01f };
-	maxForce = { 0.7f, 0.7f, 0.7f };
 	frontDirection = { 0, 0 ,1.0f };
-	isShield = false;
 	addForce = { 0, 0 ,0 };
 }
 
@@ -72,61 +62,17 @@ void Seling::Draw(BaseDirectX& baseDirectX, bool isRCamera)
 		seling.Update(baseDirectX ,&seling.each, isRCamera);
 		Draw3DObject(baseDirectX, seling);
 	}
-
-	if (isShot)
-	{
-		shotModel.each.position = ConvertXMFLOAT3toXMVECTOR(shotPos);
-		shotModel.Update(baseDirectX ,&shotModel.each, isRCamera);
-		Draw3DObject(baseDirectX, shotModel);
-	}
-
-	if (isShield)
-	{
-		shieldModel.each.position = ConvertXMFLOAT3toXMVECTOR(shieldPos);
-		shieldModel.Update(baseDirectX ,&shieldModel.each, isRCamera);
-		Draw3DObject(baseDirectX, shieldModel);
-	}
 	//enemy.Draw();
 }
 
 void Seling::AddForce(XMFLOAT3& force)
 {
-	if (this->addForce.x < maxForce.x && this->addForce.x > -maxForce.x)
-	{
-		this->addForce.x = this->addForce.x + force.x;
-		if (addForce.x > MaxForce)
-		{
-			addForce.x = MaxForce;
-		}
-		else if (addForce.x < -MaxForce)
-		{
-			addForce.x = -MaxForce;
-		}
-	}
-	if (this->addForce.y < maxForce.y && this->addForce.y > -maxForce.y)
-	{
-		this->addForce.y = this->addForce.y + force.y;
-		if (addForce.y > MaxForce)
-		{
-			addForce.y = MaxForce;
-		}
-		else if (addForce.y < -MaxForce)
-		{
-			addForce.y = -MaxForce;
-		}
-	}
-	if (this->addForce.z < maxForce.z && this->addForce.z > -maxForce.z)
-	{
-		this->addForce.z = this->addForce.z + force.z;
-		if (addForce.z > MaxForce)
-		{
-			addForce.z = MaxForce;
-		}
-		else if (addForce.z < -MaxForce)
-		{
-			addForce.z = -MaxForce;
-		}
-	}
+	addForce.x = addForce.x + force.x;
+	addForce.y = addForce.y + force.y;
+	addForce.z = addForce.z + force.z;
+	addForce.x = ShlomonMath::Clamp(addForce.x, -maxForce.x, maxForce.x);
+	addForce.y = ShlomonMath::Clamp(addForce.y, -maxForce.y, maxForce.y);
+	addForce.z = ShlomonMath::Clamp(addForce.z, -maxForce.z, maxForce.z);
 	isMoveForce = true;
 }
 
@@ -141,12 +87,13 @@ void Seling::Move()
 {
 	if (VoiceReciver::GetRight() || Input::KeyTrigger(DIK_D))
 	{
-		angle += addShieldRotaion;
+		angle += addSelingAngle;
 	}
 	if (VoiceReciver::GetLeft() || Input::KeyTrigger(DIK_A))
 	{
-		angle -= addShieldRotaion;
+		angle -= addSelingAngle;
 	}
+
 	frontDirection = { ShlomonMath::Sin(angle), 0, ShlomonMath::Cos(angle) };
 
 	if (VoiceReciver::GetFront() || Input::Key(DIK_W))
@@ -157,94 +104,11 @@ void Seling::Move()
 	{
 		AddForce(XMFLOAT3(frontDirection.x * -addForcePower, frontDirection.y * -addForcePower, frontDirection.z * -addForcePower));
 	}
+
 	VoiceReciver::SetRight(false);
 	VoiceReciver::SetLeft(false);
 	VoiceReciver::SetFront(false);
 	VoiceReciver::SetBack(false);
-}
-
-void Seling::ShotInit()
-{
-	shotPos = ConvertXMVECTORtoXMFLOAT3(seling.each.position);
-	isShot = true;
-}
-
-void Seling::ShotUpdate()
-{
-	shotPos.z += 0.1f;
-}
-
-void Seling::ShotInitAndUpdate()
-{
-	if (Input::Key(DIK_R))
-	{
-		ShotInit();
-	}
-	if (VoiceReciver::GetIsShot())
-	{
-		ShotInit();
-		VoiceReciver::SetIsShot(false);
-	}
-	if (isShot)
-	{
-		ShotUpdate();
-	}
-}
-
-void Seling::ShieldInit()
-{
-	isShield = true;
-	shieldTime = shieldMaxTime;
-	shieldModel.each.scale = { 0.01f, 0.01f, 0.01f };
-	scaleStart = { 0.02f, 0.02f, 0.01f };
-	scaleEnd = { 2.0f, 2.0f, 1.0f };
-	easeTime = 0.0f;
-}
-
-void Seling::ShieldUpdate()
-{
-	XMFLOAT3 pos;
-	pos = ConvertXMVECTORtoXMFLOAT3(seling.each.position);
-	shieldModel.each.rotation.y = angle + 180;
-	XMFLOAT3 addPos;
-	addPos = { frontDirection.x * shieldR, 0, frontDirection.z * shieldR };
-	pos = pos + addPos;
-	shieldPos = pos;
-	shieldTime--;
-	easeTime += 0.05f;
-	if (easeTime <= 1.0f)
-	{
-		shieldModel.each.scale = ShlomonMath::EaseInQuad(scaleStart, scaleEnd, easeTime);
-	}
-	else
-	{
-		shieldModel.each.scale = ShlomonMath::EaseInQuad(scaleStart, scaleEnd, 1.0f);
-	}
-	if (shieldTime <= 0)
-	{
-		isShield = false;
-	}
-}
-
-void Seling::ShieldInitAndUpdate()
-{
-	/*if (playerShieldKey.GetKeyDown())
-	{
-		ShieldInit();
-	}*/
-	if (Input::Key(DIK_R))
-	{
-		ShieldInit();
-	}
-	if (VoiceReciver::GetWall())
-	{
-		ShieldInit();
-		VoiceReciver::SetWall(false);
-	}
-	if (isShield)
-	{
-		ShieldUpdate();
-	}
 }
 
 void Seling::HitWall()
@@ -283,116 +147,4 @@ void Seling::HitGoal()
 			isGoal = true;
 		}
 	}
-}
-
-bool ShieldModel::InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& shader)
-{
-	HRESULT result = S_FALSE;
-	ComPtr<ID3DBlob> errorBlob; // エラーオブジェクト
-
-	if (shader.vsBlob == nullptr)
-	{
-		assert(0);
-	}
-	if (shader.psBlob == nullptr)
-	{
-		assert(0);
-	}
-
-	// 頂点レイアウト
-	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		{
-			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,D3D12_APPEND_ALIGNED_ELEMENT,D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{
-			"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,D3D12_APPEND_ALIGNED_ELEMENT,D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{
-			"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,D3D12_APPEND_ALIGNED_ELEMENT,D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-	};
-
-	// グラフィックスパイプラインの流れを設定
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline{};
-	gpipeline.VS = CD3DX12_SHADER_BYTECODE(shader.vsBlob.Get());
-	if (shader.gsBlob != nullptr)
-	{
-		gpipeline.GS = CD3DX12_SHADER_BYTECODE(shader.gsBlob.Get());
-	}
-	gpipeline.PS = CD3DX12_SHADER_BYTECODE(shader.psBlob.Get());
-
-	// サンプルマスク
-	gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
-	// ラスタライザステート
-	gpipeline.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	// デプスステンシルステート
-	gpipeline.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-
-	// レンダーターゲットのブレンド設定
-	D3D12_RENDER_TARGET_BLEND_DESC blenddesc{};
-	blenddesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;	// RBGA全てのチャンネルを描画
-	blenddesc.BlendEnable = true;
-
-	blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
-	blenddesc.SrcBlend = D3D12_BLEND_ONE;
-	blenddesc.DestBlend = D3D12_BLEND_ONE;
-
-	blenddesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blenddesc.SrcBlendAlpha = D3D12_BLEND_ONE;
-	blenddesc.DestBlendAlpha = D3D12_BLEND_ZERO;
-
-	// ブレンドステートの設定
-	gpipeline.BlendState.RenderTarget[0] = blenddesc;
-
-	// 深度バッファのフォーマット
-	gpipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
-
-	// 頂点レイアウトの設定
-	gpipeline.InputLayout.pInputElementDescs = inputLayout;
-	gpipeline.InputLayout.NumElements = _countof(inputLayout);
-
-	// 図形の形状設定（三角形）
-	gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-
-	gpipeline.NumRenderTargets = 1;	// 描画対象は1つ
-	gpipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
-	gpipeline.SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
-
-	// デスクリプタレンジ
-	CD3DX12_DESCRIPTOR_RANGE descRangeSRV;
-	descRangeSRV.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0); // t0 レジスタ
-
-	// ルートパラメータ
-	//CD3DX12_ROOT_PARAMETER rootparams[3];
-	CD3DX12_ROOT_PARAMETER rootparams[4];
-	rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-	rootparams[1].InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);
-	rootparams[2].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
-	rootparams[3].InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_ALL);
-	// スタティックサンプラー
-	CD3DX12_STATIC_SAMPLER_DESC samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0);
-
-	// ルートシグネチャの設定
-	CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc;
-	rootSignatureDesc.Init_1_0(_countof(rootparams), rootparams, 1, &samplerDesc, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-
-	ComPtr<ID3DBlob> rootSigBlob;
-	// バージョン自動判定のシリアライズ
-	result = D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
-	// ルートシグネチャの生成
-	result = baseDirectX.dev->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
-	if (FAILED(result)) {
-		return result;
-	}
-
-	gpipeline.pRootSignature = rootsignature.Get();
-
-	// グラフィックスパイプラインの生成-------------------------
-	result = baseDirectX.dev->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelinestate));
-
-	if (FAILED(result)) {
-		return result;
-	}
-
-	return true;
 }

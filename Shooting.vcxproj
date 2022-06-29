@@ -172,7 +172,6 @@
     <ClInclude Include="BaseDirectX\ResouceBarrier.h" />
     <ClInclude Include="BaseDirectX\viewport.h" />
     <ClInclude Include="Camera\Camera.h" />
-    <ClInclude Include="Enemy\selingEnemy.h" />
     <ClInclude Include="FbxLoader\FbxLoader.h" />
     <ClInclude Include="FBXModel\FBXModel.h" />
     <ClInclude Include="FBXObject\FBXObject.h" />
@@ -218,7 +217,6 @@
     <ClCompile Include="BaseDirectX\GameScene.cpp" />
     <ClCompile Include="BaseDirectX\Input.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
-    <ClCompile Include="Enemy\selingEnemy.cpp" />
     <ClCompile Include="FbxLoader\FbxLoader.cpp" />
     <ClCompile Include="FBXModel\FBXModel.cpp" />
     <ClCompile Include="FBXObject\FBXObject.cpp" />

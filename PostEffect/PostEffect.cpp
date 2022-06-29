@@ -310,10 +310,10 @@ void PostEffect::CalcWeightGaussian(float* weightsTbl, int sizeOfWeightsTbl, flo
 
 void PostEffects::Init(BaseDirectX &baseDirectX)
 {
-	postWater.Initialize(ShaderManager::postWater);
-	postBlur.Initialize(ShaderManager::postBlur);
-	postMosaic.Initialize(ShaderManager::postMosaic);
-	postNormal.Initialize(ShaderManager::postNormal);
+	postWater.Initialize(ShaderManager::postWater, baseDirectX);
+	postBlur.Initialize(ShaderManager::postBlur, baseDirectX);
+	postMosaic.Initialize(ShaderManager::postMosaic, baseDirectX);
+	postNormal.Initialize(ShaderManager::postNormal, baseDirectX);
 }
 
 void PostEffects::PreDraw(BaseDirectX& baseDirectX)
@@ -347,23 +347,28 @@ void PostEffects::Draw(BaseDirectX& baseDirectX)
 	if (type == PostEffectType::Normal)
 	{
 		postNormal.Draw(baseDirectX);
+		postNormal.PostDraw(baseDirectX);
 	}
 	else if (type == PostEffectType::Water)
 	{
 		postWater.Draw(baseDirectX);
+		postWater.PostDraw(baseDirectX);
 	}
 	else if (type == PostEffectType::Mosaic)
 	{
-		postMosaic.Draw();
+		postMosaic.Draw(baseDirectX);
+		postMosaic.PostDraw(baseDirectX);
 	}
 	else if (type == PostEffectType::Blur)
 	{
 
 		postBlur.Draw(baseDirectX);
+		postBlur.PostDraw(baseDirectX);
 	}
 	else
 	{
 		postNormal.Draw(baseDirectX);
+		postNormal.PostDraw(baseDirectX);
 	}
 }
 

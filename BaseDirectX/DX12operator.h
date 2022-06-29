@@ -299,6 +299,31 @@ namespace ShlomonMath
 		XMFLOAT3 cross = Cross(toTarget, speed);
 		return cross;
 	}
+	static int Clamp(const int value, const int min, const int max)
+	{
+		if (min > max) return -1;
+		if (value < min) return min;
+		else if (value > max) return max;
+		else return value;
+	}
+	static float Clamp(const float value, const float min, const float max)
+	{
+		if (min > max) return -1;
+		if (value < min) return min;
+		else if (value > max) return max;
+		else return value;
+	}
+	static XMFLOAT3 Clamp(const XMFLOAT3& value, const XMFLOAT3& min, const XMFLOAT3& max)
+	{
+		if (min.x > max.x) return XMFLOAT3();
+		if (min.y > max.y) return XMFLOAT3();
+		if (min.z > max.z) return XMFLOAT3();
+		XMFLOAT3 result;
+		result.x = Clamp(value.x, min.x, max.x);
+		result.y = Clamp(value.y, min.y, max.y);
+		result.z = Clamp(value.z, min.z, max.z);
+		return result;
+	}
 }
 
 static float Lenght(XMVECTOR position1, XMVECTOR position2)

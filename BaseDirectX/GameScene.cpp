@@ -21,7 +21,7 @@ GameScene::GameScene()
 GameScene::~GameScene()
 {
 	VoiceReciver::EndRecive();
-	
+
 }
 
 void GameScene::SceneManageUpdateAndDraw()
@@ -142,7 +142,7 @@ void GameScene::GameUpdate()
 	Cameras::rCamera.eye.y = Cameras::camera.eye.y;
 	Cameras::rCamera.eye.z = Cameras::camera.eye.z;
 	Cameras::rCamera.target = Cameras::camera.target;
-	Cameras::rCamera.up = {0, 1, 0};
+	Cameras::rCamera.up = { 0, 1, 0 };
 	Cameras::rCamera.Update();
 
 	seling.Update();
@@ -153,6 +153,11 @@ void GameScene::GameUpdate()
 	if (jumpKey.GetKeyDown())
 	{
 		int a = 0;
+	}
+
+	if (seling.GetIsGoal())
+	{
+		SceneNum = RESULT;
 	}
 
 	VoiceReciver::VoiceUDPUpdate(baseDirectX);
@@ -186,26 +191,23 @@ void GameScene::EndUpdate()
 
 void GameScene::PreWaterFaceDraw()
 {
+	bool isRDraw;
 	if (Imgui::effectType < 0)
 	{
-		light->SetLightDir(XMFLOAT3(Cameras::rCamera.GetTargetDirection()));
-		LightUpdate();
-		rSeling.Draw(baseDirectX, true);
-		rWorld.Update(baseDirectX , &rWorld.each, true);
-		Draw3DObject(baseDirectX, rWorld);
-		StageObjects::Draw(baseDirectX, true);
-		ObjectParticles::Draw(baseDirectX);
+		isRDraw = true;
 	}
 	else
 	{
-		light->SetLightDir(XMFLOAT3(Cameras::rCamera.GetTargetDirection()));
-		LightUpdate();
-		rSeling.Draw(baseDirectX, false);
-		rWorld.Update(baseDirectX ,&rWorld.each, false);
-		Draw3DObject(baseDirectX, rWorld);
-		StageObjects::Draw(baseDirectX, false);
-		ObjectParticles::Draw(baseDirectX);
+		isRDraw = false;
 	}
+	light->SetLightDir(XMFLOAT3(Cameras::rCamera.GetTargetDirection()));
+	LightUpdate();
+	rSeling.Draw(baseDirectX, isRDraw);
+	rWorld.Update(baseDirectX, &rWorld.each, isRDraw);
+	Draw3DObject(baseDirectX, rWorld);
+	StageObjects::Draw(baseDirectX, isRDraw);
+	//ObjectParticles::Draw(baseDirectX);
+
 }
 
 void GameScene::PostWaterFaceDraw()
@@ -213,10 +215,10 @@ void GameScene::PostWaterFaceDraw()
 	light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
 	LightUpdate();
 	seling.Draw(baseDirectX);
-	world.Update(baseDirectX , &world.each, false);
-	StageObjects::Draw(baseDirectX,false);
-	Draw3DObject(baseDirectX,world);
-	ObjectParticles::Draw(baseDirectX);
+	world.Update(baseDirectX, &world.each, false);
+	Draw3DObject(baseDirectX, world);
+	StageObjects::Draw(baseDirectX, false);
+	//ObjectParticles::Draw(baseDirectX);
 }
 
 void GameScene::TitleDraw()
@@ -239,7 +241,6 @@ void GameScene::SelectDraw()
 
 	//PostEffectのDraw
 	PostEffects::Draw(baseDirectX);
-	PostEffects::PostDraw(baseDirectX);
 
 	Imgui::DrawImGui(baseDirectX);
 	//描画コマンドここまで
@@ -253,72 +254,46 @@ void GameScene::GameDraw()
 
 	PreWaterFaceDraw();
 
-	BaseDirectX::UpdateFront();
-
-	//PostEffectのDraw
-	//PostEffects::Draw();
+	baseDirectX.UpdateFront();
 
 	PostWaterFaceDraw();
 
 	XMVECTOR sample = { 0, -2.0f, 0.0f, 1.0 };
+
+	PostEffect waterFaceTarget;
+	if (PostEffects::type == PostEffects::PostEffectType::Normal)
+	{
+		waterFaceTarget = PostEffects::postNormal;
+	}
+	else if (PostEffects::type == PostEffects::PostEffectType::Water)
+	{
+		waterFaceTarget = PostEffects::postWater;
+	}
+	else if (PostEffects::type == PostEffects::PostEffectType::Mosaic)
+	{
+		waterFaceTarget = PostEffects::postMosaic;
+	}
+	else if (PostEffects::type == PostEffects::PostEffectType::Blur)
+	{
+		waterFaceTarget = PostEffects::postBlur;
+	}
+	else
+	{
+		waterFaceTarget = PostEffects::postNormal;
+	}
+
 	if (Imgui::useWaterNum == 0)
 	{
-		PostEffect waterFaceTarget;
-		if (PostEffects::type == PostEffects::PostEffectType::Normal)
-		{
-			waterFaceTarget = PostEffects::postNormal;
-		}
-		else if (PostEffects::type == PostEffects::PostEffectType::Water)
-		{
-			waterFaceTarget = PostEffects::postWater;
-		}
-		else if (PostEffects::type == PostEffects::PostEffectType::Mosaic)
-		{
-			waterFaceTarget = PostEffects::postMosaic;
-		}
-		else if (PostEffects::type == PostEffects::PostEffectType::Blur)
-		{
-			waterFaceTarget = PostEffects::postBlur;
-		}
-		else
-		{
-			waterFaceTarget = PostEffects::postNormal;
-		}
-		waterFace.Draw(waterFaceTarget, sample/*seling.seling.each.position*/);
+		waterFace.Draw(baseDirectX, waterFaceTarget, sample);
 	}
 	else if (Imgui::useWaterNum == 1)
 	{
-		PostEffect waterFaceTarget;
-		if (PostEffects::type == PostEffects::PostEffectType::Normal)
-		{
-			waterFaceTarget = PostEffects::postNormal;
-		}
-		else if (PostEffects::type == PostEffects::PostEffectType::Water)
-		{
-			waterFaceTarget = PostEffects::postWater;
-		}
-		else if (PostEffects::type == PostEffects::PostEffectType::Mosaic)
-		{
-			waterFaceTarget = PostEffects::postMosaic;
-		}
-		else if (PostEffects::type == PostEffects::PostEffectType::Blur)
-		{
-			waterFaceTarget = PostEffects::postBlur;
-		}
-		else
-		{
-			waterFaceTarget = PostEffects::postNormal;
-		}
-		normalWater.Draw(waterFaceTarget, sample/*seling.seling.each.position*/);
+		normalWater.Draw(baseDirectX, waterFaceTarget, sample);
 	}
-	if (seling.GetIsGoal())
-	{
-		SceneNum = END;
-	}
-	PostEffects::Draw();
-	PostEffects::PostDraw();
 
-	Imgui::DrawImGui();
+	PostEffects::Draw(baseDirectX);
+
+	Imgui::DrawImGui(baseDirectX);
 	//描画コマンドここまで
 	baseDirectX.UpdateBack();
 }
@@ -331,7 +306,6 @@ void GameScene::ResultDraw()
 	baseDirectX.UpdateFront();
 	//PostEffectのDraw
 	PostEffects::Draw(baseDirectX);
-	PostEffects::PostDraw(baseDirectX);
 	Imgui::DrawImGui(baseDirectX);
 
 	//描画コマンドここまで
