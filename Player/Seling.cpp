@@ -42,12 +42,6 @@ void Seling::Update()
 	HitGoal();
 
 	ForceAttach();
-
-	//ShotInitAndUpdate();
-
-	//ShieldInitAndUpdate();
-
-	//enemy.Update(shieldPos, isShield);
 }
 
 void Seling::Draw(BaseDirectX& baseDirectX, bool isRCamera)
@@ -100,6 +94,8 @@ void Seling::Move()
 	VoiceReciver::SetLeft(false);
 	VoiceReciver::SetFront(false);
 	VoiceReciver::SetBack(false);
+
+	seling.each.rotation = ShlomonMath::EaseInQuad(seling.each.rotation, XMFLOAT3(seling.each.rotation.x, seling.each.rotation.y, angle), 0.3f);
 }
 
 void Seling::HitWall()
@@ -133,7 +129,7 @@ void Seling::HitGoal()
 {
 	for (auto itr = StageObjects::goals.goalsPos.begin(); itr != StageObjects::goals.goalsPos.end(); ++itr)
 	{
-		if (Lenght(seling.each.position, itr->position) <= 3.0f)
+		if (Lenght(seling.each.position, itr->position) <= 2.0f)
 		{
 			isGoal = true;
 		}

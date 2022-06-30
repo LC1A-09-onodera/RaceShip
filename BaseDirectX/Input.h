@@ -71,7 +71,6 @@ enum class KeyCode
 	KeyCodeMax = 45,
 
 };
-static const char KeyCodeString[] = "A\0B\0C\0D\0E\0F\0G\0H\0I\0J\0K\0L\0M\0N\0O\0P\0Q\0R\0S\0T\0U\0V\0W\0X\0Y\0Z\0Key1\0Key2\0Key3\0Key4\0Key5\0Key6\0Key7\0Key8\0Key9\0Key0\0Tab\0Space\0LShift\0RShift\0Up\0Down\0Right\0Left\0\0";
 
 enum class MouseButton
 {
@@ -79,7 +78,6 @@ enum class MouseButton
 	LBUTTON,
 	RBUTTON,
 };
-static const char MouseCode[] = "LButton\0RButton\0\0";
 
 class Input
 {

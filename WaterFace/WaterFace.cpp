@@ -282,14 +282,6 @@ void WaterFaceModel::InitializeGraphicsPipeline(BaseDirectX &baseDirectX, HLSLSh
 	// グラフィックスパイプラインの流れを設定
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline{};
 	gpipeline.VS = CD3DX12_SHADER_BYTECODE(shader.vsBlob.Get());
-	/*if (shader.hsBlob != nullptr)
-	{
-		gpipeline.HS = CD3DX12_SHADER_BYTECODE(shader.hsBlob.Get());
-	}
-	if (shader.dsBlob != nullptr)
-	{
-		gpipeline.DS = CD3DX12_SHADER_BYTECODE(shader.dsBlob.Get());
-	}*/
 	if (shader.gsBlob != nullptr)
 	{
 		gpipeline.GS = CD3DX12_SHADER_BYTECODE(shader.gsBlob.Get());
@@ -300,8 +292,6 @@ void WaterFaceModel::InitializeGraphicsPipeline(BaseDirectX &baseDirectX, HLSLSh
 	gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
 	// ラスタライザステート
 	gpipeline.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	//gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-	//gpipeline.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
 	// デプスステンシルステート
 	gpipeline.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 
@@ -339,12 +329,6 @@ void WaterFaceModel::InitializeGraphicsPipeline(BaseDirectX &baseDirectX, HLSLSh
 	descRangeSRV.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0); // t0 レジスタ
 
 	// ルートパラメータ
-	//CD3DX12_ROOT_PARAMETER rootparams[3];
-	/*CD3DX12_ROOT_PARAMETER rootparams[3];
-	rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-	rootparams[1].InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);
-	rootparams[2].InitAsDescriptorTable(1, &postEffect.descRangeSRV[0], D3D12_SHADER_VISIBILITY_ALL);
-	//rootparams[3].InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_ALL);*/
 	CD3DX12_ROOT_PARAMETER rootparams[4];
 	rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 	rootparams[1].InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);

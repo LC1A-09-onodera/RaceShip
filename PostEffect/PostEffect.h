@@ -11,19 +11,10 @@ class PostEffectConstBuffer : public ConstBufferData
 
 class PostEffect : public Sprite
 {
-public:
-	PostEffect();
-	void Initialize(HLSLShader &shader, BaseDirectX& baseDirectX);
-	void Draw(BaseDirectX& baseDirectX);
-	void PreDraw(BaseDirectX& baseDirectX);
-	void PostDraw(BaseDirectX& baseDirectX);
-	void CreateGraphicsPipelineState(HLSLShader &shader, BaseDirectX& baseDirectX);
-
-	void CalcWeightGaussian(float* weightsTbl, int sizeOfWeightsTbl, float sigma);
 	XMFLOAT3 pos = {0, 0, 0};
 	XMFLOAT3 scale = {1.0f, 1.0f, 1.0f};
 	XMFLOAT3 rotation = { 0, 0, 0 };
-	RenderTarget renderTarget;
+	
 	static const int texNum = 1;
 	static UINT frameTime;
 	static float effectType;
@@ -39,6 +30,15 @@ public:
 
 	static const int NumWeight = 8;
 	float weights[NumWeight] = {};
+public:
+	PostEffect();
+	void Initialize(HLSLShader &shader, BaseDirectX& baseDirectX);
+	void Draw(BaseDirectX& baseDirectX);
+	void PreDraw(BaseDirectX& baseDirectX);
+	void PostDraw(BaseDirectX& baseDirectX);
+	void CreateGraphicsPipelineState(HLSLShader &shader, BaseDirectX& baseDirectX);
+	void CalcWeightGaussian(float* weightsTbl, int sizeOfWeightsTbl, float sigma);
+	RenderTarget renderTarget;
 };
 
 

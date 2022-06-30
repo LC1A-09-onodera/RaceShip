@@ -2,15 +2,8 @@
 #define DIRECTINPUT_VERSION 0x0800 //DirectInputのバージョン指定
 #include <dinput.h>
 #include <memory>
-//#include "./WindowsAPI/WinAPI.h"
-
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
-// CheckHitKeyAll で調べる入力タイプ
-//#define CHECKINPUT_KEY   (0x01) //キー入力を調べる
-//#define CHECKINPUT_PAD   (0x02) //パッド入力を調べる
-//#define CHECKINPUT_MOUSE (0x04) //マウスボタン入力を調べる
-//#define CHECKINPUT_ALL   (CHECKINPUT_KEY | CHECKINPUT_PAD | CHECKINPUT_MOUSE) //すべての入力を調べる
 
 enum class PadKeyCode
 {
@@ -31,7 +24,6 @@ enum class PadKeyCode
 	Button10,
 	ButtonKindMax,
 };
-static const char PadKeyCodeString[] = "Up\0Down\0Left\0Right\0Button01\0Button02\0Button03\0Button04\0LB\0RB\0Slect\0Pouse\0Button09\0Button10\0\0";
 
 class DirectInput final
 {
@@ -91,7 +83,6 @@ public:
 private: // 静的メンバ変数
 	//static BYTE key[256];
 	static IDirectInput8* dinput;
-	//static IDirectInputDevice8 *devkeyborad;
 
 	static ButtonState g_ButtonStates[ButtonKind::ButtonKindMax];
 	static LPDIRECTINPUT8 g_InputInterface;							//!< DIRECTINPUT8のポインタ
@@ -100,16 +91,15 @@ private: // 静的メンバ変数
 	static DIJOYSTATE pad_data;
 
 	static const int unresponsive_range = 200;
+	
+	static BOOL CALLBACK DeviceFindCallBack(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef);
+	static BOOL StartGamePadControl();
+	static BOOL SetUpGamePadProperty(LPDIRECTINPUTDEVICE8 device);
+	static BOOL SetUpCooperativeLevel(LPDIRECTINPUTDEVICE8 device);
 
 public: // メンバ関数
 	// 入力デバイスの初期化
 	int InputInit(HINSTANCE hInstance, HWND hWnd);
-	// 特定のキーボードの入力状態の取得
-	//bool CheckHitKey(int keyCode);
-	//// 全ての入力デバイスの状態の取得
-	//int CheckHitKeyAll(int CheckType = CHECKINPUT_ALL);
-	//// キーボードデバイスの入力状態の取得
-	//int GetHitKeyStateAll(char *KeyStateArray);
 
 	/**
 	* @brief Input機能終了関数@n
@@ -154,11 +144,6 @@ public: // メンバ関数
 	// ゲームパッドの更新
 	void UpdateGamePad();
 
-	static BOOL CALLBACK DeviceFindCallBack(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef);
-	static BOOL StartGamePadControl();
-	static BOOL SetUpGamePadProperty(LPDIRECTINPUTDEVICE8 device);
-	static BOOL SetUpCooperativeLevel(LPDIRECTINPUTDEVICE8 device);
-
 	static float leftStickX();
 	static float leftStickY();
 
@@ -166,10 +151,6 @@ public: // メンバ関数
 	static float rightStickY();
 
 	static float rightTriggerZ();
-
-private:
-	// キーボードデバイスの更新
-	//int KeyInputUpdate();
 
 public:
 	static float getLeftX();

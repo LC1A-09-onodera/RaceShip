@@ -15,16 +15,6 @@ namespace ShlomonMath
 	{
 		return static_cast<float>(sin(angle * PI / 180.0f));
 	}
-	static uint64_t xor64() {
-		static uint64_t x = 88172645463325252ULL;
-		x = x ^ (x << 7);
-		return x = x ^ (x >> 9);
-	}
-	static uint32_t xor () {
-		static uint32_t y = 2463534242;
-		y = y ^ (y << 13); y = y ^ (y >> 17);
-		return y = y ^ (y << 5);
-	}
 }
 
 static const XMFLOAT3 operator +(const XMFLOAT3 v1, const XMFLOAT3 v2)
@@ -161,15 +151,6 @@ static const XMFLOAT3 operator *(float s, const XMFLOAT3& v1)
 	v.z = v1.z * s;
 	return v;
 }
-
-//static XMVECTOR operator + (const XMVECTOR v1, const XMFLOAT3& v2)
-//{
-//	XMVECTOR v;
-//	v.m128_f32[0] += v2.x;
-//	v.m128_f32[1] += v2.y;
-//	v.m128_f32[2] += v2.z;
-//	return v;
-//}
 
 static XMVECTOR operator - (const XMVECTOR v1, const XMFLOAT3& v2)
 {

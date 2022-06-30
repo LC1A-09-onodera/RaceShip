@@ -67,17 +67,11 @@
     <Filter Include="Udp">
       <UniqueIdentifier>{b2353c99-8890-443e-8f79-5250e75bba10}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ObjectParticle">
-      <UniqueIdentifier>{2dadbc1d-a189-461b-ba54-2171fe6f6edf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="WaterFace">
       <UniqueIdentifier>{d6a1824b-bac7-4497-a1df-f5f0e63fd461}</UniqueIdentifier>
     </Filter>
     <Filter Include="LoadStage">
       <UniqueIdentifier>{cd77b0a7-98ac-47a4-a623-bcf63bd071ed}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="LoadStageUDP">
-      <UniqueIdentifier>{48a4bf11-25eb-4d7d-a45b-622bab829178}</UniqueIdentifier>
     </Filter>
     <Filter Include="Player">
       <UniqueIdentifier>{74a57aab-5887-47e5-9222-e0f14eb613e1}</UniqueIdentifier>
@@ -192,9 +186,6 @@
     <ClInclude Include="IpAddress\IpAddress.h">
       <Filter>Udp</Filter>
     </ClInclude>
-    <ClInclude Include="3DObjectParticle\3DObjectParticle.h">
-      <Filter>ObjectParticle</Filter>
-    </ClInclude>
     <ClInclude Include="Rewired\Rewired.h">
       <Filter>BaseDirectx</Filter>
     </ClInclude>
@@ -206,9 +197,6 @@
     </ClInclude>
     <ClInclude Include="LoadStage\StageObject.h">
       <Filter>LoadStage</Filter>
-    </ClInclude>
-    <ClInclude Include="LoadStage\LoadStageUDP.h">
-      <Filter>LoadStageUDP</Filter>
     </ClInclude>
     <ClInclude Include="Player\Seling.h">
       <Filter>Player</Filter>
@@ -317,9 +305,6 @@
     <ClCompile Include="IpAddress\IpAddress.cpp">
       <Filter>Udp</Filter>
     </ClCompile>
-    <ClCompile Include="3DObjectParticle\3DObjectParitcle.cpp">
-      <Filter>ObjectParticle</Filter>
-    </ClCompile>
     <ClCompile Include="Rewired\Rewired.cpp">
       <Filter>BaseDirectx</Filter>
     </ClCompile>
@@ -331,9 +316,6 @@
     </ClCompile>
     <ClCompile Include="LoadStage\StageObject.cpp">
       <Filter>LoadStage</Filter>
-    </ClCompile>
-    <ClCompile Include="LoadStage\LoadStageUDP.cpp">
-      <Filter>LoadStageUDP</Filter>
     </ClCompile>
     <ClCompile Include="BaseDirectX\Input.cpp">
       <Filter>BaseDirectx</Filter>

@@ -265,14 +265,6 @@ bool Model::InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& sha
 	// グラフィックスパイプラインの流れを設定
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline{};
 	gpipeline.VS = CD3DX12_SHADER_BYTECODE(shader.vsBlob.Get());
-	/*if (shader.hsBlob != nullptr)
-	{
-		gpipeline.HS = CD3DX12_SHADER_BYTECODE(shader.hsBlob.Get());
-	}
-	if (shader.dsBlob != nullptr)
-	{
-		gpipeline.DS = CD3DX12_SHADER_BYTECODE(shader.dsBlob.Get());
-	}*/
 	if (shader.gsBlob != nullptr)
 	{
 		gpipeline.GS = CD3DX12_SHADER_BYTECODE(shader.gsBlob.Get());
@@ -283,8 +275,6 @@ bool Model::InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& sha
 	gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
 	// ラスタライザステート
 	gpipeline.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	//gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-	//gpipeline.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
 	// デプスステンシルステート
 	gpipeline.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 
@@ -311,7 +301,6 @@ bool Model::InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& sha
 
 	// 図形の形状設定（三角形）
 	gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	//gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
 	gpipeline.NumRenderTargets = 1;	// 描画対象は1つ
 	gpipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA

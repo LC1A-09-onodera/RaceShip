@@ -35,22 +35,11 @@ private:
 	void PreWaterFaceDraw();
 	void PostWaterFaceDraw();
 	int SceneNum = TITLE;
-
-public:
-	GameScene();
-	~GameScene();
-	//シーン切り替え
-	void SceneManageUpdateAndDraw();
-	//初期化
-	void Init();
-
-	void LightUpdate();
-
-public://シーンで使うもの
 	BaseDirectX baseDirectX;
+
 	int opAnimationTime;
 	const int MaxOPAnimationTime = 120;
-	
+
 	std::shared_ptr<Light> light;
 	PostEffect post;
 	float pointLightPos[3] = { 0, 1, 0 };
@@ -69,7 +58,7 @@ public://シーンで使うもの
 
 	PostEffect postWater;
 	PostEffect postMosaic;
-	Model sample;
+
 	EachInfo playerPos;
 	EachInfo rPlayerPos;
 
@@ -82,5 +71,16 @@ public://シーンで使うもの
 	Model rWorld;
 	Model skyDome;
 
-	Rewired::RewiredKeys jumpKey;
+public:
+	GameScene();
+	~GameScene();
+	//シーン切り替え
+	void SceneManageUpdateAndDraw();
+	//初期化
+	void Init();
+
+	void LightUpdate();
+
+public://シーンで使うもの
+	
 };

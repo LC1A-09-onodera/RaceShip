@@ -156,8 +156,6 @@ public:
 	Model() = default;
 
 	virtual ~Model();
-	//virtual bool Initialize();
-
 	static void SetLight(shared_ptr<Light> light);
 	Mesh mesh;
 	D3D12_CPU_DESCRIPTOR_HANDLE cpuDescHandleCBV;
@@ -168,7 +166,6 @@ public:
 	shared_ptr<BaseCollider> collider = nullptr;
 	//----基本いるもの-----------
 	float radi = 2.0f;
-	bool billboard = false;
 	//-----------------------
 	// シェーダリソースビューのハンドル(CPU)
 	CD3DX12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV;

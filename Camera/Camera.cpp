@@ -25,8 +25,8 @@ void Camera::CameraTargetRot()
 
 void Camera::Init(XMFLOAT3& eye, XMFLOAT3& target)
 {
-	eye = { 0.0f, 0.0f, -100.0f };
-	target = { 0.0f, 20.0f, 0.0f };
+	eye = eye;
+	target = target;
 	up = { 0.0f, 1.0f, 0.0f };
 
 	Update();

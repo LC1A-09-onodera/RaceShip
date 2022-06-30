@@ -2,7 +2,6 @@
 #include <iphlpapi.h>
 #include <fstream>
 #include "../imgui/ImguiControl.h"
-#include "../3DObjectParticle/3DObjectParticle.h"
 
 UDPClass VoiceReciver::udp;
 bool VoiceReciver::isShot;
@@ -44,7 +43,7 @@ void VoiceReciver::ReciveData(BaseDirectX &baseDirectX)
 	}
 	else if (text == "Explosion")
 	{
-		ObjectParticles::triangle.Init(baseDirectX, XMFLOAT3(0, 0, 0), 10, ObjectParticle3D::ParticleType::Exprotion);
+		
 	}
 	else if (text == "Shot")
 	{

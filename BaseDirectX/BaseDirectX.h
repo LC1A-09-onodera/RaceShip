@@ -45,28 +45,28 @@ public:
 	~BaseDirectX();
 	XMFLOAT4 backColor = {0.0f, 0.0f, 0.0f , 0.0f};
 	HRESULT result;
-	ComPtr<ID3D12Device> dev = nullptr;
-	ComPtr<IDXGIFactory6> dxgiFactory = nullptr;
-	ComPtr<IDXGISwapChain4> swapchain = nullptr;
-	ComPtr<ID3D12CommandAllocator> cmdAllocator = nullptr;
-	ComPtr<ID3D12GraphicsCommandList> cmdList = nullptr;
-	ComPtr<ID3D12CommandQueue> cmdQueue = nullptr;
-	ComPtr<ID3D12DescriptorHeap> rtvHeaps = nullptr;
+	ComPtr<ID3D12Device> dev;
+	ComPtr<IDXGIFactory6> dxgiFactory;
+	ComPtr<IDXGISwapChain4> swapchain;
+	ComPtr<ID3D12CommandAllocator> cmdAllocator;
+	ComPtr<ID3D12GraphicsCommandList> cmdList;
+	ComPtr<ID3D12CommandQueue> cmdQueue;
+	ComPtr<ID3D12DescriptorHeap> rtvHeaps;
 	vector<IDXGIAdapter1 *> adapters;
 	D3D_FEATURE_LEVEL levels[4] = {} ;
 	D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL();
 	IDXGIAdapter1 *tmpAdapter = nullptr;
 	D3D12_COMMAND_QUEUE_DESC cmdQueueDesc = D3D12_COMMAND_QUEUE_DESC();
 	DXGI_SWAP_CHAIN_DESC1 swapchainDesc = DXGI_SWAP_CHAIN_DESC1();
-	ComPtr<IDXGISwapChain1> swapchain1 = nullptr;
-	ComPtr<ID3D12Fence> fence = nullptr;
+	ComPtr<IDXGISwapChain1> swapchain1;
+	ComPtr<ID3D12Fence> fence;
 	UINT64 fenceVal = 0;
 	vector<ComPtr<ID3D12Resource>> backBuffers;
 	D3D12_DESCRIPTOR_HEAP_DESC heapDesc = D3D12_DESCRIPTOR_HEAP_DESC();
-	ComPtr<ID3D12Resource> depthBuffer = nullptr;
+	ComPtr<ID3D12Resource> depthBuffer;
 	CD3DX12_RESOURCE_DESC depthResDesc = CD3DX12_RESOURCE_DESC();
 	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = D3D12_DESCRIPTOR_HEAP_DESC();
-	ComPtr<ID3D12DescriptorHeap> dsvHeap = nullptr;
+	ComPtr<ID3D12DescriptorHeap> dsvHeap;
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = D3D12_DEPTH_STENCIL_VIEW_DESC();
 	//static const int ObjectNum = 200;
 	static const int TexBufferNum = 100;
@@ -76,21 +76,20 @@ public:
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline = D3D12_GRAPHICS_PIPELINE_STATE_DESC();
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipelineMeth = D3D12_GRAPHICS_PIPELINE_STATE_DESC();
 	D3D12_RENDER_TARGET_BLEND_DESC &blenddesc = D3D12_RENDER_TARGET_BLEND_DESC();
-	ComPtr<ID3DBlob> vsBlob = nullptr;
-	ComPtr<ID3DBlob> psBlob = nullptr;
-	ComPtr<ID3DBlob> errorBlob = nullptr;
+	ComPtr<ID3DBlob> vsBlob;
+	ComPtr<ID3DBlob> psBlob;
+	ComPtr<ID3DBlob> errorBlob;
 	// 頂点レイアウト
 	D3D12_INPUT_ELEMENT_DESC inputLayout[3];
 	CD3DX12_DESCRIPTOR_RANGE descRangeCRV = CD3DX12_DESCRIPTOR_RANGE();
 	CD3DX12_DESCRIPTOR_RANGE descRangeSRV = CD3DX12_DESCRIPTOR_RANGE();
 	CD3DX12_ROOT_PARAMETER rootparam[2];
-	ComPtr<ID3D12PipelineState> pipelinestate = nullptr;
-	ComPtr<ID3D12PipelineState> pipelinestateMeth = nullptr;
-	ComPtr<ID3D12RootSignature> rootsignature = nullptr;
+	ComPtr<ID3D12PipelineState> pipelinestate;
+	ComPtr<ID3D12PipelineState> pipelinestateMeth;
+	ComPtr<ID3D12RootSignature> rootsignature;
 	//テクスチャサンプラー
 	D3D12_STATIC_SAMPLER_DESC samplerDesc = D3D12_STATIC_SAMPLER_DESC();
 	//定数バッファデスクリプタヒープ
-	ComPtr<ID3D12DescriptorHeap> basicDescHeap = nullptr;
 	XMMATRIX matProjection = XMMatrixIdentity();
 	//ビュー行列の作成
 	//static XMMATRIX matView;

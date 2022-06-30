@@ -8,7 +8,6 @@
 #include "../imgui/ImguiControl.h"
 #include "../FBXObject/FBXObject.h"
 #include "../Shader/ShaderManager.h"
-#include "../3DObjectParticle/3DObjectParticle.h"
 #include "../Sound/Sound.h"
 #include "../LoadStage/LoadStage.h"
 #include "../LoadStage/StageObject.h"
@@ -21,7 +20,6 @@ GameScene::GameScene()
 GameScene::~GameScene()
 {
 	VoiceReciver::EndRecive();
-
 }
 
 void GameScene::SceneManageUpdateAndDraw()
@@ -91,12 +89,8 @@ void GameScene::Init()
 	Model::SetLight(light);
 	//ポストエフェクトの初期化
 	PostEffects::Init(baseDirectX);
-	//3Dオブジェクトのパーティクルロード
-	ObjectParticles::LoadModels(baseDirectX);
 	//Rewiredの要素初期化
 	Rewired::KeyCodeString::KeyCodeStringInit();
-	//ジャンプキーのリワイヤード決定
-	jumpKey.LoadKey("Resource/TextData/Rewired/RewiredTest.txt");
 	//ステージをテキストからロード
 	LoadStage::LoadStages("Resource/TextData/Stage/test.txt");
 
@@ -153,18 +147,12 @@ void GameScene::GameUpdate()
 	waterFace.Update();
 	normalWater.Update();
 
-	if (jumpKey.GetKeyDown())
-	{
-		int a = 0;
-	}
-
 	if (seling.GetIsGoal())
 	{
 		SceneNum = RESULT;
 	}
 
 	VoiceReciver::VoiceUDPUpdate(baseDirectX);
-	ObjectParticles::Update();
 	Sound::Updete(Imgui::volume);
 }
 
@@ -307,7 +295,6 @@ void GameScene::ResultDraw()
 {
 	//PostEffectのPreDraw
 	PostEffects::PreDraw(baseDirectX);
-	Draw3DObject(baseDirectX, sample);
 	baseDirectX.UpdateFront();
 	//PostEffectのDraw
 	PostEffects::Draw(baseDirectX);
@@ -325,7 +312,6 @@ void GameScene::EndDraw()
 {
 	//PostEffectのPreDraw
 	PostEffects::PreDraw(baseDirectX);
-	Draw3DObject(baseDirectX, sample);
 
 	baseDirectX.UpdateFront();
 	//PostEffectのDraw

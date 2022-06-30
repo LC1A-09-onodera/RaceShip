@@ -23,8 +23,6 @@ namespace Rewired
 		list<KeyCode> keys;
 		list<PadKeyCode> padKeys;
 	public:
-		void KeyBoradInit(int count, ...);
-		void PadInit(int count, ...);
 		bool GetKey();
 		bool GetKeyDown();
 		bool GetKeyUp();

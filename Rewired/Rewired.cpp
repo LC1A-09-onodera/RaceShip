@@ -6,34 +6,6 @@
 list<pair<string, KeyCode>> Rewired::KeyCodeString::keyboardKeys;
 list<pair<string, PadKeyCode>> Rewired::KeyCodeString::padKeys;
 
-void Rewired::RewiredKeys::KeyBoradInit(int count, ...)
-{
-	va_list ap;
-	va_start(ap, count);
-	KeyCode key;
-	for (int i = 0; i < count; i++)
-	{
-		key = va_arg(ap, KeyCode);
-		if (key <= KeyCode::CodeNone) continue;
-		keys.push_back(key);
-	}
-	va_end(ap);
-}
-
-void Rewired::RewiredKeys::PadInit(int count, ...)
-{
-	va_list ap;
-	va_start(ap, count);
-	PadKeyCode key;
-	for (int i = 0; i < count; i++)
-	{
-		key = va_arg(ap, PadKeyCode);
-		if (key <= PadKeyCode::ButtonNone) continue;
-		padKeys.push_back(key);
-	}
-	va_end(ap);
-}
-
 bool Rewired::RewiredKeys::GetKey()
 {
 	for (auto keyItr = keys.begin(); keyItr != keys.end(); ++keyItr)
@@ -121,7 +93,6 @@ void Rewired::RewiredKeys::LoadKey(const char* path)
 				}
 			}
 		}
-
 		else if (key == "XboxPad")
 		{
 			for (auto itr = KeyCodeString::padKeys.begin(); itr != KeyCodeString::padKeys.end(); ++itr)
@@ -163,6 +134,9 @@ void Rewired::KeyCodeString::KeyCodeStringInit()
 	pair<string, KeyCode> X = { "X", KeyCode::X };
 	pair<string, KeyCode> Y = { "Y", KeyCode::Y };
 	pair<string, KeyCode> Z = { "Z", KeyCode::Z };
+	pair<string, KeyCode> Space = { "Space", KeyCode::Space};
+	pair<string, KeyCode> LShift = { "LShift", KeyCode::LShift };
+	pair<string, KeyCode> RShift = { "RShift", KeyCode::RShift };
 	pair<string, KeyCode> Num1 = { "1", KeyCode::Key1 };
 	pair<string, KeyCode> Num2 = { "2", KeyCode::Key2 };
 	pair<string, KeyCode> Num3 = { "3", KeyCode::Key3 };
@@ -199,6 +173,9 @@ void Rewired::KeyCodeString::KeyCodeStringInit()
 	keyboardKeys.push_back(X);
 	keyboardKeys.push_back(Y);
 	keyboardKeys.push_back(Z);
+	keyboardKeys.push_back(Space);
+	keyboardKeys.push_back(LShift);
+	keyboardKeys.push_back(RShift);
 	keyboardKeys.push_back(Num1);
 	keyboardKeys.push_back(Num2);
 	keyboardKeys.push_back(Num3);
