@@ -19,7 +19,7 @@ bool Imgui::isActive = true;
 float Imgui::volume = 1.0f;
 float Imgui::CameraR = 25.0f;
 float Imgui::CameraRotation = 270.0f;
-float Imgui::CameraHigh = 0.2f;
+float Imgui::CameraHigh = 0.4f;
 bool Imgui::CameraControl = true;
 int Imgui::useWaterNum = 0;
 ComPtr<ID3D12DescriptorHeap> Imgui::CreateDescrriptorHeapForImgui(BaseDirectX& baseDirectX)

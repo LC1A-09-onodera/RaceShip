@@ -35,8 +35,4 @@ float4 main(VSOutput input) : SV_TARGET
     col = saturate(1.5 - sqrt(col));
     uv += col * distortion;
     return tex.Sample(smp, uv) + col * 0.1f;
-	//テクスチャマッピング
-    //float4 texcolor = tex.Sample(smp, input.uv);
-    //texcolor.x += 0.4f;
-    //return texcolor;
 }

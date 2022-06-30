@@ -113,10 +113,14 @@ void GameScene::Init()
 
 	waterFace.LoadModel(baseDirectX, ShaderManager::waterShader, PostEffects::postNormal);
 	normalWater.LoadModel(baseDirectX, ShaderManager::normalPlaneShader, PostEffects::postNormal);
+	const float worldSize = 40.0f;
 	world.CreateModel(baseDirectX, "SphereW", ShaderManager::playerShader);
-	world.each.scale = { 40.0f, 40.0f, 40.0f };
+	world.each.scale = { worldSize, worldSize, worldSize };
 	rWorld.CreateModel(baseDirectX, "SphereW", ShaderManager::playerShader);
-	rWorld.each.scale = { 40.0f, 40.0f, 40.0f };
+	rWorld.each.scale = { worldSize, worldSize, worldSize };
+	skyDome.CreateModel(baseDirectX, "sky", ShaderManager::playerShader);
+	const float skyDomeSize = 60.0f;
+	skyDome.each.scale = { skyDomeSize , skyDomeSize , skyDomeSize };
 }
 
 void GameScene::TitleUpdate()
@@ -138,9 +142,9 @@ void GameScene::SelectUpdate()
 void GameScene::GameUpdate()
 {
 	Cameras::camera.Update();
-	Cameras::rCamera.eye.x = Cameras::camera.eye.x;
-	Cameras::rCamera.eye.y = Cameras::camera.eye.y;
-	Cameras::rCamera.eye.z = Cameras::camera.eye.z;
+	Cameras::rCamera.eye.x = 0;
+	Cameras::rCamera.eye.y = -60.0f;
+	Cameras::rCamera.eye.z = -0.1f;
 	Cameras::rCamera.target = Cameras::camera.target;
 	Cameras::rCamera.up = { 0, 1, 0 };
 	Cameras::rCamera.Update();
@@ -217,6 +221,8 @@ void GameScene::PostWaterFaceDraw()
 	seling.Draw(baseDirectX);
 	world.Update(baseDirectX, &world.each, false);
 	Draw3DObject(baseDirectX, world);
+	skyDome.Update(baseDirectX, &skyDome.each);
+	Draw3DObject(baseDirectX, skyDome);
 	StageObjects::Draw(baseDirectX, false);
 	//ObjectParticles::Draw(baseDirectX);
 }
@@ -258,7 +264,7 @@ void GameScene::GameDraw()
 
 	PostWaterFaceDraw();
 
-	XMVECTOR sample = { 0, -2.0f, 0.0f, 1.0 };
+	XMVECTOR sample = { 0, -0.5f, 0.0f, 1.0 };
 
 	PostEffect waterFaceTarget;
 	if (PostEffects::type == PostEffects::PostEffectType::Normal)

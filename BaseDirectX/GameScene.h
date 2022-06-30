@@ -78,8 +78,10 @@ public://ÉVÅ[ÉìÇ≈égÇ§Ç‡ÇÃ
 	Seling rSeling;
 	WaterFace waterFace;
 	WaterFace normalWater;
+
 	Model world;
 	Model rWorld;
+	Model skyDome;
 
 	Rewired::RewiredKeys jumpKey;
 };

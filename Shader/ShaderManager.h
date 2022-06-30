@@ -6,6 +6,7 @@ class ShaderManager
 public:
 	static HLSLShader playerShader;
 	static HLSLShader waterShader;
+	static HLSLShader waterFaceObjectShader;
 	static HLSLShader normalPlaneShader;
 	static HLSLShader shieldShader;
 	

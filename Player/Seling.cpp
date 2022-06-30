@@ -52,17 +52,8 @@ void Seling::Update()
 
 void Seling::Draw(BaseDirectX& baseDirectX, bool isRCamera)
 {
-	if (isRCamera)
-	{
-		seling.Update(baseDirectX ,&seling.each, isRCamera);
-		Draw3DObject(baseDirectX, seling);
-	}
-	else if (!isRCamera)
-	{
-		seling.Update(baseDirectX ,&seling.each, isRCamera);
-		Draw3DObject(baseDirectX, seling);
-	}
-	//enemy.Draw();
+	seling.Update(baseDirectX, &seling.each, isRCamera);
+	Draw3DObject(baseDirectX, seling);
 }
 
 void Seling::AddForce(XMFLOAT3& force)

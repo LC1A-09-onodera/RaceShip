@@ -55,6 +55,7 @@ public:
 	void SetCircleShadowAtten(int index, const XMFLOAT3 lightAtten);
 	void SetCircleShadowFactorAngle(int index, const XMFLOAT2 &lightfactorAngle);
 	void SetLightDir(XMFLOAT3 dir){lightdir = ConvertXMFLOAT3toXMVECTOR(dir);}
+	void SetDirty(bool dirtyFlag) { dirty = dirtyFlag; }
 
 private:
 	//定数バッファ

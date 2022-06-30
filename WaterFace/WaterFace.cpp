@@ -12,9 +12,9 @@ void WaterFace::Init(BaseDirectX& baseDirectX)
 {
 	waterModel.eachData.ConstInit(baseDirectX);
 	waterModel.eachData.position = { 0, 0.0f, 0.0f, 1 };
-	waterModel.eachData.rotation = { 0, 0, 0};
-	float scaleSample = 18.0f;
-	waterModel.eachData.scale = { scaleSample, scaleSample, scaleSample };
+	waterModel.eachData.rotation = { 0, 0,0};
+	float scaleSample = 50.0f;
+	waterModel.eachData.scale = { scaleSample + 8.0f, scaleSample - 1.0f, scaleSample };
 }
 
 void WaterFace::Update()

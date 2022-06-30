@@ -1,4 +1,6 @@
 #pragma once
+
+#include <fbxsdk.h>
 #include <string>
 #include <vector>
 #include <DirectXMath.h>
@@ -8,7 +10,6 @@
 #include <d3d12.h>
 #include <d3dx12.h>
 
-#include <fbxsdk.h>
 #include <DirectXTex.h>
 
 struct Node
