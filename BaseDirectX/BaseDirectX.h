@@ -90,6 +90,7 @@ public:
 	//テクスチャサンプラー
 	D3D12_STATIC_SAMPLER_DESC samplerDesc = D3D12_STATIC_SAMPLER_DESC();
 	//定数バッファデスクリプタヒープ
+	ComPtr<ID3D12DescriptorHeap> basicDescHeap;
 	XMMATRIX matProjection = XMMatrixIdentity();
 	//ビュー行列の作成
 	//static XMMATRIX matView;
