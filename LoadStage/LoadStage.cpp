@@ -10,7 +10,10 @@ void LoadStage::LoadStages(string stagePath)
 {
 	ifstream file;
 	file.open(stagePath);
-
+	if (file.fail())
+	{
+		assert(0);
+	}
 	string line;
 
 	while (getline(file, line))

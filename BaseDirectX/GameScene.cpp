@@ -96,10 +96,9 @@ void GameScene::Init()
 	//Rewiredの要素初期化
 	Rewired::KeyCodeString::KeyCodeStringInit();
 	//ジャンプキーのリワイヤード決定
-	jumpKey.LoadKey("RewiredTest.txt");
-
+	jumpKey.LoadKey("Resource/TextData/Rewired/RewiredTest.txt");
 	//ステージをテキストからロード
-	LoadStage::LoadStages("test.txt");
+	LoadStage::LoadStages("Resource/TextData/Stage/test.txt");
 
 	StageObjects::LoadModel(baseDirectX);
 

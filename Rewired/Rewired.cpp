@@ -100,6 +100,10 @@ void Rewired::RewiredKeys::LoadKey(const char* path)
 {
 	ifstream file;
 	file.open(path);
+	if (file.fail())
+	{
+		assert(0);
+	}
 	string keyType;
 	while (getline(file, keyType))
 	{

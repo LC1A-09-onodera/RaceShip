@@ -7,7 +7,6 @@
 #include "../FBXObject/FBXObject.h"
 #include "../FbxLoader/FbxLoader.h"
 #include "../Player/Seling.h"
-#include "../Enemy/selingEnemy.h"
 #include "../Rewired/Rewired.h"
 #include "../WaterFace/WaterFace.h"
 
