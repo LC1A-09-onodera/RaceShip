@@ -179,11 +179,9 @@ void PostEffect::PreDraw(BaseDirectX & baseDirectX)
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvH[RenderTarget::renderNum];
 	for (int i = 0; i < RenderTarget::renderNum; i++)
 	{
-		//rtvH[i] = descHeapRTV->GetCPUDescriptorHandleForHeapStart();
 		rtvH[i] = CD3DX12_CPU_DESCRIPTOR_HANDLE(renderTarget.descHeapRTV->GetCPUDescriptorHandleForHeapStart(), i, baseDirectX.dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
 	}
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvH = descHeapDSV->GetCPUDescriptorHandleForHeapStart();
-	//BaseDirectX::cmdList->OMSetRenderTargets(2, rtvH, false, &dsvH);
 	baseDirectX.cmdList->OMSetRenderTargets(RenderTarget::renderNum, rtvH, false, &dsvH);
 
 	CD3DX12_VIEWPORT viewports[RenderTarget::renderNum];
