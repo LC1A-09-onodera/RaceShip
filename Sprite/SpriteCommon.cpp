@@ -18,6 +18,7 @@ SpriteCommon::SpriteCommon()
 
 void SpriteCommon::Init(BaseDirectX &baseDirectX, ComPtr<ID3DBlob> vsBlob, ComPtr<ID3DBlob> psBlob)
 {
+
     SpriteCommon::inputLayout[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,D3D12_APPEND_ALIGNED_ELEMENT,D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
     SpriteCommon::inputLayout[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,D3D12_APPEND_ALIGNED_ELEMENT,D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
     gpipeline.VS = CD3DX12_SHADER_BYTECODE(vsBlob.Get());

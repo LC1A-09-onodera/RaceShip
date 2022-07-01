@@ -312,7 +312,7 @@ bool Model::InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& sha
 
 	// ルートパラメータ
 	//CD3DX12_ROOT_PARAMETER rootparams[3];
-	CD3DX12_ROOT_PARAMETER rootparams[4];
+	CD3DX12_ROOT_PARAMETER rootparams[4]{};
 	rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 	rootparams[1].InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);
 	rootparams[2].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
@@ -330,7 +330,7 @@ bool Model::InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& sha
 	// ルートシグネチャの生成
 	result = baseDirectX.dev->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
 	if (FAILED(result)) {
-		return result;
+		return false;
 	}
 
 	gpipeline.pRootSignature = rootsignature.Get();
@@ -339,7 +339,7 @@ bool Model::InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& sha
 	result = baseDirectX.dev->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelinestate));
 
 	if (FAILED(result)) {
-		return result;
+		return false;
 	}
 
 	return true;
@@ -361,7 +361,7 @@ bool Model::LoadTexture(BaseDirectX& baseDirectX, const string& directPath, cons
 	result = LoadFromWICFile(wfilepath, WIC_FLAGS_NONE, &metadata, scratchImg);
 	if (FAILED(result))
 	{
-		return result;
+		return false;
 	}
 
 	const Image* img = scratchImg.GetImage(0, 0, 0); // 生データ抽出
@@ -384,7 +384,7 @@ bool Model::LoadTexture(BaseDirectX& baseDirectX, const string& directPath, cons
 		nullptr,
 		IID_PPV_ARGS(&texbuff));
 	if (FAILED(result)) {
-		return result;
+		return false;
 	}
 
 	// テクスチャバッファにデータ転送
@@ -396,7 +396,7 @@ bool Model::LoadTexture(BaseDirectX& baseDirectX, const string& directPath, cons
 		(UINT)img->slicePitch // 1枚サイズ
 	);
 	if (FAILED(result)) {
-		return result;
+		return false;
 	}
 
 	// シェーダリソースビュー作成

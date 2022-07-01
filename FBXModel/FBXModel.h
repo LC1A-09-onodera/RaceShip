@@ -3,6 +3,7 @@
 #pragma warning(push)
 #pragma warning(disable:26812)
 #pragma warning(disable:26495)
+#pragma warning(disable:26451)
 #include <fbxsdk.h>
 #include <DirectXTex.h>
 #pragma warning(pop)
@@ -13,7 +14,10 @@
 
 #include <wrl.h>
 #include <d3d12.h>
+#pragma warning(push)
+#pragma warning(disable:6001)
 #include <d3dx12.h>
+#pragma warning(pop)
 
 struct Node
 {

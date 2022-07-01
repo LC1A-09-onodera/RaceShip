@@ -3,12 +3,21 @@
 #include <dxgi1_6.h>
 #include <DirectXMath.h>
 #include <d3dcompiler.h>
-#include <DirectXTex.h>
 #include <wrl.h>
-#include <d3dx12.h>
 #include <vector>
 #include <xaudio2.h>
 #include <fstream>
+
+#pragma warning(push)
+#pragma warning(disable:26812)
+#include <DirectXTex.h>
+#pragma warning(pop)
+
+#pragma warning(push)
+#pragma warning(disable:6001)
+#include <d3dx12.h>
+#pragma warning(pop)
+
 #include "../WindowsAPI/WinAPI.h"
 
 using namespace Microsoft::WRL;
@@ -46,7 +55,6 @@ public:
 	XMFLOAT4 backColor = {0.0f, 0.0f, 0.0f , 0.0f};
 	HRESULT result;
 	ComPtr<ID3D12Device> dev;
-	ComPtr<IDXGIFactory6> dxgiFactory;
 	ComPtr<IDXGISwapChain4> swapchain;
 	ComPtr<ID3D12CommandAllocator> cmdAllocator;
 	ComPtr<ID3D12GraphicsCommandList> cmdList;
@@ -85,7 +93,6 @@ public:
 	CD3DX12_DESCRIPTOR_RANGE descRangeSRV = CD3DX12_DESCRIPTOR_RANGE();
 	CD3DX12_ROOT_PARAMETER rootparam[2];
 	ComPtr<ID3D12PipelineState> pipelinestate;
-	ComPtr<ID3D12PipelineState> pipelinestateMeth;
 	ComPtr<ID3D12RootSignature> rootsignature;
 	//テクスチャサンプラー
 	D3D12_STATIC_SAMPLER_DESC samplerDesc = D3D12_STATIC_SAMPLER_DESC();

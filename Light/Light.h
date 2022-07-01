@@ -1,7 +1,11 @@
 #pragma once
 #include <DirectXMath.h>
 #include <d3dcompiler.h>
+
+#pragma warning(push)
+#pragma warning(disable:6001)
 #include <d3dx12.h>
+#pragma warning(pop)
 #include "../Light/PointLight.h"
 #include "../Light/SpotLight.h"
 #include "../Light/CircleShadow.h"

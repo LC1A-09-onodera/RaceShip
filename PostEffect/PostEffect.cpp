@@ -25,12 +25,6 @@ PostEffect::PostEffect()
 void PostEffect::Initialize(HLSLShader& shader, BaseDirectX& baseDirectX)
 {
 	HRESULT result;
-	/*VertexPosUv Spritevertices[] = {
-		{{ -0.5f, -0.5f, 0.0f}, {0.0f, 1.0f}},
-		{{ -0.5f, +0.5f, 0.0f}, {0.0f, 0.0f}},
-		{{ +0.5f, -0.5f, 0.0f}, {1.0f, 1.0f}},
-		{{ +0.5f, +0.5f, 0.0f}, {1.0f, 0.0f}},
-	};*/
 	VertexPosUv Spritevertices[] = {
 		{{ -1.0f, -1.0f, 0.0f}, {0.0f, 1.0f}},
 		{{ -1.0f, +1.0f, 0.0f}, {0.0f, 0.0f}},
@@ -345,28 +339,23 @@ void PostEffects::Draw(BaseDirectX& baseDirectX)
 	if (type == PostEffectType::Normal)
 	{
 		postNormal.Draw(baseDirectX);
-		postNormal.PostDraw(baseDirectX);
 	}
 	else if (type == PostEffectType::Water)
 	{
 		postWater.Draw(baseDirectX);
-		postWater.PostDraw(baseDirectX);
 	}
 	else if (type == PostEffectType::Mosaic)
 	{
 		postMosaic.Draw(baseDirectX);
-		postMosaic.PostDraw(baseDirectX);
 	}
 	else if (type == PostEffectType::Blur)
 	{
 
 		postBlur.Draw(baseDirectX);
-		postBlur.PostDraw(baseDirectX);
 	}
 	else
 	{
 		postNormal.Draw(baseDirectX);
-		postNormal.PostDraw(baseDirectX);
 	}
 }
 

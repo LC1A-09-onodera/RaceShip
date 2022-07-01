@@ -2,10 +2,16 @@
 #include <wrl.h>
 #include <d3d12.h>
 #include <DirectXMath.h>
+#pragma warning(push)
+#pragma warning(disable:6001)
 #include <d3dx12.h>
+#pragma warning(pop)
 #include <forward_list>
 #include <d3dcompiler.h>
+#pragma warning(push)
+#pragma warning(disable:26812)
 #include <DirectXTex.h>
+#pragma warning(pop)
 #include "../BaseDirectX/BaseDirectX.h"
 
 #pragma comment(lib, "d3dcompiler.lib")

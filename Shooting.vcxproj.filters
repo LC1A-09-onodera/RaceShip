@@ -334,39 +334,29 @@
     <FxCompile Include="Resource\HLSL\SpritePixelShader.hlsl" />
     <FxCompile Include="Resource\HLSL\SpriteVertexShader.hlsl" />
     <FxCompile Include="Resource\HLSL\VertexShader.hlsl" />
-    <FxCompile Include="Resource\HLSL\GeometryPixelShader.hlsl" />
-    <FxCompile Include="Resource\HLSL\GeometryVertexShader.hlsl" />
     <FxCompile Include="Resource\HLSL\ParticleGS.hlsl" />
     <FxCompile Include="Resource\HLSL\ParticlePS.hlsl" />
     <FxCompile Include="Resource\HLSL\ParticleVS.hlsl" />
-    <FxCompile Include="Resource\HLSL\WireFramePS.hlsl" />
-    <FxCompile Include="Resource\HLSL\WireFrameVS.hlsl" />
     <FxCompile Include="Resource\HLSL\WireFrameGS.hlsl" />
-    <FxCompile Include="Resource\HLSL\peraPixel.hlsl" />
     <FxCompile Include="Resource\HLSL\peraVertex.hlsl" />
     <FxCompile Include="Resource\HLSL\PostEffectTestPS.hlsl" />
     <FxCompile Include="Resource\HLSL\PostEffectTestVS.hlsl" />
     <FxCompile Include="Resource\HLSL\FBXPS.hlsl" />
     <FxCompile Include="Resource\HLSL\FBXVS.hlsl" />
     <FxCompile Include="Resource\HLSL\OBJHS.hlsl" />
-    <FxCompile Include="Resource\HLSL\SamplePS.hlsl" />
-    <FxCompile Include="Resource\HLSL\SampleVS.hlsl" />
     <FxCompile Include="Resource\HLSL\PostBlurPS.hlsl" />
     <FxCompile Include="Resource\HLSL\PostMosaicPS.hlsl" />
     <FxCompile Include="Resource\HLSL\PostWaterPS.hlsl" />
     <FxCompile Include="Resource\HLSL\WaterSamplePS.hlsl" />
-    <FxCompile Include="Resource\HLSL\NormalPlane.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\HLSL\BSH.hlsli" />
     <None Include="Resource\HLSL\OBJHeader.hlsli" />
     <None Include="Resource\HLSL\SpriteshaderHeader.hlsli" />
-    <None Include="Resource\HLSL\GeometryHeader.hlsli" />
     <None Include="Resource\HLSL\Particle.hlsli" />
     <None Include="Resource\HLSL\peraHeader.hlsli" />
     <None Include="Resource\HLSL\PostEffectTest.hlsli" />
     <None Include="Resource\HLSL\FBX.hlsli" />
-    <None Include="Resource\HLSL\Sample.hlsli" />
     <None Include="packages.config" />
   </ItemGroup>
 </Project>

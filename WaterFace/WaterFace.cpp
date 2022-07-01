@@ -140,7 +140,7 @@ bool WaterFaceModel::LoadTexture(BaseDirectX &baseDirectX, const string& directP
 	result = LoadFromWICFile(wfilepath, WIC_FLAGS_NONE, &metadata, scratchImg);
 	if (FAILED(result))
 	{
-		return result;
+		return false;
 	}
 
 	const Image* img = scratchImg.GetImage(0, 0, 0); // 生データ抽出
@@ -163,7 +163,7 @@ bool WaterFaceModel::LoadTexture(BaseDirectX &baseDirectX, const string& directP
 		nullptr,
 		IID_PPV_ARGS(&texbuff));
 	if (FAILED(result)) {
-		return result;
+		return false;
 	}
 
 	// テクスチャバッファにデータ転送
@@ -175,7 +175,7 @@ bool WaterFaceModel::LoadTexture(BaseDirectX &baseDirectX, const string& directP
 		(UINT)img->slicePitch // 1枚サイズ
 	);
 	if (FAILED(result)) {
-		return result;
+		return false;
 	}
 
 	// シェーダリソースビュー作成
@@ -329,7 +329,7 @@ void WaterFaceModel::InitializeGraphicsPipeline(BaseDirectX &baseDirectX, HLSLSh
 	descRangeSRV.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0); // t0 レジスタ
 
 	// ルートパラメータ
-	CD3DX12_ROOT_PARAMETER rootparams[4];
+	CD3DX12_ROOT_PARAMETER rootparams[4] = {};
 	rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 	rootparams[1].InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);
 	rootparams[2].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);

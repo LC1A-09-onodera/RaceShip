@@ -3,7 +3,10 @@
 #include "../BaseDirectX/BaseDirectX.h"
 #include <wrl.h>
 #include <d3d12.h>
+#pragma warning(push)
+#pragma warning(disable:6001)
 #include <d3dx12.h>
+#pragma warning(pop)
 #include <DirectXMath.h>
 #include <string>
 

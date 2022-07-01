@@ -1,6 +1,9 @@
 #pragma once
 #include <d3dcompiler.h>
+#pragma warning(push)
+#pragma warning(disable:6001)
 #include <d3dx12.h>
+#pragma warning(pop)
 
 using namespace Microsoft::WRL;
 

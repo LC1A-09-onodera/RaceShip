@@ -27,21 +27,31 @@ void Seling::LoadModel(BaseDirectX& baseDirectX)
 
 void Seling::Init()
 {
+	seling.each.position = {0, 0, 0, 1.0f};
 	frontDirection = { 0, 0 ,1.0f };
 	addForce = { 0, 0 ,0 };
+	frontDirection = { 0.0f ,0.0f , 0.0f };
+	angle = 0;
+	isMoveForce = false;
+	addForce = { 0.0f ,0.0f , 0.0f };
+	isGoal = false;
+	
 }
 
 void Seling::Update()
 {
-	Move();
+	if (!isGoal)
+	{
+		Move();
 
-	ForceUpdate();
+		ForceUpdate();
 
-	HitWall();
+		HitWall();
 
-	HitGoal();
+		HitGoal();
 
-	ForceAttach();
+		ForceAttach();
+	}
 }
 
 void Seling::Draw(BaseDirectX& baseDirectX, bool isRCamera)

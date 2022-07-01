@@ -37,10 +37,12 @@ private:
 
 	void DrawSprites();
 
+	void LightUpdate();
+
 	int SceneNum = TITLE;
 	BaseDirectX baseDirectX;
 
-	int opAnimationTime;
+	int opAnimationTime = 0;
 	const int MaxOPAnimationTime = 120;
 
 	std::shared_ptr<Light> light;
@@ -58,7 +60,6 @@ private:
 	float circleShadowDir[3] = { 0, -1, 0 };
 	float circleShadowAtten[3] = { 0.5f, 0.6f, 0.0f };
 	float circleShadowFactorAngle[2] = { 0.0f, 0.0f };
-
 
 	PostEffect postWater;
 	PostEffect postMosaic;
@@ -83,9 +84,4 @@ public:
 	void SceneManageUpdateAndDraw();
 	//èâä˙âª
 	void Init();
-
-	void LightUpdate();
-
-public://ÉVÅ[ÉìÇ≈égÇ§Ç‡ÇÃ
-	
 };

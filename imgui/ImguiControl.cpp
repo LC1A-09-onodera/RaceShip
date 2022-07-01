@@ -4,6 +4,8 @@
 #include "../imgui/imgui_impl_win32.h"
 #include "../Camera/Camera.h"
 #include "../LoadStage/StageObject.h"
+#include "../BaseDirectX/DX12operator.h"
+
 #include <stdarg.h>
 
 ComPtr<ID3D12DescriptorHeap> Imgui::imguiDescHeap;
@@ -126,10 +128,10 @@ void Imgui::CreateMenuBar()
         {
             tab = ImguiType::CameraInfo;
         }
-        if (ImGui::MenuItem("Debug"))
+        /*if (ImGui::MenuItem("Debug"))
         {
             tab = ImguiType::Debug;
-        }
+        }*/
         if (ImGui::MenuItem("PostEffect"))
         {
             tab = ImguiType::PostEffect;
@@ -147,6 +149,7 @@ void Imgui::EachInfo(BaseDirectX& baseDirectX)
         ImGui::Text(ipv4Name.c_str());
         ImGui::SliderFloat("volume", &volume, 0, 100.0f);
         ImGui::InputInt("WaterFaceType", &useWaterNum, 1, 1);
+        useWaterNum = ShlomonMath::Clamp(useWaterNum, 0, 2);
         if (useWaterNum == 0)
         {
             ImGui::Text("water");
@@ -172,12 +175,11 @@ void Imgui::EachInfo(BaseDirectX& baseDirectX)
         ImGui::Text("Rtarget:%.2f, %.2f, %.2f", Cameras::rCamera.target.x, Cameras::rCamera.target.y, Cameras::rCamera.target.z);
         ImGui::Checkbox("ImGuiCameraControl", &CameraControl);
         ImGui::InputFloat("CameraLength:", &CameraR, 1.0f, 10.0f);
+        CameraR = ShlomonMath::Clamp(CameraR, 3.0f, 35.0f);
         ImGui::InputFloat("CameraRotation:", &CameraRotation, 1.0f, 10.0f);
+        CameraRotation = ShlomonMath::Clamp(CameraRotation, 200.0f, 340.0f);
         ImGui::InputFloat("CameraHigh:", &CameraHigh, 0.01f, 0.02f);
-    }
-    else if (tab == ImguiType::Debug)
-    {
-        DebugUpdate();
+        CameraHigh = ShlomonMath::Clamp(CameraHigh, 0.0f, 1.0f);
     }
     else if (tab == ImguiType::PostEffect)
     {
@@ -209,7 +211,6 @@ void Imgui::DebugUpdate()
     if (debugType == DebugType::Player)
     {
         ImGui::Combo("playerCombo", &playerCombo, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0");
-        //ImGui::Combo("playerCombo", &playerCombo, iEnum.GetNames());
     }
     else if (debugType == DebugType::Water)
     {

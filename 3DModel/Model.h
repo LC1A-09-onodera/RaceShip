@@ -1,5 +1,5 @@
 #pragma once
-#include "../BaseDirectX/BaseDirectX.h"
+
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include "../Light/Light.h"
 #include "../Shader/Shader.h"
+#include "../BaseDirectX/BaseDirectX.h"
 
 using namespace std;
 class BaseCollider;
@@ -158,8 +159,8 @@ public:
 	virtual ~Model();
 	static void SetLight(shared_ptr<Light> light);
 	Mesh mesh;
-	D3D12_CPU_DESCRIPTOR_HANDLE cpuDescHandleCBV;
-	D3D12_GPU_DESCRIPTOR_HANDLE gpuDescHandleCBV;
+	D3D12_CPU_DESCRIPTOR_HANDLE cpuDescHandleCBV = D3D12_CPU_DESCRIPTOR_HANDLE();
+	D3D12_GPU_DESCRIPTOR_HANDLE gpuDescHandleCBV = D3D12_GPU_DESCRIPTOR_HANDLE();
 	EachInfo each;
 	XMMATRIX matWorld = XMMatrixIdentity();
 	static shared_ptr<Light> light;
@@ -168,9 +169,9 @@ public:
 	float radi = 2.0f;
 	//-----------------------
 	// シェーダリソースビューのハンドル(CPU)
-	CD3DX12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV;
+	CD3DX12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV = CD3DX12_CPU_DESCRIPTOR_HANDLE();
 	// シェーダリソースビューのハンドル(CPU)
-	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuDescHandleSRV;
+	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuDescHandleSRV = CD3DX12_GPU_DESCRIPTOR_HANDLE();
 	// パイプラインステートオブジェクト
 	ComPtr<ID3D12PipelineState> pipelinestate;
 	// ルートシグネチャ
@@ -178,7 +179,7 @@ public:
 	// テクスチャバッファ
 	ComPtr<ID3D12Resource> texbuff;
 	// デスクリプタサイズ
-	UINT descriptorHandleIncrementSize;
+	UINT descriptorHandleIncrementSize = 0;
 	// デスクリプタヒープ
 	ComPtr<ID3D12DescriptorHeap> descHeap;
 	//マテリアル

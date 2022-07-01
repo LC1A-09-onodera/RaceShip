@@ -135,18 +135,18 @@ void GameScene::SelectUpdate()
 
 void GameScene::GameUpdate()
 {
-	Cameras::camera.Update();
-	Cameras::rCamera.eye.x = 0;
-	Cameras::rCamera.eye.y = -60.0f;
-	Cameras::rCamera.eye.z = -0.1f;
-	Cameras::rCamera.target = Cameras::camera.target;
-	Cameras::rCamera.up = { 0, 1, 0 };
-	Cameras::rCamera.Update();
-
 	seling.Update();
 	rSeling.Update();
 	waterFace.Update();
 	normalWater.Update();
+	
+	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.seling.each.position);
+	Cameras::camera.Update();
+	Cameras::rCamera.eye.x = 0;
+	Cameras::rCamera.eye.y = -60.0f;
+	Cameras::rCamera.eye.z = -5.0f;
+	Cameras::rCamera.up = { 0, 1, 0 };
+	Cameras::rCamera.Update();
 
 	if (seling.GetIsGoal())
 	{
@@ -159,7 +159,30 @@ void GameScene::GameUpdate()
 
 void GameScene::ResultUpdate()
 {
+	seling.Update();
+	rSeling.Update();
+	waterFace.Update();
+	normalWater.Update();
 
+	Imgui::CameraRotation = ShlomonMath::EaseInOutQuad(XMFLOAT3(Imgui::CameraRotation, 0 ,0) , XMFLOAT3(350.0f, 0, 0), 0.1f).x;
+	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.seling.each.position);
+	Cameras::camera.Update();
+	Cameras::rCamera.eye.x = 0;
+	Cameras::rCamera.eye.y = -60.0f;
+	Cameras::rCamera.eye.z = -5.0f;
+	Cameras::rCamera.up = { 0, 1, 0 };
+	Cameras::rCamera.Update();
+
+	if (Input::KeyTrigger(DIK_SPACE))
+	{
+		SceneNum = TITLE;
+		seling.Init();
+		rSeling.Init();
+		Imgui::CameraRotation = 270.0f;
+	}
+
+	VoiceReciver::VoiceUDPUpdate(baseDirectX);
+	Sound::Updete(Imgui::volume);
 }
 
 void GameScene::OPUpdate()
@@ -294,6 +317,7 @@ void GameScene::GameDraw()
 
 	DrawSprites();
 
+	PostEffects::PostDraw(baseDirectX);
 	Imgui::DrawImGui(baseDirectX);
 	//描画コマンドここまで
 	baseDirectX.UpdateBack();
@@ -303,11 +327,51 @@ void GameScene::ResultDraw()
 {
 	//PostEffectのPreDraw
 	PostEffects::PreDraw(baseDirectX);
-	baseDirectX.UpdateFront();
-	//PostEffectのDraw
-	PostEffects::Draw(baseDirectX);
-	Imgui::DrawImGui(baseDirectX);
 
+	PreWaterFaceDraw();
+
+	baseDirectX.UpdateFront();
+
+	PostWaterFaceDraw();
+
+	XMVECTOR waterFacePosition = { 0, -0.5f, 0.0f, 1.0 };
+	PostEffect waterFaceTarget;
+	if (PostEffects::type == PostEffects::PostEffectType::Normal)
+	{
+		waterFaceTarget = PostEffects::postNormal;
+
+	}
+	else if (PostEffects::type == PostEffects::PostEffectType::Water)
+	{
+		waterFaceTarget = PostEffects::postWater;
+	}
+	else if (PostEffects::type == PostEffects::PostEffectType::Mosaic)
+	{
+		waterFaceTarget = PostEffects::postMosaic;
+	}
+	else if (PostEffects::type == PostEffects::PostEffectType::Blur)
+	{
+		waterFaceTarget = PostEffects::postBlur;
+	}
+	else
+	{
+		waterFaceTarget = PostEffects::postNormal;
+	}
+	if (Imgui::useWaterNum == 0)
+	{
+		waterFace.Draw(baseDirectX, waterFaceTarget, waterFacePosition);
+	}
+	else if (Imgui::useWaterNum == 1)
+	{
+		normalWater.Draw(baseDirectX, waterFaceTarget, waterFacePosition);
+	}
+
+	PostEffects::Draw(baseDirectX);
+
+	DrawSprites();
+
+	PostEffects::PostDraw(baseDirectX);
+	Imgui::DrawImGui(baseDirectX);
 	//描画コマンドここまで
 	baseDirectX.UpdateBack();
 }

@@ -4,10 +4,11 @@
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_dx12.h"
 #include "../imgui/imgui_impl_win32.h"
+#include <dxgidebug.h>
 
 BaseDirectX::BaseDirectX()
 {
-	
+
 }
 
 BaseDirectX::~BaseDirectX()
@@ -40,6 +41,7 @@ void BaseDirectX::Set()
 	DebugLayerOn();
 	WindowsAPI::Set();
 	// DXGIファクトリーの生成
+	ComPtr<IDXGIFactory6> dxgiFactory;
 	result = CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory));
 
 	for (int i = 0; dxgiFactory->EnumAdapters1(i, &tmpAdapter) != DXGI_ERROR_NOT_FOUND; i++)
@@ -217,7 +219,6 @@ void BaseDirectX::Set()
 	samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0);
 
 	//ルートシグネチャ-------------------------------------------
-	//ComPtr<ID3D12RootSignature> rootsignature;
 	CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc{};
 	rootSignatureDesc.Init_1_0(_countof(rootparam), rootparam, 1, &samplerDesc, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 	ComPtr<ID3DBlob> rootSigBlob;

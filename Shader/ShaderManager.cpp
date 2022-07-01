@@ -7,7 +7,6 @@ HLSLShader ShaderManager::postWater;
 HLSLShader ShaderManager::postMosaic;
 HLSLShader ShaderManager::postBlur;
 HLSLShader ShaderManager::postNormal;
-HLSLShader ShaderManager::shieldShader;
 void ShaderManager::LoadShaders()
 {
 	playerShader.vsBlob = LoadShader(L"Resource/HLSL/OBJVertexShader.hlsl", "vs_5_0");
@@ -16,8 +15,6 @@ void ShaderManager::LoadShaders()
 	waterShader.psBlob = LoadShader(L"Resource/HLSL/WaterSamplePS.hlsl", "ps_5_0");
 	normalPlaneShader.vsBlob = LoadShader(L"Resource/HLSL/OBJVertexShader.hlsl", "vs_5_0");
 	normalPlaneShader.psBlob = LoadShader(L"Resource/HLSL/NormalPlane.hlsl", "ps_5_0");
-	shieldShader.vsBlob = LoadShader(L"Resource/HLSL/OBJVertexShader.hlsl", "vs_5_0");
-	shieldShader.psBlob = LoadShader(L"Resource/HLSL/SamplePS.hlsl", "ps_5_0");
 
 	postWater.vsBlob = LoadShader(L"Resource/HLSL/PostEffectTestVS.hlsl", "vs_5_0");
 	postWater.psBlob = LoadShader(L"Resource/HLSL/PostWaterPS.hlsl", "ps_5_0");

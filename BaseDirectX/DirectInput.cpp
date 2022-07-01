@@ -631,22 +631,7 @@ float DirectInput::getTriggerZ()
 	return pad_data.lZ / 1000.0f;
 }
 
-//int DirectInput::KeyInputUpdate()
-//{
-//	HRESULT hr;
-//
-//	ZeroMemory(key, sizeof(key));
-//	hr = devkeyborad->GetDeviceState(sizeof(key), key);
-//	if (FAILED(hr)) {
-//		// Ž¸”s‚È‚çÄŠJ‚³‚¹‚Ä‚à‚¤ˆê“xŽæ“¾
-//		devkeyborad->Acquire();
-//		devkeyborad->GetDeviceState(sizeof(key), key);
-//	}
-//
-//	return 0;
-//}
-
 DirectInput::DeviceEnumParameter::~DeviceEnumParameter()
 {
-	//delete(GamePadDevice);
+	
 }
