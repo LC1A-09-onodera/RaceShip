@@ -92,7 +92,7 @@ void GameScene::Init()
 	//Rewiredの要素初期化
 	Rewired::KeyCodeString::KeyCodeStringInit();
 	//ステージをテキストからロード
-	LoadStage::LoadStages("Resource/TextData/Stage/test.txt");
+	LoadStage::LoadStages("Resource/TextData/Stage/stage1.txt");
 
 	StageObjects::LoadModel(baseDirectX);
 
@@ -102,7 +102,6 @@ void GameScene::Init()
 	//ボイスコマンドの通信受付スタート
 	//送信側はまた違うアプリケーションで行う
 	VoiceReciver::StartUp();
-	//EnemyModels::LoadModels();
 
 	waterFace.LoadModel(baseDirectX, ShaderManager::waterShader, PostEffects::postNormal);
 	normalWater.LoadModel(baseDirectX, ShaderManager::normalPlaneShader, PostEffects::postNormal);
@@ -114,6 +113,8 @@ void GameScene::Init()
 	skyDome.CreateModel(baseDirectX, "sky", ShaderManager::playerShader);
 	const float skyDomeSize = 60.0f;
 	skyDome.each.scale = { skyDomeSize , skyDomeSize , skyDomeSize };
+
+	spaceSp.CreateSprite(baseDirectX, L"Resource/Image/space.png", XMFLOAT3(window_width / 2.0f - 100.0f, 600.0f, 0));
 }
 
 void GameScene::TitleUpdate()
@@ -168,7 +169,6 @@ void GameScene::OPUpdate()
 		SceneNum = TITLE;
 	}
 	opAnimationTime++;
-
 }
 
 void GameScene::EndUpdate()
@@ -197,7 +197,6 @@ void GameScene::PreWaterFaceDraw()
 	rWorld.Update(baseDirectX, &rWorld.each, isRDraw);
 	Draw3DObject(baseDirectX, rWorld);
 	StageObjects::Draw(baseDirectX, isRDraw);
-	//ObjectParticles::Draw(baseDirectX);
 
 }
 
@@ -211,12 +210,28 @@ void GameScene::PostWaterFaceDraw()
 	skyDome.Update(baseDirectX, &skyDome.each);
 	Draw3DObject(baseDirectX, skyDome);
 	StageObjects::Draw(baseDirectX, false);
-	//ObjectParticles::Draw(baseDirectX);
+}
+
+void GameScene::DrawSprites()
+{
+	switch (SceneNum)
+	{
+	case OP:
+		break;
+	case TITLE:
+		spaceSp.SpriteDraw(baseDirectX);
+		break;
+
+	}
+	
 }
 
 void GameScene::TitleDraw()
 {
 	baseDirectX.UpdateFront();
+	
+
+	DrawSprites();
 	Imgui::DrawImGui(baseDirectX);
 	//描画コマンドここまで
 	baseDirectX.UpdateBack();
@@ -225,7 +240,8 @@ void GameScene::TitleDraw()
 void GameScene::SelectDraw()
 {
 	baseDirectX.UpdateFront();
-
+	
+	DrawSprites();
 	Imgui::DrawImGui(baseDirectX);
 	//描画コマンドここまで
 	baseDirectX.UpdateBack();
@@ -242,11 +258,12 @@ void GameScene::GameDraw()
 
 	PostWaterFaceDraw();
 
-	XMVECTOR sample = { 0, -0.5f, 0.0f, 1.0 };
+	XMVECTOR waterFacePosition = { 0, -0.5f, 0.0f, 1.0 };
 	PostEffect waterFaceTarget;
 	if (PostEffects::type == PostEffects::PostEffectType::Normal)
 	{
 		waterFaceTarget = PostEffects::postNormal;
+
 	}
 	else if (PostEffects::type == PostEffects::PostEffectType::Water)
 	{
@@ -264,17 +281,18 @@ void GameScene::GameDraw()
 	{
 		waterFaceTarget = PostEffects::postNormal;
 	}
-
 	if (Imgui::useWaterNum == 0)
 	{
-		waterFace.Draw(baseDirectX, waterFaceTarget, sample);
+		waterFace.Draw(baseDirectX, waterFaceTarget, waterFacePosition);
 	}
 	else if (Imgui::useWaterNum == 1)
 	{
-		normalWater.Draw(baseDirectX, waterFaceTarget, sample);
+		normalWater.Draw(baseDirectX, waterFaceTarget, waterFacePosition);
 	}
 
-	//PostEffects::Draw(baseDirectX);
+	PostEffects::Draw(baseDirectX);
+
+	DrawSprites();
 
 	Imgui::DrawImGui(baseDirectX);
 	//描画コマンドここまで
