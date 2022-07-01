@@ -34,6 +34,9 @@ private:
 
 	void PreWaterFaceDraw();
 	void PostWaterFaceDraw();
+
+	void DrawSprites();
+
 	int SceneNum = TITLE;
 	BaseDirectX baseDirectX;
 
@@ -56,20 +59,22 @@ private:
 	float circleShadowAtten[3] = { 0.5f, 0.6f, 0.0f };
 	float circleShadowFactorAngle[2] = { 0.0f, 0.0f };
 
+
 	PostEffect postWater;
 	PostEffect postMosaic;
-
-	EachInfo playerPos;
-	EachInfo rPlayerPos;
-
+	//動くプレイヤー
 	Seling seling;
 	Seling rSeling;
+	//水面用
 	WaterFace waterFace;
 	WaterFace normalWater;
-
+	//ワイヤーフレームのドーム
 	Model world;
 	Model rWorld;
+	//外側のドーム
 	Model skyDome;
+
+	Sprite spaceSp;
 
 public:
 	GameScene();
