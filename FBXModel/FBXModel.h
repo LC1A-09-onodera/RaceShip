@@ -1,16 +1,19 @@
 #pragma once
 
+#pragma warning(push)
+#pragma warning(disable:26812)
+#pragma warning(disable:26495)
 #include <fbxsdk.h>
+#include <DirectXTex.h>
+#pragma warning(pop)
+
 #include <string>
 #include <vector>
 #include <DirectXMath.h>
 
-//#include <Windows.h>
 #include <wrl.h>
 #include <d3d12.h>
 #include <d3dx12.h>
-
-#include <DirectXTex.h>
 
 struct Node
 {

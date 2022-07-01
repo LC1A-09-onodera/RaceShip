@@ -80,9 +80,9 @@ void GameScene::Init()
 	//インプット初期化
 	Input::KeySet(baseDirectX, WindowsAPI::w, WindowsAPI::hwnd);
 	//FBX系
-	FbxLoader::GetInstance()->Initialize(baseDirectX.dev.Get());
+	/*FbxLoader::GetInstance()->Initialize(baseDirectX.dev.Get());
 	FBXObject::SetDevice(baseDirectX.dev.Get());
-	FBXObject::CreateGraphicsPipeline();
+	FBXObject::CreateGraphicsPipeline();*/
 	//ライト初期化
 	light.reset(Light::Create());
 	//モデルすべてにライトを適用
@@ -216,9 +216,6 @@ void GameScene::PostWaterFaceDraw()
 
 void GameScene::TitleDraw()
 {
-	//PostEffectのPreDraw
-	PostEffects::PreDraw(baseDirectX);
-
 	baseDirectX.UpdateFront();
 	Imgui::DrawImGui(baseDirectX);
 	//描画コマンドここまで
@@ -227,13 +224,7 @@ void GameScene::TitleDraw()
 
 void GameScene::SelectDraw()
 {
-	//PostEffectのPreDraw
-	PostEffects::PreDraw(baseDirectX);
-
 	baseDirectX.UpdateFront();
-
-	//PostEffectのDraw
-	PostEffects::Draw(baseDirectX);
 
 	Imgui::DrawImGui(baseDirectX);
 	//描画コマンドここまで
@@ -252,7 +243,6 @@ void GameScene::GameDraw()
 	PostWaterFaceDraw();
 
 	XMVECTOR sample = { 0, -0.5f, 0.0f, 1.0 };
-
 	PostEffect waterFaceTarget;
 	if (PostEffects::type == PostEffects::PostEffectType::Normal)
 	{
@@ -284,7 +274,7 @@ void GameScene::GameDraw()
 		normalWater.Draw(baseDirectX, waterFaceTarget, sample);
 	}
 
-	PostEffects::Draw(baseDirectX);
+	//PostEffects::Draw(baseDirectX);
 
 	Imgui::DrawImGui(baseDirectX);
 	//描画コマンドここまで

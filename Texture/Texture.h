@@ -7,10 +7,11 @@
 #include <DirectXMath.h>
 #include <d3dcompiler.h>
 
+#pragma warning(push)
+#pragma warning(disable:26812)
 #include <DirectXTex.h>
+#pragma warning(pop)
 
-#include "../BaseDirectX/Input.h"
-#include "../WindowsAPI/WinAPI.h"
 #include <wrl.h>
 #include <d3dx12.h>
 #include "../BaseDirectX/BaseDirectX.h"
