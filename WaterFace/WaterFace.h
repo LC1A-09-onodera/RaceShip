@@ -11,7 +11,7 @@ public:
 class WaterEachInfo : public EachInfo
 {
 public:
-	UINT frame;
+	UINT frame = 0;
 	void CreateConstBuff0(BaseDirectX& baseDirectX);
 	void CreateConstBuff1(BaseDirectX& baseDirectX);
 	void CreateConstBuff2(BaseDirectX& baseDirectX);

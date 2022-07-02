@@ -110,11 +110,24 @@ void GameScene::Init()
 	world.each.scale = { worldSize, worldSize, worldSize };
 	rWorld.CreateModel(baseDirectX, "SphereW", ShaderManager::playerShader);
 	rWorld.each.scale = { worldSize, worldSize, worldSize };
-	skyDome.CreateModel(baseDirectX, "sky", ShaderManager::playerShader);
+	skyDome.CreateModel(baseDirectX, "sky", ShaderManager::playerShader, true);
 	const float skyDomeSize = 60.0f;
 	skyDome.each.scale = { skyDomeSize , skyDomeSize , skyDomeSize };
 
 	spaceSp.CreateSprite(baseDirectX, L"Resource/Image/space.png", XMFLOAT3(window_width / 2.0f - 100.0f, 600.0f, 0));
+
+	for (int i = 0; i < 10; i++)
+	{
+		string path = "Resource/Image/Numbers/Num" + to_string(i) + ".png";
+		numTex[i].LoadGraph(baseDirectX, ConvertStringToWchaer(path));
+	}
+	for (int i = 0; i < 10; i++)
+	{
+		resultNumSprite[i].CreateSprite(baseDirectX, numTex[i], XMFLOAT3(window_width / 2.0f - 100.0f, 600.0f, 0));
+		resultNumSprite[i + 10].CreateSprite(baseDirectX, numTex[i], XMFLOAT3(window_width / 2.0f - 100.0f, 600.0f, 0));
+		resultNumSprite[i + 20].CreateSprite(baseDirectX, numTex[i], XMFLOAT3(window_width / 2.0f - 100.0f, 600.0f, 0));
+		resultNumSprite[i + 30].CreateSprite(baseDirectX, numTex[i], XMFLOAT3(window_width / 2.0f - 100.0f, 600.0f, 0));
+	}
 }
 
 void GameScene::TitleUpdate()
@@ -164,6 +177,7 @@ void GameScene::ResultUpdate()
 	waterFace.Update();
 	normalWater.Update();
 
+	//カメラのイージングを行う　
 	Imgui::CameraRotation = ShlomonMath::EaseInOutQuad(XMFLOAT3(Imgui::CameraRotation, 0 ,0) , XMFLOAT3(350.0f, 0, 0), 0.1f).x;
 	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.seling.each.position);
 	Cameras::camera.Update();

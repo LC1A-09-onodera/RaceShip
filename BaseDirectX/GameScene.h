@@ -1,6 +1,7 @@
 #pragma once
 #include "../3DModel/Model.h"
 #include "../Camera/Camera.h"
+#include "../Texture/Texture.h"
 #include "../Sprite/Sprite.h"
 #include "../Light/Light.h"
 #include "../PostEffect/PostEffect.h"
@@ -76,6 +77,8 @@ private:
 	Model skyDome;
 
 	Sprite spaceSp;
+	Tex numTex[10];
+	Sprite resultNumSprite[40];
 
 public:
 	GameScene();

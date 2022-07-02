@@ -20,7 +20,7 @@ class Seling
 
 	const float addForcePower = 0.02f;
 	const float MaxForce = 1.0f;
-	const float addSelingAngle = 10.0f;
+	const float addSelingAngle = 1.0f;
 	const float subForce = 50.0f;
 public:
 	Model seling;
@@ -41,4 +41,10 @@ public:
 
 	void HitWall();
 	void HitGoal();
+
+	void LoadKeys();
+	Rewired::RewiredKeys goFrontKey;
+	Rewired::RewiredKeys goBackKey;
+	Rewired::RewiredKeys lookToRightKey;
+	Rewired::RewiredKeys lookToLeftKey;
 };

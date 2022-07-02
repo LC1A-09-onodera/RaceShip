@@ -1,6 +1,8 @@
 #pragma once
 #include <DirectXMath.h>
 #include <cstdlib>
+#include <string>
+#include <stdlib.h>
 #define PI 3.141592f
 
 using namespace DirectX;
@@ -208,6 +210,14 @@ static XMFLOAT3 Cross(const XMFLOAT3& v1, const XMFLOAT3& v2)
 	result.z = v1.x * v2.y - v1.y * v2.x;
 	return result;
 }
+static const wchar_t* ConvertStringToWchaer(std::string name)
+{
+	size_t ret;
+	wchar_t* text = new wchar_t[name.size() + 1];
+	mbstowcs_s(&ret, text, name.size() + 1, name.c_str(), _TRUNCATE);
+	return text;
+}
+
 namespace ShlomonMath
 {
 	static XMFLOAT3 EaseInQuad(const XMFLOAT3& start, XMFLOAT3& end, const float t)

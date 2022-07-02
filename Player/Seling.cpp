@@ -3,6 +3,7 @@
 #include "../BaseDirectX/Input.h"
 #include "../Shader/ShaderManager.h"
 #include "../LoadStage/StageObject.h"
+#include "../imgui/ImguiControl.h"
 
 void Seling::ForceUpdate()
 {
@@ -21,13 +22,17 @@ void Seling::ForceUpdate()
 
 void Seling::LoadModel(BaseDirectX& baseDirectX)
 {
-	seling.CreateModel(baseDirectX, "Triangle", ShaderManager::playerShader, false);
+	seling.CreateModel(baseDirectX, "boat_v3", ShaderManager::playerShader, false);
+	
 	Init();
+	
+	LoadKeys();
 }
 
 void Seling::Init()
 {
 	seling.each.position = {0, 0, 0, 1.0f};
+	seling.each.scale = {1.0f, 1.0f, 0.8f};
 	frontDirection = { 0, 0 ,1.0f };
 	addForce = { 0, 0 ,0 };
 	frontDirection = { 0.0f ,0.0f , 0.0f };
@@ -35,7 +40,6 @@ void Seling::Init()
 	isMoveForce = false;
 	addForce = { 0.0f ,0.0f , 0.0f };
 	isGoal = false;
-	
 }
 
 void Seling::Update()
@@ -80,22 +84,22 @@ void Seling::ForceAttach()
 
 void Seling::Move()
 {
-	if (VoiceReciver::GetRight() || Input::KeyTrigger(DIK_D))
+	if (VoiceReciver::GetRight() || lookToRightKey.GetKey())
 	{
 		angle += addSelingAngle;
 	}
-	if (VoiceReciver::GetLeft() || Input::KeyTrigger(DIK_A))
+	if (VoiceReciver::GetLeft() || lookToLeftKey.GetKey())
 	{
 		angle -= addSelingAngle;
 	}
 
 	frontDirection = { ShlomonMath::Sin(angle), 0, ShlomonMath::Cos(angle) };
 
-	if (VoiceReciver::GetFront() || Input::Key(DIK_W))
+	if (VoiceReciver::GetFront() || goFrontKey.GetKey())
 	{
 		AddForce(XMFLOAT3(frontDirection.x * addForcePower, frontDirection.y * addForcePower, frontDirection.z * addForcePower));
 	}
-	if (VoiceReciver::GetBack() || Input::Key(DIK_S))
+	if (VoiceReciver::GetBack() || goBackKey.GetKey())
 	{
 		AddForce(XMFLOAT3(frontDirection.x * -addForcePower, frontDirection.y * -addForcePower, frontDirection.z * -addForcePower));
 	}
@@ -106,13 +110,15 @@ void Seling::Move()
 	VoiceReciver::SetBack(false);
 
 	seling.each.rotation = ShlomonMath::EaseInQuad(seling.each.rotation, XMFLOAT3(seling.each.rotation.x, seling.each.rotation.y, angle), 0.3f);
+	Imgui::CameraRotation = -seling.each.rotation.z + 270.0f;
 }
 
 void Seling::HitWall()
 {
 	for (auto itr = StageObjects::walls.wallsPos.begin(); itr != StageObjects::walls.wallsPos.end(); ++itr)
 	{
-		if (Lenght(seling.each.position, itr->position) <= 2.0f)
+		const float WallAndSelingR = 2.9f;
+		if (Lenght(seling.each.position, itr->position) <= WallAndSelingR)
 		{
 			XMFLOAT3 vec = ConvertXMVECTORtoXMFLOAT3(itr->position - seling.each.position);
 			vec = Normalize(vec);
@@ -144,4 +150,12 @@ void Seling::HitGoal()
 			isGoal = true;
 		}
 	}
+}
+
+void Seling::LoadKeys()
+{
+	goFrontKey.LoadKey("Resource/TextData/Rewired/PlayerGoFront.txt");
+	goBackKey.LoadKey("Resource/TextData/Rewired/PlayerGoBack.txt");
+	lookToRightKey.LoadKey("Resource/TextData/Rewired/PlayerLookToRight.txt");
+	lookToLeftKey.LoadKey("Resource/TextData/Rewired/PlayerLookToLeft.txt");
 }

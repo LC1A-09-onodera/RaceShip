@@ -177,7 +177,7 @@ void Imgui::EachInfo(BaseDirectX& baseDirectX)
         ImGui::InputFloat("CameraLength:", &CameraR, 1.0f, 10.0f);
         CameraR = ShlomonMath::Clamp(CameraR, 3.0f, 35.0f);
         ImGui::InputFloat("CameraRotation:", &CameraRotation, 1.0f, 10.0f);
-        CameraRotation = ShlomonMath::Clamp(CameraRotation, 200.0f, 340.0f);
+        //CameraRotation = ShlomonMath::Clamp(CameraRotation, 200.0f, 340.0f);
         ImGui::InputFloat("CameraHigh:", &CameraHigh, 0.01f, 0.02f);
         CameraHigh = ShlomonMath::Clamp(CameraHigh, 0.0f, 1.0f);
     }
