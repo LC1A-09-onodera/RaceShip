@@ -79,6 +79,8 @@ private:
 	Sprite spaceSp;
 	Tex numTex[10];
 	Sprite resultNumSprite[40];
+	Sprite goalSp;
+	Sprite titleSp;
 
 public:
 	GameScene();

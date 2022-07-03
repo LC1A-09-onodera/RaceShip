@@ -114,8 +114,9 @@ void GameScene::Init()
 	const float skyDomeSize = 60.0f;
 	skyDome.each.scale = { skyDomeSize , skyDomeSize , skyDomeSize };
 
-	spaceSp.CreateSprite(baseDirectX, L"Resource/Image/space.png", XMFLOAT3(window_width / 2.0f - 100.0f, 600.0f, 0));
-
+	spaceSp.CreateSprite(baseDirectX, L"Resource/Image/space.png", XMFLOAT3(static_cast<float>(window_width), 600.0f, 0));
+	goalSp.CreateSprite(baseDirectX, L"Resource/Image/Goal.png", XMFLOAT3(static_cast<float>(window_width), window_height / 2.0f, 0));
+	titleSp.CreateSprite(baseDirectX, L"Resource/Image/Title.png", XMFLOAT3(window_width / 2.0f - 128.0f, -128.0f, 0));
 	for (int i = 0; i < 10; i++)
 	{
 		string path = "Resource/Image/Numbers/Num" + to_string(i) + ".png";
@@ -132,10 +133,24 @@ void GameScene::Init()
 
 void GameScene::TitleUpdate()
 {
+	const float spriteSpeed = 0.15f;
+	spaceSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(spaceSp.position), XMFLOAT3(window_width / 2.0f - 80.0f, 600.0f, 0), spriteSpeed));
+	titleSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(titleSp.position), XMFLOAT3(window_width / 2.0f - 80.0f, 250.0f, 0), spriteSpeed));
 	if (Input::KeyTrigger(DIK_SPACE))
 	{
 		SceneNum = GAME;
 	}
+
+	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.seling.each.position);
+	Cameras::camera.Update();
+	Cameras::rCamera.eye.x = 0;
+	Cameras::rCamera.eye.y = -60.0f;
+	Cameras::rCamera.eye.z = -5.0f;
+	Cameras::rCamera.up = { 0, 1, 0 };
+	Cameras::rCamera.Update();
+
+	VoiceReciver::VoiceUDPUpdate(baseDirectX);
+	Sound::Updete(Imgui::volume);
 }
 
 void GameScene::SelectUpdate()
@@ -152,6 +167,11 @@ void GameScene::GameUpdate()
 	rSeling.Update();
 	waterFace.Update();
 	normalWater.Update();
+
+	//
+	const float spriteSpeed = 0.15f;
+	spaceSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(spaceSp.position), XMFLOAT3(static_cast<float>(window_width), 600.0f, 0), spriteSpeed));
+	titleSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(titleSp.position), XMFLOAT3(window_width / 2.0f - 80.0f, -128.0f, 0), spriteSpeed));
 	
 	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.seling.each.position);
 	Cameras::camera.Update();
@@ -172,11 +192,6 @@ void GameScene::GameUpdate()
 
 void GameScene::ResultUpdate()
 {
-	seling.Update();
-	rSeling.Update();
-	waterFace.Update();
-	normalWater.Update();
-
 	//カメラのイージングを行う　
 	Imgui::CameraRotation = ShlomonMath::EaseInOutQuad(XMFLOAT3(Imgui::CameraRotation, 0 ,0) , XMFLOAT3(350.0f, 0, 0), 0.1f).x;
 	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.seling.each.position);
@@ -187,12 +202,19 @@ void GameScene::ResultUpdate()
 	Cameras::rCamera.up = { 0, 1, 0 };
 	Cameras::rCamera.Update();
 
+	//スプライトのイージング
+	const float spriteSpeed = 0.2f;
+	goalSp.position = ConvertXMFLOAT3toXMVECTOR(ShlomonMath::EaseInQuad(ConvertXMVECTORtoXMFLOAT3(goalSp.position), XMFLOAT3(window_width / 2.0f - 64.0f, window_height / 2.0f, -0), spriteSpeed));
+	spaceSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(spaceSp.position), XMFLOAT3(window_width / 2.0f - 80.0f, 600.0f, 0), spriteSpeed));
+
+	//タイトルに戻す
 	if (Input::KeyTrigger(DIK_SPACE))
 	{
 		SceneNum = TITLE;
 		seling.Init();
 		rSeling.Init();
 		Imgui::CameraRotation = 270.0f;
+		goalSp.position = { static_cast<float>(window_width), window_height / 2.0f, 0 , 1.0f};
 	}
 
 	VoiceReciver::VoiceUDPUpdate(baseDirectX);
@@ -257,18 +279,67 @@ void GameScene::DrawSprites()
 		break;
 	case TITLE:
 		spaceSp.SpriteDraw(baseDirectX);
+		titleSp.SpriteDraw(baseDirectX);
 		break;
-
+	case GAME:
+		spaceSp.SpriteDraw(baseDirectX);
+		titleSp.SpriteDraw(baseDirectX);
+		break;
+	case RESULT:
+		spaceSp.SpriteDraw(baseDirectX);
+		goalSp.SpriteDraw(baseDirectX);
+		break;
 	}
-	
 }
 
 void GameScene::TitleDraw()
 {
+	//PostEffectのPreDraw
+	PostEffects::PreDraw(baseDirectX);
+
+	PreWaterFaceDraw();
+
 	baseDirectX.UpdateFront();
-	
+
+	PostWaterFaceDraw();
+
+	XMVECTOR waterFacePosition = { 0, -0.5f, 0.0f, 1.0 };
+	PostEffect waterFaceTarget;
+	if (PostEffects::type == PostEffects::PostEffectType::Normal)
+	{
+		waterFaceTarget = PostEffects::postNormal;
+
+	}
+	else if (PostEffects::type == PostEffects::PostEffectType::Water)
+	{
+		waterFaceTarget = PostEffects::postWater;
+	}
+	else if (PostEffects::type == PostEffects::PostEffectType::Mosaic)
+	{
+		waterFaceTarget = PostEffects::postMosaic;
+	}
+	else if (PostEffects::type == PostEffects::PostEffectType::Blur)
+	{
+		waterFaceTarget = PostEffects::postBlur;
+	}
+	else
+	{
+		waterFaceTarget = PostEffects::postNormal;
+	}
+	if (Imgui::useWaterNum == 0)
+	{
+		waterFace.Draw(baseDirectX, waterFaceTarget, waterFacePosition);
+	}
+	else if (Imgui::useWaterNum == 1)
+	{
+		normalWater.Draw(baseDirectX, waterFaceTarget, waterFacePosition);
+	}
+
+	PostEffects::Draw(baseDirectX);
 
 	DrawSprites();
+
+	PostEffects::PostDraw(baseDirectX);
 	Imgui::DrawImGui(baseDirectX);
 	//描画コマンドここまで
 	baseDirectX.UpdateBack();
@@ -385,6 +456,8 @@ void GameScene::ResultDraw()
 	DrawSprites();
 
 	PostEffects::PostDraw(baseDirectX);
+
+	//
 	Imgui::DrawImGui(baseDirectX);
 	//描画コマンドここまで
 	baseDirectX.UpdateBack();

@@ -99,7 +99,7 @@ StyleCopReport.xml
 *.scc
 
 # obj
-!/Resource/Model/goal/goal.obj
+!/Resource/Model/Goal/Goal.obj
 !/Resource/Model/MapWall/MapWall.obj
 !/Resource/Model/maru/maru.obj
 !/Resource/Model/Plane2/Plane2.obj
@@ -110,7 +110,7 @@ StyleCopReport.xml
 !/Resource/Model/SphereW/SphereW.obj
 !/Resource/Model/shield/shield.obj
 !/Resource/Model/sky/sky.obj
-
+!/Resource/Model/boat_v3/boat_v3.obj
 
 # Chutzpah Test files
 _Chutzpah*

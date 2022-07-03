@@ -33,6 +33,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	// ウィンドウクラスを登録解除
 	WindowsAPI::Clear();
 
+	//解放できていないものを表示
 	IDXGIDebug* pDxgiDebug = nullptr;
 	if (pDxgiDebug == nullptr)
 	{

@@ -17,6 +17,7 @@ class Seling
 	const XMFLOAT3 maxForce = { 0.7f ,0.7f , 0.7f};
 
 	bool isGoal = false;
+	bool isTitle = true;
 
 	const float addForcePower = 0.02f;
 	const float MaxForce = 1.0f;

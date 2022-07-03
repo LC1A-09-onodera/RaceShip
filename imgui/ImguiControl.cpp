@@ -132,10 +132,10 @@ void Imgui::CreateMenuBar()
         {
             tab = ImguiType::Debug;
         }*/
-        if (ImGui::MenuItem("PostEffect"))
+        /*if (ImGui::MenuItem("PostEffect"))
         {
             tab = ImguiType::PostEffect;
-        }
+        }*/
         ImGui::EndMenuBar();
     }
 }
