@@ -22,7 +22,7 @@ void Seling::ForceUpdate()
 
 void Seling::LoadModel(BaseDirectX& baseDirectX)
 {
-	seling.CreateModel(baseDirectX, "boat_v3", ShaderManager::playerShader, false);
+	selingModel.CreateModel(baseDirectX, "boat_v3", ShaderManager::playerShader, false);
 	
 	Init();
 	
@@ -31,8 +31,8 @@ void Seling::LoadModel(BaseDirectX& baseDirectX)
 
 void Seling::Init()
 {
-	seling.each.position = {0, 0, 0, 1.0f};
-	seling.each.scale = {1.0f, 1.0f, 0.8f};
+	selingModel.each.position = {0, 0, 0, 1.0f};
+	selingModel.each.scale = {1.0f, 1.0f, 0.8f};
 	frontDirection = { 0, 0 ,1.0f };
 	addForce = { 0, 0 ,0 };
 	frontDirection = { 0.0f ,0.0f , 0.0f };
@@ -60,8 +60,8 @@ void Seling::Update()
 
 void Seling::Draw(BaseDirectX& baseDirectX, bool isRCamera)
 {
-	seling.Update(baseDirectX, &seling.each, isRCamera);
-	Draw3DObject(baseDirectX, seling);
+	selingModel.Update(baseDirectX, &selingModel.each, isRCamera);
+	Draw3DObject(baseDirectX, selingModel);
 }
 
 void Seling::AddForce(XMFLOAT3& force)
@@ -77,9 +77,9 @@ void Seling::AddForce(XMFLOAT3& force)
 
 void Seling::ForceAttach()
 {
-	seling.each.position.m128_f32[0] += addForce.x;
-	seling.each.position.m128_f32[1] += addForce.y;
-	seling.each.position.m128_f32[2] += addForce.z;
+	selingModel.each.position.m128_f32[0] += addForce.x;
+	selingModel.each.position.m128_f32[1] += addForce.y;
+	selingModel.each.position.m128_f32[2] += addForce.z;
 }
 
 void Seling::Move()
@@ -109,8 +109,8 @@ void Seling::Move()
 	VoiceReciver::SetFront(false);
 	VoiceReciver::SetBack(false);
 
-	seling.each.rotation = ShlomonMath::EaseInQuad(seling.each.rotation, XMFLOAT3(seling.each.rotation.x, seling.each.rotation.y, angle), 0.3f);
-	Imgui::CameraRotation = -seling.each.rotation.z + 270.0f;
+	selingModel.each.rotation = ShlomonMath::EaseInQuad(selingModel.each.rotation, XMFLOAT3(selingModel.each.rotation.x, selingModel.each.rotation.y, angle), 0.3f);
+	Imgui::CameraRotation = -selingModel.each.rotation.z + 270.0f;
 }
 
 void Seling::HitWall()
@@ -118,13 +118,13 @@ void Seling::HitWall()
 	for (auto itr = StageObjects::walls.wallsPos.begin(); itr != StageObjects::walls.wallsPos.end(); ++itr)
 	{
 		const float WallAndSelingR = 2.9f;
-		if (Lenght(seling.each.position, itr->position) <= WallAndSelingR)
+		if (Lenght(selingModel.each.position, itr->position) <= WallAndSelingR)
 		{
-			XMFLOAT3 vec = ConvertXMVECTORtoXMFLOAT3(itr->position - seling.each.position);
+			XMFLOAT3 vec = ConvertXMVECTORtoXMFLOAT3(itr->position - selingModel.each.position);
 			vec = Normalize(vec);
 			const float rezist = 7.0f;
-			bool blockR = itr->position.m128_f32[0] > seling.each.position.m128_f32[0];
-			bool blockFront = itr->position.m128_f32[2] > seling.each.position.m128_f32[2];
+			bool blockR = itr->position.m128_f32[0] > selingModel.each.position.m128_f32[0];
+			bool blockFront = itr->position.m128_f32[2] > selingModel.each.position.m128_f32[2];
 			bool hitRight = blockR && addForce.x > 0;
 			bool hitLeft = !blockR && addForce.x < 0;
 			bool hitFront = blockFront && addForce.z > 0;
@@ -145,7 +145,7 @@ void Seling::HitGoal()
 {
 	for (auto itr = StageObjects::goals.goalsPos.begin(); itr != StageObjects::goals.goalsPos.end(); ++itr)
 	{
-		if (Lenght(seling.each.position, itr->position) <= 2.0f)
+		if (Lenght(selingModel.each.position, itr->position) <= 2.0f)
 		{
 			isGoal = true;
 		}

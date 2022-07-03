@@ -24,7 +24,7 @@ class Seling
 	const float addSelingAngle = 1.0f;
 	const float subForce = 50.0f;
 public:
-	Model seling;
+	Model selingModel;
 	void AddForce(XMFLOAT3& force);
 	XMFLOAT3 GetDirection()
 	{

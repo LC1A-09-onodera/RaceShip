@@ -141,11 +141,9 @@ void GameScene::TitleUpdate()
 		SceneNum = GAME;
 	}
 
-	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.seling.each.position);
+	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
 	Cameras::camera.Update();
-	Cameras::rCamera.eye.x = 0;
-	Cameras::rCamera.eye.y = -60.0f;
-	Cameras::rCamera.eye.z = -5.0f;
+	Cameras::rCamera.eye = { 0.0f, -60.0f, -5.0f };
 	Cameras::rCamera.up = { 0, 1, 0 };
 	Cameras::rCamera.Update();
 
@@ -173,11 +171,10 @@ void GameScene::GameUpdate()
 	spaceSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(spaceSp.position), XMFLOAT3(static_cast<float>(window_width), 600.0f, 0), spriteSpeed));
 	titleSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(titleSp.position), XMFLOAT3(window_width / 2.0f - 80.0f, -128.0f, 0), spriteSpeed));
 	
-	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.seling.each.position);
+	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
 	Cameras::camera.Update();
-	Cameras::rCamera.eye.x = 0;
-	Cameras::rCamera.eye.y = -60.0f;
-	Cameras::rCamera.eye.z = -5.0f;
+
+	Cameras::rCamera.eye = { 0.0f, -60.0f, -5.0f };
 	Cameras::rCamera.up = { 0, 1, 0 };
 	Cameras::rCamera.Update();
 
@@ -194,11 +191,10 @@ void GameScene::ResultUpdate()
 {
 	//カメラのイージングを行う　
 	Imgui::CameraRotation = ShlomonMath::EaseInOutQuad(XMFLOAT3(Imgui::CameraRotation, 0 ,0) , XMFLOAT3(350.0f, 0, 0), 0.1f).x;
-	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.seling.each.position);
+	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
 	Cameras::camera.Update();
-	Cameras::rCamera.eye.x = 0;
-	Cameras::rCamera.eye.y = -60.0f;
-	Cameras::rCamera.eye.z = -5.0f;
+
+	Cameras::rCamera.eye = { 0.0f, -60.0f, -5.0f };
 	Cameras::rCamera.up = { 0, 1, 0 };
 	Cameras::rCamera.Update();
 
@@ -304,35 +300,14 @@ void GameScene::TitleDraw()
 	PostWaterFaceDraw();
 
 	XMVECTOR waterFacePosition = { 0, -0.5f, 0.0f, 1.0 };
-	PostEffect waterFaceTarget;
-	if (PostEffects::type == PostEffects::PostEffectType::Normal)
-	{
-		waterFaceTarget = PostEffects::postNormal;
-
-	}
-	else if (PostEffects::type == PostEffects::PostEffectType::Water)
-	{
-		waterFaceTarget = PostEffects::postWater;
-	}
-	else if (PostEffects::type == PostEffects::PostEffectType::Mosaic)
-	{
-		waterFaceTarget = PostEffects::postMosaic;
-	}
-	else if (PostEffects::type == PostEffects::PostEffectType::Blur)
-	{
-		waterFaceTarget = PostEffects::postBlur;
-	}
-	else
-	{
-		waterFaceTarget = PostEffects::postNormal;
-	}
+	//水面の切り替え
 	if (Imgui::useWaterNum == 0)
 	{
-		waterFace.Draw(baseDirectX, waterFaceTarget, waterFacePosition);
+		waterFace.Draw(baseDirectX, PostEffects::postNormal, waterFacePosition);
 	}
 	else if (Imgui::useWaterNum == 1)
 	{
-		normalWater.Draw(baseDirectX, waterFaceTarget, waterFacePosition);
+		normalWater.Draw(baseDirectX, PostEffects::postNormal, waterFacePosition);
 	}
 
 	PostEffects::Draw(baseDirectX);
@@ -367,35 +342,14 @@ void GameScene::GameDraw()
 	PostWaterFaceDraw();
 
 	XMVECTOR waterFacePosition = { 0, -0.5f, 0.0f, 1.0 };
-	PostEffect waterFaceTarget;
-	if (PostEffects::type == PostEffects::PostEffectType::Normal)
-	{
-		waterFaceTarget = PostEffects::postNormal;
-
-	}
-	else if (PostEffects::type == PostEffects::PostEffectType::Water)
-	{
-		waterFaceTarget = PostEffects::postWater;
-	}
-	else if (PostEffects::type == PostEffects::PostEffectType::Mosaic)
-	{
-		waterFaceTarget = PostEffects::postMosaic;
-	}
-	else if (PostEffects::type == PostEffects::PostEffectType::Blur)
-	{
-		waterFaceTarget = PostEffects::postBlur;
-	}
-	else
-	{
-		waterFaceTarget = PostEffects::postNormal;
-	}
+	//水面の切り替え
 	if (Imgui::useWaterNum == 0)
 	{
-		waterFace.Draw(baseDirectX, waterFaceTarget, waterFacePosition);
+		waterFace.Draw(baseDirectX, PostEffects::postNormal, waterFacePosition);
 	}
 	else if (Imgui::useWaterNum == 1)
 	{
-		normalWater.Draw(baseDirectX, waterFaceTarget, waterFacePosition);
+		normalWater.Draw(baseDirectX, PostEffects::postNormal, waterFacePosition);
 	}
 
 	PostEffects::Draw(baseDirectX);
@@ -420,35 +374,14 @@ void GameScene::ResultDraw()
 	PostWaterFaceDraw();
 
 	XMVECTOR waterFacePosition = { 0, -0.5f, 0.0f, 1.0 };
-	PostEffect waterFaceTarget;
-	if (PostEffects::type == PostEffects::PostEffectType::Normal)
-	{
-		waterFaceTarget = PostEffects::postNormal;
-
-	}
-	else if (PostEffects::type == PostEffects::PostEffectType::Water)
-	{
-		waterFaceTarget = PostEffects::postWater;
-	}
-	else if (PostEffects::type == PostEffects::PostEffectType::Mosaic)
-	{
-		waterFaceTarget = PostEffects::postMosaic;
-	}
-	else if (PostEffects::type == PostEffects::PostEffectType::Blur)
-	{
-		waterFaceTarget = PostEffects::postBlur;
-	}
-	else
-	{
-		waterFaceTarget = PostEffects::postNormal;
-	}
+	//水面の切り替え
 	if (Imgui::useWaterNum == 0)
 	{
-		waterFace.Draw(baseDirectX, waterFaceTarget, waterFacePosition);
+		waterFace.Draw(baseDirectX, PostEffects::postNormal, waterFacePosition);
 	}
 	else if (Imgui::useWaterNum == 1)
 	{
-		normalWater.Draw(baseDirectX, waterFaceTarget, waterFacePosition);
+		normalWater.Draw(baseDirectX, PostEffects::postNormal, waterFacePosition);
 	}
 
 	PostEffects::Draw(baseDirectX);
@@ -472,12 +405,31 @@ void GameScene::EndDraw()
 	//PostEffectのPreDraw
 	PostEffects::PreDraw(baseDirectX);
 
-	baseDirectX.UpdateFront();
-	//PostEffectのDraw
-	PostEffects::Draw(baseDirectX);
-	PostEffects::PostDraw(baseDirectX);
-	Imgui::DrawImGui(baseDirectX);
+	PreWaterFaceDraw();
 
+	baseDirectX.UpdateFront();
+
+	PostWaterFaceDraw();
+
+	XMVECTOR waterFacePosition = { 0, -0.5f, 0.0f, 1.0 };
+	//水面の切り替え
+	if (Imgui::useWaterNum == 0)
+	{
+		waterFace.Draw(baseDirectX, PostEffects::postNormal, waterFacePosition);
+	}
+	else if (Imgui::useWaterNum == 1)
+	{
+		normalWater.Draw(baseDirectX, PostEffects::postNormal, waterFacePosition);
+	}
+
+	PostEffects::Draw(baseDirectX);
+
+	DrawSprites();
+
+	PostEffects::PostDraw(baseDirectX);
+
+	//
+	Imgui::DrawImGui(baseDirectX);
 	//描画コマンドここまで
 	baseDirectX.UpdateBack();
 }
