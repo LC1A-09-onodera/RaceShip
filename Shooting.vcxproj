@@ -194,6 +194,7 @@
     <ClInclude Include="Light\SpotLight.h" />
     <ClInclude Include="LoadStage\LoadStage.h" />
     <ClInclude Include="LoadStage\StageObject.h" />
+    <ClInclude Include="MapLayout\MapLayout.h" />
     <ClInclude Include="Particle\Particle3D.h" />
     <ClInclude Include="Player\Seling.h" />
     <ClInclude Include="PostEffect\PostEffect.h" />
@@ -234,6 +235,7 @@
     <ClCompile Include="LoadStage\LoadStage.cpp" />
     <ClCompile Include="LoadStage\StageObject.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MapLayout\MapLayout.cpp" />
     <ClCompile Include="Particle\Particle3D.cpp" />
     <ClCompile Include="Player\Seling.cpp" />
     <ClCompile Include="PostEffect\PostEffect.cpp" />

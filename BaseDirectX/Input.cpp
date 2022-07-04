@@ -1,9 +1,11 @@
 #include "Input.h"
 #include "../Rewired/Rewired.h"
+#include "../imgui/ImguiControl.h"
 
 std::shared_ptr<IDirectInput8> Input::dinput = nullptr;
 IDirectInputDevice8 *Input::devkeyboard = nullptr;
 DirectInput* Input::directInput = DirectInput::GetInstance();
+int Input::mouseWheel = 0;
 
 void Input::Update(BaseDirectX &baseDirectX)
 {
@@ -36,6 +38,7 @@ void Input::Update(BaseDirectX &baseDirectX)
 	{
 		mouseInput[VK_CANCEL] = true;
 	}
+	OnMouseWheel();
 }
 
 void Input::Init()
@@ -96,4 +99,11 @@ bool Input::MouseTrigger(MouseButton mouseinput)
 bool Input::Mouse(MouseButton mouseinput)
 {
 	return mouseInput[(int)mouseinput];
+}
+
+void Input::OnMouseWheel()
+{
+	mouseWheel = GET_WHEEL_DELTA_WPARAM(WindowsAPI::msg.wParam) / WHEEL_DELTA;
+	Imgui::mouseWheel = mouseWheel;
+	WindowsAPI::msg.wParam = 1;
 }

@@ -85,6 +85,7 @@ public:
 	static std::shared_ptr<IDirectInput8> dinput;
 	static IDirectInputDevice8 *devkeyboard;
 	static DirectInput *directInput;/////////////////////
+	static int mouseWheel;
 	static void Init();
 	static void Update(BaseDirectX& baseDirectX);
 
@@ -103,4 +104,5 @@ public:
 
 	static bool Mouse(MouseButton mouseinput);
 
+	static void OnMouseWheel();
 };

@@ -5,7 +5,7 @@
 #include "../Camera/Camera.h"
 #include "../LoadStage/StageObject.h"
 #include "../BaseDirectX/DX12operator.h"
-
+#include "../MapLayout/MapLayout.h"
 #include <stdarg.h>
 
 ComPtr<ID3D12DescriptorHeap> Imgui::imguiDescHeap;
@@ -24,6 +24,10 @@ float Imgui::CameraRotation = 270.0f;
 float Imgui::CameraHigh = 0.4f;
 bool Imgui::CameraControl = true;
 int Imgui::useWaterNum = 0;
+
+int Imgui::mouseWheel;
+bool Imgui::touchedImgui = false;
+
 ComPtr<ID3D12DescriptorHeap> Imgui::CreateDescrriptorHeapForImgui(BaseDirectX& baseDirectX)
 {
     ComPtr<ID3D12DescriptorHeap> ret;
@@ -165,6 +169,11 @@ void Imgui::EachInfo(BaseDirectX& baseDirectX)
         if (ImGui::Button("LoadStage"))
         {
             StageObjects::LoadFile(baseDirectX);
+        }
+        if (ImGui::Button("OutputFile"))
+        {
+            MapEditorObjects::OutputFile();
+            touchedImgui = true;
         }
     }
     else if (tab == ImguiType::CameraInfo)

@@ -76,6 +76,9 @@
     <Filter Include="Player">
       <UniqueIdentifier>{74a57aab-5887-47e5-9222-e0f14eb613e1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MapLayout">
+      <UniqueIdentifier>{cd51c417-338f-4f40-88e5-d9836210c0fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -210,6 +213,9 @@
     <ClInclude Include="Light\PointLight.h">
       <Filter>Light</Filter>
     </ClInclude>
+    <ClInclude Include="MapLayout\MapLayout.h">
+      <Filter>MapLayout</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -325,6 +331,9 @@
     </ClCompile>
     <ClCompile Include="UDP\udp.cpp">
       <Filter>Udp</Filter>
+    </ClCompile>
+    <ClCompile Include="MapLayout\MapLayout.cpp">
+      <Filter>MapLayout</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

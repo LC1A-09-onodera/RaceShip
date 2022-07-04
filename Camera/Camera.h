@@ -1,4 +1,5 @@
 #include <DirectXMath.h>
+#include <array>
 #include "../BaseDirectX/BaseDirectX.h"
 #include "../BaseDirectX/DX12operator.h"
 using namespace DirectX;
@@ -33,6 +34,9 @@ public:
 	bool isControl = true;
 	//”½‘Î•ûŒü‚ÌƒJƒƒ‰‚©‚Ç‚¤‚©
 	bool isRCamera = false;
+
+	std::array<float, 2> mouseClickPos = { 0, 0 };
+	std::array<float, 2> mouseMoveAmount = { 0, 0 };
 	
 	void CameraTargetRot();
 	void Init(XMFLOAT3 &eye, XMFLOAT3 &target);
@@ -46,6 +50,8 @@ public:
 	XMFLOAT3 GetMousePosition(BaseDirectX &baseDirectX);
 	XMFLOAT3 EyeToMouseVec(BaseDirectX& baseDirectX);
 	XMFLOAT3 MousePosition(BaseDirectX& baseDirectX, float z);
+	void MouseWheelY();
+	void MouseRightPushMove(BaseDirectX& baseDirectX);
 };
 
 class Cameras

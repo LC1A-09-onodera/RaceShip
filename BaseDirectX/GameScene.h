@@ -11,7 +11,7 @@
 #include "../Rewired/Rewired.h"
 #include "../WaterFace/WaterFace.h"
 
-enum GameSceneName { TITLE, SELECT, GAME, END, RESULT, OP };
+enum GameSceneName { TITLE, SELECT, GAME, END, RESULT, OP , MAPEDIT};
 
 class GameScene
 {
@@ -24,6 +24,8 @@ private:
 	void ResultUpdate();
 
 	void OPUpdate();
+	void MapEditUpdate();
+
 	//•`‰æ
 	void GameDraw();
 	void TitleDraw();
@@ -32,6 +34,7 @@ private:
 	void ResultDraw();
 
 	void OPDraw();
+	void MapEditDraw();
 
 	void PreWaterFaceDraw();
 	void PostWaterFaceDraw();
@@ -81,6 +84,10 @@ private:
 	Sprite resultNumSprite[40];
 	Sprite goalSp;
 	Sprite titleSp;
+
+	//
+	Model mapFrameV;
+	Model mapFrameH;
 
 public:
 	GameScene();

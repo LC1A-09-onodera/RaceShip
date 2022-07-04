@@ -88,4 +88,8 @@ public:
     static bool CameraControl;
 
     static int useWaterNum;
+
+    static int mouseWheel;
+
+    static bool touchedImgui;
 };

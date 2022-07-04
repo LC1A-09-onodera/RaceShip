@@ -99,8 +99,14 @@ StyleCopReport.xml
 *.scc
 
 # obj
+!/Resource/Model/boat_v3/boat_v3.obj
 !/Resource/Model/Goal/Goal.obj
+!/Resource/Model/Map/Map.obj
+!/Resource/Model/MapEnemy/MapEnemy.obj
+!/Resource/Model/MapGoal/MapGoal.obj
+!/Resource/Model/MapW/MapW.obj
 !/Resource/Model/MapWall/MapWall.obj
+!/Resource/Model/sphere/sphere.obj
 !/Resource/Model/maru/maru.obj
 !/Resource/Model/Plane2/Plane2.obj
 !/Resource/Model/seling/seling.obj
@@ -110,7 +116,7 @@ StyleCopReport.xml
 !/Resource/Model/SphereW/SphereW.obj
 !/Resource/Model/shield/shield.obj
 !/Resource/Model/sky/sky.obj
-!/Resource/Model/boat_v3/boat_v3.obj
+
 
 # Chutzpah Test files
 _Chutzpah*

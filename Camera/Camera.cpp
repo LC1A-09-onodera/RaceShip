@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Camera.h"
 #include "../BaseDirectX/Input.h"
 #include "../BaseDirectX/viewport.h"
@@ -25,8 +26,8 @@ void Camera::CameraTargetRot()
 
 void Camera::Init(XMFLOAT3& eye, XMFLOAT3& target)
 {
-	eye = eye;
-	target = target;
+	this->eye = eye;
+	this->target = target;
 	up = { 0.0f, 1.0f, 0.0f };
 
 	Update();
@@ -225,6 +226,67 @@ XMFLOAT3 Camera::MousePosition(BaseDirectX& baseDirectX, float z)
 	y = mouseVec.y * count;
 	XMFLOAT3 result = { x, y, z };
 	return result;
+}
+
+void Camera::MouseWheelY()
+{
+	const float MaxZoomIn = 2.0f;
+	const float MaxZoomOut = 45.0f;
+	bool isZoomIn = Input::mouseWheel > 0 && eye.z > MaxZoomIn;
+	bool isZoomOut = Input::mouseWheel < 0 && eye.z < MaxZoomOut;
+	if (isZoomIn || isZoomOut)
+	{
+		eye.z -= Input::mouseWheel;
+	}
+}
+
+void Camera::MouseRightPushMove(BaseDirectX& baseDirectX)
+{
+	if (Input::MouseTrigger(MouseButton::RBUTTON))
+	{
+		mouseClickPos = { MousePosition(baseDirectX, 0.0f).x, MousePosition(baseDirectX, 0.0f).y };
+	}
+	if (Input::Mouse(MouseButton::RBUTTON))
+	{
+		const float rangeLimit = 25.0f;
+		const float sensitivity = 2.0f;
+
+		std::array<float, 2> nowMousePos = { MousePosition(baseDirectX, 0.0f).x , MousePosition(baseDirectX, 0.0f).y };
+		eye.x -= (nowMousePos[0] - mouseClickPos[0]) / sensitivity;
+		target.x -= (nowMousePos[0] - mouseClickPos[0]) / sensitivity;
+		eye.y -= (nowMousePos[1] - mouseClickPos[1]) / sensitivity;
+		target.y -= (nowMousePos[1] - mouseClickPos[1]) / sensitivity;
+		mouseMoveAmount[0] += (nowMousePos[0] - mouseClickPos[0]) / sensitivity;
+		mouseMoveAmount[1] += (nowMousePos[1] - mouseClickPos[1]) / sensitivity;
+		if (eye.x > rangeLimit || eye.x < -rangeLimit || eye.y > rangeLimit || eye.y < -rangeLimit)
+		{
+			if (eye.x > rangeLimit)
+			{
+				eye.x = rangeLimit;
+				target.x = rangeLimit;
+				mouseMoveAmount[0] = -rangeLimit;
+			}
+			else if (eye.x < -rangeLimit)
+			{
+				eye.x = -rangeLimit;
+				target.x = -rangeLimit;
+				mouseMoveAmount[0] = rangeLimit;
+			}
+			if (eye.y > rangeLimit)
+			{
+				eye.y = rangeLimit;
+				target.y = rangeLimit;
+				mouseMoveAmount[1] = -rangeLimit;
+			}
+			else if (eye.y < -rangeLimit)
+			{
+				eye.y = -rangeLimit;
+				target.y = -rangeLimit;
+				mouseMoveAmount[1] = rangeLimit;
+			}
+		}
+		mouseClickPos = nowMousePos;
+	}
 }
 
 float Camera::TargetLength()

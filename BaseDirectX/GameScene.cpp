@@ -11,6 +11,7 @@
 #include "../Sound/Sound.h"
 #include "../LoadStage/LoadStage.h"
 #include "../LoadStage/StageObject.h"
+#include "../MapLayout/MapLayout.h"
 
 GameScene::GameScene()
 {
@@ -52,6 +53,10 @@ void GameScene::SceneManageUpdateAndDraw()
 		EndUpdate();
 		EndDraw();
 		break;
+	case MAPEDIT:
+		MapEditUpdate();
+		MapEditDraw();
+		break;
 	default:
 		break;
 	}
@@ -59,14 +64,15 @@ void GameScene::SceneManageUpdateAndDraw()
 
 void GameScene::Init()
 {
-	SceneNum = TITLE;
+	SceneNum = MAPEDIT;
 	baseDirectX.Set();
 	//サウンド
 	Sound::CreateVoice(baseDirectX);
 	//SRVのアドレス確保
 	baseDirectX.GetAdress();
 	//カメラ初期化
-	Cameras::camera.Init(XMFLOAT3(0, 10, -15.0f), XMFLOAT3(0, 0, 0));
+	Cameras::camera.isRCamera = true;
+	Cameras::camera.Init(XMFLOAT3(0, 0, 20.0f), XMFLOAT3(0, 0, 0));
 	Cameras::rCamera.Init(XMFLOAT3(0, -10, -15.0f), XMFLOAT3(0, 0, 0));
 	Cameras::rCamera.isRCamera = true;
 	//Imguiの初期化
@@ -95,6 +101,16 @@ void GameScene::Init()
 	LoadStage::LoadStages("Resource/TextData/Stage/stage1.txt");
 
 	StageObjects::LoadModel(baseDirectX);
+
+	MapEditorObjects::LoadModels(baseDirectX);
+
+	mapFrameV.CreateModel(baseDirectX, "Map", ShaderManager::playerShader, false);
+	mapFrameH.CreateModel(baseDirectX, "Map", ShaderManager::playerShader, false);
+
+	mapFrameV.each.rotation.y = 90.0f;
+	mapFrameH.each.rotation.x = 90.0f;
+	mapFrameH.each.rotation.y = 0.0f;
+	mapFrameH.each.rotation.z = 90.0f;
 
 	seling.LoadModel(baseDirectX);
 	rSeling.LoadModel(baseDirectX);
@@ -224,6 +240,27 @@ void GameScene::OPUpdate()
 		SceneNum = TITLE;
 	}
 	opAnimationTime++;
+}
+
+void GameScene::MapEditUpdate()
+{
+	light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
+	mapFrameV.Update(baseDirectX, &mapFrameV.each);
+	mapFrameH.Update(baseDirectX, &mapFrameH.each);
+	//deleteした後のオブジェクトを描画しようとしてエラーを出さないための応急処置
+	//Update段階でオブジェクトをなくしたい
+	Imgui::DrawImGui(baseDirectX);
+	XMFLOAT3 mousePos = Cameras::camera.MousePosition(baseDirectX, 0.0f);
+	if (!Imgui::touchedImgui)
+	{
+		MapEditorObjects::Update(baseDirectX, XMFLOAT3(mousePos.x - Cameras::camera.mouseMoveAmount[0], mousePos.y - Cameras::camera.mouseMoveAmount[1], mousePos.z));
+	}
+	Imgui::touchedImgui = false;
+	LightUpdate();
+	Imgui::CameraControl = false;
+	Cameras::camera.MouseWheelY();
+	Cameras::camera.MouseRightPushMove(baseDirectX);
+	Cameras::camera.Update();
 }
 
 void GameScene::EndUpdate()
@@ -398,6 +435,17 @@ void GameScene::ResultDraw()
 
 void GameScene::OPDraw()
 {
+}
+
+void GameScene::MapEditDraw()
+{
+	baseDirectX.UpdateFront();
+	Draw3DObject(baseDirectX, mapFrameV, -1, false);
+	Draw3DObject(baseDirectX, mapFrameH, -1, false);
+	MapEditorObjects::Draw(baseDirectX);
+	Imgui::DrawImGui(baseDirectX);
+	//描画コマンドここまで
+	baseDirectX.UpdateBack();
 }
 
 void GameScene::EndDraw()
