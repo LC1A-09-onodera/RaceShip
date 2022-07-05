@@ -67,7 +67,7 @@ public:
 	static WallObject walls;
 	static GoalObject goals;
 	static EnemyObject enemys;
-	static void LoadFile(BaseDirectX& baseDirectX);
+	static void LoadFile(BaseDirectX& baseDirectX, const char *path);
 	static void LoadModel(BaseDirectX &baseDirectX);
 	static void Draw(BaseDirectX &baseDirectX, bool isRCamera = false);
 };

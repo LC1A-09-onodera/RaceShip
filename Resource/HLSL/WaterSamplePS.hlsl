@@ -12,16 +12,20 @@ float4 main(VSOutput input) : SV_TARGET
     windowSize.x = 1280;
     windowSize.y = 720;
     float speed = 0.8f;
-    float ripple = 1.2f;
+    //波の細かさ
+    float ripple = 0.6f;
     float2 uv = input.uv;
+    //現在のフレームを取得
     uint frameCount = flash;
     float time = frameCount * 0.01;
     float2 pos = input.svpos.xy / windowSize * 12.0 - 20.0;
     float2 tmp = pos;
-    float speed2 = speed * 2.0;
-    float inten = 0.015f;
+    float speed2 = speed * 1.0;
+    //波のデカさ
+    float inten = 0.020f;
     float col = 0;
-    float distortion = 0.2f;
+    //歪みのデカさ
+    float distortion = 0.1f;
     for (int i = 0; i < Iterations; ++i)
     {
         float t = time * (1.0 - (3.2 / (float(i) + speed)));
@@ -34,5 +38,5 @@ float4 main(VSOutput input) : SV_TARGET
     col /= float(Iterations);
     col = saturate(1.5 - sqrt(col));
     uv += col * distortion;
-    return tex.Sample(smp, uv) + col * 0.1f;
+    return tex.Sample(smp, uv) + (col * 0.6f);
 }

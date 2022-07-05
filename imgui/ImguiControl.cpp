@@ -13,7 +13,7 @@ ComPtr<ID3D12DescriptorHeap> Imgui::heapForImgui;
 int Imgui::effectType = -1;
 Imgui::ImguiType Imgui::tab;
 Imgui::DebugType Imgui::debugType;
-int Imgui::playerCombo = 0;
+int Imgui::sceneNum = 0;
 ImguiEnum Imgui::iEnum(5, "a", "sample2", "sample3", "sample4", "player");
 std::string Imgui::test;
 std::string Imgui::ipv4Name;
@@ -28,6 +28,13 @@ int Imgui::useWaterNum = 0;
 int Imgui::mouseWheel;
 bool Imgui::touchedImgui = false;
 
+int Imgui::oldSceneNum;
+bool Imgui::isSceneChange = false;
+
+int Imgui::exportStageNum = 1;
+int Imgui::LoadStageNum = 1;
+bool Imgui::isExport;
+bool Imgui::isLoadstage;
 ComPtr<ID3D12DescriptorHeap> Imgui::CreateDescrriptorHeapForImgui(BaseDirectX& baseDirectX)
 {
     ComPtr<ID3D12DescriptorHeap> ret;
@@ -132,10 +139,10 @@ void Imgui::CreateMenuBar()
         {
             tab = ImguiType::CameraInfo;
         }
-        /*if (ImGui::MenuItem("Debug"))
+        if (ImGui::MenuItem("Debug"))
         {
             tab = ImguiType::Debug;
-        }*/
+        }
         /*if (ImGui::MenuItem("PostEffect"))
         {
             tab = ImguiType::PostEffect;
@@ -166,13 +173,20 @@ void Imgui::EachInfo(BaseDirectX& baseDirectX)
         {
             ImGui::Text("notiong");
         }
+
+        ImGui::InputInt("LoadStageNum", &LoadStageNum, 1, 1);
         if (ImGui::Button("LoadStage"))
         {
-            StageObjects::LoadFile(baseDirectX);
+            isLoadstage = true;
+            //string path = "Resource/TextData/Stage/stage" + to_string(LoadStageNum) + ".txt";
+            //StageObjects::LoadFile(baseDirectX, path.c_str());
         }
+        ImGui::InputInt("ExportNum", &exportStageNum, 1, 1);
         if (ImGui::Button("OutputFile"))
         {
-            MapEditorObjects::OutputFile();
+            isExport = true;
+            //string path = "Resource/TextData/Stage/stage" + to_string(exportStageNum) + ".txt";
+            //MapEditorObjects::OutputFile(path.c_str());
             touchedImgui = true;
         }
     }
@@ -189,6 +203,10 @@ void Imgui::EachInfo(BaseDirectX& baseDirectX)
         //CameraRotation = ShlomonMath::Clamp(CameraRotation, 200.0f, 340.0f);
         ImGui::InputFloat("CameraHigh:", &CameraHigh, 0.01f, 0.02f);
         CameraHigh = ShlomonMath::Clamp(CameraHigh, 0.0f, 1.0f);
+    }
+    else if (tab == ImguiType::Debug)
+    {
+        //DebugUpdate();
     }
     else if (tab == ImguiType::PostEffect)
     {
@@ -219,7 +237,13 @@ void Imgui::DebugUpdate()
 {
     if (debugType == DebugType::Player)
     {
-        ImGui::Combo("playerCombo", &playerCombo, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0");
+        isSceneChange = false;
+        oldSceneNum = sceneNum;
+        ImGui::Combo("sceneNum", &sceneNum, "TITLE\0SELECT\0GAME\0END\0RESULT\0OP\0MAPEDIT\0\0");
+        if (oldSceneNum != sceneNum)
+        {
+            isSceneChange = true;
+        }
     }
     else if (debugType == DebugType::Water)
     {
@@ -230,6 +254,21 @@ void Imgui::DebugUpdate()
 void Imgui::SetWindowActive(bool isActive)
 {
     Imgui::isActive = isActive;
+}
+void Imgui::Update(BaseDirectX& baseDirectX)
+{
+    if (isLoadstage)
+    {
+        string path = "Resource/TextData/Stage/stage" + to_string(LoadStageNum) + ".txt";
+        StageObjects::LoadFile(baseDirectX, path.c_str());
+        isLoadstage = false;
+    }
+    if (isExport)
+    {
+        string path = "Resource/TextData/Stage/stage" + to_string(exportStageNum) + ".txt";
+        MapEditorObjects::OutputFile(path.c_str());
+        isExport = false;
+    }
 };
 
 ImguiEnum::ImguiEnum(int count, ...)

@@ -50,6 +50,8 @@ public:
     static bool isActive;
     static void SetWindowActive(bool isActive);
 
+    static void Update(BaseDirectX &baseDirectX);
+
     static int effectType;
     enum class ImguiType
     {
@@ -71,7 +73,9 @@ public:
     };
     static DebugType debugType;
 
-    static int playerCombo;
+    static int sceneNum;
+    static int oldSceneNum;
+    static bool isSceneChange;
     static ImguiEnum iEnum;
 
     static std::string test;
@@ -92,4 +96,10 @@ public:
     static int mouseWheel;
 
     static bool touchedImgui;
+
+    static int exportStageNum;
+    static int LoadStageNum;
+
+    static bool isExport;
+    static bool isLoadstage;
 };

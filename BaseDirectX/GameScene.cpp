@@ -28,7 +28,18 @@ void GameScene::SceneManageUpdateAndDraw()
 	Input::Update(baseDirectX);
 	WindowsAPI::CheckMsg();
 	light->Update();
-	switch (SceneNum)
+	Imgui::Update(baseDirectX);
+	if (Input::KeyTrigger(DIK_F1))
+	{
+		Imgui::sceneNum = TITLE;
+		Imgui::CameraControl = true;
+		Cameras::camera.isRCamera = false;
+	}
+	if (Input::KeyTrigger(DIK_F2))
+	{
+		Imgui::sceneNum = MAPEDIT;
+	}
+	switch (Imgui::sceneNum)
 	{
 	case OP:
 		OPUpdate();
@@ -64,14 +75,14 @@ void GameScene::SceneManageUpdateAndDraw()
 
 void GameScene::Init()
 {
-	SceneNum = MAPEDIT;
+	SceneNum = TITLE;
 	baseDirectX.Set();
 	//サウンド
 	Sound::CreateVoice(baseDirectX);
 	//SRVのアドレス確保
 	baseDirectX.GetAdress();
 	//カメラ初期化
-	Cameras::camera.isRCamera = true;
+	//Cameras::camera.isRCamera = true;
 	Cameras::camera.Init(XMFLOAT3(0, 0, 20.0f), XMFLOAT3(0, 0, 0));
 	Cameras::rCamera.Init(XMFLOAT3(0, -10, -15.0f), XMFLOAT3(0, 0, 0));
 	Cameras::rCamera.isRCamera = true;
@@ -149,12 +160,13 @@ void GameScene::Init()
 
 void GameScene::TitleUpdate()
 {
+	Cameras::camera.isRCamera = false;
 	const float spriteSpeed = 0.15f;
 	spaceSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(spaceSp.position), XMFLOAT3(window_width / 2.0f - 80.0f, 600.0f, 0), spriteSpeed));
 	titleSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(titleSp.position), XMFLOAT3(window_width / 2.0f - 80.0f, 250.0f, 0), spriteSpeed));
 	if (Input::KeyTrigger(DIK_SPACE))
 	{
-		SceneNum = GAME;
+		Imgui::sceneNum = GAME;
 	}
 
 	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
@@ -171,12 +183,13 @@ void GameScene::SelectUpdate()
 {
 	if (Input::KeyTrigger(DIK_SPACE))
 	{
-		SceneNum = GAME;
+		Imgui::sceneNum = GAME;
 	}
 }
 
 void GameScene::GameUpdate()
 {
+	Cameras::camera.isRCamera = false;
 	seling.Update();
 	rSeling.Update();
 	waterFace.Update();
@@ -196,7 +209,7 @@ void GameScene::GameUpdate()
 
 	if (seling.GetIsGoal())
 	{
-		SceneNum = RESULT;
+		Imgui::sceneNum = RESULT;
 	}
 
 	VoiceReciver::VoiceUDPUpdate(baseDirectX);
@@ -222,7 +235,7 @@ void GameScene::ResultUpdate()
 	//タイトルに戻す
 	if (Input::KeyTrigger(DIK_SPACE))
 	{
-		SceneNum = TITLE;
+		Imgui::sceneNum = TITLE;
 		seling.Init();
 		rSeling.Init();
 		Imgui::CameraRotation = 270.0f;
@@ -237,13 +250,15 @@ void GameScene::OPUpdate()
 {
 	if (opAnimationTime > MaxOPAnimationTime)
 	{
-		SceneNum = TITLE;
+		Imgui::sceneNum = TITLE;
 	}
 	opAnimationTime++;
 }
 
 void GameScene::MapEditUpdate()
 {
+	Cameras::camera.isRCamera = true;
+	Cameras::camera.Init(XMFLOAT3(0, 0, 20.0f), XMFLOAT3(0, 0, 0));
 	light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
 	mapFrameV.Update(baseDirectX, &mapFrameV.each);
 	mapFrameH.Update(baseDirectX, &mapFrameH.each);
@@ -267,7 +282,7 @@ void GameScene::EndUpdate()
 {
 	if (Input::KeyTrigger(DIK_SPACE) || Input::directInput->IsButtonPush(DirectInput::ButtonKind::Button01))
 	{
-		SceneNum = TITLE;
+		Imgui::sceneNum = TITLE;
 		Cameras::camera.Init(XMFLOAT3(0, 10, -15.0f), XMFLOAT3(0, 0, 0));
 	}
 }

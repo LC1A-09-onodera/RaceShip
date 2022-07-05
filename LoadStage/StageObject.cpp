@@ -26,7 +26,7 @@ void WallObject::LoadPosition(BaseDirectX& baseDirectX)
 	}
 }
 
-void StageObjects::LoadFile(BaseDirectX& baseDirectX)
+void StageObjects::LoadFile(BaseDirectX& baseDirectX, const char* path)
 {
 	LoadStage::wallPosition.clear();
 	walls.wallsPos.clear();
@@ -34,7 +34,7 @@ void StageObjects::LoadFile(BaseDirectX& baseDirectX)
 	LoadStage::goalPosition.clear();
 	goals.goalsPos.clear();
 	goals.rGoalsPos.clear();
-	LoadStage::LoadStages("Resource/TextData/Stage/stage1.txt");
+	LoadStage::LoadStages(path);
 	walls.LoadPosition(baseDirectX);
 	goals.LoadPosition(baseDirectX);
 }

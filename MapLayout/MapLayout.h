@@ -57,7 +57,7 @@ class MapEditorObjects
 	static XMFLOAT3 lineMousePos;
 	static bool isLinePut;
 
-
+	static list<pair<list<MapEditorObject>::iterator, MapObjects>> andoList;
 public:
 	static const int MapW;
 	static const int MapH;
@@ -69,6 +69,7 @@ public:
 	static void SetObject(BaseDirectX& baseDirectX, XMFLOAT3& position);
 	static void SetObjectLine(BaseDirectX& baseDirectX, XMFLOAT3& position);
 	static bool ObjectCollision(XMFLOAT3& mousePos);
-	static void OutputFile();
+	static void OutputFile(const char *path);
 	static void DeleteObjects();
+	static void EraseObject();
 };

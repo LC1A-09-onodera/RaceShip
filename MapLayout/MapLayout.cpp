@@ -23,6 +23,8 @@ XMFLOAT3 MapEditorObjects::lineMousePos;
 bool MapEditorObjects::isLinePut;
 const int MapEditorObjects::MapW = 25;
 const int MapEditorObjects::MapH = 25;
+list<pair<list<MapEditorObject>::iterator, MapObjects>> MapEditorObjects::andoList;
+
 bool MapEditorObject::OnCollisionMouse(float posX, float posY)
 {
 	const float mapObjectR = 0.53f;
@@ -103,14 +105,14 @@ void MapEditorObjects::Update(BaseDirectX& baseDirectX, XMFLOAT3& mousePos)
 	{
 		SetObjectLine(baseDirectX, mousePos);
 	}
-	if (Input::Key(DIK_A) && Input::Key(DIK_L))
-	{
-		OutputFile();
-	}
 	if (Input::Key(DIK_D))
 	{
 		auto itr = wall.begin();
 		itr->piece.position.m128_f32[0] += 1.0f;
+	}
+	if (Input::Key(DIK_LCONTROL) && Input::KeyTrigger(DIK_Z))
+	{
+		EraseObject();
 	}
 }
 
@@ -153,10 +155,18 @@ void MapEditorObjects::SetObject(BaseDirectX& baseDirectX, XMFLOAT3& position)
 	if (activeType == MapObjects::WALL)
 	{
 		MapEditorObjects::wall.push_back(object);
+		auto itr = wall.end();
+		--itr;
+		pair<list<MapEditorObject>::iterator, MapObjects > ando = {itr, activeType};
+		andoList.push_back(ando);
 	}
 	else if (activeType == MapObjects::GOAL)
 	{
 		MapEditorObjects::goal.push_back(object);
+		auto itr = goal.end();
+		--itr;
+		pair<list<MapEditorObject>::iterator, MapObjects > ando = { itr, activeType };
+		andoList.push_back(ando);
 	}
 	/*else if (activeType == MapObjects::ENEMY)
 	{
@@ -226,9 +236,9 @@ bool MapEditorObjects::ObjectCollision(XMFLOAT3& mousePos)
 	return false;
 }
 
-void MapEditorObjects::OutputFile()
+void MapEditorObjects::OutputFile(const char* path)
 {
-	string fileName = "Resource/TextData/Stage/stage2.txt";
+	string fileName = path;
 	ofstream ofs(fileName);
 	if (!ofs) return;
 	//ofs << "wall" << std::endl;
@@ -253,4 +263,20 @@ void MapEditorObjects::DeleteObjects()
 	wall.clear();
 	goal.clear();
 	//enemy.clear();
+}
+
+void MapEditorObjects::EraseObject()
+{
+	if (andoList.size() < 1)return;
+	auto eraseObject = andoList.end();
+	--eraseObject;
+	if (eraseObject->second == MapObjects::WALL)
+	{
+		wall.erase(eraseObject->first);
+	}
+	else if (eraseObject->second == MapObjects::GOAL)
+	{
+		goal.erase(eraseObject->first);
+	}
+	andoList.erase(eraseObject);
 }
