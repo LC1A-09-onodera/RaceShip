@@ -186,7 +186,7 @@ public:
 	Material material;
 	//マテリアルの数
 	int materialCount = 0;
-	void CreateModel(BaseDirectX& baseDirectX, const char *name, HLSLShader &shader, bool smoothing = false);
+	void CreateModel(BaseDirectX& baseDirectX, const char *name, HLSLShader &shader, bool smoothing = false, bool isTriangle = true);
 	//void Update();
 	virtual void Update(BaseDirectX& baseDirectX, EachInfo *each, bool rCamera = false);
 	void SendVertex(BaseDirectX& baseDirectX);
@@ -198,7 +198,7 @@ public:
 	//エッジ平滑化データの追加
 	void AddAmoothData(unsigned short indexPosition, unsigned short indexVertex);
 	void CalculateSmoothedVertexNormals();
-	bool InitializeGraphicsPipeline(BaseDirectX &baseDirectX, HLSLShader &shader);
+	bool InitializeGraphicsPipeline(BaseDirectX &baseDirectX, HLSLShader &shader, bool isTriangle = true);
 	//bool LoadTexture(const wchar_t *texName = nullptr);
 	bool LoadTexture(BaseDirectX& baseDirectX, const string &directPath, const string &filename);
 	bool InitializeDescriptorHeap(BaseDirectX& baseDirectX);

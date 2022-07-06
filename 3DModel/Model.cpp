@@ -45,11 +45,11 @@ void Model::SetLight(shared_ptr<Light> light)
 	Model::light = light;
 }
 
-void Model::CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& shader, bool smoothing)
+void Model::CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& shader, bool smoothing, bool isTriangle)
 {
 	InitializeDescriptorHeap(baseDirectX);
 
-	InitializeGraphicsPipeline(baseDirectX, shader);
+	InitializeGraphicsPipeline(baseDirectX, shader, isTriangle);
 
 	LoadFileContents(baseDirectX, name, smoothing);
 
@@ -235,7 +235,7 @@ void Model::LoadFileContents(BaseDirectX &baseDirectX, const char* name, bool sm
 	file.close();
 }
 
-bool Model::InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& shader)
+bool Model::InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& shader, bool isTriangle)
 {
 	HRESULT result = S_FALSE;
 	ComPtr<ID3DBlob> errorBlob; // エラーオブジェクト
@@ -300,7 +300,16 @@ bool Model::InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& sha
 	gpipeline.InputLayout.NumElements = _countof(inputLayout);
 
 	// 図形の形状設定（三角形）
-	gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	if (isTriangle)
+	{
+		gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	}
+	else
+	{
+		gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+	}
+	// 図形の形状設定（三角形）
+	//gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
 	gpipeline.NumRenderTargets = 1;	// 描画対象は1つ
 	gpipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA

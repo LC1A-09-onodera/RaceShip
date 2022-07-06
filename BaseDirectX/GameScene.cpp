@@ -115,8 +115,8 @@ void GameScene::Init()
 
 	MapEditorObjects::LoadModels(baseDirectX);
 
-	mapFrameV.CreateModel(baseDirectX, "Map", ShaderManager::playerShader, false);
-	mapFrameH.CreateModel(baseDirectX, "Map", ShaderManager::playerShader, false);
+	mapFrameV.CreateModel(baseDirectX, "Map", ShaderManager::playerShader, false, false);
+	mapFrameH.CreateModel(baseDirectX, "Map", ShaderManager::playerShader, false, false);
 
 	mapFrameV.each.rotation.y = 90.0f;
 	mapFrameH.each.rotation.x = 90.0f;
@@ -189,6 +189,8 @@ void GameScene::SelectUpdate()
 
 void GameScene::GameUpdate()
 {
+	light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
+	LightUpdate();
 	Cameras::camera.isRCamera = false;
 	seling.Update();
 	rSeling.Update();
