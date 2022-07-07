@@ -10,5 +10,5 @@ std::string IpAddress::ipAddress;
 
 void IpAddress::GetIpAddress()
 {
-	Imgui::GetIp(ipAddress.c_str());
+	
 }

@@ -38,12 +38,16 @@ void GameScene::SceneManageUpdateAndDraw()
 	if (Input::KeyTrigger(DIK_F2))
 	{
 		Imgui::sceneNum = MAPEDIT;
+		Cameras::camera.isRCamera = true;
+		Imgui::CameraControl = false;
+		Cameras::camera.Init(XMFLOAT3(0, 0, 20.0f), XMFLOAT3(0, 0, 0));
 	}
 	switch (Imgui::sceneNum)
 	{
 	case OP:
 		OPUpdate();
 		OPDraw();
+		break;
 	case TITLE:
 		TitleUpdate();
 		TitleDraw();
@@ -68,6 +72,8 @@ void GameScene::SceneManageUpdateAndDraw()
 		MapEditUpdate();
 		MapEditDraw();
 		break;
+	case RewiredEdit:
+		
 	default:
 		break;
 	}
@@ -205,7 +211,7 @@ void GameScene::GameUpdate()
 	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
 	Cameras::camera.Update();
 
-	Cameras::rCamera.eye = { 0.0f, -60.0f, -5.0f };
+	Cameras::rCamera.eye = { 0.0f, -65.0f, -5.0f };
 	Cameras::rCamera.up = { 0, 1, 0 };
 	Cameras::rCamera.Update();
 
@@ -259,8 +265,6 @@ void GameScene::OPUpdate()
 
 void GameScene::MapEditUpdate()
 {
-	Cameras::camera.isRCamera = true;
-	Cameras::camera.Init(XMFLOAT3(0, 0, 20.0f), XMFLOAT3(0, 0, 0));
 	light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
 	mapFrameV.Update(baseDirectX, &mapFrameV.each);
 	mapFrameH.Update(baseDirectX, &mapFrameH.each);
@@ -353,7 +357,7 @@ void GameScene::TitleDraw()
 
 	PostWaterFaceDraw();
 
-	XMVECTOR waterFacePosition = { 0, -0.5f, 0.0f, 1.0 };
+	XMVECTOR waterFacePosition = { 0, -1.0f, 0.0f, 1.0 };
 	//êÖñ ÇÃêÿÇËë÷Ç¶
 	if (Imgui::useWaterNum == 0)
 	{
@@ -395,7 +399,7 @@ void GameScene::GameDraw()
 
 	PostWaterFaceDraw();
 
-	XMVECTOR waterFacePosition = { 0, -0.5f, 0.0f, 1.0 };
+	XMVECTOR waterFacePosition = { 0, -1.0f, 0.0f, 1.0 };
 	//êÖñ ÇÃêÿÇËë÷Ç¶
 	if (Imgui::useWaterNum == 0)
 	{
@@ -427,7 +431,7 @@ void GameScene::ResultDraw()
 
 	PostWaterFaceDraw();
 
-	XMVECTOR waterFacePosition = { 0, -0.5f, 0.0f, 1.0 };
+	XMVECTOR waterFacePosition = { 0, -1.0f, 0.0f, 1.0 };
 	//êÖñ ÇÃêÿÇËë÷Ç¶
 	if (Imgui::useWaterNum == 0)
 	{
@@ -463,6 +467,16 @@ void GameScene::MapEditDraw()
 	Imgui::DrawImGui(baseDirectX);
 	//ï`âÊÉRÉ}ÉìÉhÇ±Ç±Ç‹Ç≈
 	baseDirectX.UpdateBack();
+}
+
+void GameScene::RewiredEditUpdate()
+{
+	
+}
+
+void GameScene::RewiredEditDraw()
+{
+	
 }
 
 void GameScene::EndDraw()

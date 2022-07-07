@@ -30,8 +30,11 @@ class Imgui
 private:
     static ComPtr<ID3D12DescriptorHeap> imguiDescHeap;//imgui保持用メンバ
     static ComPtr<ID3D12DescriptorHeap> heapForImgui;
+    //ラジオボタン用
+    static int radioMode;
+    static void RewiredUpdate();
+    static void ShowRewiredElement();
 public:
-    
     static ComPtr<ID3D12DescriptorHeap> CreateDescrriptorHeapForImgui(BaseDirectX& baseDirectX);
     static ComPtr<ID3D12DescriptorHeap> GetHeapForImgui();
     static void DrawImGui(BaseDirectX& baseDirectX);
@@ -59,6 +62,7 @@ public:
         CameraInfo,
         Debug,
         PostEffect,
+        Rewired,
 
         ImguiTypeEnd,
     };
@@ -77,11 +81,6 @@ public:
     static int oldSceneNum;
     static bool isSceneChange;
     static ImguiEnum iEnum;
-
-    static std::string test;
-    static std::string ipv4Name;
-    static void GetTest(const char *st) {test = st;}
-    static void GetIp(const char *st) {ipv4Name = st;}
 
     static float volume;
 
@@ -102,4 +101,6 @@ public:
 
     static bool isExport;
     static bool isLoadstage;
+
+    static bool isDeleteObjects;
 };

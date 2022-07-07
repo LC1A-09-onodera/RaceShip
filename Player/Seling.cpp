@@ -154,8 +154,8 @@ void Seling::HitGoal()
 
 void Seling::LoadKeys()
 {
-	goFrontKey.LoadKey("Resource/TextData/Rewired/PlayerGoFront.txt");
-	goBackKey.LoadKey("Resource/TextData/Rewired/PlayerGoBack.txt");
-	lookToRightKey.LoadKey("Resource/TextData/Rewired/PlayerLookToRight.txt");
-	lookToLeftKey.LoadKey("Resource/TextData/Rewired/PlayerLookToLeft.txt");
+	goFrontKey.LoadKey("PlayerGoFront");
+	goBackKey.LoadKey("PlayerGoBack");
+	lookToRightKey.LoadKey("PlayerLookToRight");
+	lookToLeftKey.LoadKey("PlayerLookToLeft");
 }

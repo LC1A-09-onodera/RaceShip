@@ -6,6 +6,8 @@
 list<pair<string, KeyCode>> Rewired::KeyCodeString::keyboardKeys;
 list<pair<string, PadKeyCode>> Rewired::KeyCodeString::padKeys;
 
+list<Rewired::RewiredKeys> Rewired::RewiredContainer::rewireds;
+
 bool Rewired::RewiredKeys::GetKey()
 {
 	for (auto keyItr = keys.begin(); keyItr != keys.end(); ++keyItr)
@@ -65,11 +67,48 @@ bool Rewired::RewiredKeys::GetKeyUp()
 
 void Rewired::RewiredKeys::AddKey(KeyCode key)
 {
+	if (keys.size() > 0)
+	{
+		for (auto itr = keys.begin(); itr != keys.end(); ++itr)
+		{
+			if (*itr == key)
+			{
+				//“¯‚¶‚à‚Ì‚ð•¡”ŒÂ“o˜^‚µ‚È‚¢
+				return;
+			}
+		}
+	}
 	keys.push_back(key);
 }
 
-void Rewired::RewiredKeys::LoadKey(const char* path)
+void Rewired::RewiredKeys::AddKey(PadKeyCode key)
 {
+	if (padKeys.size() > 0)
+	{
+		for (auto itr = padKeys.begin(); itr != padKeys.end(); ++itr)
+		{
+			if (*itr == key)
+			{
+				//“¯‚¶‚à‚Ì‚ð•¡”ŒÂ“o˜^‚µ‚È‚¢
+				return;
+			}
+		}
+	}
+	padKeys.push_back(key);
+}
+
+void Rewired::RewiredKeys::LoadKey(const char* name)
+{
+	if (keys.size() > 0)
+	{
+		keys.clear();
+	}
+	if (padKeys.size() > 0)
+	{
+		padKeys.clear();
+	}
+	fileName = name;
+	string path = "Resource/TextData/Rewired/" + fileName + ".txt";
 	ifstream file;
 	file.open(path);
 	if (file.fail())
@@ -104,6 +143,7 @@ void Rewired::RewiredKeys::LoadKey(const char* path)
 			}
 		}
 	}
+	RewiredContainer::AddRewired(*this);
 }
 
 void Rewired::KeyCodeString::KeyCodeStringInit()
@@ -134,9 +174,6 @@ void Rewired::KeyCodeString::KeyCodeStringInit()
 	pair<string, KeyCode> X = { "X", KeyCode::X };
 	pair<string, KeyCode> Y = { "Y", KeyCode::Y };
 	pair<string, KeyCode> Z = { "Z", KeyCode::Z };
-	pair<string, KeyCode> Space = { "Space", KeyCode::Space};
-	pair<string, KeyCode> LShift = { "LShift", KeyCode::LShift };
-	pair<string, KeyCode> RShift = { "RShift", KeyCode::RShift };
 	pair<string, KeyCode> Num1 = { "1", KeyCode::Key1 };
 	pair<string, KeyCode> Num2 = { "2", KeyCode::Key2 };
 	pair<string, KeyCode> Num3 = { "3", KeyCode::Key3 };
@@ -147,6 +184,14 @@ void Rewired::KeyCodeString::KeyCodeStringInit()
 	pair<string, KeyCode> Num8 = { "8", KeyCode::Key8 };
 	pair<string, KeyCode> Num9 = { "9", KeyCode::Key9 };
 	pair<string, KeyCode> Num0 = { "0", KeyCode::Key0 };
+	pair<string, KeyCode> Tab =        { "Tab",        KeyCode::Tab        };
+	pair<string, KeyCode> Space =      { "Space",      KeyCode::Space      };
+	pair<string, KeyCode> LShift =     { "LShift",     KeyCode::LShift     };
+	pair<string, KeyCode> RShift =     { "RShift",     KeyCode::RShift     };
+	pair<string, KeyCode> UpArrow =    { "UpArrow",    KeyCode::UpArrow    };
+	pair<string, KeyCode> DownArrow =  { "DownArrow",  KeyCode::DownArrow  };
+	pair<string, KeyCode> RightArrow = { "RightArrow", KeyCode::RightArrow };
+	pair<string, KeyCode> LeftArrow =  { "LeftArrow",  KeyCode::LeftArrow  };
 	keyboardKeys.push_back(A);
 	keyboardKeys.push_back(B);
 	keyboardKeys.push_back(C);
@@ -173,9 +218,6 @@ void Rewired::KeyCodeString::KeyCodeStringInit()
 	keyboardKeys.push_back(X);
 	keyboardKeys.push_back(Y);
 	keyboardKeys.push_back(Z);
-	keyboardKeys.push_back(Space);
-	keyboardKeys.push_back(LShift);
-	keyboardKeys.push_back(RShift);
 	keyboardKeys.push_back(Num1);
 	keyboardKeys.push_back(Num2);
 	keyboardKeys.push_back(Num3);
@@ -186,6 +228,14 @@ void Rewired::KeyCodeString::KeyCodeStringInit()
 	keyboardKeys.push_back(Num8);
 	keyboardKeys.push_back(Num9);
 	keyboardKeys.push_back(Num0);
+	keyboardKeys.push_back(Tab);
+	keyboardKeys.push_back(Space);
+	keyboardKeys.push_back(LShift);
+	keyboardKeys.push_back(RShift);
+	keyboardKeys.push_back(UpArrow);
+	keyboardKeys.push_back(DownArrow);
+	keyboardKeys.push_back(RightArrow);
+	keyboardKeys.push_back(LeftArrow);
 
 	pair<string, PadKeyCode> PadUp = { "PadUp", PadKeyCode::UpButton };
 	pair<string, PadKeyCode> PadDown = { "PadDown", PadKeyCode::DownButton };
@@ -215,4 +265,24 @@ void Rewired::KeyCodeString::KeyCodeStringInit()
 	padKeys.push_back(PadPouse);
 	padKeys.push_back(Pad09);
 	padKeys.push_back(Pad10);
+}
+
+void Rewired::RewiredContainer::AddRewired(RewiredKeys& rewired)
+{
+	for (auto itr = rewireds.begin(); itr != rewireds.end(); ++itr)
+	{
+		if (itr->GetFileName() == rewired.GetFileName())
+		{
+			return;
+		}
+	}
+	rewireds.push_back(rewired);
+}
+
+void Rewired::RewiredContainer::ReloadRewired()
+{
+	for (auto itr = rewireds.begin(); itr != rewireds.end(); ++itr)
+	{
+		itr->LoadKey(itr->GetFileName().c_str());
+	}
 }

@@ -17,12 +17,16 @@ float4 main(VSOutput input) : SV_TARGET
     float2 uv = input.uv;
     //現在のフレームを取得
     uint frameCount = flash;
-    float time = frameCount * 0.01;
-    float2 pos = input.svpos.xy / windowSize * 12.0 - 20.0;
+    float time = frameCount * 0.005;
+    //波の一区画の大きさを変える
+    float onePlot = 12.0f;
+    //ズレ度の係数(小さすぎるとゆがまなくなる、大きいと全体が歪んで結果ゆがんでないように見える)
+    float coefficient = 15.0f;
+    float2 pos = input.svpos.xy / windowSize * onePlot - coefficient;
     float2 tmp = pos;
-    float speed2 = speed * 1.0;
+    float speed2 = speed * 0.5;
     //波のデカさ
-    float inten = 0.020f;
+    float inten = 0.025f;
     float col = 0;
     //歪みのデカさ
     float distortion = 0.1f;
@@ -38,5 +42,5 @@ float4 main(VSOutput input) : SV_TARGET
     col /= float(Iterations);
     col = saturate(1.5 - sqrt(col));
     uv += col * distortion;
-    return tex.Sample(smp, uv) + (col * 0.6f);
+    return tex.Sample(smp, uv) + (col * 0.6f) + 0.15f;
 }

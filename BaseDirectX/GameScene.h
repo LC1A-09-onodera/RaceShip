@@ -11,7 +11,7 @@
 #include "../Rewired/Rewired.h"
 #include "../WaterFace/WaterFace.h"
 
-enum GameSceneName { TITLE, SELECT, GAME, END, RESULT, OP , MAPEDIT};
+enum GameSceneName { TITLE, SELECT, GAME, END, RESULT, OP , MAPEDIT, RewiredEdit};
 
 class GameScene
 {
@@ -35,6 +35,9 @@ private:
 
 	void OPDraw();
 	void MapEditDraw();
+
+	void RewiredEditUpdate();
+	void RewiredEditDraw();
 
 	void PreWaterFaceDraw();
 	void PostWaterFaceDraw();
