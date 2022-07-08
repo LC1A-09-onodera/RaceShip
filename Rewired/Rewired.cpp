@@ -97,6 +97,34 @@ void Rewired::RewiredKeys::AddKey(PadKeyCode key)
 	padKeys.push_back(key);
 }
 
+void Rewired::RewiredKeys::Subkey(KeyCode key)
+{
+	if (keys.size() <= 0)return;
+	
+	for (auto itr = keys.begin(); itr != keys.end(); ++itr)
+	{
+		if (*itr == key)
+		{
+			keys.erase(itr);
+			return;
+		}
+	}
+}
+
+void Rewired::RewiredKeys::SubKey(PadKeyCode key)
+{
+	if (padKeys.size() <= 0)return;
+
+	for (auto itr = padKeys.begin(); itr != padKeys.end(); ++itr)
+	{
+		if (*itr == key)
+		{
+			padKeys.erase(itr);
+			return;
+		}
+	}
+}
+
 void Rewired::RewiredKeys::LoadKey(const char* name)
 {
 	if (keys.size() > 0)
@@ -144,6 +172,35 @@ void Rewired::RewiredKeys::LoadKey(const char* name)
 		}
 	}
 	RewiredContainer::AddRewired(*this);
+}
+
+void Rewired::RewiredKeys::SaveKey()
+{
+	string saveFileName = "Resource/TextData/Rewired/" + fileName + ".txt";
+	ofstream ofs(saveFileName);
+	if (!ofs) return;
+	//ofs << "wall" << std::endl;
+	for (auto itr = keys.begin(); itr != keys.end(); ++itr)
+	{
+		for (auto keyStringItr = Rewired::KeyCodeString::keyboardKeys.begin(); keyStringItr != Rewired::KeyCodeString::keyboardKeys.end(); ++keyStringItr)
+		{
+			if (keyStringItr->second == *itr)
+			{
+				ofs << "KeyBoard " + keyStringItr->first << std::endl;
+			}
+		}
+	}
+
+	for (auto itr = padKeys.begin(); itr != padKeys.end(); ++itr)
+	{
+		for (auto keyStringItr = Rewired::KeyCodeString::padKeys.begin(); keyStringItr != Rewired::KeyCodeString::padKeys.end(); ++keyStringItr)
+		{
+			if (keyStringItr->second == *itr)
+			{
+				ofs << "XboxPad " + keyStringItr->first << std::endl;
+			}
+		}
+	}
 }
 
 void Rewired::KeyCodeString::KeyCodeStringInit()

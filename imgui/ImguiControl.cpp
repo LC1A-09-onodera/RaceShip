@@ -7,7 +7,8 @@
 #include "../BaseDirectX/DX12operator.h"
 #include "../MapLayout/MapLayout.h"
 #include "../Rewired/Rewired.h"
-
+#include <sstream>
+#include <fstream>
 #include <stdarg.h>
 
 ComPtr<ID3D12DescriptorHeap> Imgui::imguiDescHeap;
@@ -136,7 +137,34 @@ void Imgui::ShowRewiredElement()
     }
     if (ImGui::Button("SubKey"))
     {
-
+        if (static_cast<int>(KeyCode::KeyCodeMax) - 1 > comboNum)
+        {
+            auto keyStringItr = Rewired::KeyCodeString::keyboardKeys.begin();
+            if (Rewired::KeyCodeString::keyboardKeys.size() > 0)
+            {
+                for (int i = 0; i < comboNum; i++)
+                {
+                    keyStringItr++;
+                }
+            }
+            itr->Subkey(keyStringItr->second);
+        }
+        else
+        {
+            auto padStringItr = Rewired::KeyCodeString::padKeys.begin();
+            if (Rewired::KeyCodeString::padKeys.size() > 0)
+            {
+                for (int j = static_cast<int>(KeyCode::KeyCodeMax) - 1; j < comboNum - ((static_cast<int>(KeyCode::KeyCodeMax)) - 1); j++)
+                {
+                    padStringItr++;
+                }
+            }
+            itr->SubKey(padStringItr->second);
+        }
+    }
+    if (ImGui::Button("Save"))
+    {
+        itr->SaveKey();
     }
 }
 

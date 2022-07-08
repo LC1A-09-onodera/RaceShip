@@ -26,7 +26,10 @@ namespace Rewired
 		bool GetKeyUp();
 		void AddKey(KeyCode key);
 		void AddKey(PadKeyCode key);
+		void Subkey(KeyCode key);
+		void SubKey(PadKeyCode key);
 		void LoadKey(const char* name);
+		void SaveKey();
 		string GetFileName(){ return fileName; }
 		list<KeyCode> keys;
 		list<PadKeyCode> padKeys;
