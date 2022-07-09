@@ -17,10 +17,7 @@ namespace Rewired
 	{
 		string fileName;
 	public:
-		int combo;
 		string newKeyName;
-		char newKeyNameBuf[256];
-		char newKeyTypeBuf[256];
 		bool GetKey();
 		bool GetKeyDown();
 		bool GetKeyUp();
@@ -38,9 +35,14 @@ namespace Rewired
 	class RewiredContainer
 	{
 	public:
+		static vector<std::string> files;
 		static list<RewiredKeys> rewireds;
 		static void AddRewired(RewiredKeys &rewired);
+		//ImGuiでファイル作成する
+		static void CreateRewired(string rewiredName);
 		//ファイル名は既存のを使うので初期化時には使えない
 		static void ReloadRewired();
+		static void LoadAllRewired();
+		static void GetFilesName();
 	};
 }

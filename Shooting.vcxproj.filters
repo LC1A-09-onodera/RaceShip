@@ -216,6 +216,9 @@
     <ClInclude Include="MapLayout\MapLayout.h">
       <Filter>MapLayout</Filter>
     </ClInclude>
+    <ClInclude Include="BaseDirectX\dirent.h">
+      <Filter>BaseDirectx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

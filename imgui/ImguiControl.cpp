@@ -6,7 +6,6 @@
 #include "../LoadStage/StageObject.h"
 #include "../BaseDirectX/DX12operator.h"
 #include "../MapLayout/MapLayout.h"
-#include "../Rewired/Rewired.h"
 #include <sstream>
 #include <fstream>
 #include <stdarg.h>
@@ -40,6 +39,9 @@ bool Imgui::isDeleteObjects = false;
 
 int Imgui::radioMode = 0;
 
+list<Rewired::RewiredKeys> Imgui::keyList;
+char Imgui::buf[256] = {};
+const char* Imgui::fileName = " ";
 void Imgui::RewiredUpdate()
 {
     //ラジオボタン用
@@ -53,6 +55,11 @@ void Imgui::RewiredUpdate()
         //ファイル名の記載
         ImGui::RadioButton(itr->GetFileName().c_str(), &radioMode, count);
         count++;
+    }
+    ImGui::InputText(fileName, buf, 256);
+    if (ImGui::Button("AddFile"))
+    {
+        Rewired::RewiredContainer::CreateRewired(buf);
     }
     ShowRewiredElement();
 }

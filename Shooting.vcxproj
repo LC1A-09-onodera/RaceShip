@@ -169,6 +169,7 @@
     <ClInclude Include="3DModel\Model.h" />
     <ClInclude Include="BaseDirectX\BaseDirectX.h" />
     <ClInclude Include="BaseDirectX\DirectInput.h" />
+    <ClInclude Include="BaseDirectX\dirent.h" />
     <ClInclude Include="BaseDirectX\DX12operator.h" />
     <ClInclude Include="BaseDirectX\GameScene.h" />
     <ClInclude Include="BaseDirectX\Input.h" />

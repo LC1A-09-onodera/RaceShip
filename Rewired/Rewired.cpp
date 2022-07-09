@@ -1,13 +1,13 @@
 #include "Rewired.h"
+#include "../BaseDirectX/dirent.h"
 #include <fstream>
 #include <string>
 #include <sstream>
 
 list<pair<string, KeyCode>> Rewired::KeyCodeString::keyboardKeys;
 list<pair<string, PadKeyCode>> Rewired::KeyCodeString::padKeys;
-
 list<Rewired::RewiredKeys> Rewired::RewiredContainer::rewireds;
-
+vector<std::string> Rewired::RewiredContainer::files;
 bool Rewired::RewiredKeys::GetKey()
 {
 	for (auto keyItr = keys.begin(); keyItr != keys.end(); ++keyItr)
@@ -100,7 +100,7 @@ void Rewired::RewiredKeys::AddKey(PadKeyCode key)
 void Rewired::RewiredKeys::Subkey(KeyCode key)
 {
 	if (keys.size() <= 0)return;
-	
+
 	for (auto itr = keys.begin(); itr != keys.end(); ++itr)
 	{
 		if (*itr == key)
@@ -179,7 +179,6 @@ void Rewired::RewiredKeys::SaveKey()
 	string saveFileName = "Resource/TextData/Rewired/" + fileName + ".txt";
 	ofstream ofs(saveFileName);
 	if (!ofs) return;
-	//ofs << "wall" << std::endl;
 	for (auto itr = keys.begin(); itr != keys.end(); ++itr)
 	{
 		for (auto keyStringItr = Rewired::KeyCodeString::keyboardKeys.begin(); keyStringItr != Rewired::KeyCodeString::keyboardKeys.end(); ++keyStringItr)
@@ -190,7 +189,6 @@ void Rewired::RewiredKeys::SaveKey()
 			}
 		}
 	}
-
 	for (auto itr = padKeys.begin(); itr != padKeys.end(); ++itr)
 	{
 		for (auto keyStringItr = Rewired::KeyCodeString::padKeys.begin(); keyStringItr != Rewired::KeyCodeString::padKeys.end(); ++keyStringItr)
@@ -241,14 +239,14 @@ void Rewired::KeyCodeString::KeyCodeStringInit()
 	pair<string, KeyCode> Num8 = { "8", KeyCode::Key8 };
 	pair<string, KeyCode> Num9 = { "9", KeyCode::Key9 };
 	pair<string, KeyCode> Num0 = { "0", KeyCode::Key0 };
-	pair<string, KeyCode> Tab =        { "Tab",        KeyCode::Tab        };
-	pair<string, KeyCode> Space =      { "Space",      KeyCode::Space      };
-	pair<string, KeyCode> LShift =     { "LShift",     KeyCode::LShift     };
-	pair<string, KeyCode> RShift =     { "RShift",     KeyCode::RShift     };
-	pair<string, KeyCode> UpArrow =    { "UpArrow",    KeyCode::UpArrow    };
-	pair<string, KeyCode> DownArrow =  { "DownArrow",  KeyCode::DownArrow  };
+	pair<string, KeyCode> Tab = { "Tab",        KeyCode::Tab };
+	pair<string, KeyCode> Space = { "Space",      KeyCode::Space };
+	pair<string, KeyCode> LShift = { "LShift",     KeyCode::LShift };
+	pair<string, KeyCode> RShift = { "RShift",     KeyCode::RShift };
+	pair<string, KeyCode> UpArrow = { "UpArrow",    KeyCode::UpArrow };
+	pair<string, KeyCode> DownArrow = { "DownArrow",  KeyCode::DownArrow };
 	pair<string, KeyCode> RightArrow = { "RightArrow", KeyCode::RightArrow };
-	pair<string, KeyCode> LeftArrow =  { "LeftArrow",  KeyCode::LeftArrow  };
+	pair<string, KeyCode> LeftArrow = { "LeftArrow",  KeyCode::LeftArrow };
 	keyboardKeys.push_back(A);
 	keyboardKeys.push_back(B);
 	keyboardKeys.push_back(C);
@@ -328,6 +326,7 @@ void Rewired::RewiredContainer::AddRewired(RewiredKeys& rewired)
 {
 	for (auto itr = rewireds.begin(); itr != rewireds.end(); ++itr)
 	{
+		//同じファイル参照のものを複数登録しない
 		if (itr->GetFileName() == rewired.GetFileName())
 		{
 			return;
@@ -336,10 +335,58 @@ void Rewired::RewiredContainer::AddRewired(RewiredKeys& rewired)
 	rewireds.push_back(rewired);
 }
 
+void Rewired::RewiredContainer::CreateRewired(string rewiredName)
+{
+	//ファイルを作る
+	string saveFileName = "Resource/TextData/Rewired/" + rewiredName + ".txt";
+	ofstream ofs(saveFileName);
+	RewiredKeys key;
+	key.LoadKey(rewiredName.c_str());
+}
+
 void Rewired::RewiredContainer::ReloadRewired()
 {
 	for (auto itr = rewireds.begin(); itr != rewireds.end(); ++itr)
 	{
 		itr->LoadKey(itr->GetFileName().c_str());
 	}
+}
+
+void Rewired::RewiredContainer::LoadAllRewired()
+{
+	for (auto itr = files.begin(); itr != files.end(); ++itr)
+	{
+		RewiredKeys key;
+		key.LoadKey(itr->c_str());
+	}
+}
+
+void Rewired::RewiredContainer::GetFilesName()
+{
+	DIR* dir;
+	dirent* diread;
+	string path = "Resource/TextData/Rewired/";
+	if ((dir = opendir(path.c_str())) != nullptr)
+	{
+		while ((diread = readdir(dir)) != nullptr)
+		{
+			if (diread->d_name[0] != '.')
+			{
+				string loadFileName = diread->d_name;
+				size_t nameSize = loadFileName.size();
+				//拡張子分削除する
+				string extension = ".txt";
+				size_t extensionSize = extension.size();
+				loadFileName = loadFileName.substr(0, nameSize - extensionSize);
+				files.push_back(loadFileName);
+			}
+		}
+		closedir(dir);
+	}
+	else
+	{
+		perror("opendir");
+		return;
+	}
+	return;
 }
