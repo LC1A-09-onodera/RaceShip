@@ -6,8 +6,9 @@
 
 list<pair<string, KeyCode>> Rewired::KeyCodeString::keyboardKeys;
 list<pair<string, PadKeyCode>> Rewired::KeyCodeString::padKeys;
-list<Rewired::RewiredKeys> Rewired::RewiredContainer::rewireds;
+list<Rewired::RewiredKeys*> Rewired::RewiredContainer::rewireds;
 vector<std::string> Rewired::RewiredContainer::files;
+list<Rewired::RewiredKeys> Rewired::RewiredContainer::rewiredsC;
 bool Rewired::RewiredKeys::GetKey()
 {
 	for (auto keyItr = keys.begin(); keyItr != keys.end(); ++keyItr)
@@ -125,7 +126,7 @@ void Rewired::RewiredKeys::SubKey(PadKeyCode key)
 	}
 }
 
-void Rewired::RewiredKeys::LoadKey(const char* name)
+void Rewired::RewiredKeys::LoadKey(const char* name, bool isAdd)
 {
 	if (keys.size() > 0)
 	{
@@ -171,6 +172,7 @@ void Rewired::RewiredKeys::LoadKey(const char* name)
 			}
 		}
 	}
+	if (!isAdd) return;
 	RewiredContainer::AddRewired(*this);
 }
 
@@ -324,15 +326,7 @@ void Rewired::KeyCodeString::KeyCodeStringInit()
 
 void Rewired::RewiredContainer::AddRewired(RewiredKeys& rewired)
 {
-	for (auto itr = rewireds.begin(); itr != rewireds.end(); ++itr)
-	{
-		//“¯‚¶ƒtƒ@ƒCƒ‹ŽQÆ‚Ì‚à‚Ì‚ð•¡”“o˜^‚µ‚È‚¢
-		if (itr->GetFileName() == rewired.GetFileName())
-		{
-			return;
-		}
-	}
-	rewireds.push_back(rewired);
+	rewireds.push_back(&rewired);
 }
 
 void Rewired::RewiredContainer::CreateRewired(string rewiredName)
@@ -348,7 +342,11 @@ void Rewired::RewiredContainer::ReloadRewired()
 {
 	for (auto itr = rewireds.begin(); itr != rewireds.end(); ++itr)
 	{
-		itr->LoadKey(itr->GetFileName().c_str());
+		(*itr)->LoadKey((*itr)->GetFileName().c_str(), false);
+	}
+	for (auto itr = rewiredsC.begin(); itr != rewiredsC.end(); ++itr)
+	{
+		itr->LoadKey(itr->GetFileName().c_str(), false);
 	}
 }
 
@@ -357,7 +355,8 @@ void Rewired::RewiredContainer::LoadAllRewired()
 	for (auto itr = files.begin(); itr != files.end(); ++itr)
 	{
 		RewiredKeys key;
-		key.LoadKey(itr->c_str());
+		key.LoadKey(itr->c_str(), false);
+		rewiredsC.push_back(key);
 	}
 }
 

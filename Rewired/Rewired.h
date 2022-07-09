@@ -25,7 +25,7 @@ namespace Rewired
 		void AddKey(PadKeyCode key);
 		void Subkey(KeyCode key);
 		void SubKey(PadKeyCode key);
-		void LoadKey(const char* name);
+		void LoadKey(const char* name, bool isAdd = true);
 		void SaveKey();
 		string GetFileName(){ return fileName; }
 		list<KeyCode> keys;
@@ -36,7 +36,8 @@ namespace Rewired
 	{
 	public:
 		static vector<std::string> files;
-		static list<RewiredKeys> rewireds;
+		static list<RewiredKeys *> rewireds;
+		static list<RewiredKeys> rewiredsC;
 		static void AddRewired(RewiredKeys &rewired);
 		//ImGui‚Åƒtƒ@ƒCƒ‹ì¬‚·‚é
 		static void CreateRewired(string rewiredName);

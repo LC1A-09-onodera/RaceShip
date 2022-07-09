@@ -50,7 +50,7 @@ void Imgui::RewiredUpdate()
         Rewired::RewiredContainer::ReloadRewired();
     }
     int count = 0;
-    for (auto itr = Rewired::RewiredContainer::rewireds.begin(); itr != Rewired::RewiredContainer::rewireds.end(); ++itr)
+    for (auto itr = Rewired::RewiredContainer::rewiredsC.begin(); itr != Rewired::RewiredContainer::rewiredsC.end(); ++itr)
     {
         //ファイル名の記載
         ImGui::RadioButton(itr->GetFileName().c_str(), &radioMode, count);
@@ -66,7 +66,7 @@ void Imgui::RewiredUpdate()
 
 void Imgui::ShowRewiredElement()
 {
-    auto itr = Rewired::RewiredContainer::rewireds.begin();
+    auto itr = Rewired::RewiredContainer::rewiredsC.begin();
     for (int i = 0; i < radioMode; i++)
     {
         itr++;

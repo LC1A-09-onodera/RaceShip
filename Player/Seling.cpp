@@ -19,7 +19,6 @@ void Seling::ForceUpdate()
 	}
 }
 
-
 void Seling::LoadModel(BaseDirectX& baseDirectX)
 {
 	selingModel.CreateModel(baseDirectX, "boat_v3", ShaderManager::playerShader, false);
