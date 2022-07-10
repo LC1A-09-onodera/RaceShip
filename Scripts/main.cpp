@@ -1,5 +1,5 @@
 #include "BaseDirectX/GameScene.h"
-#include "../Sound/Sound.h"
+#include "Sound/Sound.h"
 #include <dxgidebug.h>
 using namespace Microsoft::WRL;
 using namespace DirectX;

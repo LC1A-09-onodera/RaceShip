@@ -6,8 +6,8 @@
 #include "../LoadStage/StageObject.h"
 #include "../BaseDirectX/DX12operator.h"
 #include "../MapLayout/MapLayout.h"
-#include "../Rewired/Rewired.h"
-
+#include <sstream>
+#include <fstream>
 #include <stdarg.h>
 
 ComPtr<ID3D12DescriptorHeap> Imgui::imguiDescHeap;
@@ -39,6 +39,9 @@ bool Imgui::isDeleteObjects = false;
 
 int Imgui::radioMode = 0;
 
+list<Rewired::RewiredKeys> Imgui::keyList;
+char Imgui::buf[256] = {};
+const char* Imgui::fileName = " ";
 void Imgui::RewiredUpdate()
 {
     //ラジオボタン用
@@ -47,18 +50,23 @@ void Imgui::RewiredUpdate()
         Rewired::RewiredContainer::ReloadRewired();
     }
     int count = 0;
-    for (auto itr = Rewired::RewiredContainer::rewireds.begin(); itr != Rewired::RewiredContainer::rewireds.end(); ++itr)
+    for (auto itr = Rewired::RewiredContainer::rewiredsC.begin(); itr != Rewired::RewiredContainer::rewiredsC.end(); ++itr)
     {
         //ファイル名の記載
         ImGui::RadioButton(itr->GetFileName().c_str(), &radioMode, count);
         count++;
+    }
+    ImGui::InputText(fileName, buf, 256);
+    if (ImGui::Button("AddFile"))
+    {
+        Rewired::RewiredContainer::CreateRewired(buf);
     }
     ShowRewiredElement();
 }
 
 void Imgui::ShowRewiredElement()
 {
-    auto itr = Rewired::RewiredContainer::rewireds.begin();
+    auto itr = Rewired::RewiredContainer::rewiredsC.begin();
     for (int i = 0; i < radioMode; i++)
     {
         itr++;
@@ -136,7 +144,34 @@ void Imgui::ShowRewiredElement()
     }
     if (ImGui::Button("SubKey"))
     {
-
+        if (static_cast<int>(KeyCode::KeyCodeMax) - 1 > comboNum)
+        {
+            auto keyStringItr = Rewired::KeyCodeString::keyboardKeys.begin();
+            if (Rewired::KeyCodeString::keyboardKeys.size() > 0)
+            {
+                for (int i = 0; i < comboNum; i++)
+                {
+                    keyStringItr++;
+                }
+            }
+            itr->Subkey(keyStringItr->second);
+        }
+        else
+        {
+            auto padStringItr = Rewired::KeyCodeString::padKeys.begin();
+            if (Rewired::KeyCodeString::padKeys.size() > 0)
+            {
+                for (int j = static_cast<int>(KeyCode::KeyCodeMax) - 1; j < comboNum - ((static_cast<int>(KeyCode::KeyCodeMax)) - 1); j++)
+                {
+                    padStringItr++;
+                }
+            }
+            itr->SubKey(padStringItr->second);
+        }
+    }
+    if (ImGui::Button("Save"))
+    {
+        itr->SaveKey();
     }
 }
 

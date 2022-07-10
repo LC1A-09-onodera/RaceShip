@@ -1,13 +1,14 @@
 #include "Rewired.h"
+#include "../BaseDirectX/dirent.h"
 #include <fstream>
 #include <string>
 #include <sstream>
 
 list<pair<string, KeyCode>> Rewired::KeyCodeString::keyboardKeys;
 list<pair<string, PadKeyCode>> Rewired::KeyCodeString::padKeys;
-
-list<Rewired::RewiredKeys> Rewired::RewiredContainer::rewireds;
-
+list<Rewired::RewiredKeys*> Rewired::RewiredContainer::rewireds;
+vector<std::string> Rewired::RewiredContainer::files;
+list<Rewired::RewiredKeys> Rewired::RewiredContainer::rewiredsC;
 bool Rewired::RewiredKeys::GetKey()
 {
 	for (auto keyItr = keys.begin(); keyItr != keys.end(); ++keyItr)
@@ -97,8 +98,37 @@ void Rewired::RewiredKeys::AddKey(PadKeyCode key)
 	padKeys.push_back(key);
 }
 
-void Rewired::RewiredKeys::LoadKey(const char* name)
+void Rewired::RewiredKeys::Subkey(KeyCode key)
 {
+	if (keys.size() <= 0)return;
+
+	for (auto itr = keys.begin(); itr != keys.end(); ++itr)
+	{
+		if (*itr == key)
+		{
+			keys.erase(itr);
+			return;
+		}
+	}
+}
+
+void Rewired::RewiredKeys::SubKey(PadKeyCode key)
+{
+	if (padKeys.size() <= 0)return;
+
+	for (auto itr = padKeys.begin(); itr != padKeys.end(); ++itr)
+	{
+		if (*itr == key)
+		{
+			padKeys.erase(itr);
+			return;
+		}
+	}
+}
+
+void Rewired::RewiredKeys::LoadKey(const char* name, bool isAdd)
+{
+	//いったん全要素の削除
 	if (keys.size() > 0)
 	{
 		keys.clear();
@@ -107,8 +137,10 @@ void Rewired::RewiredKeys::LoadKey(const char* name)
 	{
 		padKeys.clear();
 	}
+	//後にReloadするときなどに使う
 	fileName = name;
-	string path = "Resource/TextData/Rewired/" + fileName + ".txt";
+	//ファイル検索
+	string path = "Resource/TextData/Rewired/" + fileName + ".csv";
 	ifstream file;
 	file.open(path);
 	if (file.fail())
@@ -121,12 +153,12 @@ void Rewired::RewiredKeys::LoadKey(const char* name)
 		istringstream line_stream(keyType);
 
 		string key;
-		getline(line_stream, key, ' ');
+		getline(line_stream, key, ',');
 		if (key == "KeyBoard")
 		{
 			for (auto itr = KeyCodeString::keyboardKeys.begin(); itr != KeyCodeString::keyboardKeys.end(); ++itr)
 			{
-				if (key + " " + itr->first == line_stream.str())
+				if (key + "," + itr->first == line_stream.str())
 				{
 					keys.push_back(itr->second);
 				}
@@ -136,14 +168,44 @@ void Rewired::RewiredKeys::LoadKey(const char* name)
 		{
 			for (auto itr = KeyCodeString::padKeys.begin(); itr != KeyCodeString::padKeys.end(); ++itr)
 			{
-				if (key + " " + itr->first == line_stream.str())
+				if (key + "," + itr->first == line_stream.str())
 				{
 					padKeys.push_back(itr->second);
 				}
 			}
 		}
 	}
+	if (!isAdd) return;
+	//初回ロードの時はコンテナに登録する
 	RewiredContainer::AddRewired(*this);
+}
+
+void Rewired::RewiredKeys::SaveKey()
+{
+	//ファイルにキーを書き込む
+	string saveFileName = "Resource/TextData/Rewired/" + fileName + ".csv";
+	ofstream ofs(saveFileName);
+	if (!ofs) return;
+	for (auto itr = keys.begin(); itr != keys.end(); ++itr)
+	{
+		for (auto keyStringItr = Rewired::KeyCodeString::keyboardKeys.begin(); keyStringItr != Rewired::KeyCodeString::keyboardKeys.end(); ++keyStringItr)
+		{
+			if (keyStringItr->second == *itr)
+			{
+				ofs << "KeyBoard," + keyStringItr->first << std::endl;
+			}
+		}
+	}
+	for (auto itr = padKeys.begin(); itr != padKeys.end(); ++itr)
+	{
+		for (auto keyStringItr = Rewired::KeyCodeString::padKeys.begin(); keyStringItr != Rewired::KeyCodeString::padKeys.end(); ++keyStringItr)
+		{
+			if (keyStringItr->second == *itr)
+			{
+				ofs << "XboxPad," + keyStringItr->first << std::endl;
+			}
+		}
+	}
 }
 
 void Rewired::KeyCodeString::KeyCodeStringInit()
@@ -184,14 +246,14 @@ void Rewired::KeyCodeString::KeyCodeStringInit()
 	pair<string, KeyCode> Num8 = { "8", KeyCode::Key8 };
 	pair<string, KeyCode> Num9 = { "9", KeyCode::Key9 };
 	pair<string, KeyCode> Num0 = { "0", KeyCode::Key0 };
-	pair<string, KeyCode> Tab =        { "Tab",        KeyCode::Tab        };
-	pair<string, KeyCode> Space =      { "Space",      KeyCode::Space      };
-	pair<string, KeyCode> LShift =     { "LShift",     KeyCode::LShift     };
-	pair<string, KeyCode> RShift =     { "RShift",     KeyCode::RShift     };
-	pair<string, KeyCode> UpArrow =    { "UpArrow",    KeyCode::UpArrow    };
-	pair<string, KeyCode> DownArrow =  { "DownArrow",  KeyCode::DownArrow  };
+	pair<string, KeyCode> Tab = { "Tab",        KeyCode::Tab };
+	pair<string, KeyCode> Space = { "Space",      KeyCode::Space };
+	pair<string, KeyCode> LShift = { "LShift",     KeyCode::LShift };
+	pair<string, KeyCode> RShift = { "RShift",     KeyCode::RShift };
+	pair<string, KeyCode> UpArrow = { "UpArrow",    KeyCode::UpArrow };
+	pair<string, KeyCode> DownArrow = { "DownArrow",  KeyCode::DownArrow };
 	pair<string, KeyCode> RightArrow = { "RightArrow", KeyCode::RightArrow };
-	pair<string, KeyCode> LeftArrow =  { "LeftArrow",  KeyCode::LeftArrow  };
+	pair<string, KeyCode> LeftArrow = { "LeftArrow",  KeyCode::LeftArrow };
 	keyboardKeys.push_back(A);
 	keyboardKeys.push_back(B);
 	keyboardKeys.push_back(C);
@@ -269,20 +331,60 @@ void Rewired::KeyCodeString::KeyCodeStringInit()
 
 void Rewired::RewiredContainer::AddRewired(RewiredKeys& rewired)
 {
-	for (auto itr = rewireds.begin(); itr != rewireds.end(); ++itr)
-	{
-		if (itr->GetFileName() == rewired.GetFileName())
-		{
-			return;
-		}
-	}
-	rewireds.push_back(rewired);
+	rewireds.push_back(&rewired);
+}
+
+void Rewired::RewiredContainer::CreateRewired(string rewiredName)
+{
+	//ファイルを作る
+	string saveFileName = "Resource/TextData/Rewired/" + rewiredName + ".csv";
+	ofstream ofs(saveFileName);
+	RewiredKeys key;
+	key.LoadKey(rewiredName.c_str());
 }
 
 void Rewired::RewiredContainer::ReloadRewired()
 {
 	for (auto itr = rewireds.begin(); itr != rewireds.end(); ++itr)
 	{
-		itr->LoadKey(itr->GetFileName().c_str());
+		(*itr)->LoadKey((*itr)->GetFileName().c_str(), false);
+	}
+	for (auto itr = rewiredsC.begin(); itr != rewiredsC.end(); ++itr)
+	{
+		itr->LoadKey(itr->GetFileName().c_str(), false);
+	}
+}
+
+void Rewired::RewiredContainer::LoadAllRewired()
+{
+	for (auto itr = files.begin(); itr != files.end(); ++itr)
+	{
+		RewiredKeys key;
+		key.LoadKey(itr->c_str(), false);
+		rewiredsC.push_back(key);
+	}
+}
+
+void Rewired::RewiredContainer::GetFilesName()
+{
+	DIR* dir;
+	dirent* diread;
+	string path = "Resource/TextData/Rewired/";
+	if ((dir = opendir(path.c_str())) != nullptr)
+	{
+		while ((diread = readdir(dir)) != nullptr)
+		{
+			if (diread->d_name[0] != '.')
+			{
+				string loadFileName = diread->d_name;
+				size_t nameSize = loadFileName.size();
+				//拡張子分削除する
+				string extension = ".csv";
+				size_t extensionSize = extension.size();
+				loadFileName = loadFileName.substr(0, nameSize - extensionSize);
+				files.push_back(loadFileName);
+			}
+		}
+		closedir(dir);
 	}
 }

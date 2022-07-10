@@ -114,6 +114,7 @@ void GameScene::Init()
 	PostEffects::Init(baseDirectX);
 	//Rewiredの要素初期化
 	Rewired::KeyCodeString::KeyCodeStringInit();
+	Rewired::RewiredContainer::GetFilesName();
 	//ステージをテキストからロード
 	LoadStage::LoadStages("Resource/TextData/Stage/stage1.txt");
 
@@ -162,6 +163,7 @@ void GameScene::Init()
 		resultNumSprite[i + 20].CreateSprite(baseDirectX, numTex[i], XMFLOAT3(window_width / 2.0f - 100.0f, 600.0f, 0));
 		resultNumSprite[i + 30].CreateSprite(baseDirectX, numTex[i], XMFLOAT3(window_width / 2.0f - 100.0f, 600.0f, 0));
 	}
+	Rewired::RewiredContainer::LoadAllRewired();
 }
 
 void GameScene::TitleUpdate()

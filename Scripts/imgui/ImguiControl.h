@@ -5,6 +5,7 @@
 #pragma warning(pop)
 #include <DirectXMath.h>
 #include "../BaseDirectX/BaseDirectX.h"
+#include "../Rewired/Rewired.h"
 using namespace Microsoft::WRL;
 using namespace DirectX;
 
@@ -103,4 +104,8 @@ public:
     static bool isLoadstage;
 
     static bool isDeleteObjects;
+
+    static list<Rewired::RewiredKeys> keyList;
+    static const char *fileName;
+    static char buf[256];
 };
