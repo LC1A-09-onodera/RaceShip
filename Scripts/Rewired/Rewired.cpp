@@ -140,7 +140,7 @@ void Rewired::RewiredKeys::LoadKey(const char* name, bool isAdd)
 	//後にReloadするときなどに使う
 	fileName = name;
 	//ファイル検索
-	string path = "Resource/TextData/Rewired/" + fileName + ".txt";
+	string path = "Resource/TextData/Rewired/" + fileName + ".csv";
 	ifstream file;
 	file.open(path);
 	if (file.fail())
@@ -153,12 +153,12 @@ void Rewired::RewiredKeys::LoadKey(const char* name, bool isAdd)
 		istringstream line_stream(keyType);
 
 		string key;
-		getline(line_stream, key, ' ');
+		getline(line_stream, key, ',');
 		if (key == "KeyBoard")
 		{
 			for (auto itr = KeyCodeString::keyboardKeys.begin(); itr != KeyCodeString::keyboardKeys.end(); ++itr)
 			{
-				if (key + " " + itr->first == line_stream.str())
+				if (key + "," + itr->first == line_stream.str())
 				{
 					keys.push_back(itr->second);
 				}
@@ -168,7 +168,7 @@ void Rewired::RewiredKeys::LoadKey(const char* name, bool isAdd)
 		{
 			for (auto itr = KeyCodeString::padKeys.begin(); itr != KeyCodeString::padKeys.end(); ++itr)
 			{
-				if (key + " " + itr->first == line_stream.str())
+				if (key + "," + itr->first == line_stream.str())
 				{
 					padKeys.push_back(itr->second);
 				}
@@ -183,7 +183,7 @@ void Rewired::RewiredKeys::LoadKey(const char* name, bool isAdd)
 void Rewired::RewiredKeys::SaveKey()
 {
 	//ファイルにキーを書き込む
-	string saveFileName = "Resource/TextData/Rewired/" + fileName + ".txt";
+	string saveFileName = "Resource/TextData/Rewired/" + fileName + ".csv";
 	ofstream ofs(saveFileName);
 	if (!ofs) return;
 	for (auto itr = keys.begin(); itr != keys.end(); ++itr)
@@ -192,7 +192,7 @@ void Rewired::RewiredKeys::SaveKey()
 		{
 			if (keyStringItr->second == *itr)
 			{
-				ofs << "KeyBoard " + keyStringItr->first << std::endl;
+				ofs << "KeyBoard," + keyStringItr->first << std::endl;
 			}
 		}
 	}
@@ -202,7 +202,7 @@ void Rewired::RewiredKeys::SaveKey()
 		{
 			if (keyStringItr->second == *itr)
 			{
-				ofs << "XboxPad " + keyStringItr->first << std::endl;
+				ofs << "XboxPad," + keyStringItr->first << std::endl;
 			}
 		}
 	}
@@ -337,7 +337,7 @@ void Rewired::RewiredContainer::AddRewired(RewiredKeys& rewired)
 void Rewired::RewiredContainer::CreateRewired(string rewiredName)
 {
 	//ファイルを作る
-	string saveFileName = "Resource/TextData/Rewired/" + rewiredName + ".txt";
+	string saveFileName = "Resource/TextData/Rewired/" + rewiredName + ".csv";
 	ofstream ofs(saveFileName);
 	RewiredKeys key;
 	key.LoadKey(rewiredName.c_str());
@@ -379,7 +379,7 @@ void Rewired::RewiredContainer::GetFilesName()
 				string loadFileName = diread->d_name;
 				size_t nameSize = loadFileName.size();
 				//拡張子分削除する
-				string extension = ".txt";
+				string extension = ".csv";
 				size_t extensionSize = extension.size();
 				loadFileName = loadFileName.substr(0, nameSize - extensionSize);
 				files.push_back(loadFileName);
