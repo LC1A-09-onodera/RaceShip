@@ -128,6 +128,7 @@ void Rewired::RewiredKeys::SubKey(PadKeyCode key)
 
 void Rewired::RewiredKeys::LoadKey(const char* name, bool isAdd)
 {
+	//いったん全要素の削除
 	if (keys.size() > 0)
 	{
 		keys.clear();
@@ -136,7 +137,9 @@ void Rewired::RewiredKeys::LoadKey(const char* name, bool isAdd)
 	{
 		padKeys.clear();
 	}
+	//後にReloadするときなどに使う
 	fileName = name;
+	//ファイル検索
 	string path = "Resource/TextData/Rewired/" + fileName + ".txt";
 	ifstream file;
 	file.open(path);
@@ -173,11 +176,13 @@ void Rewired::RewiredKeys::LoadKey(const char* name, bool isAdd)
 		}
 	}
 	if (!isAdd) return;
+	//初回ロードの時はコンテナに登録する
 	RewiredContainer::AddRewired(*this);
 }
 
 void Rewired::RewiredKeys::SaveKey()
 {
+	//ファイルにキーを書き込む
 	string saveFileName = "Resource/TextData/Rewired/" + fileName + ".txt";
 	ofstream ofs(saveFileName);
 	if (!ofs) return;
@@ -382,10 +387,4 @@ void Rewired::RewiredContainer::GetFilesName()
 		}
 		closedir(dir);
 	}
-	else
-	{
-		perror("opendir");
-		return;
-	}
-	return;
 }
