@@ -9,6 +9,7 @@ list<pair<string, PadKeyCode>> Rewired::KeyCodeString::padKeys;
 list<Rewired::RewiredKeys*> Rewired::RewiredContainer::rewireds;
 vector<std::string> Rewired::RewiredContainer::files;
 list<Rewired::RewiredKeys> Rewired::RewiredContainer::rewiredsC;
+//押されているかの判定
 bool Rewired::RewiredKeys::GetKey()
 {
 	for (auto keyItr = keys.begin(); keyItr != keys.end(); ++keyItr)
@@ -27,7 +28,7 @@ bool Rewired::RewiredKeys::GetKey()
 	}
 	return false;
 }
-
+//押した瞬間の判定
 bool Rewired::RewiredKeys::GetKeyDown()
 {
 	for (auto keyItr = keys.begin(); keyItr != keys.end(); ++keyItr)
@@ -46,7 +47,7 @@ bool Rewired::RewiredKeys::GetKeyDown()
 	}
 	return false;
 }
-
+//放された瞬間の判定
 bool Rewired::RewiredKeys::GetKeyUp()
 {
 	for (auto keyItr = keys.begin(); keyItr != keys.end(); ++keyItr)
@@ -65,7 +66,7 @@ bool Rewired::RewiredKeys::GetKeyUp()
 	}
 	return false;
 }
-
+//キーの追加
 void Rewired::RewiredKeys::AddKey(KeyCode key)
 {
 	if (keys.size() > 0)
@@ -81,7 +82,7 @@ void Rewired::RewiredKeys::AddKey(KeyCode key)
 	}
 	keys.push_back(key);
 }
-
+//キーの追加
 void Rewired::RewiredKeys::AddKey(PadKeyCode key)
 {
 	if (padKeys.size() > 0)
@@ -97,7 +98,7 @@ void Rewired::RewiredKeys::AddKey(PadKeyCode key)
 	}
 	padKeys.push_back(key);
 }
-
+//キーの削除
 void Rewired::RewiredKeys::Subkey(KeyCode key)
 {
 	if (keys.size() <= 0)return;
@@ -111,7 +112,7 @@ void Rewired::RewiredKeys::Subkey(KeyCode key)
 		}
 	}
 }
-
+//キーの削除
 void Rewired::RewiredKeys::SubKey(PadKeyCode key)
 {
 	if (padKeys.size() <= 0)return;
@@ -125,7 +126,7 @@ void Rewired::RewiredKeys::SubKey(PadKeyCode key)
 		}
 	}
 }
-
+//キーの読み込み
 void Rewired::RewiredKeys::LoadKey(const char* name, bool isAdd)
 {
 	//いったん全要素の削除
@@ -179,7 +180,7 @@ void Rewired::RewiredKeys::LoadKey(const char* name, bool isAdd)
 	//初回ロードの時はコンテナに登録する
 	RewiredContainer::AddRewired(*this);
 }
-
+//キーの保存
 void Rewired::RewiredKeys::SaveKey()
 {
 	//ファイルにキーを書き込む
@@ -207,7 +208,7 @@ void Rewired::RewiredKeys::SaveKey()
 		}
 	}
 }
-
+//キーコードと文字列の準備
 void Rewired::KeyCodeString::KeyCodeStringInit()
 {
 	pair<string, KeyCode> A = { "A", KeyCode::A };
@@ -328,12 +329,12 @@ void Rewired::KeyCodeString::KeyCodeStringInit()
 	padKeys.push_back(Pad09);
 	padKeys.push_back(Pad10);
 }
-
+//実際に使っているもののアドレスを格納
 void Rewired::RewiredContainer::AddRewired(RewiredKeys& rewired)
 {
 	rewireds.push_back(&rewired);
 }
-
+//Rewiredのロード
 void Rewired::RewiredContainer::CreateRewired(string rewiredName)
 {
 	//ファイルを作る
@@ -341,8 +342,16 @@ void Rewired::RewiredContainer::CreateRewired(string rewiredName)
 	ofstream ofs(saveFileName);
 	RewiredKeys key;
 	key.LoadKey(rewiredName.c_str());
+	for (auto itr = Rewired::RewiredContainer::rewiredsC.begin(); itr != Rewired::RewiredContainer::rewiredsC.end(); ++itr)
+	{
+		if (itr->GetFileName() == rewiredName)
+		{
+			return;
+		}
+	}
+	Rewired::RewiredContainer::rewiredsC.push_back(key);
 }
-
+//Rewiredの再読み込み
 void Rewired::RewiredContainer::ReloadRewired()
 {
 	for (auto itr = rewireds.begin(); itr != rewireds.end(); ++itr)
@@ -354,7 +363,8 @@ void Rewired::RewiredContainer::ReloadRewired()
 		itr->LoadKey(itr->GetFileName().c_str(), false);
 	}
 }
-
+//ImGuiに表示するための
+//Rewiredフォルダ内の一括ロード
 void Rewired::RewiredContainer::LoadAllRewired()
 {
 	for (auto itr = files.begin(); itr != files.end(); ++itr)
@@ -364,7 +374,8 @@ void Rewired::RewiredContainer::LoadAllRewired()
 		rewiredsC.push_back(key);
 	}
 }
-
+//Rewiredフォルダ内のファイルを取得し
+//ファイル名だけを抽出
 void Rewired::RewiredContainer::GetFilesName()
 {
 	DIR* dir;
