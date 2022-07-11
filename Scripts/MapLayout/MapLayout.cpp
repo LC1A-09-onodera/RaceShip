@@ -168,10 +168,6 @@ void MapEditorObjects::SetObject(BaseDirectX& baseDirectX, XMFLOAT3& position)
 		pair<list<MapEditorObject>::iterator, MapObjects > ando = { itr, activeType };
 		andoList.push_back(ando);
 	}
-	/*else if (activeType == MapObjects::ENEMY)
-	{
-		MapEditorObjects::enemy.push_back(object);
-	}*/
 }
 
 void MapEditorObjects::SetObjectLine(BaseDirectX& baseDirectX, XMFLOAT3& position)
@@ -251,18 +247,12 @@ void MapEditorObjects::OutputFile(const char* path)
 	{
 		ofs << "goal " + itr->PositionToString() << std::endl;
 	}
-
-	/*for (auto itr = enemy.begin(); itr != enemy.end(); ++itr)
-	{
-		ofs << "enemy " + itr->PositionToString() << std::endl;
-	}*/
 }
 
 void MapEditorObjects::DeleteObjects()
 {
 	wall.clear();
 	goal.clear();
-	//enemy.clear();
 }
 
 void MapEditorObjects::EraseObject()
