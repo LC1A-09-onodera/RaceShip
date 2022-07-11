@@ -49,6 +49,7 @@ void Imgui::RewiredUpdate()
     {
         Rewired::RewiredContainer::ReloadRewired();
     }
+    ImGui::Text("Actions");
     int count = 0;
     for (auto itr = Rewired::RewiredContainer::rewiredsC.begin(); itr != Rewired::RewiredContainer::rewiredsC.end(); ++itr)
     {
