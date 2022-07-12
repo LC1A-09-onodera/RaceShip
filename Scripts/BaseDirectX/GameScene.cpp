@@ -113,7 +113,7 @@ void GameScene::Init()
 	//ポストエフェクトの初期化
 	PostEffects::Init(baseDirectX);
 	//Rewiredの要素初期化
-	Rewired::KeyCodeString::KeyCodeStringInit();
+	Rewired::KeyCodeString::KeyCodeStringInit(baseDirectX);
 	Rewired::RewiredContainer::GetFilesName();
 	//ステージをテキストからロード
 	LoadStage::LoadStages("Resource/TextData/Stage/stage1.txt");

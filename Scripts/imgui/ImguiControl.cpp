@@ -79,9 +79,9 @@ void Imgui::ShowRewiredElement()
         {
             for (auto keyItr = itr->keys.begin(); keyItr != itr->keys.end(); ++keyItr)
             {
-                if (*keyItr == keyListItr->second)
+                if (*keyItr == std::get<1>(*keyListItr))
                 {
-                    string fileName = " " + keyListItr->first;
+                    string fileName = " " + std::get<0>(*keyListItr);
                     ImGui::Text(fileName.c_str());
                 }
             }
@@ -94,9 +94,9 @@ void Imgui::ShowRewiredElement()
         {
             for (auto keyItr = itr->padKeys.begin(); keyItr != itr->padKeys.end(); ++keyItr)
             {
-                if (*keyItr == keyListItr->second)
+                if (*keyItr == std::get<1>(*keyListItr))
                 {
-                    string fileName = " " + keyListItr->first;
+                    string fileName = " " + std::get<0>(*keyListItr);
                     ImGui::Text(fileName.c_str());
                 }
             }
@@ -106,12 +106,12 @@ void Imgui::ShowRewiredElement()
     string keyList;
     for (auto keysItr = Rewired::KeyCodeString::keyboardKeys.begin(); keysItr != Rewired::KeyCodeString::keyboardKeys.end(); ++keysItr)
     {
-        keyList = keyList + keysItr->first;
+        keyList = keyList + std::get<0>(*keysItr);
         keyList.resize(keyList.size() + 1);
     }
     for (auto padKeyItr = Rewired::KeyCodeString::padKeys.begin(); padKeyItr != Rewired::KeyCodeString::padKeys.end(); ++padKeyItr)
     {
-        keyList = keyList + padKeyItr->first;
+        keyList = keyList + std::get<0>(*padKeyItr);
         keyList.resize(keyList.size() + 1);
     }
     keyList = keyList;
@@ -128,7 +128,7 @@ void Imgui::ShowRewiredElement()
                     keyStringItr++;
                 }
             }
-            itr->AddKey(keyStringItr->second);
+            itr->AddKey(std::get<1>(*keyStringItr));
         }
         else
         {
@@ -140,7 +140,7 @@ void Imgui::ShowRewiredElement()
                     padStringItr++;
                 }
             }
-            itr->AddKey(padStringItr->second);
+            itr->AddKey(std::get<1>(*padStringItr));
         }
     }
     if (ImGui::Button("SubKey"))
@@ -155,7 +155,7 @@ void Imgui::ShowRewiredElement()
                     keyStringItr++;
                 }
             }
-            itr->Subkey(keyStringItr->second);
+            itr->Subkey(std::get<1>(*keyStringItr));
         }
         else
         {
@@ -167,7 +167,7 @@ void Imgui::ShowRewiredElement()
                     padStringItr++;
                 }
             }
-            itr->SubKey(padStringItr->second);
+            itr->SubKey(std::get<1>(*padStringItr));
         }
     }
     if (ImGui::Button("Save"))

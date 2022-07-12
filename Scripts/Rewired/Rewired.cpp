@@ -213,8 +213,8 @@ void Rewired::KeyCodeString::KeyCodeStringInit(BaseDirectX& baseDirectX)
 {
 	string path = "Resource/Image/Keys/";
 	Sprite sA, sB, sC, sD, sE, sF, sG, sH, sI, sJ, sK, sL, sM, sN, sO, sP, sQ, sR, sS, sT, sU, sV,sW, sX, sY, sZ,
-	s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, sSpace, sLShift, sLCtrl, sUP, sRight, sLeft, sDown,
-	padA, padB, padX, padY, padSelect, padPouse, padUp, padDown, padRight, padLeft;
+	s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, sSpace, sLShift, sLCtrl, sUP, sRight, sLeft, sDown, sTab, sRShift,
+	padA, padB, padX, padY, padSelect, padPouse, padUp, padDown, padRight, padLeft, padRb, padLb;
 	sA.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "A.png"), XMFLOAT3(0, 0, 0));
 	sB.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "B.png"), XMFLOAT3(0, 0, 0));
 	sC.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "C.png"), XMFLOAT3(0, 0, 0));
@@ -258,17 +258,21 @@ void Rewired::KeyCodeString::KeyCodeStringInit(BaseDirectX& baseDirectX)
 	sLeft.CreateSprite(  baseDirectX, ConvertStringToWchaer(path + "Left.png"),   XMFLOAT3(0, 0, 0));
 	sRight.CreateSprite( baseDirectX, ConvertStringToWchaer(path + "Right.png"),  XMFLOAT3(0, 0, 0));
 	sDown.CreateSprite(  baseDirectX, ConvertStringToWchaer(path + "Down.png"),   XMFLOAT3(0, 0, 0));
+	sTab.CreateSprite(   baseDirectX, ConvertStringToWchaer(path + "Tab.png"),    XMFLOAT3(0, 0, 0));
+	sRShift.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "RS.png"),     XMFLOAT3(0, 0, 0));
 
 	padA.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "PadA.png"), XMFLOAT3(0, 0, 0));
 	padB.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "PadB.png"), XMFLOAT3(0, 0, 0));
 	padX.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "PadX.png"), XMFLOAT3(0, 0, 0));
 	padY.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "PadY.png"), XMFLOAT3(0, 0, 0));
 	padSelect.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "PadSelect.png"), XMFLOAT3(0, 0, 0));
+	padPouse.CreateSprite( baseDirectX, ConvertStringToWchaer(path + "PadPouse.png"),  XMFLOAT3(0, 0, 0));
 	padUp.CreateSprite(    baseDirectX, ConvertStringToWchaer(path + "padUp.png"),     XMFLOAT3(0, 0, 0));
 	padRight.CreateSprite( baseDirectX, ConvertStringToWchaer(path + "padRight.png"),  XMFLOAT3(0, 0, 0));
 	padLeft.CreateSprite(  baseDirectX, ConvertStringToWchaer(path + "padLeft.png"),   XMFLOAT3(0, 0, 0));
 	padDown.CreateSprite(  baseDirectX, ConvertStringToWchaer(path + "padDown.png"),   XMFLOAT3(0, 0, 0));
-
+	padLb.CreateSprite(    baseDirectX, ConvertStringToWchaer(path + "LB.png"),        XMFLOAT3(0, 0, 0));
+	padRb.CreateSprite(    baseDirectX, ConvertStringToWchaer(path + "RB.png"),        XMFLOAT3(0, 0, 0));
 
 	tuple<string, KeyCode, Sprite> A = { "A", KeyCode::A , sA };
 	tuple<string, KeyCode, Sprite> B = { "B", KeyCode::B , sB };
@@ -306,10 +310,10 @@ void Rewired::KeyCodeString::KeyCodeStringInit(BaseDirectX& baseDirectX)
 	tuple<string, KeyCode, Sprite> Num8 = { "8", KeyCode::Key8 , s7 };
 	tuple<string, KeyCode, Sprite> Num9 = { "9", KeyCode::Key9 , s8 };
 	tuple<string, KeyCode, Sprite> Num0 = { "0", KeyCode::Key0 , s9 };
-	tuple<string, KeyCode, Sprite> Tab =        { "Tab",        KeyCode::Tab        };
+	tuple<string, KeyCode, Sprite> Tab =        { "Tab",        KeyCode::Tab        ,sTab};
 	tuple<string, KeyCode, Sprite> Space =      { "Space",      KeyCode::Space      ,sSpace  };
 	tuple<string, KeyCode, Sprite> LShift =     { "LShift",     KeyCode::LShift     ,sLShift };
-	tuple<string, KeyCode, Sprite> RShift =     { "RShift",     KeyCode::RShift     };
+	tuple<string, KeyCode, Sprite> RShift =     { "RShift",     KeyCode::RShift     ,sRShift};
 	tuple<string, KeyCode, Sprite> UpArrow =    { "UpArrow",    KeyCode::UpArrow    ,sUP};
 	tuple<string, KeyCode, Sprite> DownArrow =  { "DownArrow",  KeyCode::DownArrow  ,sDown};
 	tuple<string, KeyCode, Sprite> RightArrow = { "RightArrow", KeyCode::RightArrow ,sRight};
@@ -361,18 +365,18 @@ void Rewired::KeyCodeString::KeyCodeStringInit(BaseDirectX& baseDirectX)
 
 
 
-	tuple<string, PadKeyCode, Sprite> PadUp =     { "PadUp",     PadKeyCode::UpButton     ,padUp};
-	tuple<string, PadKeyCode, Sprite> PadDown =   { "PadDown",   PadKeyCode::DownButton   ,padDown};
-	tuple<string, PadKeyCode, Sprite> PadLeft =   { "PadLeft",   PadKeyCode::LeftButton   ,padLeft};
-	tuple<string, PadKeyCode, Sprite> PadRight =  { "PadRight",  PadKeyCode::RightButton  ,padRight};
+	tuple<string, PadKeyCode, Sprite> PadUp =     { "PadUp",     PadKeyCode::UpButton     ,padUp };
+	tuple<string, PadKeyCode, Sprite> PadDown =   { "PadDown",   PadKeyCode::DownButton   ,padDown };
+	tuple<string, PadKeyCode, Sprite> PadLeft =   { "PadLeft",   PadKeyCode::LeftButton   ,padLeft };
+	tuple<string, PadKeyCode, Sprite> PadRight =  { "PadRight",  PadKeyCode::RightButton  ,padRight };
 	tuple<string, PadKeyCode, Sprite> PadA =      { "PadA",      PadKeyCode::Button01     ,padA };
 	tuple<string, PadKeyCode, Sprite> PadB =      { "PadB",      PadKeyCode::Button02     ,padB };
 	tuple<string, PadKeyCode, Sprite> PadX =      { "PadX",      PadKeyCode::Button03     ,padX };
 	tuple<string, PadKeyCode, Sprite> PadY =      { "PadY",      PadKeyCode::Button04     ,padY };
-	tuple<string, PadKeyCode, Sprite> PadLB =     { "PadLB",     PadKeyCode::ButtonLB     };
-	tuple<string, PadKeyCode, Sprite> PadRB =     { "PadRB",     PadKeyCode::ButtonRB     };
-	tuple<string, PadKeyCode, Sprite> PadSelect = { "PadSelect", PadKeyCode::ButtonSelect };
-	tuple<string, PadKeyCode, Sprite> PadPouse =  { "PadPouse",  PadKeyCode::ButtonPouse  };
+	tuple<string, PadKeyCode, Sprite> PadLB =     { "PadLB",     PadKeyCode::ButtonLB     ,padLb};
+	tuple<string, PadKeyCode, Sprite> PadRB =     { "PadRB",     PadKeyCode::ButtonRB     ,padRb};
+	tuple<string, PadKeyCode, Sprite> PadSelect = { "PadSelect", PadKeyCode::ButtonSelect ,padSelect };
+	tuple<string, PadKeyCode, Sprite> PadPouse =  { "PadPouse",  PadKeyCode::ButtonPouse  ,padPouse };
 	padKeys.push_back(PadUp);
 	padKeys.push_back(PadDown);
 	padKeys.push_back(PadLeft);
