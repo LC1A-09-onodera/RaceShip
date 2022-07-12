@@ -10,6 +10,7 @@
 #include "../Player/Seling.h"
 #include "../Rewired/Rewired.h"
 #include "../WaterFace/WaterFace.h"
+#include "../MenuUI/MenuUI.h"
 
 enum GameSceneName { TITLE, SELECT, GAME, END, RESULT, OP , MAPEDIT, RewiredEdit};
 
@@ -46,11 +47,16 @@ private:
 
 	void LightUpdate();
 
+	void PouseUpdate();
+	void PouseDraw();
+
 	int SceneNum = TITLE;
 	BaseDirectX baseDirectX;
 
 	int opAnimationTime = 0;
 	const int MaxOPAnimationTime = 120;
+
+	bool isPouse = false;
 
 	std::shared_ptr<Light> light;
 	PostEffect post;
@@ -91,6 +97,8 @@ private:
 	//
 	Model mapFrameV;
 	Model mapFrameH;
+
+	MenuUI pouseUI;
 
 public:
 	GameScene();

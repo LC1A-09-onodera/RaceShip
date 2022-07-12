@@ -1,16 +1,18 @@
 #pragma once
 #include "../BaseDirectX/Input.h"
+#include "../Sprite/Sprite.h"
+#include <tuple>
 
 namespace Rewired
 {
 	class KeyCodeString
 	{
 	public:
-		static void KeyCodeStringInit();
+		static void KeyCodeStringInit(BaseDirectX &baseDirectX);
 		//Keyborad
-		static list<pair<string, KeyCode>> keyboardKeys;
+		static list<tuple<string, KeyCode, Sprite>> keyboardKeys;
 		//XBoxPad
-		static list<pair<string, PadKeyCode>> padKeys;
+		static list<tuple<string, PadKeyCode, Sprite>> padKeys;
 	};
 
 	class RewiredKeys

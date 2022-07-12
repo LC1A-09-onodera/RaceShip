@@ -20,8 +20,6 @@ enum class PadKeyCode
 	ButtonRB,
 	ButtonSelect,
 	ButtonPouse,
-	Button09,
-	Button10,
 	ButtonKindMax,
 };
 

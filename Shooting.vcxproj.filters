@@ -79,6 +79,9 @@
     <Filter Include="WindowsAPI">
       <UniqueIdentifier>{da3fb8e3-7de6-4751-ae27-b941f074357a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MenuUI">
+      <UniqueIdentifier>{7aa4f817-ce57-4df5-9bef-ef49e98dad5b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scripts\3DModel\Model.h">
@@ -222,6 +225,9 @@
     <ClInclude Include="Scripts\Rewired\Rewired.h">
       <Filter>BaseDirectx</Filter>
     </ClInclude>
+    <ClInclude Include="Scripts\MenuUI\MenuUI.h">
+      <Filter>MenuUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scripts\3DModel\Model.cpp">
@@ -340,6 +346,9 @@
     </ClCompile>
     <ClCompile Include="Scripts\Rewired\Rewired.cpp">
       <Filter>BaseDirectx</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\MenuUI\MenuUI.cpp">
+      <Filter>MenuUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -163,6 +163,7 @@ void GameScene::Init()
 		resultNumSprite[i + 20].CreateSprite(baseDirectX, numTex[i], XMFLOAT3(window_width / 2.0f - 100.0f, 600.0f, 0));
 		resultNumSprite[i + 30].CreateSprite(baseDirectX, numTex[i], XMFLOAT3(window_width / 2.0f - 100.0f, 600.0f, 0));
 	}
+	pouseUI.LoadFile(baseDirectX);
 	Rewired::RewiredContainer::LoadAllRewired();
 }
 
@@ -185,6 +186,8 @@ void GameScene::TitleUpdate()
 
 	VoiceReciver::VoiceUDPUpdate(baseDirectX);
 	Sound::Updete(Imgui::volume);
+
+	PouseUpdate();
 }
 
 void GameScene::SelectUpdate()
@@ -224,6 +227,7 @@ void GameScene::GameUpdate()
 
 	VoiceReciver::VoiceUDPUpdate(baseDirectX);
 	Sound::Updete(Imgui::volume);
+	PouseUpdate();
 }
 
 void GameScene::ResultUpdate()
@@ -254,6 +258,7 @@ void GameScene::ResultUpdate()
 
 	VoiceReciver::VoiceUDPUpdate(baseDirectX);
 	Sound::Updete(Imgui::volume);
+	PouseUpdate();
 }
 
 void GameScene::OPUpdate()
@@ -373,6 +378,7 @@ void GameScene::TitleDraw()
 	PostEffects::Draw(baseDirectX);
 
 	DrawSprites();
+	PouseDraw();
 
 	PostEffects::PostDraw(baseDirectX);
 	Imgui::DrawImGui(baseDirectX);
@@ -415,6 +421,7 @@ void GameScene::GameDraw()
 	PostEffects::Draw(baseDirectX);
 
 	DrawSprites();
+	PouseDraw();
 
 	PostEffects::PostDraw(baseDirectX);
 	Imgui::DrawImGui(baseDirectX);
@@ -447,6 +454,7 @@ void GameScene::ResultDraw()
 	PostEffects::Draw(baseDirectX);
 
 	DrawSprites();
+	PouseDraw();
 
 	PostEffects::PostDraw(baseDirectX);
 
@@ -528,4 +536,22 @@ void GameScene::LightUpdate()
 	light->SetSpotLightColor(0, XMFLOAT3(spotLightColor));
 	light->SetSpotLightAtten(0, XMFLOAT3(spotLightAtten));
 	light->SetSpotLightAngle(0, XMFLOAT2(spotLightAngle));
+}
+
+void GameScene::PouseUpdate()
+{
+	if (Input::KeyTrigger(DIK_ESCAPE) && !isPouse)
+	{
+		isPouse = true;
+	}
+	else if (Input::KeyTrigger(DIK_ESCAPE) && isPouse)
+	{
+		isPouse = false;
+	}
+}
+
+void GameScene::PouseDraw()
+{
+	if (!isPouse)return;
+	pouseUI.DrawUI(baseDirectX);
 }

@@ -197,6 +197,7 @@
     <ClInclude Include="Scripts\LoadStage\LoadStage.h" />
     <ClInclude Include="Scripts\LoadStage\StageObject.h" />
     <ClInclude Include="Scripts\MapLayout\MapLayout.h" />
+    <ClInclude Include="Scripts\MenuUI\MenuUI.h" />
     <ClInclude Include="Scripts\Particle\Particle3D.h" />
     <ClInclude Include="Scripts\Player\Seling.h" />
     <ClInclude Include="Scripts\PostEffect\PostEffect.h" />
@@ -238,6 +239,7 @@
     <ClCompile Include="Scripts\LoadStage\StageObject.cpp" />
     <ClCompile Include="Scripts\main.cpp" />
     <ClCompile Include="Scripts\MapLayout\MapLayout.cpp" />
+    <ClCompile Include="Scripts\MenuUI\MenuUI.cpp" />
     <ClCompile Include="Scripts\Particle\Particle3D.cpp" />
     <ClCompile Include="Scripts\Player\Seling.cpp" />
     <ClCompile Include="Scripts\PostEffect\PostEffect.cpp" />
