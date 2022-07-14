@@ -5,7 +5,7 @@
 IDirectInput8 *DirectInput::dinput = nullptr;
 //IDirectInputDevice8 *DirectInput::devkeyborad = nullptr;
 HWND DirectInput::hwnd = {};
-DirectInput::ButtonState DirectInput::g_ButtonStates[ButtonKind::ButtonKindMax] = {};
+DirectInput::ButtonState DirectInput::g_ButtonStates[static_cast<int>(ButtonKind::ButtonKindMax)] = {};
 LPDIRECTINPUT8 DirectInput::g_InputInterface = nullptr;
 LPDIRECTINPUTDEVICE8 DirectInput::g_GamePadDevice = nullptr;
 //BYTE DirectInput::key[256] = {};
@@ -73,13 +73,11 @@ int DirectInput::InputInit(HINSTANCE hInstance, HWND hWnd)
 	}
 
 	// 入力情報の初期化
-	for (int i = 0; i < ButtonKind::ButtonKindMax; i++)
+	for (int i = 0; i < static_cast<int>(ButtonKind::ButtonKindMax); i++)
 	{
 		g_ButtonStates[i] = ButtonState::ButtonStateNone;
 	}
 	return true;
-
-	return 0;
 }
 
 
@@ -109,7 +107,7 @@ void DirectInput::UpdateInput()
 
 bool DirectInput::IsButtonPush(ButtonKind button)
 {
-	if (g_ButtonStates[button] == ButtonState::ButtonStatePush)
+	if (g_ButtonStates[static_cast<int>(button)] == ButtonState::ButtonStatePush)
 	{
 		return true;
 	}
@@ -118,7 +116,7 @@ bool DirectInput::IsButtonPush(ButtonKind button)
 
 bool DirectInput::IsButtonPush(PadKeyCode button)
 {
-	if (g_ButtonStates[(ButtonKind)button] == ButtonState::ButtonStatePush)
+	if (g_ButtonStates[static_cast<int>(button)] == ButtonState::ButtonStatePush)
 	{
 		return true;
 	}
@@ -127,7 +125,7 @@ bool DirectInput::IsButtonPush(PadKeyCode button)
 
 bool DirectInput::IsButtonUp(ButtonKind button)
 {
-	if (g_ButtonStates[button] == ButtonState::ButtonStateUp)
+	if (g_ButtonStates[static_cast<int>(button)] == ButtonState::ButtonStateUp)
 	{
 		return true;
 	}
@@ -137,7 +135,7 @@ bool DirectInput::IsButtonUp(ButtonKind button)
 
 bool DirectInput::IsButtonUp(PadKeyCode button)
 {
-	if (g_ButtonStates[(ButtonKind)button] == ButtonState::ButtonStateUp)
+	if (g_ButtonStates[static_cast<int>(button)] == ButtonState::ButtonStateUp)
 	{
 		return true;
 	}
@@ -146,7 +144,7 @@ bool DirectInput::IsButtonUp(PadKeyCode button)
 
 bool DirectInput::IsButtonDown(ButtonKind button)
 {
-	if (g_ButtonStates[button] == ButtonState::ButtonStateDown)
+	if (g_ButtonStates[static_cast<int>(button)] == ButtonState::ButtonStateDown)
 	{
 		return true;
 	}
@@ -156,7 +154,7 @@ bool DirectInput::IsButtonDown(ButtonKind button)
 
 bool DirectInput::IsButtonDown(PadKeyCode button)
 {
-	if (g_ButtonStates[(ButtonKind)button] == ButtonState::ButtonStateDown)
+	if (g_ButtonStates[static_cast<int>(button)] == ButtonState::ButtonStateDown)
 	{
 		return true;
 	}
@@ -240,7 +238,7 @@ void DirectInput::UpdateGamePad()
 		// 再度制御開始
 		if (FAILED(g_GamePadDevice->Acquire()))
 		{
-			for (int i = 0; i < ButtonKind::ButtonKindMax; i++)
+			for (int i = 0; i < static_cast<int>(ButtonKind::ButtonKindMax); i++)
 			{
 				g_ButtonStates[i] = ButtonState::ButtonStateNone;
 			}
@@ -249,25 +247,25 @@ void DirectInput::UpdateGamePad()
 		return;
 	}
 
-	bool is_push[ButtonKind::ButtonKindMax] = {false};
+	bool is_push[static_cast<int>(ButtonKind::ButtonKindMax)] = {false};
 	// スティック判定
 	//int unresponsive_range = 200;
 	if (pad_data.lX < -unresponsive_range)
 	{
-		is_push[ButtonKind::LeftButton] = true;
+		is_push[static_cast<int>(ButtonKind::LeftButton)] = true;
 	}
 	else if (pad_data.lX > unresponsive_range)
 	{
-		is_push[ButtonKind::RightButton] = true;
+		is_push[static_cast<int>(ButtonKind::RightButton)] = true;
 	}
 
 	if (pad_data.lY < -unresponsive_range)
 	{
-		is_push[ButtonKind::UpButton] = true;
+		is_push[static_cast<int>(ButtonKind::UpButton)] = true;
 	}
 	else if (pad_data.lY > unresponsive_range)
 	{
-		is_push[ButtonKind::DownButton] = true;
+		is_push[static_cast<int>(ButtonKind::DownButton)] = true;
 	}
 
 	// 十字キー判定
@@ -281,20 +279,20 @@ void DirectInput::UpdateGamePad()
 
 		if (x < -0.01f)
 		{
-			is_push[ButtonKind::LeftButton] = true;
+			is_push[static_cast<int>(ButtonKind::LeftButton)] = true;
 		}
 		else if (x > 0.01f)
 		{
-			is_push[ButtonKind::RightButton] = true;
+			is_push[static_cast<int>(ButtonKind::RightButton)] = true;
 		}
 
 		if (y > 0.01f)
 		{
-			is_push[ButtonKind::UpButton] = true;
+			is_push[static_cast<int>(ButtonKind::UpButton)] = true;
 		}
 		else if (y < -0.01f)
 		{
-			is_push[ButtonKind::DownButton] = true;
+			is_push[static_cast<int>(ButtonKind::DownButton)] = true;
 		}
 	}
 
@@ -309,40 +307,40 @@ void DirectInput::UpdateGamePad()
 		switch (i)
 		{
 		case 0:
-			is_push[ButtonKind::Button01] = true;
+			is_push[static_cast<int>(ButtonKind::Button01)] = true;
 			break;
 		case 1:
-			is_push[ButtonKind::Button02] = true;
+			is_push[static_cast<int>(ButtonKind::Button02)] = true;
 			break;
 		case 2:
-			is_push[ButtonKind::Button03] = true;
+			is_push[static_cast<int>(ButtonKind::Button03)] = true;
 			break;
 		case 3:
-			is_push[ButtonKind::Button04] = true;
+			is_push[static_cast<int>(ButtonKind::Button04)] = true;
 			break;
 		case 4:
-			is_push[ButtonKind::ButtonLB] = true;
+			is_push[static_cast<int>(ButtonKind::ButtonLB)] = true;
 			break;
 		case 5:
-			is_push[ButtonKind::ButtonRB] = true;
+			is_push[static_cast<int>(ButtonKind::ButtonRB)] = true;
 			break;
 		case 6:
-			is_push[ButtonKind::ButtonSelect] = true;
+			is_push[static_cast<int>(ButtonKind::ButtonSelect)] = true;
 			break;
 		case 7:
-			is_push[ButtonKind::ButtonPouse] = true;
+			is_push[static_cast<int>(ButtonKind::ButtonPouse)] = true;
 			break;
 		case 8:
-			is_push[ButtonKind::Button09] = true;
+			is_push[static_cast<int>(ButtonKind::Button09)] = true;
 			break;
 		case 9:
-			is_push[ButtonKind::Button10] = true;
+			is_push[static_cast<int>(ButtonKind::Button10)] = true;
 			break;
 		}
 	}
 
 	// 入力情報からボタンの状態を更新する
-	for (int i = 0; i < ButtonKind::ButtonKindMax; i++)
+	for (int i = 0; i < static_cast<int>(ButtonKind::ButtonKindMax); i++)
 	{
 		if (is_push[i] == true)
 		{
@@ -358,7 +356,7 @@ void DirectInput::UpdateGamePad()
 		}
 		else
 		{
-			if (g_ButtonStates[i] == ButtonState::ButtonStatePush && g_ButtonStates[i] == ButtonState::ButtonStateDown)
+			if (g_ButtonStates[i] != ButtonState::ButtonStatePush && g_ButtonStates[i] != ButtonState::ButtonStateDown)
 			{
 				g_ButtonStates[i] = ButtonState::ButtonStateUp;
 			}
@@ -438,7 +436,7 @@ BOOL DirectInput::StartGamePadControl()
 	// ポーリング判定
 	if (cap.dwFlags & DIDC_POLLEDDATAFORMAT)
 	{
-		DWORD error = GetLastError();
+		//DWORD error = GetLastError();
 		// ポーリング開始
 		/*
 			PollはAcquireの前に行うとされていたが、

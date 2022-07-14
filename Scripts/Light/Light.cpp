@@ -2,20 +2,22 @@
 
 ID3D12Device *Light::device = nullptr;
 
-void Light::StaticInitialize(ID3D12Device* device)
+void Light::StaticInitialize(ID3D12Device* Device)
 {
 	//再初期化チェック
 	assert(!Light::device);
-	assert(device);
-	Light::device = (device);
+	assert(Device);
+	Light::device = (Device);
 }
 
 void Light::CreateBuff()
 {
 	HRESULT result;
-	result = device->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), 
+	CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
+	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) &~0xff);
+	result = device->CreateCommittedResource(&heapProp,
 			 D3D12_HEAP_FLAG_NONE,
-			 &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) &~0xff),
+			 &resourceDesc,
 			 D3D12_RESOURCE_STATE_GENERIC_READ,
 			 nullptr,
 			 IID_PPV_ARGS(&constBuff));
@@ -100,17 +102,17 @@ void Light::SetPointLightPos(int index, const XMFLOAT3& lightpos)
 	dirty = true;
 }
 
-void Light::SetPointLightColor(int index, const XMFLOAT3& lightcolor)
+void Light::SetPointLightColor(int index, const XMFLOAT3& lightColor)
 {
 	assert((0 <= index) && (index < PointLightNum));
-	pointLight[index].SetLightColor(lightcolor);
+	pointLight[index].SetLightColor(lightColor);
 	dirty = true;
 }
 
-void Light::SetPointLightAtten(int index, const XMFLOAT3& lightatten)
+void Light::SetPointLightAtten(int index, const XMFLOAT3& lightAtten)
 {
 	assert((0 <= index) && (index < PointLightNum));
-	pointLight[index].SetLightAtten(lightatten);
+	pointLight[index].SetLightAtten(lightAtten);
 	dirty = true;
 }
 
@@ -120,31 +122,31 @@ void Light::SetSpotLightActive(int index, bool active)
 	spotLights[index].SetActive(active);
 }
 
-void Light::SetSpotLightDir(int index, const XMVECTOR& lightdir)
+void Light::SetSpotLightDir(int index, const XMVECTOR& lightDir)
 {
 	assert(0 <= index && index < SpotLightNum);
-	spotLights[index].SetLightDir(lightdir);
+	spotLights[index].SetLightDir(lightDir);
 	dirty = true;
 }
 
-void Light::SetSpotLightPos(int index, const XMFLOAT3& lightpos)
+void Light::SetSpotLightPos(int index, const XMFLOAT3& lightPos)
 {
 	assert(0 <= index && index < SpotLightNum);
-	spotLights[index].SetLightPos(lightpos);
+	spotLights[index].SetLightPos(lightPos);
 	dirty = true;
 }
 
-void Light::SetSpotLightColor(int index, const XMFLOAT3& lightcolor)
+void Light::SetSpotLightColor(int index, const XMFLOAT3& lightColor)
 {
 	assert(0 <= index && index < SpotLightNum);
-	spotLights[index].SetLightColor(lightcolor);
+	spotLights[index].SetLightColor(lightColor);
 	dirty = true;
 }
 
-void Light::SetSpotLightAtten(int index, const XMFLOAT3& lightatten)
+void Light::SetSpotLightAtten(int index, const XMFLOAT3& lightAtten)
 {
 	assert(0 <= index && index < SpotLightNum);
-	spotLights[index].SetLightAtten(lightatten);
+	spotLights[index].SetLightAtten(lightAtten);
 	dirty = true;
 }
 
@@ -168,10 +170,10 @@ void Light::SetCircleShadowCasterPos(int index, const XMFLOAT3& casterPos)
 	dirty = true;
 }
 
-void Light::SetCircleShadowDir(int index, XMVECTOR& lightdir)
+void Light::SetCircleShadowDir(int index, XMVECTOR& lightDir)
 {
 	assert(0 <= index && index <= CircleShadowNum);
-	circleShadows[index].SetDir(lightdir);
+	circleShadows[index].SetDir(lightDir);
 	dirty = true;
 }
 
@@ -196,15 +198,15 @@ void Light::SetCircleShadowFactorAngle(int index, const XMFLOAT2& lightfactorAng
 	dirty = true;
 }
 
-void Light::SetLightDir(const XMVECTOR& lightdir)
+void Light::SetLightDir(const XMVECTOR& lightDir)
 {
-	this->lightdir = XMVector3Normalize(lightdir);
+	this->lightdir = XMVector3Normalize(lightDir);
 	dirty = true;
 }
 
-void Light::SetLightColor(const XMFLOAT3& lightcolor)
+void Light::SetLightColor(const XMFLOAT3& lightColor)
 {
-	this->lightcolor = lightcolor;
+	this->lightcolor = lightColor;
 	dirty = true;
 }
 

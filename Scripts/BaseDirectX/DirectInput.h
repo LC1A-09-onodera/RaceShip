@@ -27,7 +27,7 @@ class DirectInput final
 {
 public:
 	/** @brief キーボタンの種類 */
-	enum ButtonKind
+	enum class ButtonKind
 	{
 		ButtonNone = -1,
 		UpButton = 0,
@@ -47,7 +47,7 @@ public:
 		ButtonKindMax,
 	};
 
-	enum ButtonState
+	enum class ButtonState
 	{
 		ButtonStateNone,
 		ButtonStateDown,
@@ -82,7 +82,7 @@ private: // 静的メンバ変数
 	//static BYTE key[256];
 	static IDirectInput8* dinput;
 
-	static ButtonState g_ButtonStates[ButtonKind::ButtonKindMax];
+	static ButtonState g_ButtonStates[static_cast<int>(ButtonKind::ButtonKindMax)];
 	static LPDIRECTINPUT8 g_InputInterface;							//!< DIRECTINPUT8のポインタ
 	static LPDIRECTINPUTDEVICE8 g_GamePadDevice;					//!< DIRECTINPUTDEVICE8のポインタ
 

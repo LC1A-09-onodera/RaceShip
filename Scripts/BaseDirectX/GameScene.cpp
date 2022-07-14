@@ -472,8 +472,8 @@ void GameScene::OPDraw()
 void GameScene::MapEditDraw()
 {
 	baseDirectX.UpdateFront();
-	Draw3DObject(baseDirectX, mapFrameV, -1, false);
-	Draw3DObject(baseDirectX, mapFrameH, -1, false);
+	Draw3DObject(baseDirectX, mapFrameV, false);
+	Draw3DObject(baseDirectX, mapFrameH, false);
 	MapEditorObjects::Draw(baseDirectX);
 	Imgui::DrawImGui(baseDirectX);
 	//•`‰æƒRƒ}ƒ“ƒh‚±‚±‚Ü‚Å

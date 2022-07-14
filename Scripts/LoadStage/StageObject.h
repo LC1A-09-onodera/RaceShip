@@ -9,7 +9,7 @@ class WallObjectEach : public EachInfo
 class WallModel : public Model
 {
 public:
-	void Update(BaseDirectX& baseDirectX, WallObjectEach *each = nullptr, bool rCamera = false);
+	void Update(BaseDirectX& baseDirectX, WallObjectEach *f_each = nullptr, bool rCamera = false);
 };
 
 class WallObject
@@ -29,7 +29,7 @@ class GoalObjectEach : public EachInfo
 class GoalModel : public Model
 {
 public:
-	void Update(BaseDirectX& baseDirectX, GoalObjectEach* each = nullptr, bool rCamera = false);
+	void Update(BaseDirectX& baseDirectX, GoalObjectEach* f_each = nullptr, bool rCamera = false);
 };
 
 class GoalObject

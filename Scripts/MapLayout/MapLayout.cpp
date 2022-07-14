@@ -71,7 +71,7 @@ void MapEditorObjects::LoadFile(string path)
 {
 }
 
-void MapEditorObjects::Update(BaseDirectX& baseDirectX, XMFLOAT3& mousePos)
+void MapEditorObjects::Update(BaseDirectX& baseDirectX, XMFLOAT3& f_mousePos)
 {
 	if (Input::KeyTrigger(DIK_1))
 	{
@@ -92,9 +92,9 @@ void MapEditorObjects::Update(BaseDirectX& baseDirectX, XMFLOAT3& mousePos)
 	if (Input::MouseTrigger(MouseButton::LBUTTON))
 	{
 		isLinePut = true;
-		if (!ObjectCollision(mousePos))
+		if (!ObjectCollision(f_mousePos))
 		{
-			SetObject(baseDirectX, mousePos);
+			SetObject(baseDirectX, f_mousePos);
 		}
 	}
 	else if (!Input::Mouse(MouseButton::LBUTTON))
@@ -103,7 +103,7 @@ void MapEditorObjects::Update(BaseDirectX& baseDirectX, XMFLOAT3& mousePos)
 	}
 	if (!Input::MouseTrigger(MouseButton::LBUTTON) && Input::Mouse(MouseButton::LBUTTON) && isLinePut)
 	{
-		SetObjectLine(baseDirectX, mousePos);
+		SetObjectLine(baseDirectX, f_mousePos);
 	}
 	if (Input::Key(DIK_D))
 	{
@@ -200,32 +200,32 @@ void MapEditorObjects::SetObjectLine(BaseDirectX& baseDirectX, XMFLOAT3& positio
 	SetObject(baseDirectX, lineMousePos);
 }
 
-bool MapEditorObjects::ObjectCollision(XMFLOAT3& mousePos)
+bool MapEditorObjects::ObjectCollision(XMFLOAT3& f_mousePos)
 {
 	for (auto itr = wall.begin(); itr != wall.end(); ++itr)
 	{
-		if (itr->OnCollisionMouse(mousePos.x, mousePos.y))
+		if (itr->OnCollisionMouse(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))
 		{
 			wall.erase(itr);
-			lineMousePos = mousePos;
+			lineMousePos = f_mousePos;
 			return true;
 		}
 	}
 	for (auto itr = goal.begin(); itr != goal.end(); ++itr)
 	{
-		if (itr->OnCollisionMouse(mousePos.x, mousePos.y))
+		if (itr->OnCollisionMouse(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))
 		{
 			goal.erase(itr);
-			lineMousePos = mousePos;
+			lineMousePos = f_mousePos;
 			return true;
 		}
 	}
 	for (auto itr = enemy.begin(); itr != enemy.end(); ++itr)
 	{
-		if (itr->OnCollisionMouse(mousePos.x, mousePos.y))
+		if (itr->OnCollisionMouse(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))
 		{
 			enemy.erase(itr);
-			lineMousePos = mousePos;
+			lineMousePos = f_mousePos;
 			return true;
 		}
 	}

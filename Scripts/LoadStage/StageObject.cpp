@@ -77,13 +77,13 @@ void StageObjects::Draw(BaseDirectX& baseDirectX, bool isRCamera)
 	}
 }
 
-void WallModel::Update(BaseDirectX& baseDirectX, WallObjectEach* each, bool rCamera)
+void WallModel::Update(BaseDirectX& baseDirectX, WallObjectEach* f_each, bool rCamera)
 {
-	if (each != nullptr)
+	if (f_each != nullptr)
 	{
-		this->each = *each;
+		this->each = *f_each;
 	}
-	CalcMatrix(this, each);
+	CalcMatrix(this, &this->each);
 	SendVertex(baseDirectX);
 	ConstBufferDataB0* constMap0 = nullptr;
 	if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
@@ -113,13 +113,13 @@ void WallModel::Update(BaseDirectX& baseDirectX, WallObjectEach* each, bool rCam
 	this->each.constBuff1->Unmap(0, nullptr);
 }
 
-void GoalModel::Update(BaseDirectX& baseDirectX, GoalObjectEach* each, bool rCamera)
+void GoalModel::Update(BaseDirectX& baseDirectX, GoalObjectEach* f_each, bool rCamera)
 {
-	if (each != nullptr)
+	if (f_each != nullptr)
 	{
-		this->each = *each;
+		this->each = *f_each;
 	}
-	CalcMatrix(this, each);
+	CalcMatrix(this, &this->each);
 
 	SendVertex(baseDirectX);
 

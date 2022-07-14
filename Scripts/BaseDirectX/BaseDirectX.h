@@ -32,13 +32,13 @@ using namespace std;
 class XAudio2VoiceCallback : public IXAudio2VoiceCallback
 {
 public:
-	STDMETHOD_(void, OnVoiceProcessingPassStart) (THIS_ UINT32 BytesRequires) {};
-	STDMETHOD_(void, OnVoiceProcessingPassEnd) (THIS) {};
-	STDMETHOD_(void, OnStreamEnd) (THIS) {};
-	STDMETHOD_(void, OnBufferStart) (THIS_ void *pBufferContext) {};
-	STDMETHOD_(void, OnBufferEnd) (THIS_ void *pBufferContext) { delete[] pBufferContext; };
-	STDMETHOD_(void, OnLoopEnd) (THIS_ void *pBufferContext) {};
-	STDMETHOD_(void, OnVoiceError) (THIS_ void *pBufferCountext, HRESULT Error) {};
+	//STDMETHOD_(void, OnVoiceProcessingPassStart) (THIS_ UINT32 BytesRequires) {};
+	//STDMETHOD_(void, OnVoiceProcessingPassEnd) (THIS) {};
+	//STDMETHOD_(void, OnStreamEnd) (THIS) {};
+	//STDMETHOD_(void, OnBufferStart) (THIS_ void *pBufferContext) {};
+	//STDMETHOD_(void, OnBufferEnd) (THIS_ void *pBufferContext) { delete[] pBufferContext; };
+	//STDMETHOD_(void, OnLoopEnd) (THIS_ void *pBufferContext) {};
+	//STDMETHOD_(void, OnVoiceError) (THIS_ void *pBufferCountext, HRESULT Error) {};
 };
 
 struct PeraVertex
@@ -83,7 +83,7 @@ public:
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvH = D3D12_CPU_DESCRIPTOR_HANDLE();
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline = D3D12_GRAPHICS_PIPELINE_STATE_DESC();
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipelineMeth = D3D12_GRAPHICS_PIPELINE_STATE_DESC();
-	D3D12_RENDER_TARGET_BLEND_DESC &blenddesc = D3D12_RENDER_TARGET_BLEND_DESC();
+	//D3D12_RENDER_TARGET_BLEND_DESC &blenddesc;
 	ComPtr<ID3DBlob> vsBlob;
 	ComPtr<ID3DBlob> psBlob;
 	ComPtr<ID3DBlob> errorBlob;

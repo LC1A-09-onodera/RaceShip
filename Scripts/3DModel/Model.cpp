@@ -40,9 +40,9 @@ void Model::CalculateSmoothedVertexNormals()
 	}
 }
 
-void Model::SetLight(shared_ptr<Light> light)
+void Model::SetLight(shared_ptr<Light> Light)
 {
-	Model::light = light;
+	Model::light = Light;
 }
 
 void Model::CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& shader, bool smoothing, bool isTriangle)
@@ -56,13 +56,13 @@ void Model::CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& 
 	ConstBufferInit(baseDirectX, this, this->each);
 }
 
-void Model::Update(BaseDirectX &baseDirectX, EachInfo* each, bool rCamera)
+void Model::Update(BaseDirectX &baseDirectX, EachInfo* f_each, bool rCamera)
 {
-	if (each != nullptr)
+	if (f_each != nullptr)
 	{
-		this->each = *each;
+		this->each = *f_each;
 		
-		CalcMatrix(this, each);
+		CalcMatrix(this, &this->each);
 
 		SendVertex(baseDirectX);
 
@@ -96,7 +96,7 @@ void Model::Update(BaseDirectX &baseDirectX, EachInfo* each, bool rCamera)
 	}
 	else
 	{
-		CalcMatrix(this, each);
+		CalcMatrix(this, &this->each);
 
 		SendVertex(baseDirectX);
 
@@ -167,9 +167,9 @@ void Model::LoadFileContents(BaseDirectX &baseDirectX, const char* name, bool sm
 
 		if (key == "mtllib")
 		{   //マテリアル
-			string filename;
-			line_stream >> filename;
-			LoadMaterial(baseDirectX, directoryPath, filename);
+			string mFilename;
+			line_stream >> mFilename;
+			LoadMaterial(baseDirectX, directoryPath, mFilename);
 		}
 		if (key == "v")
 		{   //座標読み込み
@@ -365,7 +365,7 @@ bool Model::LoadTexture(BaseDirectX& baseDirectX, const string& directPath, cons
 	string filepath = directPath + filename;
 
 	wchar_t wfilepath[128];
-	int iBufferSize = MultiByteToWideChar(CP_ACP, 0, filepath.c_str(), -1, wfilepath, _countof(wfilepath));
+	//int iBufferSize = MultiByteToWideChar(CP_ACP, 0, filepath.c_str(), -1, wfilepath, _countof(wfilepath));
 
 	result = LoadFromWICFile(wfilepath, WIC_FLAGS_NONE, &metadata, scratchImg);
 	if (FAILED(result))
@@ -383,10 +383,10 @@ bool Model::LoadTexture(BaseDirectX& baseDirectX, const string& directPath, cons
 		(UINT16)metadata.arraySize,
 		(UINT16)metadata.mipLevels
 	);
-
+	CD3DX12_HEAP_PROPERTIES heapProp(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0);
 	// テクスチャ用バッファの生成
 	result = baseDirectX.dev->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0),
+		&heapProp,
 		D3D12_HEAP_FLAG_NONE,
 		&texresDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ, // テクスチャ用指定
@@ -521,7 +521,7 @@ void Set3DDraw(BaseDirectX& baseDirectX, const Model& model, bool triangle)
 	}
 }
 
-void Draw3DObject(BaseDirectX& baseDirectX, const Model& model, int texNum, bool triangle)
+void Draw3DObject(BaseDirectX& baseDirectX, const Model& model, bool triangle)
 {
 	Set3DDraw(baseDirectX, model, triangle);
 	baseDirectX.cmdList->IASetVertexBuffers(0, 1, &model.mesh.vbView);

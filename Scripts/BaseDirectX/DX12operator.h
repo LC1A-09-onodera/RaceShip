@@ -154,7 +154,7 @@ static const XMFLOAT3 operator *(float s, const XMFLOAT3& v1)
 	return v;
 }
 
-static XMVECTOR operator - (const XMVECTOR v1, const XMFLOAT3& v2)
+static XMVECTOR operator - (const XMFLOAT3& v2)
 {
 	XMVECTOR v;
 	v.m128_f32[0] -= v2.x;
@@ -364,23 +364,24 @@ static float Lenght(XMFLOAT3 &v)
 static float length(const float v1, const float v2)
 {
 	float result = 0.0f;
-
-	return result;
+	float hoge = v1 + v2;
+	hoge = hoge * result;
+	return hoge;
 };
 
-static XMFLOAT2 Normalize(const float v1, const float v2)
-{
-	XMFLOAT2 result = {};
+//static XMFLOAT2 Normalize(const float v1, const float v2)
+//{
+//	XMFLOAT2 result = {};
+//
+//	return result;
+//}
 
-	return result;
-}
-
-static XMFLOAT2 Dot(const float v1, const float v2)
-{
-	XMFLOAT2 result = {};
-
-	return result;
-}
+//static XMFLOAT2 Dot(const float v1, const float v2)
+//{
+//	XMFLOAT2 result = {};
+//
+//	return result;
+//}
 
 static float Magnitude(const XMFLOAT3& v)
 {

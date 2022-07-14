@@ -61,6 +61,9 @@ public:
 	bool back;
 	float rotation = 0.0f;
 	int texNum;
+	float pad1 = 0.0f;
+	float pad2 = 0.0f;
+	float pad3 = 0.0f;
 	//éÀâeçsóÒ
 	XMVECTOR position{};
 	XMMATRIX matProjection{};

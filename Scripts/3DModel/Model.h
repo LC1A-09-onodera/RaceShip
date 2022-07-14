@@ -157,7 +157,7 @@ public:
 	Model() = default;
 
 	virtual ~Model();
-	static void SetLight(shared_ptr<Light> light);
+	static void SetLight(shared_ptr<Light> Light);
 	Mesh mesh;
 	D3D12_CPU_DESCRIPTOR_HANDLE cpuDescHandleCBV = D3D12_CPU_DESCRIPTOR_HANDLE();
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuDescHandleCBV = D3D12_GPU_DESCRIPTOR_HANDLE();
@@ -188,7 +188,7 @@ public:
 	int materialCount = 0;
 	void CreateModel(BaseDirectX& baseDirectX, const char *name, HLSLShader &shader, bool smoothing = false, bool isTriangle = true);
 	//void Update();
-	virtual void Update(BaseDirectX& baseDirectX, EachInfo *each, bool rCamera = false);
+	virtual void Update(BaseDirectX& baseDirectX, EachInfo *f_each, bool rCamera = false);
 	void SendVertex(BaseDirectX& baseDirectX);
 	
 	void LoadFileContents(BaseDirectX& baseDirectX, const char* name, bool smoothing = false);
@@ -287,6 +287,6 @@ void CalcMatrix(T *model, U *eachInfo)
 	model->matWorld *= matTrans;
 }
 void Set3DDraw(BaseDirectX& baseDirectX, const Model &model, bool triangle = true);
-void Draw3DObject(BaseDirectX& baseDirectX, const Model &model, int texNum = -1, bool triangle = true);
+void Draw3DObject(BaseDirectX& baseDirectX, const Model &model, bool triangle = true);
 bool ObjectColition(Model& object1, Model& object2);
 bool CiycleColition(const XMFLOAT3 &object1, const XMFLOAT3 &object2 , float radi1, float radi2);

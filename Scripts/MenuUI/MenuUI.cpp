@@ -6,14 +6,15 @@ void MenuUI::LoadFile(BaseDirectX& baseDirectX)
 	pouseBack.CreateSprite(baseDirectX, L"Resource/Image/PouseBackground.png", XMFLOAT3(0, 0, 0));
 }
 
-void MenuUI::LoadFile(BaseDirectX& baseDirectX, string name)
-{
-	
-}
-
-void MenuUI::Init(float height)
-{
-}
+//void MenuUI::LoadFile(BaseDirectX& baseDirectX, string name)
+//{
+//	
+//}
+//
+//void MenuUI::Init(float height)
+//{
+//	
+//}
 
 void MenuUI::DrawUI(BaseDirectX& baseDirectX)
 {
