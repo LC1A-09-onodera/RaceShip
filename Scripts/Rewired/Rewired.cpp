@@ -4,8 +4,8 @@
 #include <string>
 #include <sstream>
 
-list<tuple<string, KeyCode, Sprite>> Rewired::KeyCodeString::keyboardKeys;
-list<tuple<string, PadKeyCode, Sprite>> Rewired::KeyCodeString::padKeys;
+list<tuple<string, KeyCode, Sprite>> Rewired::KeyCodeString::mKeyboardKeys;
+list<tuple<string, PadKeyCode, Sprite>> Rewired::KeyCodeString::mPadKeys;
 list<Rewired::RewiredKeys*> Rewired::RewiredContainer::rewireds;
 vector<std::string> Rewired::RewiredContainer::files;
 list<Rewired::RewiredKeys> Rewired::RewiredContainer::rewiredsC;
@@ -157,7 +157,7 @@ void Rewired::RewiredKeys::LoadKey(const char* name, bool isAdd)
 		getline(line_stream, key, ',');
 		if (key == "KeyBoard")
 		{
-			for (auto itr = KeyCodeString::keyboardKeys.begin(); itr != KeyCodeString::keyboardKeys.end(); ++itr)
+			for (auto itr = KeyCodeString::mKeyboardKeys.begin(); itr != KeyCodeString::mKeyboardKeys.end(); ++itr)
 			{
 				if (key + "," + std::get<0>(*itr) == line_stream.str())
 				{
@@ -167,7 +167,7 @@ void Rewired::RewiredKeys::LoadKey(const char* name, bool isAdd)
 		}
 		else if (key == "XboxPad")
 		{
-			for (auto itr = KeyCodeString::padKeys.begin(); itr != KeyCodeString::padKeys.end(); ++itr)
+			for (auto itr = KeyCodeString::mPadKeys.begin(); itr != KeyCodeString::mPadKeys.end(); ++itr)
 			{
 				if (key + "," + std::get<0>(*itr) == line_stream.str())
 				{
@@ -189,7 +189,7 @@ void Rewired::RewiredKeys::SaveKey()
 	if (!ofs) return;
 	for (auto itr = keys.begin(); itr != keys.end(); ++itr)
 	{
-		for (auto keyStringItr = Rewired::KeyCodeString::keyboardKeys.begin(); keyStringItr != Rewired::KeyCodeString::keyboardKeys.end(); ++keyStringItr)
+		for (auto keyStringItr = Rewired::KeyCodeString::mKeyboardKeys.begin(); keyStringItr != Rewired::KeyCodeString::mKeyboardKeys.end(); ++keyStringItr)
 		{
 			if (std::get<1>(*keyStringItr) == *itr)
 			{
@@ -199,7 +199,7 @@ void Rewired::RewiredKeys::SaveKey()
 	}
 	for (auto itr = padKeys.begin(); itr != padKeys.end(); ++itr)
 	{
-		for (auto keyStringItr = Rewired::KeyCodeString::padKeys.begin(); keyStringItr != Rewired::KeyCodeString::padKeys.end(); ++keyStringItr)
+		for (auto keyStringItr = Rewired::KeyCodeString::mPadKeys.begin(); keyStringItr != Rewired::KeyCodeString::mPadKeys.end(); ++keyStringItr)
 		{
 			if (std::get<1>(*keyStringItr) == *itr)
 			{
@@ -215,42 +215,42 @@ void Rewired::KeyCodeString::KeyCodeStringInit(BaseDirectX& baseDirectX)
 	Sprite sA, sB, sC, sD, sE, sF, sG, sH, sI, sJ, sK, sL, sM, sN, sO, sP, sQ, sR, sS, sT, sU, sV,sW, sX, sY, sZ,
 	s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, sSpace, sLShift, sLCtrl, sUP, sRight, sLeft, sDown, sTab, sRShift,
 	padA, padB, padX, padY, padSelect, padPouse, padUp, padDown, padRight, padLeft, padRb, padLb;
-	sA.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "A.png"), XMFLOAT3(0, 0, 0));
-	sB.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "B.png"), XMFLOAT3(0, 0, 0));
-	sC.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "C.png"), XMFLOAT3(0, 0, 0));
-	sD.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "D.png"), XMFLOAT3(0, 0, 0));
-	sE.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "E.png"), XMFLOAT3(0, 0, 0));
-	sF.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "F.png"), XMFLOAT3(0, 0, 0));
-	sG.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "G.png"), XMFLOAT3(0, 0, 0));
-	sH.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "H.png"), XMFLOAT3(0, 0, 0));
-	sI.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "I.png"), XMFLOAT3(0, 0, 0));
-	sJ.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "J.png"), XMFLOAT3(0, 0, 0));
-	sK.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "K.png"), XMFLOAT3(0, 0, 0));
-	sL.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "L.png"), XMFLOAT3(0, 0, 0));
-	sM.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "M.png"), XMFLOAT3(0, 0, 0));
-	sN.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "N.png"), XMFLOAT3(0, 0, 0));
-	sO.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "O.png"), XMFLOAT3(0, 0, 0));
-	sP.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "P.png"), XMFLOAT3(0, 0, 0));
-	sQ.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "Q.png"), XMFLOAT3(0, 0, 0));
-	sR.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "R.png"), XMFLOAT3(0, 0, 0));
-	sS.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "S.png"), XMFLOAT3(0, 0, 0));
-	sT.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "T.png"), XMFLOAT3(0, 0, 0));
-	sU.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "U.png"), XMFLOAT3(0, 0, 0));
-	sV.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "V.png"), XMFLOAT3(0, 0, 0));
-	sW.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "W.png"), XMFLOAT3(0, 0, 0));
-	sX.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "X.png"), XMFLOAT3(0, 0, 0));
-	sY.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "Y.png"), XMFLOAT3(0, 0, 0));
-	sZ.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "Z.png"), XMFLOAT3(0, 0, 0));
-	s0.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "0.png"), XMFLOAT3(0, 0, 0));
-	s1.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "1.png"), XMFLOAT3(0, 0, 0));
-	s2.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "2.png"), XMFLOAT3(0, 0, 0));
-	s3.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "3.png"), XMFLOAT3(0, 0, 0));
-	s4.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "4.png"), XMFLOAT3(0, 0, 0));
-	s5.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "5.png"), XMFLOAT3(0, 0, 0));
-	s6.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "6.png"), XMFLOAT3(0, 0, 0));
-	s7.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "7.png"), XMFLOAT3(0, 0, 0));
-	s8.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "8.png"), XMFLOAT3(0, 0, 0));
-	s9.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "9.png"), XMFLOAT3(0, 0, 0));
+	sA.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "A.png"), XMFLOAT3(0, 0, 0) );
+	sB.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "B.png"), XMFLOAT3(0, 0, 0) );
+	sC.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "C.png"), XMFLOAT3(0, 0, 0) );
+	sD.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "D.png"), XMFLOAT3(0, 0, 0) );
+	sE.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "E.png"), XMFLOAT3(0, 0, 0) );
+	sF.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "F.png"), XMFLOAT3(0, 0, 0) );
+	sG.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "G.png"), XMFLOAT3(0, 0, 0) );
+	sH.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "H.png"), XMFLOAT3(0, 0, 0) );
+	sI.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "I.png"), XMFLOAT3(0, 0, 0) );
+	sJ.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "J.png"), XMFLOAT3(0, 0, 0) );
+	sK.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "K.png"), XMFLOAT3(0, 0, 0) );
+	sL.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "L.png"), XMFLOAT3(0, 0, 0) );
+	sM.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "M.png"), XMFLOAT3(0, 0, 0) );
+	sN.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "N.png"), XMFLOAT3(0, 0, 0) );
+	sO.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "O.png"), XMFLOAT3(0, 0, 0) );
+	sP.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "P.png"), XMFLOAT3(0, 0, 0) );
+	sQ.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "Q.png"), XMFLOAT3(0, 0, 0) );
+	sR.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "R.png"), XMFLOAT3(0, 0, 0) );
+	sS.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "S.png"), XMFLOAT3(0, 0, 0) );
+	sT.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "T.png"), XMFLOAT3(0, 0, 0) );
+	sU.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "U.png"), XMFLOAT3(0, 0, 0) );
+	sV.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "V.png"), XMFLOAT3(0, 0, 0) );
+	sW.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "W.png"), XMFLOAT3(0, 0, 0) );
+	sX.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "X.png"), XMFLOAT3(0, 0, 0) );
+	sY.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "Y.png"), XMFLOAT3(0, 0, 0) );
+	sZ.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "Z.png"), XMFLOAT3(0, 0, 0) );
+	s0.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "0.png"), XMFLOAT3(0, 0, 0) );
+	s1.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "1.png"), XMFLOAT3(0, 0, 0) );
+	s2.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "2.png"), XMFLOAT3(0, 0, 0) );
+	s3.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "3.png"), XMFLOAT3(0, 0, 0) );
+	s4.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "4.png"), XMFLOAT3(0, 0, 0) );
+	s5.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "5.png"), XMFLOAT3(0, 0, 0) );
+	s6.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "6.png"), XMFLOAT3(0, 0, 0) );
+	s7.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "7.png"), XMFLOAT3(0, 0, 0) );
+	s8.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "8.png"), XMFLOAT3(0, 0, 0) );
+	s9.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "9.png"), XMFLOAT3(0, 0, 0) );
 	sSpace.CreateSprite( baseDirectX, ConvertStringToWchaer(path + "Space.png"),  XMFLOAT3(0, 0, 0));
 	sLShift.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "LShift.png"), XMFLOAT3(0, 0, 0));
 	sLCtrl.CreateSprite( baseDirectX, ConvertStringToWchaer(path + "LCtrl.png"),  XMFLOAT3(0, 0, 0));
@@ -266,13 +266,13 @@ void Rewired::KeyCodeString::KeyCodeStringInit(BaseDirectX& baseDirectX)
 	padX.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "PadX.png"), XMFLOAT3(0, 0, 0));
 	padY.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "PadY.png"), XMFLOAT3(0, 0, 0));
 	padSelect.CreateSprite(baseDirectX, ConvertStringToWchaer(path + "PadSelect.png"), XMFLOAT3(0, 0, 0));
-	padPouse.CreateSprite( baseDirectX, ConvertStringToWchaer(path + "PadPouse.png"),  XMFLOAT3(0, 0, 0));
-	padUp.CreateSprite(    baseDirectX, ConvertStringToWchaer(path + "padUp.png"),     XMFLOAT3(0, 0, 0));
-	padRight.CreateSprite( baseDirectX, ConvertStringToWchaer(path + "padRight.png"),  XMFLOAT3(0, 0, 0));
-	padLeft.CreateSprite(  baseDirectX, ConvertStringToWchaer(path + "padLeft.png"),   XMFLOAT3(0, 0, 0));
-	padDown.CreateSprite(  baseDirectX, ConvertStringToWchaer(path + "padDown.png"),   XMFLOAT3(0, 0, 0));
-	padLb.CreateSprite(    baseDirectX, ConvertStringToWchaer(path + "LB.png"),        XMFLOAT3(0, 0, 0));
-	padRb.CreateSprite(    baseDirectX, ConvertStringToWchaer(path + "RB.png"),        XMFLOAT3(0, 0, 0));
+	padPouse.CreateSprite( baseDirectX, ConvertStringToWchaer(path + "PadPouse.png"), XMFLOAT3(0, 0, 0));
+	padUp.CreateSprite(    baseDirectX, ConvertStringToWchaer(path + "padUp.png"), XMFLOAT3(0, 0, 0));
+	padRight.CreateSprite( baseDirectX, ConvertStringToWchaer(path + "padRight.png"), XMFLOAT3(0, 0, 0));
+	padLeft.CreateSprite(  baseDirectX, ConvertStringToWchaer(path + "padLeft.png"), XMFLOAT3(0, 0, 0));
+	padDown.CreateSprite(  baseDirectX, ConvertStringToWchaer(path + "padDown.png"), XMFLOAT3(0, 0, 0));
+	padLb.CreateSprite(    baseDirectX, ConvertStringToWchaer(path + "LB.png"), XMFLOAT3(0, 0, 0));
+	padRb.CreateSprite(    baseDirectX, ConvertStringToWchaer(path + "RB.png"), XMFLOAT3(0, 0, 0));
 
 	tuple<string, KeyCode, Sprite> A = { "A", KeyCode::A , sA };
 	tuple<string, KeyCode, Sprite> B = { "B", KeyCode::B , sB };
@@ -300,70 +300,68 @@ void Rewired::KeyCodeString::KeyCodeStringInit(BaseDirectX& baseDirectX)
 	tuple<string, KeyCode, Sprite> X = { "X", KeyCode::X , sX };
 	tuple<string, KeyCode, Sprite> Y = { "Y", KeyCode::Y , sY };
 	tuple<string, KeyCode, Sprite> Z = { "Z", KeyCode::Z , sZ };
-	tuple<string, KeyCode, Sprite> Num1 = { "1", KeyCode::Key1 , s0 };
-	tuple<string, KeyCode, Sprite> Num2 = { "2", KeyCode::Key2 , s1 };
-	tuple<string, KeyCode, Sprite> Num3 = { "3", KeyCode::Key3 , s2 };
-	tuple<string, KeyCode, Sprite> Num4 = { "4", KeyCode::Key4 , s3 };
-	tuple<string, KeyCode, Sprite> Num5 = { "5", KeyCode::Key5 , s4 };
-	tuple<string, KeyCode, Sprite> Num6 = { "6", KeyCode::Key6 , s5 };
-	tuple<string, KeyCode, Sprite> Num7 = { "7", KeyCode::Key7 , s6 };
-	tuple<string, KeyCode, Sprite> Num8 = { "8", KeyCode::Key8 , s7 };
-	tuple<string, KeyCode, Sprite> Num9 = { "9", KeyCode::Key9 , s8 };
-	tuple<string, KeyCode, Sprite> Num0 = { "0", KeyCode::Key0 , s9 };
-	tuple<string, KeyCode, Sprite> Tab =        { "Tab",        KeyCode::Tab        ,sTab};
+	tuple<string, KeyCode, Sprite> Num1 = { "1", KeyCode::Key1 , s1 };
+	tuple<string, KeyCode, Sprite> Num2 = { "2", KeyCode::Key2 , s2 };
+	tuple<string, KeyCode, Sprite> Num3 = { "3", KeyCode::Key3 , s3 };
+	tuple<string, KeyCode, Sprite> Num4 = { "4", KeyCode::Key4 , s4 };
+	tuple<string, KeyCode, Sprite> Num5 = { "5", KeyCode::Key5 , s5 };
+	tuple<string, KeyCode, Sprite> Num6 = { "6", KeyCode::Key6 , s6 };
+	tuple<string, KeyCode, Sprite> Num7 = { "7", KeyCode::Key7 , s7 };
+	tuple<string, KeyCode, Sprite> Num8 = { "8", KeyCode::Key8 , s8 };
+	tuple<string, KeyCode, Sprite> Num9 = { "9", KeyCode::Key9 , s9 };
+	tuple<string, KeyCode, Sprite> Num0 = { "0", KeyCode::Key0 , s0 };
+	tuple<string, KeyCode, Sprite> Tab =        { "Tab",        KeyCode::Tab        ,sTab };
 	tuple<string, KeyCode, Sprite> Space =      { "Space",      KeyCode::Space      ,sSpace  };
 	tuple<string, KeyCode, Sprite> LShift =     { "LShift",     KeyCode::LShift     ,sLShift };
-	tuple<string, KeyCode, Sprite> RShift =     { "RShift",     KeyCode::RShift     ,sRShift};
-	tuple<string, KeyCode, Sprite> UpArrow =    { "UpArrow",    KeyCode::UpArrow    ,sUP};
-	tuple<string, KeyCode, Sprite> DownArrow =  { "DownArrow",  KeyCode::DownArrow  ,sDown};
-	tuple<string, KeyCode, Sprite> RightArrow = { "RightArrow", KeyCode::RightArrow ,sRight};
-	tuple<string, KeyCode, Sprite> LeftArrow =  { "LeftArrow",  KeyCode::LeftArrow  ,sLeft};
-	keyboardKeys.push_back(A);
-	keyboardKeys.push_back(B);
-	keyboardKeys.push_back(C);
-	keyboardKeys.push_back(D);
-	keyboardKeys.push_back(E);
-	keyboardKeys.push_back(F);
-	keyboardKeys.push_back(G);
-	keyboardKeys.push_back(H);
-	keyboardKeys.push_back(I);
-	keyboardKeys.push_back(J);
-	keyboardKeys.push_back(K);
-	keyboardKeys.push_back(L);
-	keyboardKeys.push_back(M);
-	keyboardKeys.push_back(N);
-	keyboardKeys.push_back(O);
-	keyboardKeys.push_back(P);
-	keyboardKeys.push_back(Q);
-	keyboardKeys.push_back(R);
-	keyboardKeys.push_back(S);
-	keyboardKeys.push_back(T);
-	keyboardKeys.push_back(U);
-	keyboardKeys.push_back(V);
-	keyboardKeys.push_back(W);
-	keyboardKeys.push_back(X);
-	keyboardKeys.push_back(Y);
-	keyboardKeys.push_back(Z);
-	keyboardKeys.push_back(Num1);
-	keyboardKeys.push_back(Num2);
-	keyboardKeys.push_back(Num3);
-	keyboardKeys.push_back(Num4);
-	keyboardKeys.push_back(Num5);
-	keyboardKeys.push_back(Num6);
-	keyboardKeys.push_back(Num7);
-	keyboardKeys.push_back(Num8);
-	keyboardKeys.push_back(Num9);
-	keyboardKeys.push_back(Num0);
-	keyboardKeys.push_back(Tab);
-	keyboardKeys.push_back(Space);
-	keyboardKeys.push_back(LShift);
-	keyboardKeys.push_back(RShift);
-	keyboardKeys.push_back(UpArrow);
-	keyboardKeys.push_back(DownArrow);
-	keyboardKeys.push_back(RightArrow);
-	keyboardKeys.push_back(LeftArrow);
-
-
+	tuple<string, KeyCode, Sprite> RShift =     { "RShift",     KeyCode::RShift     ,sRShift };
+	tuple<string, KeyCode, Sprite> UpArrow =    { "UpArrow",    KeyCode::UpArrow    ,sUP };
+	tuple<string, KeyCode, Sprite> DownArrow =  { "DownArrow",  KeyCode::DownArrow  ,sDown };
+	tuple<string, KeyCode, Sprite> RightArrow = { "RightArrow", KeyCode::RightArrow ,sRight };
+	tuple<string, KeyCode, Sprite> LeftArrow =  { "LeftArrow",  KeyCode::LeftArrow  ,sLeft };
+	mKeyboardKeys.push_back(A);
+	mKeyboardKeys.push_back(B);
+	mKeyboardKeys.push_back(C);
+	mKeyboardKeys.push_back(D);
+	mKeyboardKeys.push_back(E);
+	mKeyboardKeys.push_back(F);
+	mKeyboardKeys.push_back(G);
+	mKeyboardKeys.push_back(H);
+	mKeyboardKeys.push_back(I);
+	mKeyboardKeys.push_back(J);
+	mKeyboardKeys.push_back(K);
+	mKeyboardKeys.push_back(L);
+	mKeyboardKeys.push_back(M);
+	mKeyboardKeys.push_back(N);
+	mKeyboardKeys.push_back(O);
+	mKeyboardKeys.push_back(P);
+	mKeyboardKeys.push_back(Q);
+	mKeyboardKeys.push_back(R);
+	mKeyboardKeys.push_back(S);
+	mKeyboardKeys.push_back(T);
+	mKeyboardKeys.push_back(U);
+	mKeyboardKeys.push_back(V);
+	mKeyboardKeys.push_back(W);
+	mKeyboardKeys.push_back(X);
+	mKeyboardKeys.push_back(Y);
+	mKeyboardKeys.push_back(Z);
+	mKeyboardKeys.push_back(Num1);
+	mKeyboardKeys.push_back(Num2);
+	mKeyboardKeys.push_back(Num3);
+	mKeyboardKeys.push_back(Num4);
+	mKeyboardKeys.push_back(Num5);
+	mKeyboardKeys.push_back(Num6);
+	mKeyboardKeys.push_back(Num7);
+	mKeyboardKeys.push_back(Num8);
+	mKeyboardKeys.push_back(Num9);
+	mKeyboardKeys.push_back(Num0);
+	mKeyboardKeys.push_back(Tab);
+	mKeyboardKeys.push_back(Space);
+	mKeyboardKeys.push_back(LShift);
+	mKeyboardKeys.push_back(RShift);
+	mKeyboardKeys.push_back(UpArrow);
+	mKeyboardKeys.push_back(DownArrow);
+	mKeyboardKeys.push_back(RightArrow);
+	mKeyboardKeys.push_back(LeftArrow);
 
 	tuple<string, PadKeyCode, Sprite> PadUp =     { "PadUp",     PadKeyCode::UpButton     ,padUp };
 	tuple<string, PadKeyCode, Sprite> PadDown =   { "PadDown",   PadKeyCode::DownButton   ,padDown };
@@ -373,22 +371,22 @@ void Rewired::KeyCodeString::KeyCodeStringInit(BaseDirectX& baseDirectX)
 	tuple<string, PadKeyCode, Sprite> PadB =      { "PadB",      PadKeyCode::Button02     ,padB };
 	tuple<string, PadKeyCode, Sprite> PadX =      { "PadX",      PadKeyCode::Button03     ,padX };
 	tuple<string, PadKeyCode, Sprite> PadY =      { "PadY",      PadKeyCode::Button04     ,padY };
-	tuple<string, PadKeyCode, Sprite> PadLB =     { "PadLB",     PadKeyCode::ButtonLB     ,padLb};
-	tuple<string, PadKeyCode, Sprite> PadRB =     { "PadRB",     PadKeyCode::ButtonRB     ,padRb};
+	tuple<string, PadKeyCode, Sprite> PadLB =     { "PadLB",     PadKeyCode::ButtonLB     ,padLb };
+	tuple<string, PadKeyCode, Sprite> PadRB =     { "PadRB",     PadKeyCode::ButtonRB     ,padRb };
 	tuple<string, PadKeyCode, Sprite> PadSelect = { "PadSelect", PadKeyCode::ButtonSelect ,padSelect };
 	tuple<string, PadKeyCode, Sprite> PadPouse =  { "PadPouse",  PadKeyCode::ButtonPouse  ,padPouse };
-	padKeys.push_back(PadUp);
-	padKeys.push_back(PadDown);
-	padKeys.push_back(PadLeft);
-	padKeys.push_back(PadRight);
-	padKeys.push_back(PadA);
-	padKeys.push_back(PadB);
-	padKeys.push_back(PadX);
-	padKeys.push_back(PadY);
-	padKeys.push_back(PadLB);
-	padKeys.push_back(PadRB);
-	padKeys.push_back(PadSelect);
-	padKeys.push_back(PadPouse);
+	mPadKeys.push_back(PadUp);
+	mPadKeys.push_back(PadDown);
+	mPadKeys.push_back(PadLeft);
+	mPadKeys.push_back(PadRight);
+	mPadKeys.push_back(PadA);
+	mPadKeys.push_back(PadB);
+	mPadKeys.push_back(PadX);
+	mPadKeys.push_back(PadY);
+	mPadKeys.push_back(PadLB);
+	mPadKeys.push_back(PadRB);
+	mPadKeys.push_back(PadSelect);
+	mPadKeys.push_back(PadPouse);
 }
 //é¿ç€Ç…égÇ¡ÇƒÇ¢ÇÈÇ‡ÇÃÇÃÉAÉhÉåÉXÇäiî[
 void Rewired::RewiredContainer::AddRewired(RewiredKeys& rewired)

@@ -77,7 +77,7 @@ public:
 	ComPtr<ID3D12DescriptorHeap> dsvHeap;
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = D3D12_DEPTH_STENCIL_VIEW_DESC();
 	//static const int ObjectNum = 200;
-	static const int TexBufferNum = 100;
+	static const int TexBufferNum = 200;
 	D3D12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV[BaseDirectX::TexBufferNum] = {};
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuDescHandleSRV[BaseDirectX::TexBufferNum] = {};
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvH = D3D12_CPU_DESCRIPTOR_HANDLE();

@@ -10,9 +10,9 @@ namespace Rewired
 	public:
 		static void KeyCodeStringInit(BaseDirectX &baseDirectX);
 		//Keyborad
-		static list<tuple<string, KeyCode, Sprite>> keyboardKeys;
+		static list<tuple<string, KeyCode, Sprite>> mKeyboardKeys;
 		//XBoxPad
-		static list<tuple<string, PadKeyCode, Sprite>> padKeys;
+		static list<tuple<string, PadKeyCode, Sprite>> mPadKeys;
 	};
 
 	class RewiredKeys

@@ -75,7 +75,7 @@ void Imgui::ShowRewiredElement()
     //キーボードのの設定されている値
     if (itr->keys.size() > 0)
     {
-        for (auto keyListItr = Rewired::KeyCodeString::keyboardKeys.begin(); keyListItr != Rewired::KeyCodeString::keyboardKeys.end(); ++keyListItr)
+        for (auto keyListItr = Rewired::KeyCodeString::mKeyboardKeys.begin(); keyListItr != Rewired::KeyCodeString::mKeyboardKeys.end(); ++keyListItr)
         {
             for (auto keyItr = itr->keys.begin(); keyItr != itr->keys.end(); ++keyItr)
             {
@@ -90,7 +90,7 @@ void Imgui::ShowRewiredElement()
     //XBoxPadの設定されている値
     if (itr->padKeys.size() > 0)
     {
-        for (auto keyListItr = Rewired::KeyCodeString::padKeys.begin(); keyListItr != Rewired::KeyCodeString::padKeys.end(); ++keyListItr)
+        for (auto keyListItr = Rewired::KeyCodeString::mPadKeys.begin(); keyListItr != Rewired::KeyCodeString::mPadKeys.end(); ++keyListItr)
         {
             for (auto keyItr = itr->padKeys.begin(); keyItr != itr->padKeys.end(); ++keyItr)
             {
@@ -104,51 +104,74 @@ void Imgui::ShowRewiredElement()
     }
     static int comboNum = 0;
     string keyList;
-    for (auto keysItr = Rewired::KeyCodeString::keyboardKeys.begin(); keysItr != Rewired::KeyCodeString::keyboardKeys.end(); ++keysItr)
+    for (auto keysItr = Rewired::KeyCodeString::mKeyboardKeys.begin(); keysItr != Rewired::KeyCodeString::mKeyboardKeys.end(); ++keysItr)
     {
         keyList = keyList + std::get<0>(*keysItr);
         keyList.resize(keyList.size() + 1);
     }
-    for (auto padKeyItr = Rewired::KeyCodeString::padKeys.begin(); padKeyItr != Rewired::KeyCodeString::padKeys.end(); ++padKeyItr)
+    for (auto padKeyItr = Rewired::KeyCodeString::mPadKeys.begin(); padKeyItr != Rewired::KeyCodeString::mPadKeys.end(); ++padKeyItr)
     {
         keyList = keyList + std::get<0>(*padKeyItr);
         keyList.resize(keyList.size() + 1);
     }
-    keyList = keyList;
     ImGui::Combo("", &comboNum, keyList.c_str());
     if (ImGui::Button("AddKey"))
     {
         if (static_cast<int>(KeyCode::KeyCodeMax) - 1 > comboNum)
         {
-            auto keyStringItr = Rewired::KeyCodeString::keyboardKeys.begin();
-            if (Rewired::KeyCodeString::keyboardKeys.size() > 0)
+            auto keyStringItr = Rewired::KeyCodeString::mKeyboardKeys.begin();
+            if (Rewired::KeyCodeString::mKeyboardKeys.size() > 0)
             {
                 for (int i = 0; i < comboNum; i++)
                 {
                     keyStringItr++;
                 }
             }
-            itr->AddKey(std::get<1>(*keyStringItr));
+            bool isA = false;
+            //既に使っているキーを再登録しない
+            for (auto keyContainarItr = Rewired::RewiredContainer::rewiredsC.begin(); keyContainarItr != Rewired::RewiredContainer::rewiredsC.end(); ++keyContainarItr)
+            {
+                for (auto kItr = keyContainarItr->keys.begin(); kItr != keyContainarItr->keys.end(); ++kItr)
+                {
+                    if (*kItr == std::get<1>(*keyStringItr))
+                    {
+                        isA = true;
+                    }
+                }
+            }
+            if (!isA) itr->AddKey(std::get<1>(*keyStringItr));
         }
         else
         {
-            auto padStringItr = Rewired::KeyCodeString::padKeys.begin();
-            if (Rewired::KeyCodeString::padKeys.size() > 0)
+            auto padStringItr = Rewired::KeyCodeString::mPadKeys.begin();
+            if (Rewired::KeyCodeString::mPadKeys.size() > 0)
             {
-                for (int j = static_cast<int>(KeyCode::KeyCodeMax) - 1; j < comboNum - ((static_cast<int>(KeyCode::KeyCodeMax)) - 1); j++)
+                for (int j = 0; j < comboNum - ((static_cast<int>(KeyCode::KeyCodeMax)) - 1); j++)
                 {
                     padStringItr++;
                 }
             }
-            itr->AddKey(std::get<1>(*padStringItr));
+            //既に使っているキーを再登録しない
+            bool isA = false;
+            for (auto keyContainarItr = Rewired::RewiredContainer::rewiredsC.begin(); keyContainarItr != Rewired::RewiredContainer::rewiredsC.end(); ++keyContainarItr)
+            {
+                for (auto kItr = keyContainarItr->padKeys.begin(); kItr != keyContainarItr->padKeys.end(); ++kItr)
+                {
+                    if (*kItr == std::get<1>(*padStringItr))
+                    {
+                        isA = true;
+                    }
+                }
+            }
+            if (!isA) itr->AddKey(std::get<1>(*padStringItr));
         }
     }
     if (ImGui::Button("SubKey"))
     {
         if (static_cast<int>(KeyCode::KeyCodeMax) - 1 > comboNum)
         {
-            auto keyStringItr = Rewired::KeyCodeString::keyboardKeys.begin();
-            if (Rewired::KeyCodeString::keyboardKeys.size() > 0)
+            auto keyStringItr = Rewired::KeyCodeString::mKeyboardKeys.begin();
+            if (Rewired::KeyCodeString::mKeyboardKeys.size() > 0)
             {
                 for (int i = 0; i < comboNum; i++)
                 {
@@ -159,8 +182,8 @@ void Imgui::ShowRewiredElement()
         }
         else
         {
-            auto padStringItr = Rewired::KeyCodeString::padKeys.begin();
-            if (Rewired::KeyCodeString::padKeys.size() > 0)
+            auto padStringItr = Rewired::KeyCodeString::mPadKeys.begin();
+            if (Rewired::KeyCodeString::mPadKeys.size() > 0)
             {
                 for (int j = static_cast<int>(KeyCode::KeyCodeMax) - 1; j < comboNum - ((static_cast<int>(KeyCode::KeyCodeMax)) - 1); j++)
                 {

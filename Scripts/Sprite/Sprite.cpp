@@ -118,7 +118,8 @@ void Sprite::CreateSprite(BaseDirectX& baseDirectX, const wchar_t* graph, XMFLOA
 
 void Sprite::CreateSprite(BaseDirectX& baseDirectX, Tex tex, XMFLOAT3 position, ComPtr<ID3D12Resource> texBuff, bool back, bool TexSize)
 {
-    texNum = tex.Get();
+    this->tex = tex;
+    texNum = this->tex.Get();
     this->back = back;
     VertexPosUv Spritevertices[] = {
         {{  0.0f, 100.0f, 0.0f}, {0.0f, 1.0f}},
@@ -193,7 +194,7 @@ void Sprite::CreateSprite(BaseDirectX& baseDirectX, Tex tex, XMFLOAT3 position, 
         D3D12_RESOURCE_DESC resDesc;
         if (texBuff == nullptr)
         {
-            resDesc = tex.texbuff->GetDesc();
+            resDesc = this->tex.texbuff->GetDesc();
         }
         else
         {

@@ -112,15 +112,16 @@ void GameScene::Init()
 	Model::SetLight(light);
 	//ポストエフェクトの初期化
 	PostEffects::Init(baseDirectX);
-	//Rewiredの要素初期化
-	Rewired::KeyCodeString::KeyCodeStringInit(baseDirectX);
-	Rewired::RewiredContainer::GetFilesName();
 	//ステージをテキストからロード
 	LoadStage::LoadStages("Resource/TextData/Stage/stage1.txt");
 
 	StageObjects::LoadModel(baseDirectX);
 
 	MapEditorObjects::LoadModels(baseDirectX);
+
+	//Rewiredの要素初期化
+	Rewired::KeyCodeString::KeyCodeStringInit(baseDirectX);
+	Rewired::RewiredContainer::GetFilesName();
 
 	mapFrameV.CreateModel(baseDirectX, "Map", ShaderManager::playerShader, false, false);
 	mapFrameH.CreateModel(baseDirectX, "Map", ShaderManager::playerShader, false, false);
