@@ -29,9 +29,9 @@ void MenuUI::DrawUI(BaseDirectX& baseDirectX)
 		{
 			for (auto keysItr = itr->keys.begin(); keysItr != itr->keys.end(); ++keysItr)
 			{
-				if (std::get<1>(*keyItr) == *keysItr)
+				if (keyItr->keyCode == *keysItr)
 				{
-					Sprite sp = std::get<2>(*keyItr);
+					Sprite sp = keyItr->icon;
 					sp.position.m128_f32[0] = i * uiSize;
 					sp.position.m128_f32[1] = j * uiSize;
 					sp.SpriteDraw(baseDirectX);
@@ -43,9 +43,9 @@ void MenuUI::DrawUI(BaseDirectX& baseDirectX)
 		{
 			for (auto padsItr = itr->padKeys.begin(); padsItr != itr->padKeys.end(); ++padsItr)
 			{
-				if (std::get<1>(*padItr) == *padsItr)
+				if (padItr->keyCode == *padsItr)
 				{
-					Sprite sp = std::get<2>(*padItr);
+					Sprite sp = padItr->icon;
 					sp.position.m128_f32[0] = i * uiSize;
 					sp.position.m128_f32[1] = j * uiSize;
 					sp.SpriteDraw(baseDirectX);

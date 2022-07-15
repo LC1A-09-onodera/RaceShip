@@ -74,11 +74,12 @@ void SpriteCommon::Init(BaseDirectX &baseDirectX, ComPtr<ID3DBlob> vsBlob, ComPt
 
 }
 
-HRESULT SpriteCommon::LoadSprtieGraph(UINT texNumber, const wchar_t *filename)
+HRESULT SpriteCommon::LoadSprtieGraph(const wchar_t *filename)
 {
     //âÊëúÉfÅ[É^
     TexMetadata metadata{};
     ScratchImage scratchImg{};
-    HRESULT result = LoadFromWICFile(filename, WIC_FLAGS_NONE, &metadata, scratchImg);
+    HRESULT result;
+    result = LoadFromWICFile(filename, WIC_FLAGS_NONE, &metadata, scratchImg);
     return S_OK;
 }

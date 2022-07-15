@@ -8,13 +8,13 @@ protected:
 	//半透明黒
 	Sprite pouseBack;
 	//スクロールした値
-	float pouseScroll;
+	float pouseScroll = 0.0f;
 	//ここまでスクロールできるように
-	float maxpouseScroll;
+	float maxpouseScroll = 0.0f;
 	//一個の要素の大きさ
-	float eachHeight;
+	float eachHeight = 0.0f;
 	//これより大きいならスクロールできるようにする
-	float showWindowHeight;
+	float showWindowHeight = 0.0f;
 
 	list<pair<string, Sprite>> keySprites;
 

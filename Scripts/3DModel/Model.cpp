@@ -365,7 +365,8 @@ bool Model::LoadTexture(BaseDirectX& baseDirectX, const string& directPath, cons
 	string filepath = directPath + filename;
 
 	wchar_t wfilepath[128];
-	//int iBufferSize = MultiByteToWideChar(CP_ACP, 0, filepath.c_str(), -1, wfilepath, _countof(wfilepath));
+	int iBufferSize;
+	iBufferSize = MultiByteToWideChar(CP_ACP, 0, filepath.c_str(), -1, wfilepath, _countof(wfilepath));
 
 	result = LoadFromWICFile(wfilepath, WIC_FLAGS_NONE, &metadata, scratchImg);
 	if (FAILED(result))

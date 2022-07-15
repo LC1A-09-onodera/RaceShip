@@ -22,7 +22,7 @@ public:
 	/// </summary>
 	/// <returns>インスタンス</returns>
 	static FbxLoader* GetInstance();
-	void Initialize(ID3D12Device* dev);
+	void Initialize(ID3D12Device* f_dev);
 	void Finalize();
 	FBXModel* LoadModelFromFile(const std::string& modelName);
 	void ParseNodeRecursive(FBXModel* model, FbxNode* fbxNode, Node* parent = nullptr);

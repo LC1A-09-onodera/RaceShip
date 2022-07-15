@@ -148,17 +148,17 @@ void Camera::ShakeUpdate()
 	}
 }
 
-void Camera::SetShake(float shakePower)
+void Camera::SetShake(float f_shakePower)
 {
-	Camera::shakePower = shakePower;
+	Camera::shakePower = f_shakePower;
 	Camera::eyeStartPosition = Camera::eye;
 	Camera::targetStartPosition = Camera::target;
 	isShake = true;
 }
 
-void Camera::SetTarget(XMFLOAT3 &target)
+void Camera::SetTarget(XMFLOAT3 &f_target)
 {
-	this->target = target;
+	this->target = f_target;
 }
 
 XMFLOAT3 Camera::GetTargetDirection()

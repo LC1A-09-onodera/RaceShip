@@ -40,7 +40,9 @@ void GameScene::SceneManageUpdateAndDraw()
 		Imgui::sceneNum = MAPEDIT;
 		Cameras::camera.isRCamera = true;
 		Imgui::CameraControl = false;
-		Cameras::camera.Init(XMFLOAT3(0, 0, 20.0f), XMFLOAT3(0, 0, 0));
+		XMFLOAT3 cameraEeyReset(0, 0, 20.0f);
+		XMFLOAT3 cameraTargetReset(0, 0, 0);
+		Cameras::camera.Init(cameraEeyReset, cameraTargetReset);
 	}
 	switch (Imgui::sceneNum)
 	{
@@ -89,8 +91,12 @@ void GameScene::Init()
 	baseDirectX.GetAdress();
 	//カメラ初期化
 	//Cameras::camera.isRCamera = true;
-	Cameras::camera.Init(XMFLOAT3(0, 0, 20.0f), XMFLOAT3(0, 0, 0));
-	Cameras::rCamera.Init(XMFLOAT3(0, -10, -15.0f), XMFLOAT3(0, 0, 0));
+	XMFLOAT3 cameraEye(0, 0, 20.0f);
+	XMFLOAT3 cameraTarget(0, 0, 0);
+	Cameras::camera.Init(cameraEye, cameraTarget);
+	XMFLOAT3 rCameraEye(0, -10, -15.0f);
+	XMFLOAT3 rCameraTarget(0, 0, 0);
+	Cameras::rCamera.Init(rCameraEye, rCameraTarget);
 	Cameras::rCamera.isRCamera = true;
 	//Imguiの初期化
 	Imgui::Init(baseDirectX);
@@ -172,8 +178,10 @@ void GameScene::TitleUpdate()
 {
 	Cameras::camera.isRCamera = false;
 	const float spriteSpeed = 0.15f;
-	spaceSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(spaceSp.position), XMFLOAT3(window_width / 2.0f - 80.0f, 600.0f, 0), spriteSpeed));
-	titleSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(titleSp.position), XMFLOAT3(window_width / 2.0f - 80.0f, 250.0f, 0), spriteSpeed));
+	XMFLOAT3 spaceEndPos = { window_width / 2.0f - 80.0f, 600.0f, 0 };
+	XMFLOAT3 titleEndPos = { window_width / 2.0f - 80.0f, 250.0f, 0 };
+	spaceSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(spaceSp.position), spaceEndPos, spriteSpeed));
+	titleSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(titleSp.position), titleEndPos, spriteSpeed));
 	if (Input::KeyTrigger(DIK_SPACE))
 	{
 		Imgui::sceneNum = GAME;
@@ -185,7 +193,7 @@ void GameScene::TitleUpdate()
 	Cameras::rCamera.up = { 0, 1, 0 };
 	Cameras::rCamera.Update();
 
-	VoiceReciver::VoiceUDPUpdate(baseDirectX);
+	VoiceReciver::VoiceUDPUpdate();
 	Sound::Updete(Imgui::volume);
 
 	PouseUpdate();
@@ -211,8 +219,10 @@ void GameScene::GameUpdate()
 
 	//
 	const float spriteSpeed = 0.15f;
-	spaceSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(spaceSp.position), XMFLOAT3(static_cast<float>(window_width), 600.0f, 0), spriteSpeed));
-	titleSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(titleSp.position), XMFLOAT3(window_width / 2.0f - 80.0f, -128.0f, 0), spriteSpeed));
+	XMFLOAT3 spaceSpGoal(static_cast<float>(window_width), 600.0f, 0);
+	XMFLOAT3 titleSpGoal(window_width / 2.0f - 80.0f, -128.0f, 0);
+	spaceSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(spaceSp.position), spaceSpGoal, spriteSpeed));
+	titleSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(titleSp.position), titleSpGoal, spriteSpeed));
 	
 	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
 	Cameras::camera.Update();
@@ -226,7 +236,7 @@ void GameScene::GameUpdate()
 		Imgui::sceneNum = RESULT;
 	}
 
-	VoiceReciver::VoiceUDPUpdate(baseDirectX);
+	VoiceReciver::VoiceUDPUpdate();
 	Sound::Updete(Imgui::volume);
 	PouseUpdate();
 }
@@ -234,7 +244,9 @@ void GameScene::GameUpdate()
 void GameScene::ResultUpdate()
 {
 	//カメラのイージングを行う　
-	Imgui::CameraRotation = ShlomonMath::EaseInOutQuad(XMFLOAT3(Imgui::CameraRotation, 0 ,0) , XMFLOAT3(350.0f, 0, 0), 0.1f).x;
+	XMFLOAT3 cameraStart(Imgui::CameraRotation, 0 ,0);
+	XMFLOAT3 cameraEnd(350.0f, 0, 0);
+	Imgui::CameraRotation = ShlomonMath::EaseInOutQuad(cameraStart, cameraEnd, 0.1f).x;
 	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
 	Cameras::camera.Update();
 
@@ -244,8 +256,11 @@ void GameScene::ResultUpdate()
 
 	//スプライトのイージング
 	const float spriteSpeed = 0.2f;
-	goalSp.position = ConvertXMFLOAT3toXMVECTOR(ShlomonMath::EaseInQuad(ConvertXMVECTORtoXMFLOAT3(goalSp.position), XMFLOAT3(window_width / 2.0f - 64.0f, window_height / 2.0f, -0), spriteSpeed));
-	spaceSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(spaceSp.position), XMFLOAT3(window_width / 2.0f - 80.0f, 600.0f, 0), spriteSpeed));
+
+	XMFLOAT3 goalSpGoal(window_width / 2.0f - 64.0f, window_height / 2.0f, -0);
+	XMFLOAT3 spaceSpGoal(window_width / 2.0f - 80.0f, 600.0f, 0);
+	goalSp.position = ConvertXMFLOAT3toXMVECTOR(ShlomonMath::EaseInQuad(ConvertXMVECTORtoXMFLOAT3(goalSp.position), goalSpGoal, spriteSpeed));
+	spaceSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(spaceSp.position), spaceSpGoal, spriteSpeed));
 
 	//タイトルに戻す
 	if (Input::KeyTrigger(DIK_SPACE))
@@ -257,7 +272,7 @@ void GameScene::ResultUpdate()
 		goalSp.position = { static_cast<float>(window_width), window_height / 2.0f, 0 , 1.0f};
 	}
 
-	VoiceReciver::VoiceUDPUpdate(baseDirectX);
+	VoiceReciver::VoiceUDPUpdate();
 	Sound::Updete(Imgui::volume);
 	PouseUpdate();
 }
@@ -279,10 +294,11 @@ void GameScene::MapEditUpdate()
 	//deleteした後のオブジェクトを描画しようとしてエラーを出さないための応急処置
 	//Update段階でオブジェクトをなくしたい
 	Imgui::DrawImGui(baseDirectX);
-	XMFLOAT3 mousePos = Cameras::camera.MousePosition(baseDirectX, 0.0f);
+	XMFLOAT3 nowMousePos = Cameras::camera.MousePosition(baseDirectX, 0.0f);
 	if (!Imgui::touchedImgui)
 	{
-		MapEditorObjects::Update(baseDirectX, XMFLOAT3(mousePos.x - Cameras::camera.mouseMoveAmount[0], mousePos.y - Cameras::camera.mouseMoveAmount[1], mousePos.z));
+		XMFLOAT3 mousePosi(nowMousePos.x - Cameras::camera.mouseMoveAmount[0], nowMousePos.y - Cameras::camera.mouseMoveAmount[1], nowMousePos.z);
+		MapEditorObjects::Update(baseDirectX, mousePosi);
 	}
 	Imgui::touchedImgui = false;
 	LightUpdate();
@@ -297,7 +313,9 @@ void GameScene::EndUpdate()
 	if (Input::KeyTrigger(DIK_SPACE) || Input::directInput->IsButtonPush(DirectInput::ButtonKind::Button01))
 	{
 		Imgui::sceneNum = TITLE;
-		Cameras::camera.Init(XMFLOAT3(0, 10, -15.0f), XMFLOAT3(0, 0, 0));
+		XMFLOAT3 eye(0, 10, -15.0f);
+		XMFLOAT3 target(0, 0, 0);
+		Cameras::camera.Init(eye, target);
 	}
 }
 
@@ -369,11 +387,11 @@ void GameScene::TitleDraw()
 	//水面の切り替え
 	if (Imgui::useWaterNum == 0)
 	{
-		waterFace.Draw(baseDirectX, PostEffects::postNormal, waterFacePosition);
+		waterFace.Draw(baseDirectX, waterFacePosition);
 	}
 	else if (Imgui::useWaterNum == 1)
 	{
-		normalWater.Draw(baseDirectX, PostEffects::postNormal, waterFacePosition);
+		normalWater.Draw(baseDirectX, waterFacePosition);
 	}
 
 	PostEffects::Draw(baseDirectX);
@@ -412,11 +430,11 @@ void GameScene::GameDraw()
 	//水面の切り替え
 	if (Imgui::useWaterNum == 0)
 	{
-		waterFace.Draw(baseDirectX, PostEffects::postNormal, waterFacePosition);
+		waterFace.Draw(baseDirectX, waterFacePosition);
 	}
 	else if (Imgui::useWaterNum == 1)
 	{
-		normalWater.Draw(baseDirectX, PostEffects::postNormal, waterFacePosition);
+		normalWater.Draw(baseDirectX, waterFacePosition);
 	}
 
 	PostEffects::Draw(baseDirectX);
@@ -445,11 +463,11 @@ void GameScene::ResultDraw()
 	//水面の切り替え
 	if (Imgui::useWaterNum == 0)
 	{
-		waterFace.Draw(baseDirectX, PostEffects::postNormal, waterFacePosition);
+		waterFace.Draw(baseDirectX, waterFacePosition);
 	}
 	else if (Imgui::useWaterNum == 1)
 	{
-		normalWater.Draw(baseDirectX, PostEffects::postNormal, waterFacePosition);
+		normalWater.Draw(baseDirectX, waterFacePosition);
 	}
 
 	PostEffects::Draw(baseDirectX);
@@ -505,11 +523,11 @@ void GameScene::EndDraw()
 	//水面の切り替え
 	if (Imgui::useWaterNum == 0)
 	{
-		waterFace.Draw(baseDirectX, PostEffects::postNormal, waterFacePosition);
+		waterFace.Draw(baseDirectX, waterFacePosition);
 	}
 	else if (Imgui::useWaterNum == 1)
 	{
-		normalWater.Draw(baseDirectX, PostEffects::postNormal, waterFacePosition);
+		normalWater.Draw(baseDirectX, waterFacePosition);
 	}
 
 	PostEffects::Draw(baseDirectX);

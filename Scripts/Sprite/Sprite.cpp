@@ -3,11 +3,11 @@
 
 SpriteCommon Sprite::common;
 
-void Sprite::CreateSprite(BaseDirectX& baseDirectX, const wchar_t* graph, XMFLOAT3 position, ComPtr<ID3D12Resource> texBuff, bool back, bool TexSize)
+void Sprite::CreateSprite(BaseDirectX& baseDirectX, const wchar_t* graph, XMFLOAT3 f_position, ComPtr<ID3D12Resource> texBuff, bool f_back, bool TexSize)
 {
     tex.LoadGraph(baseDirectX, graph);
     texNum = tex.Get();
-    this->back = back;
+    this->back = f_back;
     VertexPosUv Spritevertices[] = {
         {{  0.0f, 100.0f, 0.0f}, {0.0f, 1.0f}},
         {{  0.0f,   0.0f, 0.0f}, {0.0f, 0.0f}},
@@ -53,9 +53,9 @@ void Sprite::CreateSprite(BaseDirectX& baseDirectX, const wchar_t* graph, XMFLOA
     //共通データの初期化
     common.Init(baseDirectX, vsBlob, psBlob);
 
-    this->position.m128_f32[0] = position.x;
-    this->position.m128_f32[1] = position.y;
-    this->position.m128_f32[2] = position.z;
+    this->position.m128_f32[0] = f_position.x;
+    this->position.m128_f32[1] = f_position.y;
+    this->position.m128_f32[2] = f_position.z;
 
     //デスクリプタレンジ
     descRangeSRV.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
@@ -98,7 +98,9 @@ void Sprite::CreateSprite(BaseDirectX& baseDirectX, const wchar_t* graph, XMFLOA
     }
 
     //頂点マップ
-    baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizevb), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertBuff));
+    CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
+    CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(sizevb);
+    baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertBuff));
     VertexPosUv *vertMap = nullptr;
     baseDirectX.result = vertBuff->Map(0, nullptr, (void **)&vertMap);
     memcpy(vertMap, Spritevertices, sizeof(Spritevertices));
@@ -106,7 +108,8 @@ void Sprite::CreateSprite(BaseDirectX& baseDirectX, const wchar_t* graph, XMFLOA
     vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
     vbView.SizeInBytes = sizeof(Spritevertices);
     vbView.StrideInBytes = sizeof(Spritevertices[0]);
-    baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff));
+    CD3DX12_RESOURCE_DESC resourceDescConst = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff);
+    baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDescConst, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff));
     
     //定数マップ
     ConstBufferDataSP *constMap = nullptr;
@@ -116,11 +119,11 @@ void Sprite::CreateSprite(BaseDirectX& baseDirectX, const wchar_t* graph, XMFLOA
     constBuff->Unmap(0, nullptr);
 }
 
-void Sprite::CreateSprite(BaseDirectX& baseDirectX, Tex tex, XMFLOAT3 position, ComPtr<ID3D12Resource> texBuff, bool back, bool TexSize)
+void Sprite::CreateSprite(BaseDirectX& baseDirectX, Tex f_tex, XMFLOAT3 f_position, ComPtr<ID3D12Resource> texBuff, bool f_back, bool TexSize)
 {
-    this->tex = tex;
+    this->tex = f_tex;
     texNum = this->tex.Get();
-    this->back = back;
+    this->back = f_back;
     VertexPosUv Spritevertices[] = {
         {{  0.0f, 100.0f, 0.0f}, {0.0f, 1.0f}},
         {{  0.0f,   0.0f, 0.0f}, {0.0f, 0.0f}},
@@ -166,9 +169,9 @@ void Sprite::CreateSprite(BaseDirectX& baseDirectX, Tex tex, XMFLOAT3 position, 
     //共通データの初期化
     common.Init(baseDirectX, vsBlob, psBlob);
 
-    this->position.m128_f32[0] = position.x;
-    this->position.m128_f32[1] = position.y;
-    this->position.m128_f32[2] = position.z;
+    this->position.m128_f32[0] = f_position.x;
+    this->position.m128_f32[1] = f_position.y;
+    this->position.m128_f32[2] = f_position.z;
 
     //デスクリプタレンジ
     descRangeSRV.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
@@ -211,7 +214,9 @@ void Sprite::CreateSprite(BaseDirectX& baseDirectX, Tex tex, XMFLOAT3 position, 
     }
 
     //頂点マップ
-    baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizevb), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertBuff));
+    CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
+    CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(sizevb);
+    baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertBuff));
     VertexPosUv* vertMap = nullptr;
     baseDirectX.result = vertBuff->Map(0, nullptr, (void**)&vertMap);
     memcpy(vertMap, Spritevertices, sizeof(Spritevertices));
@@ -219,7 +224,8 @@ void Sprite::CreateSprite(BaseDirectX& baseDirectX, Tex tex, XMFLOAT3 position, 
     vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
     vbView.SizeInBytes = sizeof(Spritevertices);
     vbView.StrideInBytes = sizeof(Spritevertices[0]);
-    baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff));
+    CD3DX12_RESOURCE_DESC resourceDescConst = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff);
+    baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDescConst, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff));
 
     //定数マップ
     ConstBufferDataSP* constMap = nullptr;
@@ -294,7 +300,9 @@ void Sprite::ChangeSize(BaseDirectX& baseDirectX, float wid, float hei)
     
 
     //頂点マップ
-    baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizevb), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertBuff));
+    CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
+    CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(sizevb);
+    baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertBuff));
     VertexPosUv *vertMap = nullptr;
     baseDirectX.result = vertBuff->Map(0, nullptr, (void **)&vertMap);
     memcpy(vertMap, Spritevertices, sizeof(Spritevertices));
@@ -302,7 +310,8 @@ void Sprite::ChangeSize(BaseDirectX& baseDirectX, float wid, float hei)
     vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
     vbView.SizeInBytes = sizeof(Spritevertices);
     vbView.StrideInBytes = sizeof(Spritevertices[0]);
-    baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff));
+    CD3DX12_RESOURCE_DESC resourceDescConst = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff);
+    baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDescConst, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff));
     
     //定数マップ
     ConstBufferDataSP *constMap = nullptr;
@@ -332,7 +341,9 @@ void Sprite::ChangeSizeOther(BaseDirectX& baseDirectX, float wid, float hei)
 
 
     //頂点マップ
-    baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizevb), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertBuff));
+    CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
+    CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(sizevb);
+    baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertBuff));
     VertexPosUv* vertMap = nullptr;
     baseDirectX.result = vertBuff->Map(0, nullptr, (void**)&vertMap);
     memcpy(vertMap, Spritevertices, sizeof(Spritevertices));
@@ -340,7 +351,8 @@ void Sprite::ChangeSizeOther(BaseDirectX& baseDirectX, float wid, float hei)
     vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
     vbView.SizeInBytes = sizeof(Spritevertices);
     vbView.StrideInBytes = sizeof(Spritevertices[0]);
-    baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff));
+    CD3DX12_RESOURCE_DESC resourceDescConst = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff);
+    baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDescConst, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuff));
 
     //定数マップ
     ConstBufferDataSP* constMap = nullptr;

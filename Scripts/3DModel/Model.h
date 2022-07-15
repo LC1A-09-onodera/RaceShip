@@ -120,12 +120,16 @@ void CreateConstBuff0(T &each, ComPtr<ID3D12Device> &dev)
 	resdesc.SampleDesc.Count = 1;
 	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-	HRESULT result = dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&each.constBuff0));
+	HRESULT result;
+	result = dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&each.constBuff0));
 };
 template <typename T>
 void CreateConstBuff1(T &each, ComPtr<ID3D12Device>& dev)
 {
-	HRESULT result = dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&each.constBuff1));
+	HRESULT result;
+	CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
+	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) & ~0xff);
+	result = dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&each.constBuff1));
 };
 template <typename T>
 void CreateConstBuff2(T& each, ComPtr<ID3D12Device>& dev)
@@ -141,7 +145,8 @@ void CreateConstBuff2(T& each, ComPtr<ID3D12Device>& dev)
 	resdesc.MipLevels = 1;
 	resdesc.SampleDesc.Count = 1;
 	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	HRESULT result = dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&each.constBuff2));
+	HRESULT result;
+	result = dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&each.constBuff2));
 };
 template <typename T>
 void ConstInit(T &each, ComPtr<ID3D12Device>& dev)
@@ -213,11 +218,13 @@ void ConstBufferInit(BaseDirectX &baseDirectX, T *model, U &eachInfo)
 	if (model == nullptr) return;
 	UINT sizeVB = static_cast<UINT>(sizeof(Vertex) * model->mesh.vertices.size());
 	UINT sizeIB = static_cast<UINT>(sizeof(unsigned short) * model->mesh.indices.size());
-	&CD3DX12_RESOURCE_DESC::Buffer(sizeVB);
-	&CD3DX12_RESOURCE_DESC::Buffer(sizeIB);
+	/*CD3DX12_RESOURCE_DESC::Buffer(sizeVB);
+	CD3DX12_RESOURCE_DESC::Buffer(sizeIB);*/
 	model->mesh.vbView.SizeInBytes = sizeVB;
 	model->mesh.ibView.SizeInBytes = sizeIB;
-	baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizeVB), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&model->mesh.vertBuff));
+	CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
+	CD3DX12_RESOURCE_DESC resourceDescVB = CD3DX12_RESOURCE_DESC::Buffer(sizeVB);
+	baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDescVB, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&model->mesh.vertBuff));
 	Vertex* vertMap = nullptr;
 	baseDirectX.result = model->mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
 	if (SUCCEEDED(baseDirectX.result))
@@ -226,7 +233,8 @@ void ConstBufferInit(BaseDirectX &baseDirectX, T *model, U &eachInfo)
 		model->mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
 	}
 	//インデックスバッファの生成
-	baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizeIB), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&model->mesh.indexBuff));
+	CD3DX12_RESOURCE_DESC resourceDescIB = CD3DX12_RESOURCE_DESC::Buffer(sizeIB);
+	baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDescIB, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&model->mesh.indexBuff));
 	unsigned short* indexMap = nullptr;
 	baseDirectX.result = model->mesh.indexBuff->Map(0, nullptr, (void**)&indexMap);
 	if (SUCCEEDED(baseDirectX.result))

@@ -31,18 +31,18 @@ XMMATRIX ParticleManager::matBillboardY = XMMatrixIdentity();
 
 std::shared_ptr<ParticleIndi> ParticleControl::attackEffect = nullptr;
 
-bool ParticleManager::StaticInitialize(ID3D12Device *device,  int window_width, int window_height,XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up)
+bool ParticleManager::StaticInitialize(ID3D12Device *f_device,  int f_window_width, int f_window_height,XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up)
 {
 	// nullptrチェック
-	assert(device);
+	assert(f_device);
 
-	ParticleManager::device = device;
+	ParticleManager::device = f_device;
 
 	// デスクリプタヒープの初期化
 	//InitializeDescriptorHeap();
 
 	// カメラ初期化
-	InitializeCamera(window_width, window_height,eye, target, up);
+	InitializeCamera(f_window_width, f_window_height, f_eye, f_target, f_up);
 
 	// パイプライン初期化
 	//InitializeGraphicsPipeline();
@@ -103,15 +103,15 @@ void PostDraw()
 	// コマンドリストを解除
 	ParticleManager::cmdList = nullptr;
 }
-void ParticleManager::SetEye(XMFLOAT3 eye)
+void ParticleManager::SetEye(XMFLOAT3 f_eye)
 {
-	ParticleManager::eye = eye;
+	ParticleManager::eye = f_eye;
 
 	//UpdateViewMatrix();
 }
-void ParticleManager::SetTarget(XMFLOAT3 target)
+void ParticleManager::SetTarget(XMFLOAT3 f_target)
 {
-	ParticleManager::target = target;
+	ParticleManager::target = f_target;
 
 	//UpdateViewMatrix();
 }
@@ -139,10 +139,10 @@ void ParticleManager::CameraMoveEyeVector(XMFLOAT3 move)
 	eye_moved.z += move.z;
 	SetEye(eye_moved);
 }
-void ParticleManager::InitializeCamera(int window_width, int window_height,XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up)
+void ParticleManager::InitializeCamera(int Window_width, int Window_height,XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up)
 {
 	// ビュー行列の生成
-	UpdateViewMatrix(eye, target, up, false);
+	UpdateViewMatrix(f_eye, f_target, f_up, false);
 
 	// 平行投影による射影行列の生成
 	//constMap->mat = XMMatrixOrthographicOffCenterLH(
@@ -152,7 +152,7 @@ void ParticleManager::InitializeCamera(int window_width, int window_height,XMFLO
 	// 透視投影による射影行列の生成
 	matProjection = XMMatrixPerspectiveFovLH(
 		XMConvertToRadians(60.0f),
-		(float)window_width / window_height,
+		(float)Window_width / Window_height,
 		0.1f, 1000.0f
 	);
 }
@@ -200,13 +200,13 @@ void ParticleManager::CameraUpdate()
 
 	matView.r[3] = translation;
 }
-void ParticleManager::UpdateViewMatrix(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up , bool isBillbord)
+void ParticleManager::UpdateViewMatrix(XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up , bool isBillbord)
 {
 	//ビュー変換行列を作り直す
 	//matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
-	XMVECTOR eyePosition = XMLoadFloat3(&eye);
-	XMVECTOR targetPosition = XMLoadFloat3(&target);
-	XMVECTOR upVector = XMLoadFloat3(&up);
+	XMVECTOR eyePosition = XMLoadFloat3(&f_eye);
+	XMVECTOR targetPosition = XMLoadFloat3(&f_target);
+	XMVECTOR upVector = XMLoadFloat3(&f_up);
 	//z軸
 	XMVECTOR cameraAxisZ = XMVectorSubtract(targetPosition, eyePosition);
 
@@ -282,12 +282,13 @@ ParticleIndi *ParticleIndi::Create(const wchar_t *texName)
 void ParticleIndi::CreateModel()
 {
 	HRESULT result = S_FALSE;
-
+	CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
+	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(vertices));
 	// 頂点バッファ生成
 	result = ParticleManager::device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		&heapProp,
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(sizeof(vertices)),
+		&resourceDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&vertBuff));
@@ -525,13 +526,14 @@ bool ParticleIndi::Initialize(const wchar_t *texName)
 	CreateModel();
 	// nullptrチェック
 	assert(ParticleManager::device);
-
+	CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
+	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff);
 	HRESULT result;
 	// 定数バッファの生成
 	result = ParticleManager::device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), 	// アップロード可能
+		&heapProp, 	// アップロード可能
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff),
+		&resourceDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&constBuff));
@@ -621,10 +623,10 @@ bool ParticleIndi::LoadTexture(const wchar_t *texName)
 		(UINT16)metadata.arraySize,
 		(UINT16)metadata.mipLevels
 	);
-
+	CD3DX12_HEAP_PROPERTIES heapProp(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0);
 	// テクスチャ用バッファの生成
 	result = ParticleManager::device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0),
+		&heapProp,
 		D3D12_HEAP_FLAG_NONE,
 		&texresDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ, // テクスチャ用指定
@@ -665,13 +667,13 @@ bool ParticleIndi::LoadTexture(const wchar_t *texName)
 
 	return true;
 }
-void ParticleIndi::Add(int life, XMFLOAT3 &position, XMFLOAT3 &velocity, XMFLOAT3 &accel, float start_scale, float end_scale)
+void ParticleIndi::Add(int life, XMFLOAT3 &f_position, XMFLOAT3 &velocity, XMFLOAT3 &accel, float start_scale, float end_scale)
 {
 	//要素追加
 	particles.emplace_front();
 	//追加した要素
 	Particle &p = particles.front();
-	p.position = position;
+	p.position = f_position;
 	p.velocity = velocity;
 	p.accel = accel;
 	p.num_frame = life;
@@ -953,7 +955,7 @@ void ParticleIndi::FlashParticle(const DirectX::XMFLOAT3 emitterPosition, float 
 	XMFLOAT3 vel{};
 	XMFLOAT3 acc{};
 
-	float randam = static_cast<float>(rand());
+	//float randam = static_cast<float>(rand());
 	pos = emitterPosition;
 	vel.x = 1.0f;
 	acc.x = -0.01f;

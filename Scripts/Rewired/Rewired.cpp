@@ -4,8 +4,8 @@
 #include <string>
 #include <sstream>
 
-list<tuple<string, KeyCode, Sprite>> Rewired::KeyCodeString::mKeyboardKeys;
-list<tuple<string, PadKeyCode, Sprite>> Rewired::KeyCodeString::mPadKeys;
+list<Rewired::KeyInfo<KeyCode>> Rewired::KeyCodeString::mKeyboardKeys;
+list<Rewired::KeyInfo<PadKeyCode>> Rewired::KeyCodeString::mPadKeys;
 list<Rewired::RewiredKeys*> Rewired::RewiredContainer::rewireds;
 vector<std::string> Rewired::RewiredContainer::files;
 list<Rewired::RewiredKeys> Rewired::RewiredContainer::rewiredsC;
@@ -159,9 +159,9 @@ void Rewired::RewiredKeys::LoadKey(const char* name, bool isAdd)
 		{
 			for (auto itr = KeyCodeString::mKeyboardKeys.begin(); itr != KeyCodeString::mKeyboardKeys.end(); ++itr)
 			{
-				if (key + "," + std::get<0>(*itr) == line_stream.str())
+				if (key + "," + itr->keyName == line_stream.str())
 				{
-					keys.push_back(std::get<1>(*itr));
+					keys.push_back(itr->keyCode);
 				}
 			}
 		}
@@ -169,9 +169,9 @@ void Rewired::RewiredKeys::LoadKey(const char* name, bool isAdd)
 		{
 			for (auto itr = KeyCodeString::mPadKeys.begin(); itr != KeyCodeString::mPadKeys.end(); ++itr)
 			{
-				if (key + "," + std::get<0>(*itr) == line_stream.str())
+				if (key + "," + itr->keyName == line_stream.str())
 				{
-					padKeys.push_back(std::get<1>(*itr));
+					padKeys.push_back(itr->keyCode);
 				}
 			}
 		}
@@ -191,9 +191,9 @@ void Rewired::RewiredKeys::SaveKey()
 	{
 		for (auto keyStringItr = Rewired::KeyCodeString::mKeyboardKeys.begin(); keyStringItr != Rewired::KeyCodeString::mKeyboardKeys.end(); ++keyStringItr)
 		{
-			if (std::get<1>(*keyStringItr) == *itr)
+			if (keyStringItr->keyCode == *itr)
 			{
-				ofs << "KeyBoard," + std::get<0>(*keyStringItr) << std::endl;
+				ofs << "KeyBoard," + keyStringItr->keyName << std::endl;
 			}
 		}
 	}
@@ -201,9 +201,9 @@ void Rewired::RewiredKeys::SaveKey()
 	{
 		for (auto keyStringItr = Rewired::KeyCodeString::mPadKeys.begin(); keyStringItr != Rewired::KeyCodeString::mPadKeys.end(); ++keyStringItr)
 		{
-			if (std::get<1>(*keyStringItr) == *itr)
+			if (keyStringItr->keyCode == *itr)
 			{
-				ofs << "XboxPad," + std::get<0>(*keyStringItr) << std::endl;
+				ofs << "XboxPad," + keyStringItr->keyName << std::endl;
 			}
 		}
 	}
@@ -274,50 +274,50 @@ void Rewired::KeyCodeString::KeyCodeStringInit(BaseDirectX& baseDirectX)
 	padLb.CreateSprite(    baseDirectX, ConvertStringToWchaer(path + "LB.png"), XMFLOAT3(0, 0, 0));
 	padRb.CreateSprite(    baseDirectX, ConvertStringToWchaer(path + "RB.png"), XMFLOAT3(0, 0, 0));
 
-	tuple<string, KeyCode, Sprite> A = { "A", KeyCode::A , sA };
-	tuple<string, KeyCode, Sprite> B = { "B", KeyCode::B , sB };
-	tuple<string, KeyCode, Sprite> C = { "C", KeyCode::C , sC };
-	tuple<string, KeyCode, Sprite> D = { "D", KeyCode::D , sD };
-	tuple<string, KeyCode, Sprite> E = { "E", KeyCode::E , sE };
-	tuple<string, KeyCode, Sprite> F = { "F", KeyCode::F , sF };
-	tuple<string, KeyCode, Sprite> G = { "G", KeyCode::G , sG };
-	tuple<string, KeyCode, Sprite> H = { "H", KeyCode::H , sH };
-	tuple<string, KeyCode, Sprite> I = { "I", KeyCode::I , sI };
-	tuple<string, KeyCode, Sprite> J = { "J", KeyCode::J , sJ };
-	tuple<string, KeyCode, Sprite> K = { "K", KeyCode::K , sK };
-	tuple<string, KeyCode, Sprite> L = { "L", KeyCode::L , sL };
-	tuple<string, KeyCode, Sprite> M = { "M", KeyCode::M , sM };
-	tuple<string, KeyCode, Sprite> N = { "N", KeyCode::N , sN };
-	tuple<string, KeyCode, Sprite> O = { "O", KeyCode::O , sO };
-	tuple<string, KeyCode, Sprite> P = { "P", KeyCode::P , sP };
-	tuple<string, KeyCode, Sprite> Q = { "Q", KeyCode::Q , sQ };
-	tuple<string, KeyCode, Sprite> R = { "R", KeyCode::R , sR };
-	tuple<string, KeyCode, Sprite> S = { "S", KeyCode::S , sS };
-	tuple<string, KeyCode, Sprite> T = { "T", KeyCode::T , sT };
-	tuple<string, KeyCode, Sprite> U = { "U", KeyCode::U , sU };
-	tuple<string, KeyCode, Sprite> V = { "V", KeyCode::V , sV };
-	tuple<string, KeyCode, Sprite> W = { "W", KeyCode::W , sW };
-	tuple<string, KeyCode, Sprite> X = { "X", KeyCode::X , sX };
-	tuple<string, KeyCode, Sprite> Y = { "Y", KeyCode::Y , sY };
-	tuple<string, KeyCode, Sprite> Z = { "Z", KeyCode::Z , sZ };
-	tuple<string, KeyCode, Sprite> Num1 = { "1", KeyCode::Key1 , s1 };
-	tuple<string, KeyCode, Sprite> Num2 = { "2", KeyCode::Key2 , s2 };
-	tuple<string, KeyCode, Sprite> Num3 = { "3", KeyCode::Key3 , s3 };
-	tuple<string, KeyCode, Sprite> Num4 = { "4", KeyCode::Key4 , s4 };
-	tuple<string, KeyCode, Sprite> Num5 = { "5", KeyCode::Key5 , s5 };
-	tuple<string, KeyCode, Sprite> Num6 = { "6", KeyCode::Key6 , s6 };
-	tuple<string, KeyCode, Sprite> Num7 = { "7", KeyCode::Key7 , s7 };
-	tuple<string, KeyCode, Sprite> Num8 = { "8", KeyCode::Key8 , s8 };
-	tuple<string, KeyCode, Sprite> Num9 = { "9", KeyCode::Key9 , s9 };
-	tuple<string, KeyCode, Sprite> Num0 = { "0", KeyCode::Key0 , s0 };
-	tuple<string, KeyCode, Sprite> Tab =        { "Tab",        KeyCode::Tab        ,sTab };
-	tuple<string, KeyCode, Sprite> Space =      { "Space",      KeyCode::Space      ,sSpace  };
-	tuple<string, KeyCode, Sprite> LShift =     { "LShift",     KeyCode::LShift     ,sLShift };
-	tuple<string, KeyCode, Sprite> RShift =     { "RShift",     KeyCode::RShift     ,sRShift };
-	tuple<string, KeyCode, Sprite> UpArrow =    { "UpArrow",    KeyCode::UpArrow    ,sUP };
-	tuple<string, KeyCode, Sprite> DownArrow =  { "DownArrow",  KeyCode::DownArrow  ,sDown };
-	tuple<string, KeyCode, Sprite> RightArrow = { "RightArrow", KeyCode::RightArrow ,sRight };
-	tuple<string, KeyCode, Sprite> LeftArrow =  { "LeftArrow",  KeyCode::LeftArrow  ,sLeft };
+	Rewired::KeyInfo<KeyCode> A = { "A", KeyCode::A , sA };
+	Rewired::KeyInfo<KeyCode> B = { "B", KeyCode::B , sB };
+	Rewired::KeyInfo<KeyCode> C = { "C", KeyCode::C , sC };
+	Rewired::KeyInfo<KeyCode> D = { "D", KeyCode::D , sD };
+	Rewired::KeyInfo<KeyCode> E = { "E", KeyCode::E , sE };
+	Rewired::KeyInfo<KeyCode> F = { "F", KeyCode::F , sF };
+	Rewired::KeyInfo<KeyCode> G = { "G", KeyCode::G , sG };
+	Rewired::KeyInfo<KeyCode> H = { "H", KeyCode::H , sH };
+	Rewired::KeyInfo<KeyCode> I = { "I", KeyCode::I , sI };
+	Rewired::KeyInfo<KeyCode> J = { "J", KeyCode::J , sJ };
+	Rewired::KeyInfo<KeyCode> K = { "K", KeyCode::K , sK };
+	Rewired::KeyInfo<KeyCode> L = { "L", KeyCode::L , sL };
+	Rewired::KeyInfo<KeyCode> M = { "M", KeyCode::M , sM };
+	Rewired::KeyInfo<KeyCode> N = { "N", KeyCode::N , sN };
+	Rewired::KeyInfo<KeyCode> O = { "O", KeyCode::O , sO };
+	Rewired::KeyInfo<KeyCode> P = { "P", KeyCode::P , sP };
+	Rewired::KeyInfo<KeyCode> Q = { "Q", KeyCode::Q , sQ };
+	Rewired::KeyInfo<KeyCode> R = { "R", KeyCode::R , sR };
+	Rewired::KeyInfo<KeyCode> S = { "S", KeyCode::S , sS };
+	Rewired::KeyInfo<KeyCode> T = { "T", KeyCode::T , sT };
+	Rewired::KeyInfo<KeyCode> U = { "U", KeyCode::U , sU };
+	Rewired::KeyInfo<KeyCode> V = { "V", KeyCode::V , sV };
+	Rewired::KeyInfo<KeyCode> W = { "W", KeyCode::W , sW };
+	Rewired::KeyInfo<KeyCode> X = { "X", KeyCode::X , sX };
+	Rewired::KeyInfo<KeyCode> Y = { "Y", KeyCode::Y , sY };
+	Rewired::KeyInfo<KeyCode> Z = { "Z", KeyCode::Z , sZ };
+	Rewired::KeyInfo<KeyCode> Num1 = { "1", KeyCode::Key1 , s1 };
+	Rewired::KeyInfo<KeyCode> Num2 = { "2", KeyCode::Key2 , s2 };
+	Rewired::KeyInfo<KeyCode> Num3 = { "3", KeyCode::Key3 , s3 };
+	Rewired::KeyInfo<KeyCode> Num4 = { "4", KeyCode::Key4 , s4 };
+	Rewired::KeyInfo<KeyCode> Num5 = { "5", KeyCode::Key5 , s5 };
+	Rewired::KeyInfo<KeyCode> Num6 = { "6", KeyCode::Key6 , s6 };
+	Rewired::KeyInfo<KeyCode> Num7 = { "7", KeyCode::Key7 , s7 };
+	Rewired::KeyInfo<KeyCode> Num8 = { "8", KeyCode::Key8 , s8 };
+	Rewired::KeyInfo<KeyCode> Num9 = { "9", KeyCode::Key9 , s9 };
+	Rewired::KeyInfo<KeyCode> Num0 = { "0", KeyCode::Key0 , s0 };
+	Rewired::KeyInfo<KeyCode> Tab =        { "Tab",        KeyCode::Tab        ,sTab };
+	Rewired::KeyInfo<KeyCode> Space =      { "Space",      KeyCode::Space      ,sSpace  };
+	Rewired::KeyInfo<KeyCode> LShift =     { "LShift",     KeyCode::LShift     ,sLShift };
+	Rewired::KeyInfo<KeyCode> RShift =     { "RShift",     KeyCode::RShift     ,sRShift };
+	Rewired::KeyInfo<KeyCode> UpArrow =    { "UpArrow",    KeyCode::UpArrow    ,sUP };
+	Rewired::KeyInfo<KeyCode> DownArrow =  { "DownArrow",  KeyCode::DownArrow  ,sDown };
+	Rewired::KeyInfo<KeyCode> RightArrow = { "RightArrow", KeyCode::RightArrow ,sRight };
+	Rewired::KeyInfo<KeyCode> LeftArrow =  { "LeftArrow",  KeyCode::LeftArrow  ,sLeft };
 	mKeyboardKeys.push_back(A);
 	mKeyboardKeys.push_back(B);
 	mKeyboardKeys.push_back(C);
@@ -363,18 +363,18 @@ void Rewired::KeyCodeString::KeyCodeStringInit(BaseDirectX& baseDirectX)
 	mKeyboardKeys.push_back(RightArrow);
 	mKeyboardKeys.push_back(LeftArrow);
 
-	tuple<string, PadKeyCode, Sprite> PadUp =     { "PadUp",     PadKeyCode::UpButton     ,padUp };
-	tuple<string, PadKeyCode, Sprite> PadDown =   { "PadDown",   PadKeyCode::DownButton   ,padDown };
-	tuple<string, PadKeyCode, Sprite> PadLeft =   { "PadLeft",   PadKeyCode::LeftButton   ,padLeft };
-	tuple<string, PadKeyCode, Sprite> PadRight =  { "PadRight",  PadKeyCode::RightButton  ,padRight };
-	tuple<string, PadKeyCode, Sprite> PadA =      { "PadA",      PadKeyCode::Button01     ,padA };
-	tuple<string, PadKeyCode, Sprite> PadB =      { "PadB",      PadKeyCode::Button02     ,padB };
-	tuple<string, PadKeyCode, Sprite> PadX =      { "PadX",      PadKeyCode::Button03     ,padX };
-	tuple<string, PadKeyCode, Sprite> PadY =      { "PadY",      PadKeyCode::Button04     ,padY };
-	tuple<string, PadKeyCode, Sprite> PadLB =     { "PadLB",     PadKeyCode::ButtonLB     ,padLb };
-	tuple<string, PadKeyCode, Sprite> PadRB =     { "PadRB",     PadKeyCode::ButtonRB     ,padRb };
-	tuple<string, PadKeyCode, Sprite> PadSelect = { "PadSelect", PadKeyCode::ButtonSelect ,padSelect };
-	tuple<string, PadKeyCode, Sprite> PadPouse =  { "PadPouse",  PadKeyCode::ButtonPouse  ,padPouse };
+	Rewired::KeyInfo<PadKeyCode> PadUp =     { "PadUp",     PadKeyCode::UpButton     ,padUp };
+	Rewired::KeyInfo<PadKeyCode> PadDown =   { "PadDown",   PadKeyCode::DownButton   ,padDown };
+	Rewired::KeyInfo<PadKeyCode> PadLeft =   { "PadLeft",   PadKeyCode::LeftButton   ,padLeft };
+	Rewired::KeyInfo<PadKeyCode> PadRight =  { "PadRight",  PadKeyCode::RightButton  ,padRight };
+	Rewired::KeyInfo<PadKeyCode> PadA =      { "PadA",      PadKeyCode::Button01     ,padA };
+	Rewired::KeyInfo<PadKeyCode> PadB =      { "PadB",      PadKeyCode::Button02     ,padB };
+	Rewired::KeyInfo<PadKeyCode> PadX =      { "PadX",      PadKeyCode::Button03     ,padX };
+	Rewired::KeyInfo<PadKeyCode> PadY =      { "PadY",      PadKeyCode::Button04     ,padY };
+	Rewired::KeyInfo<PadKeyCode> PadLB =     { "PadLB",     PadKeyCode::ButtonLB     ,padLb };
+	Rewired::KeyInfo<PadKeyCode> PadRB =     { "PadRB",     PadKeyCode::ButtonRB     ,padRb };
+	Rewired::KeyInfo<PadKeyCode> PadSelect = { "PadSelect", PadKeyCode::ButtonSelect ,padSelect };
+	Rewired::KeyInfo<PadKeyCode> PadPouse =  { "PadPouse",  PadKeyCode::ButtonPouse  ,padPouse };
 	mPadKeys.push_back(PadUp);
 	mPadKeys.push_back(PadDown);
 	mPadKeys.push_back(PadLeft);

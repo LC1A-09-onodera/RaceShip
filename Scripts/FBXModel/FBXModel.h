@@ -23,6 +23,8 @@ struct Node
 {
 	//名前
 	std::string name;
+	float pad1 = 0.0f;
+	float pad2 = 0.0f;
 	//スケール
 	DirectX::XMVECTOR scaling = {1, 1, 1, 0};
 	//回転角

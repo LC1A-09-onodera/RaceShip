@@ -5,14 +5,21 @@
 
 namespace Rewired
 {
+	template <typename T>
+	struct KeyInfo
+	{
+		string keyName;
+		T keyCode;
+		Sprite icon;
+	};
 	class KeyCodeString
 	{
 	public:
 		static void KeyCodeStringInit(BaseDirectX &baseDirectX);
 		//Keyborad
-		static list<tuple<string, KeyCode, Sprite>> mKeyboardKeys;
+		static list<KeyInfo<KeyCode>> mKeyboardKeys;
 		//XBoxPad
-		static list<tuple<string, PadKeyCode, Sprite>> mPadKeys;
+		static list<KeyInfo<PadKeyCode>> mPadKeys;
 	};
 
 	class RewiredKeys

@@ -48,11 +48,11 @@ public:
     static void ChangeInfo(XMFLOAT3 &xmfloat3Original, XMFLOAT3& imguiInfo);
 
     static void CreateMenuBar();
-    static void EachInfo(BaseDirectX& baseDirectX);
+    static void EachInfo();
     static void DebugUpdate();
 
     static bool isActive;
-    static void SetWindowActive(bool isActive);
+    static void SetWindowActive(bool f_isActive);
 
     static void Update(BaseDirectX &baseDirectX);
 

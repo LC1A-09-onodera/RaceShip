@@ -44,7 +44,7 @@ public: // 静的メンバ関数
 	/// <summary>
 	/// 静的初期化
 	/// </summary>
-	static bool StaticInitialize(ID3D12Device *device,  int window_width, int window_height, XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up);
+	static bool StaticInitialize(ID3D12Device *f_device,  int f_window_width, int f_window_height, XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up);
 
 	/// <summary>
 	/// 視点座標の取得
@@ -56,7 +56,7 @@ public: // 静的メンバ関数
 	/// 視点座標の設定
 	/// </summary>
 	/// <param name="position">座標</param>
-	static void SetEye(XMFLOAT3 eye);
+	static void SetEye(XMFLOAT3 f_eye);
 
 	/// <summary>
 	/// 注視点座標の取得
@@ -68,7 +68,7 @@ public: // 静的メンバ関数
 	/// 注視点座標の設定
 	/// </summary>
 	/// <param name="position">座標</param>
-	static void SetTarget(XMFLOAT3 target);
+	static void SetTarget(XMFLOAT3 f_target);
 
 	/// <summary>
 	/// ベクトルによる移動
@@ -112,7 +112,7 @@ private:// 静的メンバ関数
 	/// </summary>
 	/// <param name="window_width">画面横幅</param>
 	/// <param name="window_height">画面縦幅</param>
-	static void InitializeCamera(int window_width, int window_height, XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up);
+	static void InitializeCamera(int Window_width, int Window_height, XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up);
 
 	/// <summary>
 	/// カメラ初期化
@@ -123,7 +123,7 @@ public: // メンバ関数
 	/// <summary>
 	/// ビュー行列を更新
 	/// </summary>
-	static void UpdateViewMatrix(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, bool isBillbord = true);
+	static void UpdateViewMatrix(XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up, bool isBillbord = true);
 	// コマンドリスト
 	static ID3D12GraphicsCommandList *cmdList;
 
@@ -214,7 +214,7 @@ public:
 	/// 座標の設定
 	/// </summary>
 	/// <param name="position">座標</param>
-	void SetPosition(DirectX::XMFLOAT3 position) { this->position = position; }
+	void SetPosition(DirectX::XMFLOAT3 f_position) { this->position = f_position; }
 	/// <summary>
 	/// 3Dオブジェクト生成
 	/// </summary>
@@ -247,7 +247,7 @@ public:
 	/// <summary>
 	/// パーティクルの追加
 	/// </summary>
-	void Add(int life, DirectX::XMFLOAT3 &position, DirectX::XMFLOAT3 &velocity, DirectX::XMFLOAT3 &accel, float start_scale = 1.0f, float end_scale = 0.0f);
+	void Add(int life, DirectX::XMFLOAT3 &f_position, DirectX::XMFLOAT3 &velocity, DirectX::XMFLOAT3 &accel, float start_scale = 1.0f, float end_scale = 0.0f);
 
 	/// <summary>
 	/// パーティクルの生成

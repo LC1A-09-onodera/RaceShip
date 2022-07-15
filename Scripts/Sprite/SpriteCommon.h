@@ -36,6 +36,6 @@ public:
 	static ComPtr<ID3D12Resource> TexBuff[SRVCount];
 
 	void Init(BaseDirectX& baseDirectX, ComPtr<ID3DBlob> vsBlob, ComPtr<ID3DBlob> psBlob);
-	HRESULT LoadSprtieGraph(UINT texNumber, const wchar_t *filename);
+	HRESULT LoadSprtieGraph(const wchar_t *filename);
 	SpriteCommon();
 };

@@ -14,7 +14,7 @@ class UDPClass
 	//Žó‚¯Žæ‚Á‚½Œ‹‰Ê‚ÌŠi”[
 	std::string tex;
 public:
-	void SetPortNum(int port);
+	void SetPortNum(int f_port);
 	void StartUp();
 	void Recive();
 	void EndRecive();

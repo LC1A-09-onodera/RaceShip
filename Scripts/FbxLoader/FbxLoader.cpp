@@ -11,10 +11,10 @@ FbxLoader* FbxLoader::GetInstance()
 	return &instance;
 }
 
-void FbxLoader::Initialize(ID3D12Device* dev)
+void FbxLoader::Initialize(ID3D12Device* f_dev)
 {
 	assert(fbxManager == nullptr);
-	this->dev = dev;
+	this->dev = f_dev;
 	fbxManager = FbxManager::Create();
 	FbxIOSettings* ios = FbxIOSettings::Create(fbxManager, IOSROOT);
 	fbxManager->SetIOSettings(ios);
@@ -173,13 +173,13 @@ void FbxLoader::ParseMeshFaces(FBXModel* model, FbxMesh* fbxMesh)
 			}
 			if (j < 3)
 			{
-				indices.push_back(index);
+				indices.push_back(static_cast<unsigned short>(index));
 			}
 			else
 			{
-				int index2 = indices[indices.size() - 1];
-				int index3 = index;
-				int index0 = indices[indices.size() - 3];
+				unsigned short index2 = indices[indices.size() - 1];
+				unsigned short index3 = static_cast<unsigned short>(index);
+				unsigned short index0 = indices[indices.size() - 3];
 				indices.push_back(index2);
 				indices.push_back(index3);
 				indices.push_back(index0);

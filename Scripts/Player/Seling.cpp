@@ -96,11 +96,13 @@ void Seling::Move()
 
 	if (VoiceReciver::GetFront() || goFrontKey.GetKey())
 	{
-		AddForce(XMFLOAT3(frontDirection.x * addForcePower, frontDirection.y * addForcePower, frontDirection.z * addForcePower));
+		XMFLOAT3 force(frontDirection.x * addForcePower, frontDirection.y * addForcePower, frontDirection.z * addForcePower);
+		AddForce(force);
 	}
 	if (VoiceReciver::GetBack() || goBackKey.GetKey())
 	{
-		AddForce(XMFLOAT3(frontDirection.x * -addForcePower, frontDirection.y * -addForcePower, frontDirection.z * -addForcePower));
+		XMFLOAT3 force(frontDirection.x * -addForcePower, frontDirection.y * -addForcePower, frontDirection.z * -addForcePower);
+		AddForce(force);
 	}
 
 	VoiceReciver::SetRight(false);
@@ -108,7 +110,8 @@ void Seling::Move()
 	VoiceReciver::SetFront(false);
 	VoiceReciver::SetBack(false);
 
-	selingModel.each.rotation = ShlomonMath::EaseInQuad(selingModel.each.rotation, XMFLOAT3(selingModel.each.rotation.x, selingModel.each.rotation.y, angle), 0.3f);
+	XMFLOAT3 easeGoal(selingModel.each.rotation.x, selingModel.each.rotation.y, angle);
+	selingModel.each.rotation = ShlomonMath::EaseInQuad(selingModel.each.rotation, easeGoal, 0.3f);
 	Imgui::CameraRotation = -selingModel.each.rotation.z + 270.0f;
 }
 

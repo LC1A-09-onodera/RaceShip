@@ -34,9 +34,9 @@ public:
 	static bool GetPouse() { return isPouse; }
 	static void SetPouse(bool pouse) { VoiceReciver::isPouse = pouse; }
 
-	static void VoiceUDPUpdate(BaseDirectX &baseDirectX);
+	static void VoiceUDPUpdate();
 	static void StartUp();
-	static void ReciveData(BaseDirectX& baseDirectX);
+	static void ReciveData();
 	static void EndRecive();
 	static void LoadText();
 };

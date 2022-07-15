@@ -44,8 +44,8 @@ public:
 	void EyeAndTargetMove(XMFLOAT3 moveAmount);
 	float TargetLength();
 	void ShakeUpdate();
-	void SetShake(float shakePower);
-	void SetTarget(XMFLOAT3 &target);
+	void SetShake(float f_shakePower);
+	void SetTarget(XMFLOAT3 &f_target);
 	XMFLOAT3 GetTargetDirection();
 	XMFLOAT3 GetMousePosition(BaseDirectX &baseDirectX);
 	XMFLOAT3 EyeToMouseVec(BaseDirectX& baseDirectX);

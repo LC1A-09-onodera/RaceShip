@@ -13,9 +13,9 @@ bool VoiceReciver::isLeft;
 bool VoiceReciver::isPouse;
 bool VoiceReciver::isWall;
 
-void VoiceReciver::VoiceUDPUpdate(BaseDirectX &baseDirectX)
+void VoiceReciver::VoiceUDPUpdate()
 {
-	ReciveData(baseDirectX);
+	ReciveData();
 }
 
 void VoiceReciver::StartUp()
@@ -24,7 +24,7 @@ void VoiceReciver::StartUp()
 	udp.StartUp();
 }
 
-void VoiceReciver::ReciveData(BaseDirectX &baseDirectX)
+void VoiceReciver::ReciveData()
 {
 	udp.Recive();
 	std::string text = udp.GetResult();

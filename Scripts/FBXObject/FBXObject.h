@@ -35,9 +35,9 @@ public:
 	void Initialize();
 	void Update(BaseDirectX& baseDirectX);
 	void Draw(ID3D12GraphicsCommandList *cmdList);
-	void SetModel(FBXModel* model){this->model = model;}
+	void SetModel(FBXModel* f_model){this->model = f_model;}
 	void PlayAnimation();
-	static void SetDevice(ID3D12Device *dev){FBXObject::dev = dev;}
+	static void SetDevice(ID3D12Device *f_dev){FBXObject::dev = f_dev;}
 	static void CreateGraphicsPipeline();
 	XMFLOAT3 scale = {1, 1, 1};
 	XMFLOAT3 rotation = {0, 0, 0};

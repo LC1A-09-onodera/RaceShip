@@ -82,10 +82,10 @@ void Imgui::ShowRewiredElement()
         {
             for (auto keyItr = itr->keys.begin(); keyItr != itr->keys.end(); ++keyItr)
             {
-                if (*keyItr == std::get<1>(*keyListItr))
+                if (*keyItr == keyListItr->keyCode)
                 {
-                    string fileName = " " + std::get<0>(*keyListItr);
-                    ImGui::Text(fileName.c_str());
+                    string keyFileName = " " + keyListItr->keyName;
+                    ImGui::Text(keyFileName.c_str());
                 }
             }
         }
@@ -97,27 +97,27 @@ void Imgui::ShowRewiredElement()
         {
             for (auto keyItr = itr->padKeys.begin(); keyItr != itr->padKeys.end(); ++keyItr)
             {
-                if (*keyItr == std::get<1>(*keyListItr))
+                if (*keyItr == keyListItr->keyCode)
                 {
-                    string fileName = " " + std::get<0>(*keyListItr);
-                    ImGui::Text(fileName.c_str());
+                    string keyFileName = " " + keyListItr->keyName;
+                    ImGui::Text(keyFileName.c_str());
                 }
             }
         }
     }
     static int comboNum = 0;
-    string keyList;
+    string sKeyList;
     for (auto keysItr = Rewired::KeyCodeString::mKeyboardKeys.begin(); keysItr != Rewired::KeyCodeString::mKeyboardKeys.end(); ++keysItr)
     {
-        keyList = keyList + std::get<0>(*keysItr);
-        keyList.resize(keyList.size() + 1);
+        sKeyList = sKeyList + keysItr->keyName;
+        sKeyList.resize(keyList.size() + 1);
     }
     for (auto padKeyItr = Rewired::KeyCodeString::mPadKeys.begin(); padKeyItr != Rewired::KeyCodeString::mPadKeys.end(); ++padKeyItr)
     {
-        keyList = keyList + std::get<0>(*padKeyItr);
-        keyList.resize(keyList.size() + 1);
+        sKeyList = sKeyList + padKeyItr->keyName;
+        sKeyList.resize(keyList.size() + 1);
     }
-    ImGui::Combo("", &comboNum, keyList.c_str());
+    ImGui::Combo("", &comboNum, sKeyList.c_str());
     if (ImGui::Button("AddKey"))
     {
         if (static_cast<int>(KeyCode::KeyCodeMax) - 1 > comboNum)
@@ -136,13 +136,13 @@ void Imgui::ShowRewiredElement()
             {
                 for (auto kItr = keyContainarItr->keys.begin(); kItr != keyContainarItr->keys.end(); ++kItr)
                 {
-                    if (*kItr == std::get<1>(*keyStringItr))
+                    if (*kItr == keyStringItr->keyCode)
                     {
                         isA = true;
                     }
                 }
             }
-            if (!isA) itr->AddKey(std::get<1>(*keyStringItr));
+            if (!isA) itr->AddKey(keyStringItr->keyCode);
         }
         else
         {
@@ -160,13 +160,13 @@ void Imgui::ShowRewiredElement()
             {
                 for (auto kItr = keyContainarItr->padKeys.begin(); kItr != keyContainarItr->padKeys.end(); ++kItr)
                 {
-                    if (*kItr == std::get<1>(*padStringItr))
+                    if (*kItr == padStringItr->keyCode)
                     {
                         isA = true;
                     }
                 }
             }
-            if (!isA) itr->AddKey(std::get<1>(*padStringItr));
+            if (!isA) itr->AddKey(padStringItr->keyCode);
         }
     }
     if (ImGui::Button("SubKey"))
@@ -181,7 +181,7 @@ void Imgui::ShowRewiredElement()
                     keyStringItr++;
                 }
             }
-            itr->Subkey(std::get<1>(*keyStringItr));
+            itr->Subkey(keyStringItr->keyCode);
         }
         else
         {
@@ -193,7 +193,7 @@ void Imgui::ShowRewiredElement()
                     padStringItr++;
                 }
             }
-            itr->SubKey(std::get<1>(*padStringItr));
+            itr->SubKey(padStringItr->keyCode);
         }
     }
     if (ImGui::Button("Save"))
@@ -228,7 +228,7 @@ void Imgui::DrawImGui(BaseDirectX& baseDirectX)
     ImGui::Begin("InfomationAndEdit", nullptr, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
     ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
     CreateMenuBar();
-    EachInfo(baseDirectX);
+    EachInfo();
     ImGui::End();
     ImGui::Render();
     baseDirectX.cmdList->SetDescriptorHeaps(1, GetHeapForImgui().GetAddressOf());
@@ -322,7 +322,7 @@ void Imgui::CreateMenuBar()
     }
 }
 
-void Imgui::EachInfo(BaseDirectX& baseDirectX)
+void Imgui::EachInfo()
 {
     if (tab == ImguiType::Status)
     {
@@ -423,9 +423,9 @@ void Imgui::DebugUpdate()
     }
 }
 
-void Imgui::SetWindowActive(bool isActive)
+void Imgui::SetWindowActive(bool f_isActive)
 {
-    Imgui::isActive = isActive;
+    Imgui::isActive = f_isActive;
 }
 
 void Imgui::Update(BaseDirectX& baseDirectX)
