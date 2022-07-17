@@ -13,8 +13,8 @@ void WaterFace::Init(BaseDirectX& baseDirectX)
 	waterModel.eachData.ConstInit(baseDirectX);
 	waterModel.eachData.position = { 0, 0.0f, 0.0f, 1 };
 	waterModel.eachData.rotation = { 0, 0,0};
-	float scaleSample = 50.0f;
-	waterModel.eachData.scale = { scaleSample + 8.0f, scaleSample - 1.0f, scaleSample };
+	float scaleSample = 62.0f;
+	waterModel.eachData.scale = { scaleSample + 0.0f, scaleSample - 1.0f, scaleSample };
 }
 
 void WaterFace::Update()
@@ -387,9 +387,7 @@ void WaterFaceModel::Draw(BaseDirectX& baseDirectX, WaterEachInfo& f_each)
 {
 	Update(baseDirectX);
 	baseDirectX.cmdList->IASetIndexBuffer(&mesh.ibView);
-	//BaseDirectX::cmdList->SetPipelineState(postEffect.pipelineState.Get());
 	baseDirectX.cmdList->SetPipelineState(pipelinestate.Get());
-	//BaseDirectX::cmdList->SetGraphicsRootSignature(postEffect.rootSignature.Get());
 	baseDirectX.cmdList->SetGraphicsRootSignature(rootsignature.Get());
 	baseDirectX.cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	baseDirectX.cmdList->IASetVertexBuffers(0, 1, &mesh.vbView);

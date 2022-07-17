@@ -189,7 +189,7 @@ void GameScene::TitleUpdate()
 
 	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
 	Cameras::camera.Update();
-	Cameras::rCamera.eye = { 0.0f, -60.0f, -5.0f };
+	Cameras::rCamera.eye = { 0.0f, -67.0f, -10.1f };
 	Cameras::rCamera.up = { 0, 1, 0 };
 	Cameras::rCamera.Update();
 
@@ -227,7 +227,7 @@ void GameScene::GameUpdate()
 	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
 	Cameras::camera.Update();
 
-	Cameras::rCamera.eye = { 0.0f, -65.0f, -5.0f };
+	Cameras::rCamera.eye = { 0.0f, -67.0f, -10.1f };
 	Cameras::rCamera.up = { 0, 1, 0 };
 	Cameras::rCamera.Update();
 
@@ -250,7 +250,7 @@ void GameScene::ResultUpdate()
 	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
 	Cameras::camera.Update();
 
-	Cameras::rCamera.eye = { 0.0f, -60.0f, -5.0f };
+	Cameras::rCamera.eye = { 0.0f, -66.0f, -10.1f };
 	Cameras::rCamera.up = { 0, 1, 0 };
 	Cameras::rCamera.Update();
 
@@ -383,7 +383,7 @@ void GameScene::TitleDraw()
 
 	PostWaterFaceDraw();
 
-	XMVECTOR waterFacePosition = { 0, -1.0f, 0.0f, 1.0 };
+	XMVECTOR waterFacePosition = { 0, -0.8f, 0.0f, 1.0 };
 	//êÖñ ÇÃêÿÇËë÷Ç¶
 	if (Imgui::useWaterNum == 0)
 	{
@@ -426,7 +426,7 @@ void GameScene::GameDraw()
 
 	PostWaterFaceDraw();
 
-	XMVECTOR waterFacePosition = { 0, -1.0f, 0.0f, 1.0 };
+	XMVECTOR waterFacePosition = { 0, -0.8f, 0.0f, 1.0 };
 	//êÖñ ÇÃêÿÇËë÷Ç¶
 	if (Imgui::useWaterNum == 0)
 	{
@@ -459,7 +459,7 @@ void GameScene::ResultDraw()
 
 	PostWaterFaceDraw();
 
-	XMVECTOR waterFacePosition = { 0, -1.0f, 0.0f, 1.0 };
+	XMVECTOR waterFacePosition = { 0, -0.8f, 0.0f, 1.0 };
 	//êÖñ ÇÃêÿÇËë÷Ç¶
 	if (Imgui::useWaterNum == 0)
 	{

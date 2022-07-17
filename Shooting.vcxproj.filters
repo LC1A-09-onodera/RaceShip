@@ -228,6 +228,9 @@
     <ClInclude Include="Scripts\MenuUI\MenuUI.h">
       <Filter>MenuUI</Filter>
     </ClInclude>
+    <ClInclude Include="BaseScriptableObject.h">
+      <Filter>BaseDirectx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scripts\3DModel\Model.cpp">
@@ -372,6 +375,7 @@
     <FxCompile Include="Resource\HLSL\PostMosaicPS.hlsl" />
     <FxCompile Include="Resource\HLSL\PostWaterPS.hlsl" />
     <FxCompile Include="Resource\HLSL\WaterSamplePS.hlsl" />
+    <FxCompile Include="Resource\HLSL\NormalPlane.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\HLSL\BSH.hlsli" />
