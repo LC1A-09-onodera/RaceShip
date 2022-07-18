@@ -12,6 +12,7 @@
 #include <sstream>
 #include <fstream>
 #include <stdarg.h>
+#include "../3DModel/Model.h"
 
 ComPtr<ID3D12DescriptorHeap> Imgui::imguiDescHeap;
 ComPtr<ID3D12DescriptorHeap> Imgui::heapForImgui;
@@ -374,7 +375,7 @@ void Imgui::EachInfo()
     }
     else if (tab == ImguiType::Debug)
     {
-        //DebugUpdate();
+        DebugUpdate();
     }
     else if (tab == ImguiType::PostEffect)
     {
@@ -407,19 +408,9 @@ void Imgui::EachInfo()
 }
 void Imgui::DebugUpdate()
 {
-    if (debugType == DebugType::Player)
+    for (auto itr = ModelManager::m_models.begin(); itr != ModelManager::m_models.end(); ++itr)
     {
-        isSceneChange = false;
-        oldSceneNum = sceneNum;
-        ImGui::Combo("sceneNum", &sceneNum, "TITLE\0SELECT\0GAME\0END\0RESULT\0OP\0MAPEDIT\0\0");
-        if (oldSceneNum != sceneNum)
-        {
-            isSceneChange = true;
-        }
-    }
-    else if (debugType == DebugType::Water)
-    {
-
+        ImGui::Text((*itr)->m_modelName.c_str());
     }
 }
 

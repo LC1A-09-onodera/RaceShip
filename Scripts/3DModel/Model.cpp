@@ -3,6 +3,7 @@
 
 using namespace std;
 shared_ptr<Light> Model::light = nullptr;
+std::list<ModelElement *> ModelManager::m_models;
 
 Model::~Model()
 {
@@ -47,6 +48,8 @@ void Model::SetLight(shared_ptr<Light> Light)
 
 void Model::CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& shader, bool smoothing, bool isTriangle)
 {
+	m_modelName = name;
+
 	InitializeDescriptorHeap(baseDirectX);
 
 	InitializeGraphicsPipeline(baseDirectX, shader, isTriangle);
@@ -54,6 +57,20 @@ void Model::CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& 
 	LoadFileContents(baseDirectX, name, smoothing);
 
 	ConstBufferInit(baseDirectX, this, this->each);
+
+	ModelElement *model = new ModelElement(m_modelName, this);
+	if (ModelManager::m_models.size() > 0)
+	{
+		for (auto itr = ModelManager::m_models.begin(); itr != ModelManager::m_models.end(); ++itr)
+		{
+			if ((*itr)->m_modelName == m_modelName)
+			{
+				return;
+			}
+		}
+	}
+	ModelManager::m_models.push_back(model);
+
 }
 
 void Model::Update(BaseDirectX &baseDirectX, EachInfo* f_each, bool rCamera)

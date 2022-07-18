@@ -144,8 +144,14 @@ void GameScene::Init()
 	//送信側はまた違うアプリケーションで行う
 	VoiceReciver::StartUp();
 
+
+
 	waterFace.LoadModel(baseDirectX, ShaderManager::waterShader, PostEffects::postNormal);
+
+
+
 	normalWater.LoadModel(baseDirectX, ShaderManager::normalPlaneShader, PostEffects::postNormal);
+	mosaicWater.LoadModel(baseDirectX, ShaderManager::mosaicPlaneShader, PostEffects::postNormal);
 	const float worldSize = 40.0f;
 	world.CreateModel(baseDirectX, "SphereW", ShaderManager::playerShader);
 	world.each.scale = { worldSize, worldSize, worldSize };
@@ -216,7 +222,7 @@ void GameScene::GameUpdate()
 	rSeling.Update();
 	waterFace.Update();
 	normalWater.Update();
-
+	mosaicWater.Update();
 	//
 	const float spriteSpeed = 0.15f;
 	XMFLOAT3 spaceSpGoal(static_cast<float>(window_width), 600.0f, 0);
@@ -393,7 +399,10 @@ void GameScene::TitleDraw()
 	{
 		normalWater.Draw(baseDirectX, waterFacePosition);
 	}
-
+	else if (Imgui::useWaterNum == 2)
+	{
+		mosaicWater.Draw(baseDirectX, waterFacePosition);
+	}
 	PostEffects::Draw(baseDirectX);
 
 	DrawSprites();

@@ -190,7 +190,6 @@
     <ClInclude Include="Scripts\imgui\imstb_rectpack.h" />
     <ClInclude Include="Scripts\imgui\imstb_textedit.h" />
     <ClInclude Include="Scripts\imgui\imstb_truetype.h" />
-    <ClInclude Include="Scripts\IpAddress\IpAddress.h" />
     <ClInclude Include="Scripts\Light\CircleShadow.h" />
     <ClInclude Include="Scripts\Light\Light.h" />
     <ClInclude Include="Scripts\Light\PointLight.h" />
@@ -234,7 +233,6 @@
     <ClCompile Include="Scripts\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="Scripts\imgui\imgui_tables.cpp" />
     <ClCompile Include="Scripts\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="Scripts\IpAddress\IpAddress.cpp" />
     <ClCompile Include="Scripts\Light\Light.cpp" />
     <ClCompile Include="Scripts\LoadStage\LoadStage.cpp" />
     <ClCompile Include="Scripts\LoadStage\StageObject.cpp" />
@@ -285,6 +283,16 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\ObjectMosicPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Resource\HLSL\OBJHS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Hull</ShaderType>

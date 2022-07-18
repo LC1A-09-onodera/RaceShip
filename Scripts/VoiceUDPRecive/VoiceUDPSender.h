@@ -4,17 +4,13 @@
 #include <string>
 #include <WinSock2.h> //windows
 #include <Windows.h>
-
+#include "../UDP/udp.h"
 #pragma comment(lib, "ws2_32.lib")
 #pragma warning(disable:4996) 
 
 class VoiceUDPSender
 {
-	int port;
-	int sock;
-	struct sockaddr_in addr;
-	WSAData wsaData;
-	struct timeval tv;
+	UDPClass udp;
 
 	void StartUp();
 	void SendData();

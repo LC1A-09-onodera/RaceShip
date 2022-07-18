@@ -78,5 +78,5 @@ void VoiceReciver::ReciveData()
 
 void VoiceReciver::EndRecive()
 {
-	udp.EndRecive();
+	udp.End();
 }

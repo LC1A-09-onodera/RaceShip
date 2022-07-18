@@ -213,9 +213,6 @@
     <ClInclude Include="Scripts\VoiceUDPRecive\VoiceUDPSender.h">
       <Filter>Udp</Filter>
     </ClInclude>
-    <ClInclude Include="Scripts\IpAddress\IpAddress.h">
-      <Filter>Udp</Filter>
-    </ClInclude>
     <ClInclude Include="Scripts\WaterFace\WaterFace.h">
       <Filter>WaterFace</Filter>
     </ClInclude>
@@ -335,9 +332,6 @@
     <ClCompile Include="Scripts\VoiceUDPRecive\VoiceUDPSender.cpp">
       <Filter>Udp</Filter>
     </ClCompile>
-    <ClCompile Include="Scripts\IpAddress\IpAddress.cpp">
-      <Filter>Udp</Filter>
-    </ClCompile>
     <ClCompile Include="Scripts\WaterFace\WaterFace.cpp">
       <Filter>WaterFace</Filter>
     </ClCompile>
@@ -376,6 +370,7 @@
     <FxCompile Include="Resource\HLSL\PostWaterPS.hlsl" />
     <FxCompile Include="Resource\HLSL\WaterSamplePS.hlsl" />
     <FxCompile Include="Resource\HLSL\NormalPlane.hlsl" />
+    <FxCompile Include="Resource\HLSL\ObjectMosicPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\HLSL\BSH.hlsli" />

@@ -19,6 +19,11 @@ void UDPClass::StartUp()
 	ioctlsocket(sock, FIONBIO, &val);
 }
 
+void UDPClass::SendData(const char* data)
+{
+	sendto(sock, data, sizeof(data), 0, (struct sockaddr*)&addr, sizeof(addr));//addr‚É•¶š—ñ‘—M
+}
+
 void UDPClass::Recive()
 {
 	char buf[100] = {};
@@ -27,7 +32,7 @@ void UDPClass::Recive()
 	tex = buf;
 }
 
-void UDPClass::EndRecive()
+void UDPClass::End()
 {
 	closesocket(sock);
 	WSACleanup();

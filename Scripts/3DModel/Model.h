@@ -170,6 +170,7 @@ public:
 	XMMATRIX matWorld = XMMatrixIdentity();
 	static shared_ptr<Light> light;
 	shared_ptr<BaseCollider> collider = nullptr;
+	string m_modelName;
 	//----Šî–{‚¢‚é‚à‚Ì-----------
 	float radi = 2.0f;
 	//-----------------------
@@ -298,3 +299,21 @@ void Set3DDraw(BaseDirectX& baseDirectX, const Model &model, bool triangle = tru
 void Draw3DObject(BaseDirectX& baseDirectX, const Model &model, bool triangle = true);
 bool ObjectColition(Model& object1, Model& object2);
 bool CiycleColition(const XMFLOAT3 &object1, const XMFLOAT3 &object2 , float radi1, float radi2);
+
+class ModelElement
+{
+public:
+	ModelElement(std::string name, Model *model)
+	{
+		m_model = model;
+		m_modelName = name;
+	}
+	std::string m_modelName;
+	Model *m_model;
+};
+
+class ModelManager
+{
+public:
+	static std::list<ModelElement *> m_models;
+};

@@ -82,6 +82,7 @@ private:
 	//水面用
 	WaterFace waterFace;
 	WaterFace normalWater;
+	WaterFace mosaicWater;
 	//ワイヤーフレームのドーム
 	Model world;
 	Model rWorld;
