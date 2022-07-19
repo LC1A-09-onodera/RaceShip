@@ -97,6 +97,10 @@ void MapEditorObjects::Update(BaseDirectX& baseDirectX, XMFLOAT3& f_mousePos)
 			SetObject(baseDirectX, f_mousePos);
 		}
 	}
+	if (Input::MouseTrigger(MouseButton::RBUTTON))
+	{
+		//ObjectCollision(f_mousePos);
+	}
 	else if (!Input::Mouse(MouseButton::LBUTTON))
 	{
 		isLinePut = false;
@@ -204,27 +208,46 @@ bool MapEditorObjects::ObjectCollision(XMFLOAT3& f_mousePos)
 {
 	for (auto itr = wall.begin(); itr != wall.end(); ++itr)
 	{
-		if (itr->OnCollisionMouse(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))
+		if (itr->OnCollisionMouse(static_cast<float>(f_mousePos.x), static_cast<float>(f_mousePos.y)))
 		{
-			wall.erase(itr);
+			if (Input::MouseTrigger(MouseButton::LBUTTON))
+			{
+				wall.erase(itr);
+			}
+			else if (Input::MouseTrigger(MouseButton::RBUTTON))
+			{
+				itr->piece.rotation.x += 90.0f;
+				itr->piece.rotation.y += 90.0f;
+			}
 			lineMousePos = f_mousePos;
 			return true;
 		}
 	}
 	for (auto itr = goal.begin(); itr != goal.end(); ++itr)
 	{
-		if (itr->OnCollisionMouse(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))
+		if (itr->OnCollisionMouse(static_cast<float>(f_mousePos.x), static_cast<float>(f_mousePos.y)))
 		{
-			goal.erase(itr);
+			if (Input::MouseTrigger(MouseButton::LBUTTON))goal.erase(itr);
+			else if (Input::MouseTrigger(MouseButton::RBUTTON))
+			{
+				itr->piece.rotation.x += 90.0f;
+				itr->piece.rotation.z += 90.0f;
+				itr->piece.rotation.y += 180.0f;
+			}
 			lineMousePos = f_mousePos;
 			return true;
 		}
 	}
 	for (auto itr = enemy.begin(); itr != enemy.end(); ++itr)
 	{
-		if (itr->OnCollisionMouse(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))
+		if (itr->OnCollisionMouse(static_cast<float>(f_mousePos.x), static_cast<float>(f_mousePos.y)))
 		{
-			enemy.erase(itr);
+			if (Input::MouseTrigger(MouseButton::LBUTTON))enemy.erase(itr);
+			else if (Input::MouseTrigger(MouseButton::RBUTTON))
+			{
+				itr->piece.rotation.x += 90.0f;
+				itr->piece.rotation.z += 90.0f;
+			}
 			lineMousePos = f_mousePos;
 			return true;
 		}

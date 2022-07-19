@@ -116,12 +116,12 @@ void Imgui::ShowRewiredElement()
     for (auto keysItr = Rewired::KeyCodeString::mKeyboardKeys.begin(); keysItr != Rewired::KeyCodeString::mKeyboardKeys.end(); ++keysItr)
     {
         sKeyList = sKeyList + keysItr->keyName;
-        sKeyList.resize(keyList.size() + 1);
+        sKeyList.resize(sKeyList.size() + 1);
     }
     for (auto padKeyItr = Rewired::KeyCodeString::mPadKeys.begin(); padKeyItr != Rewired::KeyCodeString::mPadKeys.end(); ++padKeyItr)
     {
         sKeyList = sKeyList + padKeyItr->keyName;
-        sKeyList.resize(keyList.size() + 1);
+        sKeyList.resize(sKeyList.size() + 1);
     }
     ImGui::Combo("", &comboNum, sKeyList.c_str());
     if (ImGui::Button("AddKey"))

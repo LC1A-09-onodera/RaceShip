@@ -40,6 +40,8 @@ void GameScene::SceneManageUpdateAndDraw()
 		Imgui::sceneNum = MAPEDIT;
 		Cameras::camera.isRCamera = true;
 		Imgui::CameraControl = false;
+		Cameras::camera.mouseMoveAmount[0] = 0.0f;
+		Cameras::camera.mouseMoveAmount[1] = 0.0f;
 		XMFLOAT3 cameraEeyReset(0, 0, 20.0f);
 		XMFLOAT3 cameraTargetReset(0, 0, 0);
 		Cameras::camera.Init(cameraEeyReset, cameraTargetReset);
