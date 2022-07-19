@@ -94,6 +94,7 @@ public:
 	// 頂点インデックス配列
 	std::vector<unsigned short> indices;
 };
+
 class EachInfo
 {
 public:
@@ -103,6 +104,13 @@ public:
 	XMFLOAT3 scale = { 1,1,1 };
 	XMFLOAT3 rotation = { 0,0,0 };
 	XMVECTOR position = { 0,0,0 };
+	std::string m_eachName;
+};
+
+class EachManager
+{
+public:
+	static list<EachInfo *> eahcs;
 };
 
 template <typename T>

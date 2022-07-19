@@ -16,13 +16,19 @@ void WallObject::LoadPosition(BaseDirectX& baseDirectX)
 		each.position.m128_f32[0] = itr->x;
 		each.position.m128_f32[2] = itr->y;
 		each.scale = { 2.0f, 4.0f, 2.0f };
+		each.m_eachName.clear();
+		each.m_eachName = each.m_eachName + "wall";
 		wallsPos.push_back(each);
+		//EachManager::eahcs.push_back(&(*--wallsPos.end()));
 		WallObjectEach eachR;
 		ConstInit(eachR, baseDirectX.dev);
 		eachR.position.m128_f32[0] = itr->x;
 		eachR.position.m128_f32[2] = itr->y;
 		eachR.scale = { 2.0f, 4.0f, 2.0f };
+		eachR.m_eachName.clear();
+		eachR.m_eachName = eachR.m_eachName + "rWall";
 		rWallsPos.push_back(eachR);
+		//EachManager::eahcs.push_back(&(*--rWallsPos.end()));
 	}
 }
 
@@ -161,12 +167,18 @@ void GoalObject::LoadPosition(BaseDirectX& baseDirectX)
 		each.position.m128_f32[0] = itr->x;
 		each.position.m128_f32[2] = itr->y;
 		each.scale = { 0.5f, 0.7f, 0.5f };
+		each.m_eachName.clear();
+		each.m_eachName = each.m_eachName + "goal";
 		goalsPos.push_back(each);
+		//EachManager::eahcs.push_back(&(*--goalsPos.end()));
 		GoalObjectEach eachR;
 		ConstInit(eachR, baseDirectX.dev);
 		eachR.position.m128_f32[0] = itr->x;
 		eachR.position.m128_f32[2] = itr->y;
 		eachR.scale = { 0.5f, 0.7f, 0.5f };
+		eachR.m_eachName.clear();
+		eachR.m_eachName = eachR.m_eachName + "rGoal";
 		rGoalsPos.push_back(eachR);
+		//EachManager::eahcs.push_back(&(*--rGoalsPos.end()));
 	}
 }

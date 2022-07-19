@@ -1,6 +1,9 @@
 #include "ImguiControl.h"
 #include "../imgui/imgui.h"
+#pragma warning(push)
+#pragma warning(disable:26451)
 #include "../imgui/imgui_impl_dx12.h"
+#pragma warning(pop)
 #include "../imgui/imgui_impl_win32.h"
 #include "../Camera/Camera.h"
 #include "../LoadStage/StageObject.h"
@@ -13,6 +16,8 @@
 #include <fstream>
 #include <stdarg.h>
 #include "../3DModel/Model.h"
+
+//#define _DEBUG
 
 ComPtr<ID3D12DescriptorHeap> Imgui::imguiDescHeap;
 ComPtr<ID3D12DescriptorHeap> Imgui::heapForImgui;
@@ -222,6 +227,7 @@ ComPtr<ID3D12DescriptorHeap> Imgui::GetHeapForImgui()
 
 void Imgui::DrawImGui(BaseDirectX& baseDirectX)
 {
+//#ifdef DEBUG
     if (!isActive) return;
     ImGui_ImplDX12_NewFrame();
     ImGui_ImplWin32_NewFrame();
@@ -234,6 +240,7 @@ void Imgui::DrawImGui(BaseDirectX& baseDirectX)
     ImGui::Render();
     baseDirectX.cmdList->SetDescriptorHeaps(1, GetHeapForImgui().GetAddressOf());
     ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), baseDirectX.cmdList.Get());
+//#endif//DEBUG
 }
 
 void Imgui::Init(BaseDirectX& baseDirectX)
@@ -411,6 +418,18 @@ void Imgui::DebugUpdate()
     for (auto itr = ModelManager::m_models.begin(); itr != ModelManager::m_models.end(); ++itr)
     {
         ImGui::Text((*itr)->m_modelName.c_str());
+    }
+    ImGui::Text(" ");
+    for (auto itr = EachManager::eahcs.begin(); itr != EachManager::eahcs.end(); ++itr)
+    {
+        ImGui::Text((*itr)->m_eachName.c_str());
+        XMFLOAT3 posXM = ConvertXMVECTORtoXMFLOAT3((*itr)->position);
+        float pos[3] = { posXM.x, posXM.y , posXM.z };
+        float rot[3] = { (*itr)->rotation.x, (*itr)->rotation.y ,(*itr)->rotation.z };
+        float scale[3] = { (*itr)->scale.x, (*itr)->scale.y, (*itr)->scale.z };
+        ImGui::DragFloat3("position", pos, 0.005f);
+        ImGui::DragFloat3("rotation", rot, 0.005f);
+        ImGui::DragFloat3("scale", scale, 0.005f);
     }
 }
 

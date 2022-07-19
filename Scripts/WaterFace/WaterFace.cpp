@@ -13,6 +13,8 @@ void WaterFace::Init(BaseDirectX& baseDirectX)
 	waterModel.eachData.ConstInit(baseDirectX);
 	waterModel.eachData.position = { 0, 0.0f, 0.0f, 1 };
 	waterModel.eachData.rotation = { 0, 0,0};
+	waterModel.each.m_eachName = "water";
+	//EachManager::eahcs.push_back(&waterModel.eachData);
 	float scaleSample = 62.0f;
 	waterModel.eachData.scale = { scaleSample + 0.0f, scaleSample - 1.0f, scaleSample };
 }

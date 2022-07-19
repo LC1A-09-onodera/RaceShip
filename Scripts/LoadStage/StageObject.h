@@ -3,7 +3,7 @@
 
 class WallObjectEach : public EachInfo
 {
-
+	
 };
 
 class WallModel : public Model

@@ -116,6 +116,8 @@ void GameScene::Init()
 	light.reset(Light::Create());
 	//モデルすべてにライトを適用
 	Model::SetLight(light);
+	//inspector初期化
+	EachManager::eahcs.clear();
 	//ポストエフェクトの初期化
 	PostEffects::Init(baseDirectX);
 	//ステージをテキストからロード
@@ -130,8 +132,11 @@ void GameScene::Init()
 	Rewired::RewiredContainer::GetFilesName();
 
 	mapFrameV.CreateModel(baseDirectX, "Map", ShaderManager::playerShader, false, false);
+	mapFrameV.each.m_eachName = "MapV";
+	EachManager::eahcs.push_back(&mapFrameV.each);
 	mapFrameH.CreateModel(baseDirectX, "Map", ShaderManager::playerShader, false, false);
-
+	mapFrameH.each.m_eachName = "MapH";
+	EachManager::eahcs.push_back(&mapFrameH.each);
 	mapFrameV.each.rotation.y = 90.0f;
 	mapFrameH.each.rotation.x = 90.0f;
 	mapFrameH.each.rotation.y = 0.0f;
@@ -144,11 +149,7 @@ void GameScene::Init()
 	//送信側はまた違うアプリケーションで行う
 	VoiceReciver::StartUp();
 
-
-
 	waterFace.LoadModel(baseDirectX, ShaderManager::waterShader, PostEffects::postNormal);
-
-
 
 	normalWater.LoadModel(baseDirectX, ShaderManager::normalPlaneShader, PostEffects::postNormal);
 	mosaicWater.LoadModel(baseDirectX, ShaderManager::mosaicPlaneShader, PostEffects::postNormal);

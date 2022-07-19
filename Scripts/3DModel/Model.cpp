@@ -4,7 +4,7 @@
 using namespace std;
 shared_ptr<Light> Model::light = nullptr;
 std::list<ModelElement *> ModelManager::m_models;
-
+list<EachInfo*> EachManager::eahcs;
 Model::~Model()
 {
 	
@@ -59,7 +59,7 @@ void Model::CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& 
 	ConstBufferInit(baseDirectX, this, this->each);
 
 	ModelElement *model = new ModelElement(m_modelName, this);
-	if (ModelManager::m_models.size() > 0)
+	/*if (ModelManager::m_models.size() > 0)
 	{
 		for (auto itr = ModelManager::m_models.begin(); itr != ModelManager::m_models.end(); ++itr)
 		{
@@ -68,9 +68,8 @@ void Model::CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& 
 				return;
 			}
 		}
-	}
+	}*/
 	ModelManager::m_models.push_back(model);
-
 }
 
 void Model::Update(BaseDirectX &baseDirectX, EachInfo* f_each, bool rCamera)
