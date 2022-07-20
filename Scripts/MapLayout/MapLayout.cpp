@@ -81,10 +81,6 @@ void MapEditorObjects::Update(BaseDirectX& baseDirectX, XMFLOAT3& f_mousePos)
 	{
 		activeType = MapObjects::GOAL;
 	}
-	/*if (Input::KeyTrigger(DIK_3))
-	{
-		activeType = MapObjects::ENEMY;
-	}*/
 	if (Input::KeyTrigger(DIK_0))
 	{
 		activeType = MapObjects::NONE;
@@ -99,7 +95,7 @@ void MapEditorObjects::Update(BaseDirectX& baseDirectX, XMFLOAT3& f_mousePos)
 	}
 	if (Input::MouseTrigger(MouseButton::RBUTTON))
 	{
-		//ObjectCollision(f_mousePos);
+		ObjectCollision(f_mousePos);
 	}
 	else if (!Input::Mouse(MouseButton::LBUTTON))
 	{

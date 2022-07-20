@@ -429,7 +429,10 @@ void Imgui::DebugUpdate()
         float scale[3] = { (*itr)->scale.x, (*itr)->scale.y, (*itr)->scale.z };
         ImGui::DragFloat3("position", pos, 0.005f);
         ImGui::DragFloat3("rotation", rot, 0.005f);
-        ImGui::DragFloat3("scale", scale, 0.005f);
+        ImGui::DragFloat3("scale", scale, 0.005f); 
+        (*itr)->position = { pos[0], pos[1], pos[2], 1.0f };
+        (*itr)->rotation = { rot[0], rot[1], rot[2] };
+        (*itr)->scale = { scale[0], scale[1], scale[2] };
     }
 }
 
