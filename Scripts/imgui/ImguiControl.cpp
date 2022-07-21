@@ -293,10 +293,6 @@ void Imgui::CreateMenuBar()
         {
             tab = ImguiType::Debug;
         }
-        /*if (ImGui::MenuItem("PostEffect"))
-        {
-            tab = ImguiType::PostEffect;
-        }*/
         if (ImGui::MenuItem("Rewired"))
         {
             tab = ImguiType::Rewired;

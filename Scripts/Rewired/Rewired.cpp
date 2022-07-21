@@ -388,6 +388,39 @@ void Rewired::KeyCodeString::KeyCodeStringInit(BaseDirectX& baseDirectX)
 	mPadKeys.push_back(PadSelect);
 	mPadKeys.push_back(PadPouse);
 }
+
+bool Rewired::KeyCodeString::GetAnyInput(KeyInfo<KeyCode> *key)
+{
+	for (auto itr = mKeyboardKeys.begin(); itr != mKeyboardKeys.end(); ++itr)
+	{
+		if (Input::KeyTrigger(itr->keyCode))
+		{
+			if (key != nullptr)
+			{
+				key = &(*itr);
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Rewired::KeyCodeString::GetPadAnyInput(KeyInfo<PadKeyCode>* key)
+{
+	for (auto itr = mPadKeys.begin(); itr != mPadKeys.end(); ++itr)
+	{
+		if (Input::directInput->IsButtonDown(itr->keyCode))
+		{
+			if (key != nullptr)
+			{
+				key = &(*itr);
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
 //実際に使っているもののアドレスを格納
 void Rewired::RewiredContainer::AddRewired(RewiredKeys& rewired)
 {
