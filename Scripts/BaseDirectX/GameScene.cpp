@@ -145,6 +145,7 @@ void GameScene::Init()
 	mapFrameH.each.rotation.z = 90.0f;
 
 	seling.LoadModel(baseDirectX);
+	EachManager::eahcs.push_back(&seling.selingModel.each);
 	rSeling.LoadModel(baseDirectX);
 
 	//ボイスコマンドの通信受付スタート

@@ -26,8 +26,6 @@ void Seling::LoadModel(BaseDirectX& baseDirectX)
 	Init();
 	
 	LoadKeys();
-
-	EachManager::eahcs.push_back(&selingModel.each);
 }
 
 void Seling::Init()

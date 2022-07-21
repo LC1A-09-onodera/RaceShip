@@ -30,30 +30,22 @@ class Imgui
 {
 private:
     static ComPtr<ID3D12DescriptorHeap> imguiDescHeap;//imgui保持用メンバ
-    static ComPtr<ID3D12DescriptorHeap> heapForImgui;
+    static bool isActive;
     //ラジオボタン用
     static int radioMode;
     static void RewiredUpdate();
     static void ShowRewiredElement();
-public:
+    static void CreateMenuBar();
+    static void InspectorView();
+    static void EachInfo();
     static ComPtr<ID3D12DescriptorHeap> CreateDescrriptorHeapForImgui(BaseDirectX& baseDirectX);
     static ComPtr<ID3D12DescriptorHeap> GetHeapForImgui();
+public:
+    
     static void DrawImGui(BaseDirectX& baseDirectX);
     static void Init(BaseDirectX& baseDirectX);
-    static void GetAndDrawInfo(const int &intOriginal, int& imguiInfo);
-    static void GetAndDrawInfo(const float &floatOriginal, float& imguiInfo);
-    static void GetAndDrawInfo(const XMFLOAT3 &xmfloat3Original, XMFLOAT3& imguiInfo);
-    static void ChangeInfo(int &intOriginal, int& imguiInfo);
-    static void ChangeInfo(float &floatOriginal, float& imguiInfo);
-    static void ChangeInfo(XMFLOAT3 &xmfloat3Original, XMFLOAT3& imguiInfo);
-
-    static void CreateMenuBar();
-    static void EachInfo();
     static void DebugUpdate();
-
-    static bool isActive;
     static void SetWindowActive(bool f_isActive);
-
     static void Update(BaseDirectX &baseDirectX);
 
     static int effectType;

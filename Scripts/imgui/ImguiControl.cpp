@@ -20,7 +20,6 @@
 //#define _DEBUG
 
 ComPtr<ID3D12DescriptorHeap> Imgui::imguiDescHeap;
-ComPtr<ID3D12DescriptorHeap> Imgui::heapForImgui;
 int Imgui::effectType = -1;
 Imgui::ImguiType Imgui::tab;
 Imgui::DebugType Imgui::debugType;
@@ -232,12 +231,24 @@ void Imgui::DrawImGui(BaseDirectX& baseDirectX)
     ImGui_ImplDX12_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
+
     ImGui::Begin("InfomationAndEdit", nullptr, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
     ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
+
     CreateMenuBar();
     EachInfo();
+
+    ImGui::End();
+
+    ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
+    ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
+
+    InspectorView();
+
     ImGui::End();
     ImGui::Render();
+
+
     baseDirectX.cmdList->SetDescriptorHeaps(1, GetHeapForImgui().GetAddressOf());
     ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), baseDirectX.cmdList.Get());
 //#endif//DEBUG
@@ -266,42 +277,6 @@ void Imgui::Init(BaseDirectX& baseDirectX)
     blnResult = ImGui_ImplDX12_Init(baseDirectX.dev.Get(), 3, DXGI_FORMAT_R8G8B8A8_UNORM, GetHeapForImgui().Get(), GetHeapForImgui()->GetCPUDescriptorHandleForHeapStart(), GetHeapForImgui()->GetGPUDescriptorHandleForHeapStart());
 }
 
-void Imgui::ChangeInfo(int& intOriginal, int& imguiInfo)
-{
-    intOriginal = imguiInfo;
-    return;
-}
-
-void Imgui::ChangeInfo(float& floatOriginal, float& imguiInfo)
-{
-    floatOriginal = imguiInfo;
-    return;
-}
-
-void Imgui::ChangeInfo(XMFLOAT3& xmfloat3Original, XMFLOAT3& imguiInfo)
-{
-    xmfloat3Original = imguiInfo;
-    return;
-}
-
-void Imgui::GetAndDrawInfo(const int& intOriginal, int& imguiInfo)
-{
-    imguiInfo = intOriginal;
-    return;
-}
-
-void Imgui::GetAndDrawInfo(const float& floatOriginal, float& imguiInfo)
-{
-    imguiInfo = floatOriginal;
-    return;
-}
-
-void Imgui::GetAndDrawInfo(const XMFLOAT3& xmfloat3Original, XMFLOAT3& imguiInfo)
-{
-    imguiInfo = xmfloat3Original;
-    return;
-}
-
 void Imgui::CreateMenuBar()
 {
     if (ImGui::BeginMenuBar())
@@ -328,6 +303,11 @@ void Imgui::CreateMenuBar()
         }
         ImGui::EndMenuBar();
     }
+}
+
+void Imgui::InspectorView()
+{
+    DebugUpdate();
 }
 
 void Imgui::EachInfo()
@@ -390,7 +370,7 @@ void Imgui::EachInfo()
     }
     else if (tab == ImguiType::Debug)
     {
-        DebugUpdate();
+        
     }
     else if (tab == ImguiType::PostEffect)
     {
@@ -423,24 +403,35 @@ void Imgui::EachInfo()
 }
 void Imgui::DebugUpdate()
 {
-    for (auto itr = ModelManager::m_models.begin(); itr != ModelManager::m_models.end(); ++itr)
+    static int inspectorConbo = 1;
+    int count = 0;
+    auto itr = EachManager::eahcs.begin();
+    for ( ;itr != EachManager::eahcs.end(); ++itr)
     {
-        ImGui::Text((*itr)->m_modelName.c_str());
+        count++;
+        ImGui::RadioButton((*itr)->m_eachName.c_str(), &inspectorConbo, count);
     }
-    ImGui::Text(" ");
-    for (auto itr = EachManager::eahcs.begin(); itr != EachManager::eahcs.end(); ++itr)
+    itr = EachManager::eahcs.begin();
+    for (int i = 1; i < inspectorConbo; i++)
     {
-        ImGui::Text((*itr)->m_eachName.c_str());
-        XMFLOAT3 posXM = ConvertXMVECTORtoXMFLOAT3((*itr)->position);
-        float pos[3] = { posXM.x, posXM.y , posXM.z };
-        float rot[3] = { (*itr)->rotation.x, (*itr)->rotation.y ,(*itr)->rotation.z };
-        float scale[3] = { (*itr)->scale.x, (*itr)->scale.y, (*itr)->scale.z };
-        ImGui::DragFloat3("position", pos, 0.005f);
-        ImGui::DragFloat3("rotation", rot, 0.005f);
-        ImGui::DragFloat3("scale", scale, 0.005f); 
-        (*itr)->position = { pos[0], pos[1], pos[2], 1.0f };
-        (*itr)->rotation = { rot[0], rot[1], rot[2] };
-        (*itr)->scale = { scale[0], scale[1], scale[2] };
+        itr++;
+    }
+
+    XMFLOAT3 posXM = ConvertXMVECTORtoXMFLOAT3((*itr)->position);
+    float pos[3] = { posXM.x, posXM.y , posXM.z };
+    float rot[3] = { (*itr)->rotation.x, (*itr)->rotation.y ,(*itr)->rotation.z };
+    float scale[3] = { (*itr)->scale.x, (*itr)->scale.y, (*itr)->scale.z };
+    ImGui::DragFloat3("position", pos, 0.005f);
+    ImGui::DragFloat3("rotation", rot, 0.005f);
+    ImGui::DragFloat3("scale", scale, 0.005f); 
+    (*itr)->position = { pos[0], pos[1], pos[2], 1.0f };
+    (*itr)->rotation = { rot[0], rot[1], rot[2] };
+    (*itr)->scale = { scale[0], scale[1], scale[2] };
+
+    ImGui::Text(" ");
+    for (auto modelItr = ModelManager::m_models.begin(); modelItr != ModelManager::m_models.end(); ++modelItr)
+    {
+        ImGui::Text((*modelItr)->m_modelName.c_str());
     }
 }
 

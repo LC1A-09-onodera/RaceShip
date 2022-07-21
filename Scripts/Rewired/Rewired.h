@@ -21,7 +21,6 @@ namespace Rewired
 		//XBoxPad
 		static list<KeyInfo<PadKeyCode>> mPadKeys;
 	};
-
 	class RewiredKeys
 	{
 		string fileName;
@@ -40,7 +39,6 @@ namespace Rewired
 		list<KeyCode> keys;
 		list<PadKeyCode> padKeys;
 	};
-
 	class RewiredContainer
 	{
 	public:
