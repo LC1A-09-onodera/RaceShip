@@ -14,7 +14,6 @@ void WaterFace::Init(BaseDirectX& baseDirectX)
 	waterModel.eachData.position = { 0, 0.0f, 0.0f, 1 };
 	waterModel.eachData.rotation = { 0, 0,0};
 	waterModel.each.m_eachName = "water";
-	//EachManager::eahcs.push_back(&waterModel.eachData);
 	float scaleSample = 62.0f;
 	waterModel.eachData.scale = { scaleSample + 0.0f, scaleSample - 1.0f, scaleSample };
 }
@@ -128,60 +127,6 @@ void WaterFaceModel::CreateModel(BaseDirectX& baseDirectX, const char* name, HLS
 
 bool WaterFaceModel::LoadTexture(BaseDirectX &baseDirectX, const string& directPath, const string& filename, PostEffect& postEffect)
 {
-	HRESULT result = S_FALSE;
-
-	// WICテクスチャのロード
-	TexMetadata metadata{};
-	ScratchImage scratchImg{};
-
-	string filepath = directPath + filename;
-
-	wchar_t wfilepath[128] = {};
-	int iBufferSize;
-	iBufferSize = MultiByteToWideChar(CP_ACP, 0, filepath.c_str(), -1, wfilepath, _countof(wfilepath));
-
-	result = LoadFromWICFile(wfilepath, WIC_FLAGS_NONE, &metadata, scratchImg);
-	if (FAILED(result))
-	{
-		return false;
-	}
-
-	const Image* img = scratchImg.GetImage(0, 0, 0); // 生データ抽出
-
-	// リソース設定
-	CD3DX12_RESOURCE_DESC texresDesc = CD3DX12_RESOURCE_DESC::Tex2D(
-		metadata.format,
-		metadata.width,
-		(UINT)metadata.height,
-		(UINT16)metadata.arraySize,
-		(UINT16)metadata.mipLevels
-	);
-
-	// テクスチャ用バッファの生成
-	CD3DX12_HEAP_PROPERTIES heapProp(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0);
-	result = baseDirectX.dev->CreateCommittedResource(
-		&heapProp,
-		D3D12_HEAP_FLAG_NONE,
-		&texresDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ, // テクスチャ用指定
-		nullptr,
-		IID_PPV_ARGS(&texbuff));
-	if (FAILED(result)) {
-		return false;
-	}
-
-	// テクスチャバッファにデータ転送
-	result = texbuff->WriteToSubresource(
-		0,
-		nullptr, // 全領域へコピー
-		img->pixels,    // 元データアドレス
-		(UINT)img->rowPitch,  // 1ラインサイズ
-		(UINT)img->slicePitch // 1枚サイズ
-	);
-	if (FAILED(result)) {
-		return false;
-	}
-
 	// シェーダリソースビュー作成
 	cpuDescHandleSRV = CD3DX12_CPU_DESCRIPTOR_HANDLE(descHeap->GetCPUDescriptorHandleForHeapStart(), 0, descriptorHandleIncrementSize);
 	gpuDescHandleSRV = CD3DX12_GPU_DESCRIPTOR_HANDLE(descHeap->GetGPUDescriptorHandleForHeapStart(), 0, descriptorHandleIncrementSize);
@@ -193,8 +138,6 @@ bool WaterFaceModel::LoadTexture(BaseDirectX &baseDirectX, const string& directP
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
 	srvDesc.Texture2D.MipLevels = 1;
-
-	//BaseDirectX::dev->CreateShaderResourceView(texbuff.Get(), &srvDesc, cpuDescHandleSRV[materialCount]);
 	baseDirectX.dev->CreateShaderResourceView(postEffect.renderTarget.texBuff[0].Get(), &srvDesc, cpuDescHandleSRV);
 	return true;
 }

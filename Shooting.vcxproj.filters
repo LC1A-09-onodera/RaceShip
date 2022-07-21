@@ -371,6 +371,8 @@
     <FxCompile Include="Resource\HLSL\WaterSamplePS.hlsl" />
     <FxCompile Include="Resource\HLSL\NormalPlane.hlsl" />
     <FxCompile Include="Resource\HLSL\ObjectMosicPS.hlsl" />
+    <FxCompile Include="Resource\HLSL\MonoPS.hlsl" />
+    <FxCompile Include="Resource\HLSL\BlurPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\HLSL\BSH.hlsli" />

@@ -26,6 +26,8 @@ void Seling::LoadModel(BaseDirectX& baseDirectX)
 	Init();
 	
 	LoadKeys();
+
+	EachManager::eahcs.push_back(&selingModel.each);
 }
 
 void Seling::Init()
@@ -33,7 +35,6 @@ void Seling::Init()
 	selingModel.each.position = {0, 0, 0, 1.0f};
 	selingModel.each.scale = {1.0f, 1.0f, 0.8f};
 	selingModel.each.m_eachName = "player";
-	EachManager::eahcs.push_back(&selingModel.each);
 	frontDirection = { 0, 0 ,1.0f };
 	addForce = { 0, 0 ,0 };
 	frontDirection = { 0.0f ,0.0f , 0.0f };

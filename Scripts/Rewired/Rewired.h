@@ -49,7 +49,7 @@ namespace Rewired
 		static list<RewiredKeys> rewiredsC;
 		static void AddRewired(RewiredKeys &rewired);
 		//ImGuiでファイル作成する
-		static void CreateRewired(string rewiredName);
+		static void CreateRewired(string rewiredName, bool isAdd);
 		//ファイル名は既存のを使うので初期化時には使えない
 		static void ReloadRewired();
 		static void LoadAllRewired();

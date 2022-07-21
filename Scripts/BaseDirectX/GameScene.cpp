@@ -152,9 +152,11 @@ void GameScene::Init()
 	VoiceReciver::StartUp();
 
 	waterFace.LoadModel(baseDirectX, ShaderManager::waterShader, PostEffects::postNormal);
-
 	normalWater.LoadModel(baseDirectX, ShaderManager::normalPlaneShader, PostEffects::postNormal);
 	mosaicWater.LoadModel(baseDirectX, ShaderManager::mosaicPlaneShader, PostEffects::postNormal);
+	monoWater.LoadModel(baseDirectX, ShaderManager::monoPlaneShader, PostEffects::postNormal);
+	blurWater.LoadModel(baseDirectX, ShaderManager::blurPlaneShader, PostEffects::postNormal);
+
 	const float worldSize = 40.0f;
 	world.CreateModel(baseDirectX, "SphereW", ShaderManager::playerShader);
 	world.each.scale = { worldSize, worldSize, worldSize };
@@ -345,7 +347,6 @@ void GameScene::PreWaterFaceDraw()
 	rWorld.Update(baseDirectX, &rWorld.each, isRDraw);
 	Draw3DObject(baseDirectX, rWorld);
 	StageObjects::Draw(baseDirectX, isRDraw);
-
 }
 
 void GameScene::PostWaterFaceDraw()
@@ -392,20 +393,8 @@ void GameScene::TitleDraw()
 
 	PostWaterFaceDraw();
 
-	XMVECTOR waterFacePosition = { 0, -0.8f, 0.0f, 1.0 };
-	//êÖñ ÇÃêÿÇËë÷Ç¶
-	if (Imgui::useWaterNum == 0)
-	{
-		waterFace.Draw(baseDirectX, waterFacePosition);
-	}
-	else if (Imgui::useWaterNum == 1)
-	{
-		normalWater.Draw(baseDirectX, waterFacePosition);
-	}
-	else if (Imgui::useWaterNum == 2)
-	{
-		mosaicWater.Draw(baseDirectX, waterFacePosition);
-	}
+	DrawPostEffect();
+
 	PostEffects::Draw(baseDirectX);
 
 	DrawSprites();
@@ -438,16 +427,7 @@ void GameScene::GameDraw()
 
 	PostWaterFaceDraw();
 
-	XMVECTOR waterFacePosition = { 0, -0.8f, 0.0f, 1.0 };
-	//êÖñ ÇÃêÿÇËë÷Ç¶
-	if (Imgui::useWaterNum == 0)
-	{
-		waterFace.Draw(baseDirectX, waterFacePosition);
-	}
-	else if (Imgui::useWaterNum == 1)
-	{
-		normalWater.Draw(baseDirectX, waterFacePosition);
-	}
+	DrawPostEffect();
 
 	PostEffects::Draw(baseDirectX);
 
@@ -471,16 +451,7 @@ void GameScene::ResultDraw()
 
 	PostWaterFaceDraw();
 
-	XMVECTOR waterFacePosition = { 0, -0.8f, 0.0f, 1.0 };
-	//êÖñ ÇÃêÿÇËë÷Ç¶
-	if (Imgui::useWaterNum == 0)
-	{
-		waterFace.Draw(baseDirectX, waterFacePosition);
-	}
-	else if (Imgui::useWaterNum == 1)
-	{
-		normalWater.Draw(baseDirectX, waterFacePosition);
-	}
+	DrawPostEffect();
 
 	PostEffects::Draw(baseDirectX);
 
@@ -585,4 +556,30 @@ void GameScene::PouseDraw()
 {
 	if (!isPouse)return;
 	pouseUI.DrawUI(baseDirectX);
+}
+
+void GameScene::DrawPostEffect()
+{
+	XMVECTOR waterFacePosition = { 0, -0.8f, 0.0f, 1.0 };
+	//êÖñ ÇÃêÿÇËë÷Ç¶
+	if (Imgui::useWaterNum == 0)
+	{
+		waterFace.Draw(baseDirectX, waterFacePosition);
+	}
+	else if (Imgui::useWaterNum == 1)
+	{
+		normalWater.Draw(baseDirectX, waterFacePosition);
+	}
+	else if (Imgui::useWaterNum == 2)
+	{
+		mosaicWater.Draw(baseDirectX, waterFacePosition);
+	}
+	else if (Imgui::useWaterNum == 3)
+	{
+		monoWater.Draw(baseDirectX, waterFacePosition);
+	}
+	else if (Imgui::useWaterNum == 4)
+	{
+		blurWater.Draw(baseDirectX, waterFacePosition);
+	}
 }

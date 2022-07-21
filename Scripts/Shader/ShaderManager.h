@@ -9,6 +9,8 @@ public:
 	static HLSLShader waterFaceObjectShader;
 	static HLSLShader normalPlaneShader;
 	static HLSLShader mosaicPlaneShader;
+	static HLSLShader monoPlaneShader;
+	static HLSLShader blurPlaneShader;
 	
 	static HLSLShader postWater;
 	static HLSLShader postMosaic;

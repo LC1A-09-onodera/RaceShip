@@ -394,13 +394,13 @@ void Rewired::RewiredContainer::AddRewired(RewiredKeys& rewired)
 	rewireds.push_back(&rewired);
 }
 //Rewiredのロード
-void Rewired::RewiredContainer::CreateRewired(string rewiredName)
+void Rewired::RewiredContainer::CreateRewired(string rewiredName, bool isAdd)
 {
 	//ファイルを作る
 	string saveFileName = "Resource/TextData/Rewired/" + rewiredName + ".csv";
 	ofstream ofs(saveFileName);
 	RewiredKeys key;
-	key.LoadKey(rewiredName.c_str());
+	key.LoadKey(rewiredName.c_str(), isAdd);
 	for (auto itr = Rewired::RewiredContainer::rewiredsC.begin(); itr != Rewired::RewiredContainer::rewiredsC.end(); ++itr)
 	{
 		if (itr->GetFileName() == rewiredName)

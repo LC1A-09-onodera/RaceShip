@@ -29,7 +29,6 @@ class MapObjectNames
 class MapEditorObject
 {
 public:
-
 	EachInfo piece;
 	bool isActive = false;
 	bool OnCollisionMouse(float posX, float posY);

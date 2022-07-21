@@ -50,6 +50,8 @@ private:
 	void PouseUpdate();
 	void PouseDraw();
 
+	void DrawPostEffect();
+
 	int SceneNum = TITLE;
 	BaseDirectX baseDirectX;
 
@@ -83,6 +85,8 @@ private:
 	WaterFace waterFace;
 	WaterFace normalWater;
 	WaterFace mosaicWater;
+	WaterFace monoWater;
+	WaterFace blurWater;
 	//ワイヤーフレームのドーム
 	Model world;
 	Model rWorld;

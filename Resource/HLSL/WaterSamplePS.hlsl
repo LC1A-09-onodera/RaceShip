@@ -11,6 +11,7 @@ float4 main(VSOutput input) : SV_TARGET
     float2 windowSize;
     windowSize.x = 1280 * 2;
     windowSize.y = 720 * 2;
+    //…–Ê‚Ì“®‚«‚Ì‘¬“x
     float speed = 0.7f;
     //”g‚Ì×‚©‚³
     float ripple = 0.9f;
@@ -33,7 +34,6 @@ float4 main(VSOutput input) : SV_TARGET
     float distortion = 0.02f;
     for (int i = 0; i < Iterations; ++i)
     {
-        //float t = time * (1.0 - (3.2 / (float(i) + speed)));
         float t = time * (1.0 - (3.2 / (float(i) + speed)));
         tmp = pos + float2(
 		cos(t - tmp.x * ripple) + sin(t + tmp.y * ripple),

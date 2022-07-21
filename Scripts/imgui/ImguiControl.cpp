@@ -69,7 +69,7 @@ void Imgui::RewiredUpdate()
     ImGui::InputText(fileName, buf, 256);
     if (ImGui::Button("AddFile"))
     {
-        Rewired::RewiredContainer::CreateRewired(buf);
+        Rewired::RewiredContainer::CreateRewired(buf, false);
     }
     ShowRewiredElement();
 }
@@ -334,9 +334,10 @@ void Imgui::EachInfo()
 {
     if (tab == ImguiType::Status)
     {
+        //ImGui::Image()
         ImGui::Text("FPS:%.2f", WindowsAPI::rate);
         ImGui::InputInt("WaterFaceType", &useWaterNum, 1, 1);
-        useWaterNum = ShlomonMath::Clamp(useWaterNum, 0, 2);
+        useWaterNum = ShlomonMath::Clamp(useWaterNum, 0, 4);
         if (useWaterNum == 0)
         {
             ImGui::Text("water");
@@ -347,9 +348,16 @@ void Imgui::EachInfo()
         }
         else if (useWaterNum == 2)
         {
-            ImGui::Text("notiong");
+            ImGui::Text("mosaic");
         }
-
+        else if (useWaterNum == 3)
+        {
+            ImGui::Text("mono");
+        }
+        else if (useWaterNum == 4)
+        {
+            ImGui::Text("blur");
+        }
         ImGui::InputInt("LoadStageNum", &LoadStageNum, 1, 1);
         if (ImGui::Button("LoadStage"))
         {
@@ -429,7 +437,10 @@ void Imgui::DebugUpdate()
         float scale[3] = { (*itr)->scale.x, (*itr)->scale.y, (*itr)->scale.z };
         ImGui::DragFloat3("position", pos, 0.005f);
         ImGui::DragFloat3("rotation", rot, 0.005f);
-        ImGui::DragFloat3("scale", scale, 0.005f);
+        ImGui::DragFloat3("scale", scale, 0.005f); 
+        (*itr)->position = { pos[0], pos[1], pos[2], 1.0f };
+        (*itr)->rotation = { rot[0], rot[1], rot[2] };
+        (*itr)->scale = { scale[0], scale[1], scale[2] };
     }
 }
 
