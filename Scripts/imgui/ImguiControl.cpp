@@ -125,81 +125,11 @@ void Imgui::ShowRewiredElement()
     ImGui::Combo("", &comboNum, sKeyList.c_str());
     if (ImGui::Button("AddKey"))
     {
-        if (static_cast<int>(KeyCode::KeyCodeMax) - 1 > comboNum)
-        {
-            auto keyStringItr = Rewired::KeyCodeString::mKeyboardKeys.begin();
-            if (Rewired::KeyCodeString::mKeyboardKeys.size() > 0)
-            {
-                for (int i = 0; i < comboNum; i++)
-                {
-                    keyStringItr++;
-                }
-            }
-            bool isA = false;
-            //Šù‚ÉŽg‚Á‚Ä‚¢‚éƒL[‚ðÄ“o˜^‚µ‚È‚¢
-            for (auto keyContainarItr = Rewired::RewiredContainer::rewiredsC.begin(); keyContainarItr != Rewired::RewiredContainer::rewiredsC.end(); ++keyContainarItr)
-            {
-                for (auto kItr = keyContainarItr->keys.begin(); kItr != keyContainarItr->keys.end(); ++kItr)
-                {
-                    if (*kItr == keyStringItr->keyCode)
-                    {
-                        isA = true;
-                    }
-                }
-            }
-            if (!isA) itr->AddKey(keyStringItr->keyCode);
-        }
-        else
-        {
-            auto padStringItr = Rewired::KeyCodeString::mPadKeys.begin();
-            if (Rewired::KeyCodeString::mPadKeys.size() > 0)
-            {
-                for (int j = 0; j < comboNum - ((static_cast<int>(KeyCode::KeyCodeMax)) - 1); j++)
-                {
-                    padStringItr++;
-                }
-            }
-            //Šù‚ÉŽg‚Á‚Ä‚¢‚éƒL[‚ðÄ“o˜^‚µ‚È‚¢
-            bool isA = false;
-            for (auto keyContainarItr = Rewired::RewiredContainer::rewiredsC.begin(); keyContainarItr != Rewired::RewiredContainer::rewiredsC.end(); ++keyContainarItr)
-            {
-                for (auto kItr = keyContainarItr->padKeys.begin(); kItr != keyContainarItr->padKeys.end(); ++kItr)
-                {
-                    if (*kItr == padStringItr->keyCode)
-                    {
-                        isA = true;
-                    }
-                }
-            }
-            if (!isA) itr->AddKey(padStringItr->keyCode);
-        }
+        Rewired::RewiredContainer::AddKey(itr, comboNum);
     }
     if (ImGui::Button("SubKey"))
     {
-        if (static_cast<int>(KeyCode::KeyCodeMax) - 1 > comboNum)
-        {
-            auto keyStringItr = Rewired::KeyCodeString::mKeyboardKeys.begin();
-            if (Rewired::KeyCodeString::mKeyboardKeys.size() > 0)
-            {
-                for (int i = 0; i < comboNum; i++)
-                {
-                    keyStringItr++;
-                }
-            }
-            itr->Subkey(keyStringItr->keyCode);
-        }
-        else
-        {
-            auto padStringItr = Rewired::KeyCodeString::mPadKeys.begin();
-            if (Rewired::KeyCodeString::mPadKeys.size() > 0)
-            {
-                for (int j = static_cast<int>(KeyCode::KeyCodeMax) - 1; j < comboNum - ((static_cast<int>(KeyCode::KeyCodeMax)) - 1); j++)
-                {
-                    padStringItr++;
-                }
-            }
-            itr->SubKey(padStringItr->keyCode);
-        }
+        Rewired::RewiredContainer::SubKey(itr, comboNum);
     }
     if (ImGui::Button("Save"))
     {
@@ -228,6 +158,7 @@ void Imgui::DrawImGui(BaseDirectX& baseDirectX)
 {
 //#ifdef DEBUG
     if (!isActive) return;
+
     ImGui_ImplDX12_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
@@ -246,9 +177,8 @@ void Imgui::DrawImGui(BaseDirectX& baseDirectX)
     InspectorView();
 
     ImGui::End();
+
     ImGui::Render();
-
-
     baseDirectX.cmdList->SetDescriptorHeaps(1, GetHeapForImgui().GetAddressOf());
     ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), baseDirectX.cmdList.Get());
 //#endif//DEBUG

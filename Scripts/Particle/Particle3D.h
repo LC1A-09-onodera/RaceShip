@@ -155,6 +155,7 @@ class ParticleIndi
 		float s_scale = 1.0f;
 		//最終地
 		float e_scale = 0.0f;
+		float angle = 0.0f;
 		
 	};
 	struct ConstBufferData
@@ -239,6 +240,11 @@ public:
 	void Update(DirectX::XMFLOAT3 eye, DirectX::XMFLOAT3 target, DirectX::XMFLOAT3 up , DirectX::XMFLOAT3 *pos = nullptr, bool isBilbord = true);
 
 	/// <summary>
+	/// 毎フレーム処理
+	/// </summary>
+	void ElementUpdate(DirectX::XMFLOAT3 eye, DirectX::XMFLOAT3 target, DirectX::XMFLOAT3 up, bool isBilbord = true);
+
+	/// <summary>
 	/// テクスチャ読み込み
 	/// </summary>
 	/// <returns>成否</returns>
@@ -248,7 +254,10 @@ public:
 	/// パーティクルの追加
 	/// </summary>
 	void Add(int life, DirectX::XMFLOAT3 &f_position, DirectX::XMFLOAT3 &velocity, DirectX::XMFLOAT3 &accel, float start_scale = 1.0f, float end_scale = 0.0f);
-
+	/// <summary>
+	/// パーティクルの追加
+	/// </summary>
+	void Add(int life, DirectX::XMFLOAT3& f_position,float angle , float start_scale = 1.0f, float end_scale = 0.0f);
 	/// <summary>
 	/// パーティクルの生成
 	/// </summary>
@@ -315,6 +324,8 @@ public:
 	void BackParticle(const DirectX::XMFLOAT3 emitterPosition = { 0, 0, 0 }, float startSize = 2.0f, float endSize = 2.0f, int life = 180);
 
 	void FlashParticle(const DirectX::XMFLOAT3 emitterPosition = { 0, 0, 0 }, float startSize = 2.0f, float endSize = 2.0f, int life = 60);
+
+	void LifeParticle(const DirectX::XMFLOAT3 cameraPosition = {0, 0, 0}, float R = 20.0f, float startSize = 2.0f, float endSize = 0.0f, int life = 60);
 };
 /// <summary>
 	/// 描画
@@ -334,7 +345,8 @@ public:
 	ParticleControl(const ParticleControl &obj) = delete;
 	ParticleControl &operator=(const ParticleControl &obj) = delete;
 	static std::shared_ptr<ParticleIndi> attackEffect;
+	static std::shared_ptr<ParticleIndi> elementEffect;
 	static void Update();
 	static void Init(BaseDirectX &baseDirectX);
-	static void Draw();
+	static void Draw(BaseDirectX& baseDirectX);
 };

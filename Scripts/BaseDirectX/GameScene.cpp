@@ -152,7 +152,9 @@ void GameScene::Init()
 	//送信側はまた違うアプリケーションで行う
 	VoiceReciver::StartUp();
 
-	waterFace.LoadModel(baseDirectX, ShaderManager::waterShader, PostEffects::postNormal);
+	waterFace[0].LoadModel(baseDirectX, ShaderManager::waterShader, PostEffects::postNormal);
+	waterFace[1].LoadModel(baseDirectX, ShaderManager::waterShader, PostEffects::postNormal);
+	waterFace[1].waterModel.eachData.position.m128_f32[2] = 20.0f;
 	normalWater.LoadModel(baseDirectX, ShaderManager::normalPlaneShader, PostEffects::postNormal);
 	mosaicWater.LoadModel(baseDirectX, ShaderManager::mosaicPlaneShader, PostEffects::postNormal);
 	monoWater.LoadModel(baseDirectX, ShaderManager::monoPlaneShader, PostEffects::postNormal);
@@ -226,7 +228,8 @@ void GameScene::GameUpdate()
 	Cameras::camera.isRCamera = false;
 	seling.Update();
 	rSeling.Update();
-	waterFace.Update();
+	waterFace[0].Update();
+	waterFace[1].Update();
 	normalWater.Update();
 	mosaicWater.Update();
 	//
@@ -243,12 +246,22 @@ void GameScene::GameUpdate()
 	Cameras::rCamera.up = { 0, 1, 0 };
 	Cameras::rCamera.Update();
 
+	static int particleTimer = 0;
+	particleTimer++;
+	if (particleTimer > 1)
+	{ 
+		XMFLOAT3 emitpos = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
+		ParticleControl::elementEffect->LifeParticle(emitpos, 11.0f, 0.8f, 0.0f, 200);
+		particleTimer = 0;
+	}
+
 	if (seling.GetIsGoal())
 	{
 		Imgui::sceneNum = RESULT;
 	}
 
 	VoiceReciver::VoiceUDPUpdate();
+	ParticleControl::Update();
 	Sound::Updete(Imgui::volume);
 	PouseUpdate();
 }
@@ -348,6 +361,7 @@ void GameScene::PreWaterFaceDraw()
 	rWorld.Update(baseDirectX, &rWorld.each, isRDraw);
 	Draw3DObject(baseDirectX, rWorld);
 	StageObjects::Draw(baseDirectX, isRDraw);
+	ParticleControl::Draw(baseDirectX);
 }
 
 void GameScene::PostWaterFaceDraw()
@@ -357,8 +371,8 @@ void GameScene::PostWaterFaceDraw()
 	seling.Draw(baseDirectX);
 	world.Update(baseDirectX, &world.each, false);
 	Draw3DObject(baseDirectX, world);
-	skyDome.Update(baseDirectX, &skyDome.each);
-	Draw3DObject(baseDirectX, skyDome);
+	/*skyDome.Update(baseDirectX, &skyDome.each);
+	Draw3DObject(baseDirectX, skyDome);*/
 	StageObjects::Draw(baseDirectX, false);
 }
 
@@ -432,6 +446,7 @@ void GameScene::GameDraw()
 
 	PostEffects::Draw(baseDirectX);
 
+	ParticleControl::Draw(baseDirectX);
 	DrawSprites();
 	PouseDraw();
 
@@ -507,7 +522,8 @@ void GameScene::EndDraw()
 	//水面の切り替え
 	if (Imgui::useWaterNum == 0)
 	{
-		waterFace.Draw(baseDirectX, waterFacePosition);
+		waterFace[0].Draw(baseDirectX, waterFacePosition);
+		waterFace[1].Draw(baseDirectX, waterFacePosition);
 	}
 	else if (Imgui::useWaterNum == 1)
 	{
@@ -562,10 +578,12 @@ void GameScene::PouseDraw()
 void GameScene::DrawPostEffect()
 {
 	XMVECTOR waterFacePosition = { 0, -0.8f, 0.0f, 1.0 };
+	XMVECTOR waterFacePosition2 = { waterFacePosition.m128_f32[0], -0.8f, waterFacePosition.m128_f32[2] + 89.0f, 1.0 };
 	//水面の切り替え
 	if (Imgui::useWaterNum == 0)
 	{
-		waterFace.Draw(baseDirectX, waterFacePosition);
+		waterFace[0].Draw(baseDirectX, waterFacePosition);
+		waterFace[1].Draw(baseDirectX, waterFacePosition2);
 	}
 	else if (Imgui::useWaterNum == 1)
 	{

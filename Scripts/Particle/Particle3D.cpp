@@ -17,9 +17,9 @@
 /// 静的メンバ変数の実体
 /// </summary>
 
-ID3D12Device *ParticleManager::device = nullptr;
+ID3D12Device* ParticleManager::device = nullptr;
 //UINT ParticleManager::descriptorHandleIncrementSize = 0;
-ID3D12GraphicsCommandList *ParticleManager::cmdList = nullptr;
+ID3D12GraphicsCommandList* ParticleManager::cmdList = nullptr;
 XMMATRIX ParticleManager::matView{};
 XMMATRIX ParticleManager::matProjection{};
 XMFLOAT3 ParticleManager::eye = { 0, 0, 0.0f };
@@ -30,8 +30,9 @@ XMMATRIX ParticleManager::matBillboard = XMMatrixIdentity();
 XMMATRIX ParticleManager::matBillboardY = XMMatrixIdentity();
 
 std::shared_ptr<ParticleIndi> ParticleControl::attackEffect = nullptr;
+std::shared_ptr<ParticleIndi> ParticleControl::elementEffect = nullptr;
 
-bool ParticleManager::StaticInitialize(ID3D12Device *f_device,  int f_window_width, int f_window_height,XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up)
+bool ParticleManager::StaticInitialize(ID3D12Device* f_device, int f_window_width, int f_window_height, XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up)
 {
 	// nullptrチェック
 	assert(f_device);
@@ -55,7 +56,7 @@ bool ParticleManager::StaticInitialize(ID3D12Device *f_device,  int f_window_wid
 
 	return true;
 }
-void PreDraw(ID3D12GraphicsCommandList *cmdList, const ParticleIndi *particle)
+void PreDraw(ID3D12GraphicsCommandList* cmdList, const ParticleIndi* particle)
 {
 	// PreDrawとPostDrawがペアで呼ばれていなければエラー
 	assert(ParticleManager::cmdList == nullptr);
@@ -72,7 +73,7 @@ void PreDraw(ID3D12GraphicsCommandList *cmdList, const ParticleIndi *particle)
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 }
-void ParticleDraw(ID3D12GraphicsCommandList *cmdList, const ParticleIndi *particle)
+void ParticleDraw(ID3D12GraphicsCommandList* cmdList, const ParticleIndi* particle)
 {
 	PreDraw(cmdList, particle);
 	// nullptrチェック
@@ -85,7 +86,7 @@ void ParticleDraw(ID3D12GraphicsCommandList *cmdList, const ParticleIndi *partic
 	//cmdList->IASetIndexBuffer(&ibView);
 
 	// デスクリプタヒープの配列
-	ID3D12DescriptorHeap *ppHeaps[] = { particle->descHeap.Get() };
+	ID3D12DescriptorHeap* ppHeaps[] = { particle->descHeap.Get() };
 	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
 	// 定数バッファビューをセット
@@ -139,7 +140,7 @@ void ParticleManager::CameraMoveEyeVector(XMFLOAT3 move)
 	eye_moved.z += move.z;
 	SetEye(eye_moved);
 }
-void ParticleManager::InitializeCamera(int Window_width, int Window_height,XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up)
+void ParticleManager::InitializeCamera(int Window_width, int Window_height, XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up)
 {
 	// ビュー行列の生成
 	UpdateViewMatrix(f_eye, f_target, f_up, false);
@@ -200,7 +201,7 @@ void ParticleManager::CameraUpdate()
 
 	matView.r[3] = translation;
 }
-void ParticleManager::UpdateViewMatrix(XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up , bool isBillbord)
+void ParticleManager::UpdateViewMatrix(XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up, bool isBillbord)
 {
 	//ビュー変換行列を作り直す
 	//matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
@@ -260,12 +261,12 @@ void ParticleManager::UpdateViewMatrix(XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOA
 	matBillboardY.r[1] = yBillCameraAxisY;
 	matBillboardY.r[2] = yBillCameraAxisZ;
 	matBillboardY.r[3] = XMVectorSet(0, 0, 0, 1);
-	
+
 }
-ParticleIndi *ParticleIndi::Create(const wchar_t *texName)
+ParticleIndi* ParticleIndi::Create(const wchar_t* texName)
 {
 	// 3Dオブジェクトのインスタンスを生成
-	ParticleIndi *particleMan = new ParticleIndi();
+	ParticleIndi* particleMan = new ParticleIndi();
 	if (particleMan == nullptr) {
 		return nullptr;
 	}
@@ -297,8 +298,8 @@ void ParticleIndi::CreateModel()
 		return;
 	}
 
-	VertexPos *vertMap = nullptr;
-	result = vertBuff->Map(0, nullptr, (void **)&vertMap);
+	VertexPos* vertMap = nullptr;
+	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
 	if (SUCCEEDED(result)) {
 		memcpy(vertMap, vertices, sizeof(vertices));
 		vertBuff->Unmap(0, nullptr);
@@ -311,7 +312,7 @@ void ParticleIndi::CreateModel()
 }
 bool ParticleIndi::InitializeDescriptorHeap()
 {
-	
+
 	HRESULT result = S_FALSE;
 
 	// デスクリプタヒープを生成	
@@ -352,7 +353,7 @@ bool ParticleIndi::InitializeGraphicsPipeline()
 		std::string errstr;
 		errstr.resize(errorBlob->GetBufferSize());
 
-		std::copy_n((char *)errorBlob->GetBufferPointer(),
+		std::copy_n((char*)errorBlob->GetBufferPointer(),
 			errorBlob->GetBufferSize(),
 			errstr.begin());
 		errstr += "\n";
@@ -375,7 +376,7 @@ bool ParticleIndi::InitializeGraphicsPipeline()
 		std::string errstr;
 		errstr.resize(errorBlob->GetBufferSize());
 
-		std::copy_n((char *)errorBlob->GetBufferPointer(),
+		std::copy_n((char*)errorBlob->GetBufferPointer(),
 			errorBlob->GetBufferSize(),
 			errstr.begin());
 		errstr += "\n";
@@ -398,7 +399,7 @@ bool ParticleIndi::InitializeGraphicsPipeline()
 		std::string errstr;
 		errstr.resize(errorBlob->GetBufferSize());
 
-		std::copy_n((char *)errorBlob->GetBufferPointer(),
+		std::copy_n((char*)errorBlob->GetBufferPointer(),
 			errorBlob->GetBufferSize(),
 			errstr.begin());
 		errstr += "\n";
@@ -514,7 +515,7 @@ bool ParticleIndi::InitializeGraphicsPipeline()
 
 	return true;
 }
-bool ParticleIndi::Initialize(const wchar_t *texName)
+bool ParticleIndi::Initialize(const wchar_t* texName)
 {
 	//デスクリプタ
 	InitializeDescriptorHeap();
@@ -539,15 +540,15 @@ bool ParticleIndi::Initialize(const wchar_t *texName)
 		IID_PPV_ARGS(&constBuff));
 
 	return true;
-	
+
 }
-void ParticleIndi::Update(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, XMFLOAT3 *pos, bool isBilbord)
+void ParticleIndi::Update(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, XMFLOAT3* pos, bool isBilbord)
 {
 	HRESULT result;
-	
+
 	//パーティクルの消滅
 	particles.remove_if(
-		[](Particle &x)
+		[](Particle& x)
 		{
 			return x.frame >= x.num_frame;
 		}
@@ -571,12 +572,12 @@ void ParticleIndi::Update(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, XMFLOAT3 *
 		it->scale = (it->e_scale - it->s_scale) / f;
 		it->scale += it->s_scale;
 	}
-	
+
 	ParticleManager::UpdateViewMatrix(eye, target, up, isBilbord);
 
 	//頂点バッファへデータ転送
-	VertexPos *vertMap = nullptr;
-	result = vertBuff->Map(0, nullptr, (void **)&vertMap);
+	VertexPos* vertMap = nullptr;
+	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
 	if (SUCCEEDED(result))
 	{
 		for (std::forward_list<Particle>::iterator it = particles.begin(); it != particles.end(); it++)
@@ -589,16 +590,70 @@ void ParticleIndi::Update(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, XMFLOAT3 *
 	}
 
 	// 定数バッファへデータ転送
-	ConstBufferData *constMap = nullptr;
-	result = constBuff->Map(0, nullptr, (void **)&constMap);
+	ConstBufferData* constMap = nullptr;
+	result = constBuff->Map(0, nullptr, (void**)&constMap);
 	//constMap->color = color;
 	constMap->mat = ParticleManager::matView * ParticleManager::matProjection;	// 行列の合成
 	constMap->matBillboard = ParticleManager::matBillboard;
 	constMap->alpha = this->alpha;
 	constBuff->Unmap(0, nullptr);
-	
+
 }
-bool ParticleIndi::LoadTexture(const wchar_t *texName)
+void ParticleIndi::ElementUpdate(DirectX::XMFLOAT3 eye, DirectX::XMFLOAT3 target, DirectX::XMFLOAT3 up, bool isBilbord)
+{
+	HRESULT result;
+
+	//パーティクルの消滅
+	particles.remove_if(
+		[](Particle& x)
+		{
+			return x.frame >= x.num_frame;
+		}
+	);
+	//全パーティクルの更新
+	for (std::forward_list<Particle>::iterator it = particles.begin(); it != particles.end(); it++)
+	{
+		//フレームの増加
+		it->frame++;
+		it->angle += 0.2f;
+		XMFLOAT3 newPos = it->position;
+		newPos.x = (ShlomonMath::Cos(it->angle) * 30.0f);
+		newPos.z  = (ShlomonMath::Sin(it->angle) * 30.0f);
+		//移動
+		it->position = newPos;
+		//スケールの変更
+		float f = (float)it->num_frame / it->frame;
+		//スケールの線形補間
+		it->scale = (it->e_scale - it->s_scale) / f;
+		it->scale += it->s_scale;
+	}
+
+	ParticleManager::UpdateViewMatrix(eye, target, up, isBilbord);
+
+	//頂点バッファへデータ転送
+	VertexPos* vertMap = nullptr;
+	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
+	if (SUCCEEDED(result))
+	{
+		for (std::forward_list<Particle>::iterator it = particles.begin(); it != particles.end(); it++)
+		{
+			vertMap->pos = it->position;
+			vertMap->scale = it->scale;
+			vertMap++;
+		}
+		vertBuff->Unmap(0, nullptr);
+	}
+
+	// 定数バッファへデータ転送
+	ConstBufferData* constMap = nullptr;
+	result = constBuff->Map(0, nullptr, (void**)&constMap);
+	//constMap->color = color;
+	constMap->mat = ParticleManager::matView * ParticleManager::matProjection;	// 行列の合成
+	constMap->matBillboard = ParticleManager::matBillboard;
+	constMap->alpha = this->alpha;
+	constBuff->Unmap(0, nullptr);
+}
+bool ParticleIndi::LoadTexture(const wchar_t* texName)
 {
 	HRESULT result = S_FALSE;
 
@@ -613,7 +668,7 @@ bool ParticleIndi::LoadTexture(const wchar_t *texName)
 		assert(0);
 	}
 
-	const Image *img = scratchImg.GetImage(0, 0, 0); // 生データ抽出
+	const Image* img = scratchImg.GetImage(0, 0, 0); // 生データ抽出
 
 	// リソース設定
 	CD3DX12_RESOURCE_DESC texresDesc = CD3DX12_RESOURCE_DESC::Tex2D(
@@ -667,12 +722,12 @@ bool ParticleIndi::LoadTexture(const wchar_t *texName)
 
 	return true;
 }
-void ParticleIndi::Add(int life, XMFLOAT3 &f_position, XMFLOAT3 &velocity, XMFLOAT3 &accel, float start_scale, float end_scale)
+void ParticleIndi::Add(int life, XMFLOAT3& f_position, XMFLOAT3& velocity, XMFLOAT3& accel, float start_scale, float end_scale)
 {
 	//要素追加
 	particles.emplace_front();
 	//追加した要素
-	Particle &p = particles.front();
+	Particle& p = particles.front();
 	p.position = f_position;
 	p.velocity = velocity;
 	p.accel = accel;
@@ -681,7 +736,19 @@ void ParticleIndi::Add(int life, XMFLOAT3 &f_position, XMFLOAT3 &velocity, XMFLO
 	p.e_scale = end_scale;
 	p.scale = p.s_scale;
 }
-void ParticleIndi::StartParticle( const XMFLOAT3 emitterPosition, float startSize, float endSize, int life)
+void ParticleIndi::Add(int life, DirectX::XMFLOAT3& f_position, float angle, float start_scale, float end_scale)
+{
+	//要素追加
+	particles.emplace_front();
+	//追加した要素
+	Particle& p = particles.front();
+	p.position = f_position;
+	p.num_frame = life;
+	p.s_scale = start_scale;
+	p.e_scale = end_scale;
+	p.angle = angle;
+}
+void ParticleIndi::StartParticle(const XMFLOAT3 emitterPosition, float startSize, float endSize, int life)
 {
 	for (int i = 0; i < 100; i++)
 	{
@@ -802,7 +869,7 @@ void ParticleIndi::LuckParticle(const DirectX::XMFLOAT3 emitterPosition, float s
 
 		acc.z = -vel.z / 50.0f;
 		acc.y = -vel.y / 50.0f;
-		
+
 		Add(life, pos, vel, acc, startSize, endSize);
 	}
 }
@@ -851,16 +918,16 @@ void ParticleIndi::UpParticle(const DirectX::XMFLOAT3 emitterPosition, float sta
 	XMFLOAT3 pos{};
 	XMFLOAT3 vel{};
 	XMFLOAT3 acc{};
-	float y,z;
+	float y, z;
 	int count = 20;
 
 	for (int i = 0; i < count; i++)
 	{
 		pos = emitterPosition;
-		
+
 		z = cosf(i * (360.0f / count) * 3.141592f / 180.0f);
 		y = sinf(i * (360.0f / count) * 3.141592f / 180.0f);
-		
+
 		pos.z += z * life;
 		pos.y += y * life;
 		vel.z = -z;
@@ -871,8 +938,8 @@ void ParticleIndi::UpParticle(const DirectX::XMFLOAT3 emitterPosition, float sta
 		Add(life, pos, vel, acc, startSize, endSize);
 
 	}
-	
-	
+
+
 }
 void ParticleIndi::RainParticle(const DirectX::XMFLOAT3 emitterPosition, float startSize, float endSize, int life, int count)
 {
@@ -880,7 +947,7 @@ void ParticleIndi::RainParticle(const DirectX::XMFLOAT3 emitterPosition, float s
 	XMFLOAT3 vel{};
 	XMFLOAT3 acc{};
 
-	for (int i = 0;i < count;i++)
+	for (int i = 0; i < count; i++)
 	{
 		pos = emitterPosition;
 		pos.z = static_cast<float>(rand() % 100 - 50);
@@ -945,7 +1012,7 @@ void ParticleIndi::BackParticle(const DirectX::XMFLOAT3 emitterPosition, float s
 	pos.y += (int)randam % 200 - 100 + (int)randam % 10 / 10;
 	vel.z -= 1.0f;
 
-	
+
 	Add(life, pos, vel, acc, startSize, endSize);
 }
 
@@ -973,52 +1040,47 @@ void ParticleIndi::FlashParticle(const DirectX::XMFLOAT3 emitterPosition, float 
 	Add(life, pos, vel, acc, startSize, endSize);
 }
 
+void ParticleIndi::LifeParticle(const DirectX::XMFLOAT3 cameraPosition, float R, float startSize, float endSize, int life)
+{
+	for (int i = 0; i < 1; i++)
+	{
+		int angle = rand() & 360;
+		const int hiK = 60;
+		int hi = rand() & hiK;
+		hi -= hiK / 2;
+		XMFLOAT3 pos;
+		pos.x = cameraPosition.x + (ShlomonMath::Cos(angle) * R);
+		pos.z = cameraPosition.z + (ShlomonMath::Sin(angle) * R);
+		pos.y = cameraPosition.y + hi;
+		Add(life, pos, static_cast<float>(angle), startSize, endSize);
+	}
+}
+
 ParticleControl::ParticleControl()
 {
 }
 
 ParticleControl::~ParticleControl()
 {
-	
+
 }
 
 void ParticleControl::Update()
 {
-	
-	for (int i = 0; i < 10; i++)
-	{
-		//numbers[i]->Update(Cameras::camera.eye.v, Cameras::camera.target.v, Cameras::camera.up.v);
-	}
+	elementEffect->ElementUpdate(Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up);
 }
 
-void ParticleControl::Init(BaseDirectX &baseDirectX)
+void ParticleControl::Init(BaseDirectX& baseDirectX)
 {
 	// 3Dパーティクル静的初期化
 	if (!ParticleManager::StaticInitialize(baseDirectX.dev.Get(), window_width, window_height, Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up))
 	{
 		assert(0);
 	}
-	
-	/*numbers[0].reset(numbers[0]->Create(L"Resource/Img/number_0.png"));
-	numbers[1].reset(numbers[0]->Create(L"Resource/Img/number_1.png"));
-	numbers[2].reset(numbers[0]->Create(L"Resource/Img/number_2.png"));
-	numbers[3].reset(numbers[0]->Create(L"Resource/Img/number_3.png"));
-	numbers[4].reset(numbers[0]->Create(L"Resource/Img/number_4.png"));
-	numbers[5].reset(numbers[0]->Create(L"Resource/Img/number_5.png"));
-	numbers[6].reset(numbers[0]->Create(L"Resource/Img/number_6.png"));
-	numbers[7].reset(numbers[0]->Create(L"Resource/Img/number_7.png"));
-	numbers[8].reset(numbers[0]->Create(L"Resource/Img/number_8.png"));
-	numbers[9].reset(numbers[0]->Create(L"Resource/Img/number_9.png"));*/
-	for (int i = 0; i < 10; i++)
-	{
-		//numbers[i]->alpha = 0.0f;
-	}
+	elementEffect.reset(elementEffect->Create(L"Resource/Image/element.png"));
 }
 
-void ParticleControl::Draw()
+void ParticleControl::Draw(BaseDirectX& baseDirectX)
 {
-	for (int i = 0; i < 10; i++)
-	{
-		//ParticleDraw(BaseDirectX::cmdList.Get(), numbers[i].get());
-	}
+	ParticleDraw(baseDirectX.cmdList.Get(), elementEffect.get());
 }

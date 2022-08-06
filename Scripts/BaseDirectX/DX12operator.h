@@ -9,6 +9,14 @@ using namespace DirectX;
 
 namespace ShlomonMath
 {
+	static const int Cos(int angle)
+	{
+		return static_cast<int>(cos(angle * PI / 180.0f));
+	}
+	static const int Sin(int angle)
+	{
+		return static_cast<int>(sin(angle * PI / 180.0f));
+	}
 	static const float Cos(float angle)
 	{
 		return static_cast<float>(cos(angle * PI / 180.0f));
@@ -18,7 +26,6 @@ namespace ShlomonMath
 		return static_cast<float>(sin(angle * PI / 180.0f));
 	}
 }
-
 static const XMFLOAT3 operator +(const XMFLOAT3 v1, const XMFLOAT3 v2)
 {
 	XMFLOAT3 result;
@@ -27,7 +34,6 @@ static const XMFLOAT3 operator +(const XMFLOAT3 v1, const XMFLOAT3 v2)
 	result.z = v1.z + v2.z;
 	return result;
 }
-
 static const XMFLOAT3 operator -(const XMFLOAT3 v1, const XMFLOAT3 v2)
 {
 	XMFLOAT3 result;
@@ -36,7 +42,6 @@ static const XMFLOAT3 operator -(const XMFLOAT3 v1, const XMFLOAT3 v2)
 	result.z = v1.z - v2.z;
 	return result;
 }
-
 static const XMFLOAT3 operator *(const XMFLOAT3 v1, const XMFLOAT3 v2)
 {
 	XMFLOAT3 result;
@@ -45,7 +50,6 @@ static const XMFLOAT3 operator *(const XMFLOAT3 v1, const XMFLOAT3 v2)
 	result.z = v1.z * v2.z;
 	return result;
 }
-
 static const XMFLOAT3 operator /(const XMFLOAT3 v1, const XMFLOAT3 v2)
 {
 	XMFLOAT3 result;
@@ -54,7 +58,6 @@ static const XMFLOAT3 operator /(const XMFLOAT3 v1, const XMFLOAT3 v2)
 	result.z = v1.z / v2.z;
 	return result;
 }
-
 static const XMFLOAT3 operator /(const XMFLOAT3 v1, float s)
 {
 	XMFLOAT3 result;
@@ -63,7 +66,6 @@ static const XMFLOAT3 operator /(const XMFLOAT3 v1, float s)
 	result.z = v1.z / s;
 	return result;
 }
-
 static const XMFLOAT3 operator +(const XMFLOAT3 v1, const XMVECTOR v2)
 {
 	XMFLOAT3 result;
@@ -72,7 +74,6 @@ static const XMFLOAT3 operator +(const XMFLOAT3 v1, const XMVECTOR v2)
 	result.z = v1.z + v2.m128_f32[2];
 	return result;
 }
-
 static const XMFLOAT3 operator +(const XMVECTOR v1, const XMFLOAT3 v2)
 {
 	XMFLOAT3 result;
@@ -81,7 +82,6 @@ static const XMFLOAT3 operator +(const XMVECTOR v1, const XMFLOAT3 v2)
 	result.z = v2.z + v1.m128_f32[2];
 	return result;
 }
-
 static const XMFLOAT3 operator -(const XMFLOAT3 v1, const XMVECTOR v2)
 {
 	XMFLOAT3 result;
@@ -90,7 +90,6 @@ static const XMFLOAT3 operator -(const XMFLOAT3 v1, const XMVECTOR v2)
 	result.z = v1.z - v2.m128_f32[2];
 	return result;
 }
-
 static const XMFLOAT3 operator -(const XMVECTOR v1, const XMFLOAT3 v2)
 {
 	XMFLOAT3 result;
@@ -99,7 +98,6 @@ static const XMFLOAT3 operator -(const XMVECTOR v1, const XMFLOAT3 v2)
 	result.z = v2.z - v1.m128_f32[2];
 	return result;
 }
-
 static const XMFLOAT3 operator +(const XMFLOAT3 v1, const float v2)
 {
 	XMFLOAT3 result;
@@ -108,7 +106,6 @@ static const XMFLOAT3 operator +(const XMFLOAT3 v1, const float v2)
 	result.z = v1.z + v2;
 	return result;
 }
-
 static const XMFLOAT3 operator +(const float v1, const XMFLOAT3 v2)
 {
 	XMFLOAT3 result;
@@ -117,7 +114,6 @@ static const XMFLOAT3 operator +(const float v1, const XMFLOAT3 v2)
 	result.z = v2.z + v1;
 	return result;
 }
-
 static const XMFLOAT3 operator -(const XMFLOAT3 v1, const float v2)
 {
 	XMFLOAT3 result;
@@ -126,7 +122,6 @@ static const XMFLOAT3 operator -(const XMFLOAT3 v1, const float v2)
 	result.z = v1.z - v2;
 	return result;
 }
-
 static const XMFLOAT3 operator -(const float v1, const XMFLOAT3 v2)
 {
 	XMFLOAT3 result;
@@ -135,7 +130,6 @@ static const XMFLOAT3 operator -(const float v1, const XMFLOAT3 v2)
 	result.z = v2.z - v1;
 	return result;
 }
-
 static const XMFLOAT3 operator *(const XMFLOAT3& v1, float s)
 {
 	XMFLOAT3 v;
@@ -144,7 +138,6 @@ static const XMFLOAT3 operator *(const XMFLOAT3& v1, float s)
 	v.z = v1.z * s;
 	return v;
 }
-
 static const XMFLOAT3 operator *(float s, const XMFLOAT3& v1)
 {
 	XMFLOAT3 v;
@@ -153,7 +146,6 @@ static const XMFLOAT3 operator *(float s, const XMFLOAT3& v1)
 	v.z = v1.z * s;
 	return v;
 }
-
 static XMVECTOR operator - (const XMFLOAT3& v2)
 {
 	XMVECTOR v;
@@ -162,7 +154,6 @@ static XMVECTOR operator - (const XMFLOAT3& v2)
 	v.m128_f32[2] -= v2.z;
 	return v;
 }
-
 static const XMFLOAT3 ConvertXMVECTORtoXMFLOAT3(const XMVECTOR& v)
 {
 	XMFLOAT3 result;
@@ -171,7 +162,6 @@ static const XMFLOAT3 ConvertXMVECTORtoXMFLOAT3(const XMVECTOR& v)
 	result.z = v.m128_f32[2];
 	return result;
 }
-
 static const XMVECTOR ConvertXMFLOAT3toXMVECTOR(const XMFLOAT3& v)
 {
 	XMVECTOR result;
@@ -180,7 +170,6 @@ static const XMVECTOR ConvertXMFLOAT3toXMVECTOR(const XMFLOAT3& v)
 	result.m128_f32[2] = v.z;
 	return result;
 }
-
 static XMFLOAT3 Normalize(const XMFLOAT3& v)
 {
 	float leg = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
@@ -190,7 +179,6 @@ static XMFLOAT3 Normalize(const XMFLOAT3& v)
 	result.z = v.z / leg;
 	return result;
 }
-
 static XMFLOAT3 Lerp(const XMFLOAT3& start, XMFLOAT3& end, const float t)
 {
 	XMFLOAT3 result, result2;
@@ -201,7 +189,6 @@ static XMFLOAT3 Lerp(const XMFLOAT3& start, XMFLOAT3& end, const float t)
 	result.z = result.z + result2.z;
 	return result;
 }
-
 static XMFLOAT3 Cross(const XMFLOAT3& v1, const XMFLOAT3& v2)
 {
 	XMFLOAT3 result;
@@ -217,7 +204,18 @@ static const wchar_t* ConvertStringToWchaer(std::string name)
 	mbstowcs_s(&ret, text, name.size() + 1, name.c_str(), _TRUNCATE);
 	return text;
 }
-
+static bool CollisionRectangle2D(XMFLOAT3& leftUp, float wid, float hi, XMFLOAT3& pointPos)
+{
+	bool left = leftUp.x <= pointPos.x;
+	bool right = leftUp.x + wid >= pointPos.x;
+	bool up = leftUp.y <= pointPos.y;
+	bool down = leftUp.y + hi >= pointPos.y;
+	if (left && right && up && down)
+	{
+		return true;
+	}
+	return false;
+}
 namespace ShlomonMath
 {
 	static XMFLOAT3 EaseInQuad(const XMFLOAT3& start, XMFLOAT3& end, const float t)
@@ -327,7 +325,6 @@ static float Lenght(XMVECTOR position1, XMVECTOR position2)
 	result = sqrtf((leng.x * leng.x) + (leng.y * leng.y) + (leng.z * leng.z));
 	return result;
 }
-
 static float Lenght(XMFLOAT3 position1, XMFLOAT3 position2)
 {
 	float result;
@@ -338,7 +335,6 @@ static float Lenght(XMFLOAT3 position1, XMFLOAT3 position2)
 	result = sqrtf((leng.x * leng.x) + (leng.y * leng.y) + (leng.z * leng.z));
 	return result;
 }
-
 static float Lenght(XMVECTOR position1, XMFLOAT3 position2)
 {
 	float result;
@@ -349,7 +345,6 @@ static float Lenght(XMVECTOR position1, XMFLOAT3 position2)
 	result = sqrtf((leng.x * leng.x) + (leng.y * leng.y) + (leng.z * leng.z));
 	return result;
 }
-
 static float Lenght(XMFLOAT3 &v)
 {
 	float result;
@@ -360,7 +355,6 @@ static float Lenght(XMFLOAT3 &v)
 	result = sqrtf((leng.x * leng.x) + (leng.y * leng.y) + (leng.z * leng.z));
 	return result;
 }
-
 static float length(const float v1, const float v2)
 {
 	float result = 0.0f;
@@ -368,32 +362,15 @@ static float length(const float v1, const float v2)
 	hoge = hoge * result;
 	return hoge;
 };
-
-//static XMFLOAT2 Normalize(const float v1, const float v2)
-//{
-//	XMFLOAT2 result = {};
-//
-//	return result;
-//}
-
-//static XMFLOAT2 Dot(const float v1, const float v2)
-//{
-//	XMFLOAT2 result = {};
-//
-//	return result;
-//}
-
 static float Magnitude(const XMFLOAT3& v)
 {
 	float res = v.x * v.x + v.y * v.y + v.z * v.z;
 	return sqrtf(res);
 }
-
 static float Dot(const XMFLOAT3& v1, const XMFLOAT3& v2)
 {
 	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
-
 static XMFLOAT3 GetRandom(int length)
 {
 	XMFLOAT3 result;

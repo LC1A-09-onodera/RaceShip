@@ -82,7 +82,7 @@ private:
 	Seling seling;
 	Seling rSeling;
 	//êÖñ óp
-	WaterFace waterFace;
+	WaterFace waterFace[2];
 	WaterFace normalWater;
 	WaterFace mosaicWater;
 	WaterFace monoWater;
