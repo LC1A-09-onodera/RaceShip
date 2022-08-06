@@ -2,6 +2,8 @@
 #include "../3DModel/Model.h"
 #include "../PostEffect/PostEffect.h"
 
+class Camera;
+
 class WaterConstBuff0 : public ConstBufferDataB0
 {
 public:
@@ -28,7 +30,7 @@ public:
 	UINT frameTime = 0;
 	//EachInfo each;
 	void CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& shader,PostEffect &postEffect, bool smoothing = false);
-	bool LoadTexture(BaseDirectX& baseDirectX, const string& directPath, const string& filename, PostEffect &postEffect);
+	bool LoadTexture(BaseDirectX& baseDirectX, PostEffect &postEffect);
 	void LoadMaterial(BaseDirectX& baseDirectX, const string& directoryPath, const string& filename, PostEffect& postEffect);
 	void InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& shader);
 	void Update(BaseDirectX& baseDirectX);
@@ -41,9 +43,15 @@ class WaterFace
 {
 public:
 	WaterFaceModel waterModel;
-
+	shared_ptr<Camera> f_camera;
 	void LoadModel(BaseDirectX& baseDirectX, HLSLShader &useShader, PostEffect &postEffect);
 	void Init(BaseDirectX& baseDirectX);
 	void Update();
 	void Draw(BaseDirectX& baseDirectX,  XMVECTOR &selingPos);
+};
+
+class WaterCameraManager
+{
+public:
+	static list<shared_ptr<Camera>> f_cameras;
 };

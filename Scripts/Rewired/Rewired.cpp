@@ -389,32 +389,26 @@ void Rewired::KeyCodeString::KeyCodeStringInit(BaseDirectX& baseDirectX)
 	mPadKeys.push_back(PadPouse);
 }
 
-bool Rewired::KeyCodeString::GetAnyInput(KeyInfo<KeyCode> *key)
+bool Rewired::KeyCodeString::GetAnyInput(KeyInfo<KeyCode> &key)
 {
 	for (auto itr = mKeyboardKeys.begin(); itr != mKeyboardKeys.end(); ++itr)
 	{
 		if (Input::KeyTrigger(itr->keyCode))
 		{
-			if (key != nullptr)
-			{
-				key = &(*itr);
-			}
+			key = (*itr);
 			return true;
 		}
 	}
 	return false;
 }
 
-bool Rewired::KeyCodeString::GetPadAnyInput(KeyInfo<PadKeyCode>* key)
+bool Rewired::KeyCodeString::GetPadAnyInput(KeyInfo<PadKeyCode>& key)
 {
 	for (auto itr = mPadKeys.begin(); itr != mPadKeys.end(); ++itr)
 	{
 		if (Input::directInput->IsButtonDown(itr->keyCode))
 		{
-			if (key != nullptr)
-			{
-				key = &(*itr);
-			}
+			key = (*itr);
 			return true;
 		}
 	}
@@ -489,5 +483,85 @@ void Rewired::RewiredContainer::GetFilesName()
 			}
 		}
 		closedir(dir);
+	}
+}
+
+void Rewired::RewiredContainer::AddKey(std::list<RewiredKeys>::iterator itr, int keyIndex)
+{
+	if (static_cast<int>(KeyCode::KeyCodeMax) - 1 > keyIndex)
+	{
+		auto keyStringItr = Rewired::KeyCodeString::mKeyboardKeys.begin();
+		if (Rewired::KeyCodeString::mKeyboardKeys.size() > 0)
+		{
+			for (int i = 0; i < keyIndex; i++)
+			{
+				keyStringItr++;
+			}
+		}
+		bool isA = false;
+		//Šù‚ÉŽg‚Á‚Ä‚¢‚éƒL[‚ðÄ“o˜^‚µ‚È‚¢
+		for (auto keyContainarItr = Rewired::RewiredContainer::rewiredsC.begin(); keyContainarItr != Rewired::RewiredContainer::rewiredsC.end(); ++keyContainarItr)
+		{
+			for (auto kItr = keyContainarItr->keys.begin(); kItr != keyContainarItr->keys.end(); ++kItr)
+			{
+				if (*kItr == keyStringItr->keyCode)
+				{
+					isA = true;
+				}
+			}
+		}
+		if (!isA) itr->AddKey(keyStringItr->keyCode);
+	}
+	else
+	{
+		auto padStringItr = Rewired::KeyCodeString::mPadKeys.begin();
+		if (Rewired::KeyCodeString::mPadKeys.size() > 0)
+		{
+			for (int j = 0; j < keyIndex - ((static_cast<int>(KeyCode::KeyCodeMax)) - 1); j++)
+			{
+				padStringItr++;
+			}
+		}
+		//Šù‚ÉŽg‚Á‚Ä‚¢‚éƒL[‚ðÄ“o˜^‚µ‚È‚¢
+		bool isA = false;
+		for (auto keyContainarItr = Rewired::RewiredContainer::rewiredsC.begin(); keyContainarItr != Rewired::RewiredContainer::rewiredsC.end(); ++keyContainarItr)
+		{
+			for (auto kItr = keyContainarItr->padKeys.begin(); kItr != keyContainarItr->padKeys.end(); ++kItr)
+			{
+				if (*kItr == padStringItr->keyCode)
+				{
+					isA = true;
+				}
+			}
+		}
+		if (!isA) itr->AddKey(padStringItr->keyCode);
+	}
+}
+
+void Rewired::RewiredContainer::SubKey(std::list<RewiredKeys>::iterator itr, int keyIndex)
+{
+	if (static_cast<int>(KeyCode::KeyCodeMax) - 1 > keyIndex)
+	{
+		auto keyStringItr = Rewired::KeyCodeString::mKeyboardKeys.begin();
+		if (Rewired::KeyCodeString::mKeyboardKeys.size() > 0)
+		{
+			for (int i = 0; i < keyIndex; i++)
+			{
+				keyStringItr++;
+			}
+		}
+		itr->Subkey(keyStringItr->keyCode);
+	}
+	else
+	{
+		auto padStringItr = Rewired::KeyCodeString::mPadKeys.begin();
+		if (Rewired::KeyCodeString::mPadKeys.size() > 0)
+		{
+			for (int j = 0; j < keyIndex - ((static_cast<int>(KeyCode::KeyCodeMax)) - 1); j++)
+			{
+				padStringItr++;
+			}
+		}
+		itr->SubKey(padStringItr->keyCode);
 	}
 }

@@ -1,10 +1,16 @@
 #include "WaterFace.h"
 #include "../Shader/ShaderManager.h"
 #include "../Camera/Camera.h"
+list<shared_ptr<Camera>> WaterCameraManager::f_cameras;
 
 void WaterFace::LoadModel(BaseDirectX& baseDirectX, HLSLShader &useShader, PostEffect& postEffect)
 {
 	waterModel.CreateModel(baseDirectX, "Plane2", useShader, postEffect);
+	XMFLOAT3 eyePos = { 0, 0, 0 };
+	XMFLOAT3 targetPos = { 0, 0, 0 };
+	f_camera.reset(new Camera());
+	f_camera.get()->Init(eyePos, targetPos);
+	WaterCameraManager::f_cameras.push_back(f_camera);
 	Init(baseDirectX);
 }
 
@@ -125,7 +131,7 @@ void WaterFaceModel::CreateModel(BaseDirectX& baseDirectX, const char* name, HLS
 	file.close();
 }
 
-bool WaterFaceModel::LoadTexture(BaseDirectX &baseDirectX, const string& directPath, const string& filename, PostEffect& postEffect)
+bool WaterFaceModel::LoadTexture(BaseDirectX &baseDirectX, PostEffect& postEffect)
 {
 	// シェーダリソースビュー作成
 	cpuDescHandleSRV = CD3DX12_CPU_DESCRIPTOR_HANDLE(descHeap->GetCPUDescriptorHandleForHeapStart(), 0, descriptorHandleIncrementSize);
@@ -192,7 +198,7 @@ void WaterFaceModel::LoadMaterial(BaseDirectX& baseDirectX, const string& direct
 		if (key == "map_Kd")
 		{
 			line_striam >> material.texFilename;
-			LoadTexture(baseDirectX, directoryPath, material.texFilename, postEffect);
+			LoadTexture(baseDirectX, postEffect);
 		}
 	}
 	materialCount += 1;

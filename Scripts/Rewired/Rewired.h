@@ -1,7 +1,6 @@
 #pragma once
 #include "../BaseDirectX/Input.h"
 #include "../Sprite/Sprite.h"
-#include <tuple>
 
 namespace Rewired
 {
@@ -16,8 +15,8 @@ namespace Rewired
 	{
 	public:
 		static void KeyCodeStringInit(BaseDirectX &baseDirectX);
-		static bool GetAnyInput(KeyInfo<KeyCode> *key = nullptr);
-		static bool GetPadAnyInput(KeyInfo<PadKeyCode> *key = nullptr);
+		static bool GetAnyInput(KeyInfo<KeyCode> &key);
+		static bool GetPadAnyInput(KeyInfo<PadKeyCode> &key );
 		//Keyborad
 		static list<KeyInfo<KeyCode>> mKeyboardKeys;
 		//XBoxPad
@@ -54,5 +53,7 @@ namespace Rewired
 		static void ReloadRewired();
 		static void LoadAllRewired();
 		static void GetFilesName();
+		static void AddKey(std::list<RewiredKeys>::iterator itr, int keyIndex);
+		static void SubKey(std::list<RewiredKeys>::iterator itr, int keyIndex);
 	};
 }
