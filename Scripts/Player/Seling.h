@@ -3,6 +3,8 @@
 #include "../BaseDirectX/DX12operator.h"
 #include "../Rewired/Rewired.h"
 
+class Camera;
+
 class Seling
 {
 	//³–Ê•ûŒü‚Ìæ“¾
@@ -11,8 +13,7 @@ class Seling
 	float angle = 0;
 	//“®‚­‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒO
 	bool isMoveForce = false;
-	//“®‚­—Ê
-	XMFLOAT3 addForce = { 0.0f ,0.0f , 0.0f};
+	
 	//Å‘å’l‚ğŒˆ‚ß‚Ä‚¨‚­
 	const XMFLOAT3 maxForce = { 0.7f ,0.7f , 0.7f};
 
@@ -24,6 +25,8 @@ class Seling
 	const float addSelingAngle = 1.0f;
 	const float subForce = 50.0f;
 public:
+	//“®‚­—Ê
+	XMFLOAT3 addForce = { 0.0f ,0.0f , 0.0f};
 	Model selingModel;
 	void AddForce(XMFLOAT3& force);
 	XMFLOAT3 GetDirection()
@@ -35,7 +38,9 @@ public:
 	void LoadModel(BaseDirectX &baseDirectX);
 	void Init();
 	void Update();
+	void Update(bool isPouse);
 	void Draw(BaseDirectX& baseDirectX, bool isRCamera = false);
+	void Draw(BaseDirectX& baseDirectX, Camera &f_camera);
 
 	void ForceAttach();
 	void Move();

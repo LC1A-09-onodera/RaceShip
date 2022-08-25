@@ -19,9 +19,9 @@ protected:
 
 	list<pair<string, Sprite>> keySprites;
 
-	bool mInputReception;
+	bool mInputReception = false;
 
-	Rewired::RewiredKeys *selectKey;
+	Rewired::RewiredKeys *selectKey = nullptr;
 	Sprite mSMenu;
 	Sprite mSFront;
 	Sprite mSBack;

@@ -27,11 +27,12 @@ public:
 	ComPtr<ID3D12Resource> depthBuff;
 	ComPtr<ID3D12DescriptorHeap> descHeapRTV;
 	ComPtr<ID3D12DescriptorHeap> descHeapDSV;
+	PostEffect m_renderTarget;
 	UINT frameTime = 0;
 	//EachInfo each;
-	void CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& shader,PostEffect &postEffect, bool smoothing = false);
-	bool LoadTexture(BaseDirectX& baseDirectX, PostEffect &postEffect);
-	void LoadMaterial(BaseDirectX& baseDirectX, const string& directoryPath, const string& filename, PostEffect& postEffect);
+	void CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& shader, bool smoothing = false);
+	bool LoadTexture(BaseDirectX& baseDirectX);
+	void LoadMaterial(BaseDirectX& baseDirectX, const string& directoryPath, const string& filename);
 	void InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& shader);
 	void Update(BaseDirectX& baseDirectX);
 	void PreDraw();
@@ -43,8 +44,8 @@ class WaterFace
 {
 public:
 	WaterFaceModel waterModel;
-	shared_ptr<Camera> f_camera;
-	void LoadModel(BaseDirectX& baseDirectX, HLSLShader &useShader, PostEffect &postEffect);
+	shared_ptr<Camera> m_camera;
+	void LoadModel(BaseDirectX& baseDirectX, HLSLShader &useShader, XMFLOAT3 &f_cameraPos, XMFLOAT3 &f_cameraTarget);
 	void Init(BaseDirectX& baseDirectX);
 	void Update();
 	void Draw(BaseDirectX& baseDirectX,  XMVECTOR &selingPos);

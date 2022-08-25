@@ -6,6 +6,7 @@
 #include <DirectXMath.h>
 #include "../BaseDirectX/BaseDirectX.h"
 #include "../Rewired/Rewired.h"
+#include "../Player/Seling.h"
 using namespace Microsoft::WRL;
 using namespace DirectX;
 
@@ -37,6 +38,7 @@ private:
     static void ShowRewiredElement();
     static void CreateMenuBar();
     static void InspectorView();
+    static void FileFalse();
     static void EachInfo();
     static ComPtr<ID3D12DescriptorHeap> CreateDescrriptorHeapForImgui(BaseDirectX& baseDirectX);
     static ComPtr<ID3D12DescriptorHeap> GetHeapForImgui();
@@ -46,9 +48,10 @@ public:
     static void Init(BaseDirectX& baseDirectX);
     static void DebugUpdate();
     static void SetWindowActive(bool f_isActive);
-    static void Update(BaseDirectX &baseDirectX);
-
+    static void Update(BaseDirectX &baseDirectX, Seling& player);
+    static bool isMulchthled;
     static int effectType;
+    static bool isFileOutputFalse;
     enum class ImguiType
     {
         Status,

@@ -16,6 +16,7 @@
 #include <fstream>
 #include <stdarg.h>
 #include "../3DModel/Model.h"
+#include "../Player/Seling.h"
 
 //#define _DEBUG
 
@@ -44,8 +45,9 @@ int Imgui::LoadStageNum = 1;
 bool Imgui::isExport = false;
 bool Imgui::isLoadstage = false;
 bool Imgui::isDeleteObjects = false;
-
+bool Imgui::isFileOutputFalse = false;
 int Imgui::radioMode = 0;
+bool Imgui::isMulchthled = true;
 
 list<Rewired::RewiredKeys> Imgui::keyList;
 char Imgui::buf[256] = {};
@@ -156,7 +158,7 @@ ComPtr<ID3D12DescriptorHeap> Imgui::GetHeapForImgui()
 
 void Imgui::DrawImGui(BaseDirectX& baseDirectX)
 {
-//#ifdef DEBUG
+    //#ifdef DEBUG
     if (!isActive) return;
 
     ImGui_ImplDX12_NewFrame();
@@ -178,10 +180,20 @@ void Imgui::DrawImGui(BaseDirectX& baseDirectX)
 
     ImGui::End();
 
+    if (isFileOutputFalse)
+    {
+        ImGui::Begin("Error", nullptr, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
+        ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
+
+        FileFalse();
+
+        ImGui::End();
+    }
+
     ImGui::Render();
     baseDirectX.cmdList->SetDescriptorHeaps(1, GetHeapForImgui().GetAddressOf());
     ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), baseDirectX.cmdList.Get());
-//#endif//DEBUG
+    //#endif//DEBUG
 }
 
 void Imgui::Init(BaseDirectX& baseDirectX)
@@ -236,6 +248,15 @@ void Imgui::InspectorView()
     DebugUpdate();
 }
 
+void Imgui::FileFalse()
+{
+    ImGui::Text("File Export Is Failed");
+    if (ImGui::Button("Close"))
+    {
+        isFileOutputFalse = false;
+    }
+}
+
 void Imgui::EachInfo()
 {
     if (tab == ImguiType::Status)
@@ -279,6 +300,7 @@ void Imgui::EachInfo()
         {
             isDeleteObjects = true;
         }
+        ImGui::Checkbox("mulchThled", &isMulchthled);
     }
     else if (tab == ImguiType::CameraInfo)
     {
@@ -296,7 +318,7 @@ void Imgui::EachInfo()
     }
     else if (tab == ImguiType::Debug)
     {
-        
+
     }
     else if (tab == ImguiType::PostEffect)
     {
@@ -332,7 +354,7 @@ void Imgui::DebugUpdate()
     static int inspectorConbo = 1;
     int count = 0;
     auto itr = EachManager::eahcs.begin();
-    for ( ;itr != EachManager::eahcs.end(); ++itr)
+    for (; itr != EachManager::eahcs.end(); ++itr)
     {
         count++;
         ImGui::RadioButton((*itr)->m_eachName.c_str(), &inspectorConbo, count);
@@ -349,7 +371,7 @@ void Imgui::DebugUpdate()
     float scale[3] = { (*itr)->scale.x, (*itr)->scale.y, (*itr)->scale.z };
     ImGui::DragFloat3("position", pos, 0.005f);
     ImGui::DragFloat3("rotation", rot, 0.005f);
-    ImGui::DragFloat3("scale", scale, 0.005f); 
+    ImGui::DragFloat3("scale", scale, 0.005f);
     (*itr)->position = { pos[0], pos[1], pos[2], 1.0f };
     (*itr)->rotation = { rot[0], rot[1], rot[2] };
     (*itr)->scale = { scale[0], scale[1], scale[2] };
@@ -366,18 +388,21 @@ void Imgui::SetWindowActive(bool f_isActive)
     Imgui::isActive = f_isActive;
 }
 
-void Imgui::Update(BaseDirectX& baseDirectX)
+void Imgui::Update(BaseDirectX& baseDirectX, Seling& player)
 {
     if (isLoadstage)
     {
         string path = "Resource/TextData/Stage/stage" + to_string(LoadStageNum) + ".txt";
-        StageObjects::LoadFile(baseDirectX, path.c_str());
+        StageObjects::LoadFile(baseDirectX, player, path.c_str());
         isLoadstage = false;
     }
     if (isExport)
     {
         string path = "Resource/TextData/Stage/stage" + to_string(exportStageNum) + ".txt";
-        MapEditorObjects::OutputFile(path.c_str());
+        if (MapEditorObjects::OutputFile(path.c_str()) == false)
+        {
+            isFileOutputFalse = true;
+        }
         isExport = false;
     }
     if (isDeleteObjects)

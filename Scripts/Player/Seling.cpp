@@ -57,10 +57,31 @@ void Seling::Update()
 		ForceAttach();
 	}
 }
+void Seling::Update(bool isPouse)
+{
+	if (!isGoal && !isPouse)
+	{
+		Move();
+
+		ForceUpdate();
+
+		HitWall();
+
+		HitGoal();
+
+		ForceAttach();
+	}
+}
 
 void Seling::Draw(BaseDirectX& baseDirectX, bool isRCamera)
 {
 	selingModel.Update(baseDirectX, &selingModel.each, isRCamera);
+	Draw3DObject(baseDirectX, selingModel);
+}
+
+void Seling::Draw(BaseDirectX& baseDirectX, Camera& f_camera)
+{
+	selingModel.Update(baseDirectX, &selingModel.each, f_camera);
 	Draw3DObject(baseDirectX, selingModel);
 }
 

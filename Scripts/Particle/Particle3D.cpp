@@ -29,8 +29,8 @@ XMFLOAT3 ParticleManager::up = { 0, 1, 0 };
 XMMATRIX ParticleManager::matBillboard = XMMatrixIdentity();
 XMMATRIX ParticleManager::matBillboardY = XMMatrixIdentity();
 
-std::shared_ptr<ParticleIndi> ParticleControl::attackEffect = nullptr;
 std::shared_ptr<ParticleIndi> ParticleControl::elementEffect = nullptr;
+std::shared_ptr<ParticleIndi> ParticleControl::sheetOfSpray = nullptr;
 
 bool ParticleManager::StaticInitialize(ID3D12Device* f_device, int f_window_width, int f_window_height, XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up)
 {
@@ -617,8 +617,8 @@ void ParticleIndi::ElementUpdate(DirectX::XMFLOAT3 eye, DirectX::XMFLOAT3 target
 		it->frame++;
 		it->angle += 0.2f;
 		XMFLOAT3 newPos = it->position;
-		newPos.x = (ShlomonMath::Cos(it->angle) * 30.0f);
-		newPos.z  = (ShlomonMath::Sin(it->angle) * 30.0f);
+		newPos.x = it->startPos.x + (ShlomonMath::Cos(it->angle) * 35.0f);
+		newPos.z  = it->startPos.z + (ShlomonMath::Sin(it->angle) * 35.0f);
 		//移動
 		it->position = newPos;
 		//スケールの変更
@@ -736,7 +736,7 @@ void ParticleIndi::Add(int life, XMFLOAT3& f_position, XMFLOAT3& velocity, XMFLO
 	p.e_scale = end_scale;
 	p.scale = p.s_scale;
 }
-void ParticleIndi::Add(int life, DirectX::XMFLOAT3& f_position, float angle, float start_scale, float end_scale)
+void ParticleIndi::Add(int life, DirectX::XMFLOAT3& f_position, DirectX::XMFLOAT3& startPos, float angle, float start_scale, float end_scale)
 {
 	//要素追加
 	particles.emplace_front();
@@ -747,6 +747,7 @@ void ParticleIndi::Add(int life, DirectX::XMFLOAT3& f_position, float angle, flo
 	p.s_scale = start_scale;
 	p.e_scale = end_scale;
 	p.angle = angle;
+	p.startPos = startPos;
 }
 void ParticleIndi::StartParticle(const XMFLOAT3 emitterPosition, float startSize, float endSize, int life)
 {
@@ -857,19 +858,60 @@ void ParticleIndi::LuckParticle(const DirectX::XMFLOAT3 emitterPosition, float s
 	XMFLOAT3 pos{};
 	XMFLOAT3 vel{};
 	XMFLOAT3 acc{};
-	int count = 20;
-
+	int count = 2;
+	const int hoge = 10;
 	for (int i = 0; i < count; i++)
 	{
 		pos = emitterPosition;
-		vel.z = cosf((int)i * (360.0f / count) * 3.141592f / 180.0f);
-		vel.y = sinf((int)i * (360.0f / count) * 3.141592f / 180.0f);
-		vel.z = (vel.z * (rand() % 3 + 0.1f)) / 10.0f;
-		vel.y = (vel.y * (rand() % 3 + 0.1f)) / 10.0f;
+		vel.x = static_cast<float>(rand() % 10) / 200.0f;
+		vel.x += static_cast<float>(rand() % 10) / 2000.0f;
+		if (rand() % 2 == 0)
+		{
+			vel.x = -vel.x;
+		}
+		vel.y = static_cast<float>(rand()  % 10) / 200.0f;
 
-		acc.z = -vel.z / 50.0f;
-		acc.y = -vel.y / 50.0f;
+		acc.x = -vel.x / 100.0f;
+		acc.y = -vel.y / 100.0f;
+		acc.z = -0.001f;
+		Add(life, pos, vel, acc, startSize, endSize);
+	}
+}
+void ParticleIndi::SheetOfSprayParticle(const DirectX::XMFLOAT3 emitterPosition, const DirectX::XMFLOAT3 angle, const DirectX::XMFLOAT3 changePos, float startSize, float endSize, int life)
+{
+	XMFLOAT3 pos{};
+	XMFLOAT3 vel{};
+	XMFLOAT3 acc{};
+	XMFLOAT3 ang{};
+	XMFLOAT3 chagePosi{};
+	float power = changePos.x + changePos.y + changePos.z;
+	power = abs(power);
+	power = power * 3.0f;
+	int count = 1;
+	const int hoge = 10;
+	if (power < 0.14f) return;
+	for (int i = 0; i < count; i++)
+	{
+		pos = emitterPosition;
+		vel.x = static_cast<float>(rand() % 10) / 200.0f;
+		vel.x += static_cast<float>(rand() % 10) / 2000.0f;
+		vel.x = vel.x * ShlomonMath::Cos(angle.x) * power;
 
+		vel.z = static_cast<float>(rand() % 10) / 200.0f;
+		vel.z += static_cast<float>(rand() % 10) / 2000.0f;
+		vel.z = vel.z * ShlomonMath::Sin(angle.z) * power;
+
+		if (rand() % 2 == 0)
+		{
+			vel.x = -vel.x;
+			vel.z = -vel.z;
+		}
+
+		vel.y = static_cast<float>(rand() % 10) / 140.0f * power;
+
+		acc.x = -vel.x / 100.0f;
+		acc.y = -vel.y / 100.0f;
+		acc.z = -vel.z / 100.0f;
 		Add(life, pos, vel, acc, startSize, endSize);
 	}
 }
@@ -1015,7 +1057,6 @@ void ParticleIndi::BackParticle(const DirectX::XMFLOAT3 emitterPosition, float s
 
 	Add(life, pos, vel, acc, startSize, endSize);
 }
-
 void ParticleIndi::FlashParticle(const DirectX::XMFLOAT3 emitterPosition, float startSize, float endSize, int life)
 {
 	XMFLOAT3 pos{};
@@ -1039,20 +1080,21 @@ void ParticleIndi::FlashParticle(const DirectX::XMFLOAT3 emitterPosition, float 
 	acc.y = -0.01f;
 	Add(life, pos, vel, acc, startSize, endSize);
 }
-
 void ParticleIndi::LifeParticle(const DirectX::XMFLOAT3 cameraPosition, float R, float startSize, float endSize, int life)
 {
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 50; i++)
 	{
-		int angle = rand() & 360;
+		int angle = rand() % 1080;
 		const int hiK = 60;
-		int hi = rand() & hiK;
-		hi -= hiK / 2;
+		float hi = static_cast<float>(rand() & hiK);
+		float hi2 = static_cast<float>(rand() & hiK / 10);
+		hi -= hiK / 2 + hi2;
 		XMFLOAT3 pos;
 		pos.x = cameraPosition.x + (ShlomonMath::Cos(angle) * R);
 		pos.z = cameraPosition.z + (ShlomonMath::Sin(angle) * R);
 		pos.y = cameraPosition.y + hi;
-		Add(life, pos, static_cast<float>(angle), startSize, endSize);
+		XMFLOAT3 startPos = cameraPosition;
+		Add(life, pos, startPos, static_cast<float>(angle), startSize, endSize);
 	}
 }
 
@@ -1068,6 +1110,7 @@ ParticleControl::~ParticleControl()
 void ParticleControl::Update()
 {
 	elementEffect->ElementUpdate(Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up);
+	sheetOfSpray->Update(Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up);
 }
 
 void ParticleControl::Init(BaseDirectX& baseDirectX)
@@ -1078,9 +1121,11 @@ void ParticleControl::Init(BaseDirectX& baseDirectX)
 		assert(0);
 	}
 	elementEffect.reset(elementEffect->Create(L"Resource/Image/element.png"));
+	sheetOfSpray.reset(sheetOfSpray->Create(L"Resource/Image/element.png"));
 }
 
 void ParticleControl::Draw(BaseDirectX& baseDirectX)
 {
 	ParticleDraw(baseDirectX.cmdList.Get(), elementEffect.get());
+	ParticleDraw(baseDirectX.cmdList.Get(), sheetOfSpray.get());
 }

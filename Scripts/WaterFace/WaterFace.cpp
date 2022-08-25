@@ -3,14 +3,12 @@
 #include "../Camera/Camera.h"
 list<shared_ptr<Camera>> WaterCameraManager::f_cameras;
 
-void WaterFace::LoadModel(BaseDirectX& baseDirectX, HLSLShader &useShader, PostEffect& postEffect)
+void WaterFace::LoadModel(BaseDirectX& baseDirectX, HLSLShader &useShader, XMFLOAT3& f_cameraPos, XMFLOAT3& f_cameraTarget)
 {
-	waterModel.CreateModel(baseDirectX, "Plane2", useShader, postEffect);
-	XMFLOAT3 eyePos = { 0, 0, 0 };
-	XMFLOAT3 targetPos = { 0, 0, 0 };
-	f_camera.reset(new Camera());
-	f_camera.get()->Init(eyePos, targetPos);
-	WaterCameraManager::f_cameras.push_back(f_camera);
+	waterModel.CreateModel(baseDirectX, "Plane2", useShader);
+	m_camera.reset(new Camera());
+	m_camera.get()->Init(f_cameraPos, f_cameraTarget);
+	WaterCameraManager::f_cameras.push_back(m_camera);
 	Init(baseDirectX);
 }
 
@@ -35,8 +33,9 @@ void WaterFace::Draw(BaseDirectX& baseDirectX,  XMVECTOR& selingPos)
 	waterModel.Draw(baseDirectX, waterModel.eachData);
 }
 
-void WaterFaceModel::CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& shader, PostEffect& postEffect, bool smoothing)
+void WaterFaceModel::CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& shader,  bool smoothing)
 {
+	m_renderTarget.Initialize(ShaderManager::postWater, baseDirectX);
 	InitializeDescriptorHeap(baseDirectX);
 	InitializeGraphicsPipeline(baseDirectX, shader);
 
@@ -64,7 +63,7 @@ void WaterFaceModel::CreateModel(BaseDirectX& baseDirectX, const char* name, HLS
 		{   //マテリアル
 			string fileName;
 			line_stream >> fileName;
-			LoadMaterial(baseDirectX, directoryPath, fileName, postEffect);
+			LoadMaterial(baseDirectX, directoryPath, fileName);
 		}
 		if (key == "v")
 		{   //座標読み込み
@@ -131,24 +130,24 @@ void WaterFaceModel::CreateModel(BaseDirectX& baseDirectX, const char* name, HLS
 	file.close();
 }
 
-bool WaterFaceModel::LoadTexture(BaseDirectX &baseDirectX, PostEffect& postEffect)
+bool WaterFaceModel::LoadTexture(BaseDirectX &baseDirectX)
 {
 	// シェーダリソースビュー作成
 	cpuDescHandleSRV = CD3DX12_CPU_DESCRIPTOR_HANDLE(descHeap->GetCPUDescriptorHandleForHeapStart(), 0, descriptorHandleIncrementSize);
 	gpuDescHandleSRV = CD3DX12_GPU_DESCRIPTOR_HANDLE(descHeap->GetGPUDescriptorHandleForHeapStart(), 0, descriptorHandleIncrementSize);
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{}; // 設定構造体
-	D3D12_RESOURCE_DESC resDesc = postEffect.renderTarget.texBuff[0]->GetDesc();
+	D3D12_RESOURCE_DESC resDesc = m_renderTarget.renderTarget.texBuff[0]->GetDesc();
 
 	srvDesc.Format = resDesc.Format;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
 	srvDesc.Texture2D.MipLevels = 1;
-	baseDirectX.dev->CreateShaderResourceView(postEffect.renderTarget.texBuff[0].Get(), &srvDesc, cpuDescHandleSRV);
+	baseDirectX.dev->CreateShaderResourceView(m_renderTarget.renderTarget.texBuff[0].Get(), &srvDesc, cpuDescHandleSRV);
 	return true;
 }
 
-void WaterFaceModel::LoadMaterial(BaseDirectX& baseDirectX, const string& directoryPath, const string& filename, PostEffect& postEffect)
+void WaterFaceModel::LoadMaterial(BaseDirectX& baseDirectX, const string& directoryPath, const string& filename)
 {
 	ifstream file;
 	file.open(directoryPath + filename);
@@ -198,7 +197,7 @@ void WaterFaceModel::LoadMaterial(BaseDirectX& baseDirectX, const string& direct
 		if (key == "map_Kd")
 		{
 			line_striam >> material.texFilename;
-			LoadTexture(baseDirectX, postEffect);
+			LoadTexture(baseDirectX);
 		}
 	}
 	materialCount += 1;

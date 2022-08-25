@@ -12,6 +12,8 @@
 using namespace std;
 class BaseCollider;
 
+class Camera;
+
 struct ConstBufferData
 {
 	XMMATRIX mat;
@@ -203,6 +205,7 @@ public:
 	void CreateModel(BaseDirectX& baseDirectX, const char *name, HLSLShader &shader, bool smoothing = false, bool isTriangle = true);
 	//void Update();
 	virtual void Update(BaseDirectX& baseDirectX, EachInfo *f_each, bool rCamera = false);
+	virtual void Update(BaseDirectX& baseDirectX, EachInfo* f_each, Camera &f_camera);
 	void SendVertex(BaseDirectX& baseDirectX);
 	
 	void LoadFileContents(BaseDirectX& baseDirectX, const char* name, bool smoothing = false);

@@ -366,6 +366,7 @@ void PostEffects::PostDraw(BaseDirectX& baseDirectX)
 {
 	if (type == PostEffectType::Normal)
 	{
+		
 		postNormal.PostDraw(baseDirectX);
 	}
 	else if (type == PostEffectType::Water)

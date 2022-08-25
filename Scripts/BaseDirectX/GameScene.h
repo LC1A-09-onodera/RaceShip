@@ -11,7 +11,7 @@
 #include "../Rewired/Rewired.h"
 #include "../WaterFace/WaterFace.h"
 #include "../MenuUI/MenuUI.h"
-
+#include "../Particle/Particle3D.h"
 enum GameSceneName { TITLE, SELECT, GAME, END, RESULT, OP , MAPEDIT, RewiredEdit};
 
 class GameScene
@@ -104,7 +104,6 @@ private:
 	Model mapFrameH;
 
 	MenuUI pouseUI;
-
 public:
 	GameScene();
 	~GameScene();
