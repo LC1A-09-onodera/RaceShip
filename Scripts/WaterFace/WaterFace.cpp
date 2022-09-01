@@ -10,13 +10,15 @@ void WaterFace::LoadModel(BaseDirectX& baseDirectX, HLSLShader &useShader, XMFLO
 	m_camera.get()->Init(f_cameraPos, f_cameraTarget);
 	WaterCameraManager::f_cameras.push_back(m_camera);
 	Init(baseDirectX);
+	/*waterModel.eachData.m_eachName = "water";
+	EachManager::eahcs.push_back(&waterModel.eachData);*/
 }
 
 void WaterFace::Init(BaseDirectX& baseDirectX)
 {
 	waterModel.eachData.ConstInit(baseDirectX);
 	waterModel.eachData.position = { 0, 0.0f, 0.0f, 1 };
-	waterModel.eachData.rotation = { 0, 0,0};
+	waterModel.eachData.rotation = { 0, 0, 0};
 	waterModel.each.m_eachName = "water";
 	float scaleSample = 62.0f;
 	waterModel.eachData.scale = { scaleSample + 0.0f, scaleSample - 1.0f, scaleSample };

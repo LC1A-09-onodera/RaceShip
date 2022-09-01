@@ -228,6 +228,9 @@
     <ClInclude Include="BaseScriptableObject.h">
       <Filter>BaseDirectx</Filter>
     </ClInclude>
+    <ClInclude Include="Scripts\LoadStage\SpringBoard.h">
+      <Filter>LoadStage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scripts\3DModel\Model.cpp">
@@ -346,6 +349,9 @@
     </ClCompile>
     <ClCompile Include="Scripts\MenuUI\MenuUI.cpp">
       <Filter>MenuUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\LoadStage\SpringBoard.cpp">
+      <Filter>LoadStage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

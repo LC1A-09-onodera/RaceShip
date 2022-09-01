@@ -104,18 +104,19 @@ StyleCopReport.xml
 !/Resource/Model/Map/Map.obj
 !/Resource/Model/MapEnemy/MapEnemy.obj
 !/Resource/Model/MapGoal/MapGoal.obj
+!/Resource/Model/MapPlayer/MapPlayer.obj
 !/Resource/Model/MapW/MapW.obj
 !/Resource/Model/MapWall/MapWall.obj
-!/Resource/Model/sphere/sphere.obj
 !/Resource/Model/maru/maru.obj
 !/Resource/Model/Plane2/Plane2.obj
 !/Resource/Model/seling/seling.obj
 !/Resource/Model/shield/shield.obj
+!/Resource/Model/sky/sky.obj
+!/Resource/Model/sphere/sphere.obj
+!/Resource/Model/SphereW/SphereW.obj
+!/Resource/Model/SpringBorad/SpringBorad.obj
 !/Resource/Model/Triangle/Triangle.obj
 !/Resource/Model/WaterFace/WaterFace.obj
-!/Resource/Model/SphereW/SphereW.obj
-!/Resource/Model/shield/shield.obj
-!/Resource/Model/sky/sky.obj
 
 
 # Chutzpah Test files

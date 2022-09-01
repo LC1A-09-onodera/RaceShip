@@ -334,6 +334,9 @@ public:
 
 	void LifeParticle(const DirectX::XMFLOAT3 cameraPosition = {0, 0, 0}, float R = 20.0f, float startSize = 2.0f, float endSize = 0.0f, int life = 60);
 
+	void Landing(const DirectX::XMFLOAT3 emitterPosition = {0, 0, 0}, float power = 10.0f, float startSize = 0.5f, float endSize = 0.0f, int life = 60);
+
+	void LandingUpdate(DirectX::XMFLOAT3 eye, DirectX::XMFLOAT3 target, DirectX::XMFLOAT3 up, bool isBilbord = true);
 };
 /// <summary>
 	/// ï`âÊ
@@ -355,6 +358,7 @@ public:
 	static std::shared_ptr<ParticleIndi> elementEffect;
 	//êÖÇµÇ‘Ç´
 	static std::shared_ptr<ParticleIndi> sheetOfSpray;
+	static std::shared_ptr<ParticleIndi> sheetOfSpray2;
 	static void Update();
 	static void Init(BaseDirectX &baseDirectX);
 	static void Draw(BaseDirectX& baseDirectX);

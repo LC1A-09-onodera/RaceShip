@@ -4,6 +4,8 @@
 #include "../Shader/ShaderManager.h"
 #include "../LoadStage/StageObject.h"
 #include "../imgui/ImguiControl.h"
+#include "../Particle/Particle3D.h"
+
 
 void Seling::ForceUpdate()
 {
@@ -26,6 +28,11 @@ void Seling::LoadModel(BaseDirectX& baseDirectX)
 	Init();
 	
 	LoadKeys();
+
+	SpringBoard::LoadModel(baseDirectX);
+	springBorad.Init(baseDirectX, SpringBoard::Direction::UpToBottom);
+	springBorad.m_wid = 10.0f;
+	springBorad.m_hi = 2.0f;
 }
 
 void Seling::Init()
@@ -40,6 +47,8 @@ void Seling::Init()
 	isMoveForce = false;
 	addForce = { 0.0f ,0.0f , 0.0f };
 	isGoal = false;
+	m_isJump = false;
+	m_isLanding = false;
 }
 
 void Seling::Update()
@@ -69,6 +78,9 @@ void Seling::Update(bool isPouse)
 
 		HitGoal();
 
+		//
+		springBorad.Update((*this));
+
 		ForceAttach();
 	}
 }
@@ -77,12 +89,14 @@ void Seling::Draw(BaseDirectX& baseDirectX, bool isRCamera)
 {
 	selingModel.Update(baseDirectX, &selingModel.each, isRCamera);
 	Draw3DObject(baseDirectX, selingModel);
+	springBorad.Draw(baseDirectX, isRCamera);
 }
 
 void Seling::Draw(BaseDirectX& baseDirectX, Camera& f_camera)
 {
 	selingModel.Update(baseDirectX, &selingModel.each, f_camera);
 	Draw3DObject(baseDirectX, selingModel);
+	springBorad.Draw(baseDirectX, f_camera);
 }
 
 void Seling::AddForce(XMFLOAT3& force)
@@ -101,10 +115,28 @@ void Seling::ForceAttach()
 	selingModel.each.position.m128_f32[0] += addForce.x;
 	selingModel.each.position.m128_f32[1] += addForce.y;
 	selingModel.each.position.m128_f32[2] += addForce.z;
+	if (selingModel.each.position.m128_f32[1] > 0 && !m_isJump)
+	{
+		selingModel.each.position.m128_f32[1] -= 0.02f;
+		if (selingModel.each.position.m128_f32[1] <= 0)
+		{
+			XMFLOAT3 emitterPos = ConvertXMVECTORtoXMFLOAT3(selingModel.each.position);
+			ParticleControl::sheetOfSpray2->Landing(emitterPos);
+		}
+	}
 }
 
 void Seling::Move()
 {
+	/*if (m_isJump)
+	{
+		
+		if (m_isLanding)
+		{
+			m_isJump = false;
+			m_isLanding = false;
+		}
+	}*/
 	if (VoiceReciver::GetRight() || lookToRightKey.GetKey())
 	{
 		angle += addSelingAngle;

@@ -7,6 +7,10 @@ SamplerState smp : register(s0);
 
 float4 main(VSOutput input) : SV_TARGET
 {
+    float2 smpUV;
+    smpUV.x = 1.0 - input.uv.x;
+    smpUV.y = input.uv.y;
+    return tex.Sample(smp, smpUV);
     //…–Ê‚Û‚¢‚Ì
     float2 windowSize;
     windowSize.x = 1280 * 2;
@@ -15,7 +19,9 @@ float4 main(VSOutput input) : SV_TARGET
     float speed = 0.7f;
     //”g‚Ì×‚©‚³
     float ripple = 0.9f;
-    float2 uv = input.uv;
+    float2 uv;
+    uv.x = 1.0 - input.uv.x;
+    uv.y = input.uv.y;
     //Œ»İ‚ÌƒtƒŒ[ƒ€‚ğæ“¾
     uint frameCount = flash;
     float time = frameCount * 0.005;

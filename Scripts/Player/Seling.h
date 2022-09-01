@@ -2,6 +2,7 @@
 #include "../3DModel/Model.h"
 #include "../BaseDirectX/DX12operator.h"
 #include "../Rewired/Rewired.h"
+#include "../LoadStage/SpringBoard.h"
 
 class Camera;
 
@@ -24,7 +25,13 @@ class Seling
 	const float MaxForce = 1.0f;
 	const float addSelingAngle = 1.0f;
 	const float subForce = 50.0f;
+
+	
+	bool m_isLanding = false;
 public:
+
+	SpringBoard springBorad;
+	bool m_isJump = false;
 	//“®‚­—Ê
 	XMFLOAT3 addForce = { 0.0f ,0.0f , 0.0f};
 	Model selingModel;

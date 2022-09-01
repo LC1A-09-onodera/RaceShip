@@ -195,6 +195,7 @@
     <ClInclude Include="Scripts\Light\PointLight.h" />
     <ClInclude Include="Scripts\Light\SpotLight.h" />
     <ClInclude Include="Scripts\LoadStage\LoadStage.h" />
+    <ClInclude Include="Scripts\LoadStage\SpringBoard.h" />
     <ClInclude Include="Scripts\LoadStage\StageObject.h" />
     <ClInclude Include="Scripts\MapLayout\MapLayout.h" />
     <ClInclude Include="Scripts\MenuUI\MenuUI.h" />
@@ -235,6 +236,7 @@
     <ClCompile Include="Scripts\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Scripts\Light\Light.cpp" />
     <ClCompile Include="Scripts\LoadStage\LoadStage.cpp" />
+    <ClCompile Include="Scripts\LoadStage\SpringBoard.cpp" />
     <ClCompile Include="Scripts\LoadStage\StageObject.cpp" />
     <ClCompile Include="Scripts\main.cpp" />
     <ClCompile Include="Scripts\MapLayout\MapLayout.cpp" />

@@ -23,14 +23,14 @@ struct Node
 {
 	//名前
 	std::string name;
-	float pad1 = 0.0f;
-	float pad2 = 0.0f;
+	/*float pad1 = 0.0f;
+	float pad2 = 0.0f;*/
 	//スケール
-	DirectX::XMVECTOR scaling = {1, 1, 1, 0};
+	DirectX::XMVECTOR scaling ;
 	//回転角
-	DirectX::XMVECTOR rotation = {0, 0, 0 ,0};
+	DirectX::XMVECTOR rotation ;
 	//ローカル移動
-	DirectX::XMVECTOR translation = {0, 0 ,0, 1};
+	DirectX::XMVECTOR translation ;
 	//ローカル変形行列
 	DirectX::XMMATRIX transform;
 	//グローバル変形行列

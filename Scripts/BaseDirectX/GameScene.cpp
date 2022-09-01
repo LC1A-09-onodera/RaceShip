@@ -220,6 +220,7 @@ void GameScene::TitleUpdate()
 	normalWater.Update();
 	mosaicWater.Update();
 
+
 	spaceSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(spaceSp.position), spaceEndPos, spriteSpeed));
 	titleSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(titleSp.position), titleEndPos, spriteSpeed));
 	if (Input::KeyTrigger(DIK_SPACE))
@@ -239,8 +240,11 @@ void GameScene::TitleUpdate()
 	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
 	Cameras::camera.Update();
 
-	Cameras::rCamera.eye = { 0.0f, -67.0f, -10.1f };
+	const float lengY = 6.0f;
+	const float lengXY = 1.0f;
+	Cameras::rCamera.eye = { Cameras::camera.eye.x * lengXY, Cameras::camera.eye.y * lengY, Cameras::camera.eye.z * lengXY };
 	Cameras::rCamera.up = { 0, 1, 0 };
+	Cameras::rCamera.target = Cameras::camera.target;
 	Cameras::rCamera.Update();
 
 	Sound::Updete(Imgui::volume);
@@ -295,9 +299,17 @@ void GameScene::GameUpdate()
 	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
 	Cameras::camera.Update();
 
-	Cameras::rCamera.eye = { 0.0f, -67.0f, -10.1f };
-	Cameras::rCamera.up = { 0, 1, 0 };
+	const float lengY = 6.0f;
+	const float lengXY = 1.0f;
+	Cameras::rCamera.eye = { Cameras::camera.eye.x * lengXY, Cameras::camera.eye.y * lengY, Cameras::camera.eye.z * lengXY};
+	Cameras::rCamera.up = { 0, -1, 0 };
+	Cameras::rCamera.target = Cameras::camera.target;
 	Cameras::rCamera.Update();
+
+	if (Input::KeyTrigger(DIK_SPACE))
+	{
+		ParticleControl::sheetOfSpray2->Landing(selingPos, 10.0f);
+	}
 
 	static int particleTimer = 0;
 	particleTimer++;
@@ -606,6 +618,7 @@ void GameScene::EndDraw()
 	PostWaterFaceDraw();
 
 	XMVECTOR waterFacePosition = { 0, -0.5f, 0.0f, 1.0 };
+	//waterFace[0].waterModel.eachData.rotation.x = Imgui::CameraRotation;
 	//êÖñ ÇÃêÿÇËë÷Ç¶
 	if (Imgui::useWaterNum == 0)
 	{
@@ -664,13 +677,22 @@ void GameScene::PouseDraw()
 
 void GameScene::DrawPostEffect()
 {
-	XMVECTOR waterFacePosition = { 0, -0.8f, 0.0f, 1.0 };
-	XMVECTOR waterFacePosition2 = { waterFacePosition.m128_f32[0], -0.8f, waterFacePosition.m128_f32[2] + 89.0f, 1.0 };
+	XMVECTOR waterFacePosition = { seling.selingModel.each.position.m128_f32[0], -0.2f, seling.selingModel.each.position.m128_f32[2], 1.0 };
+	XMVECTOR waterFacePosition2 = { waterFacePosition.m128_f32[0], -0.2f, waterFacePosition.m128_f32[2] + 89.0f, 1.0 };
 	//êÖñ ÇÃêÿÇËë÷Ç¶
 	if (Imgui::useWaterNum == 0)
 	{
+		const float rotAngle = 0.25f;
+		/*if (seling.lookToLeftKey.GetKey())
+		{
+			waterFace[0].waterModel.eachData.rotation.z -= rotAngle;
+		}
+		if (seling.lookToRightKey.GetKey())
+		{
+			waterFace[0].waterModel.eachData.rotation.z += rotAngle;
+		}*/
+		waterFace[0].waterModel.eachData.rotation.z = seling.selingModel.each.rotation.z;
 		waterFace[0].Draw(baseDirectX, waterFacePosition);
-		//waterFace[1].Draw(baseDirectX, waterFacePosition2);
 	}
 	else if (Imgui::useWaterNum == 1)
 	{

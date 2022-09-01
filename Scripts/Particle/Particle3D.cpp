@@ -31,6 +31,7 @@ XMMATRIX ParticleManager::matBillboardY = XMMatrixIdentity();
 
 std::shared_ptr<ParticleIndi> ParticleControl::elementEffect = nullptr;
 std::shared_ptr<ParticleIndi> ParticleControl::sheetOfSpray = nullptr;
+std::shared_ptr<ParticleIndi> ParticleControl::sheetOfSpray2 = nullptr;
 
 bool ParticleManager::StaticInitialize(ID3D12Device* f_device, int f_window_width, int f_window_height, XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up)
 {
@@ -1097,6 +1098,81 @@ void ParticleIndi::LifeParticle(const DirectX::XMFLOAT3 cameraPosition, float R,
 		Add(life, pos, startPos, static_cast<float>(angle), startSize, endSize);
 	}
 }
+void ParticleIndi::Landing(const DirectX::XMFLOAT3 emitterPosition, float power, float startSize, float endSize, int life)
+{
+	power += 1;
+	for (int i = 0; i < 50; i++)
+	{
+		float angle = static_cast<float>(rand() % 1080);
+		//float hi = 0.3f;
+		float hi = static_cast<float>((rand() % 10)) / 30.0f;
+		float hihi = static_cast<float>((rand() % 2 + 1)) / 10.0f;
+		hihi = hihi + hi;
+		XMFLOAT3 pos;
+		pos = emitterPosition;
+		XMFLOAT3 vel;
+		vel = {ShlomonMath::Cos(angle) / 3.3f, hihi, ShlomonMath::Sin(angle) / 3.3f };
+		XMFLOAT3 acc;
+		acc = {-vel.x / life , -vel.y / life * 2.0f, -vel.z / life };
+		Add(life, pos, vel, acc, startSize, endSize);
+	}
+}
+void ParticleIndi::LandingUpdate(DirectX::XMFLOAT3 eye, DirectX::XMFLOAT3 target, DirectX::XMFLOAT3 up, bool isBilbord)
+{
+	HRESULT result;
+
+	//パーティクルの消滅
+	particles.remove_if(
+		[](Particle& x)
+		{
+			return x.frame >= x.num_frame;
+		}
+	);
+	//全パーティクルの更新
+	for (std::forward_list<Particle>::iterator it = particles.begin(); it != particles.end(); it++)
+	{
+		//フレームの増加
+		it->frame++;
+		//速度に加速度を追加
+		it->velocity = it->velocity + it->accel;
+
+
+		//移動
+		it->position = it->position + it->velocity;
+
+
+		//スケールの変更
+		float f = (float)it->num_frame / it->frame;
+		//スケールの線形補間
+		it->scale = (it->e_scale - it->s_scale) / f;
+		it->scale += it->s_scale;
+	}
+
+	ParticleManager::UpdateViewMatrix(eye, target, up, isBilbord);
+
+	//頂点バッファへデータ転送
+	VertexPos* vertMap = nullptr;
+	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
+	if (SUCCEEDED(result))
+	{
+		for (std::forward_list<Particle>::iterator it = particles.begin(); it != particles.end(); it++)
+		{
+			vertMap->pos = it->position;
+			vertMap->scale = it->scale;
+			vertMap++;
+		}
+		vertBuff->Unmap(0, nullptr);
+	}
+
+	// 定数バッファへデータ転送
+	ConstBufferData* constMap = nullptr;
+	result = constBuff->Map(0, nullptr, (void**)&constMap);
+	//constMap->color = color;
+	constMap->mat = ParticleManager::matView * ParticleManager::matProjection;	// 行列の合成
+	constMap->matBillboard = ParticleManager::matBillboard;
+	constMap->alpha = this->alpha;
+	constBuff->Unmap(0, nullptr);
+}
 
 ParticleControl::ParticleControl()
 {
@@ -1111,6 +1187,7 @@ void ParticleControl::Update()
 {
 	elementEffect->ElementUpdate(Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up);
 	sheetOfSpray->Update(Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up);
+	sheetOfSpray2->LandingUpdate(Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up);
 }
 
 void ParticleControl::Init(BaseDirectX& baseDirectX)
@@ -1122,10 +1199,12 @@ void ParticleControl::Init(BaseDirectX& baseDirectX)
 	}
 	elementEffect.reset(elementEffect->Create(L"Resource/Image/element.png"));
 	sheetOfSpray.reset(sheetOfSpray->Create(L"Resource/Image/element.png"));
+	sheetOfSpray2.reset(sheetOfSpray->Create(L"Resource/Image/element.png"));
 }
 
 void ParticleControl::Draw(BaseDirectX& baseDirectX)
 {
 	ParticleDraw(baseDirectX.cmdList.Get(), elementEffect.get());
 	ParticleDraw(baseDirectX.cmdList.Get(), sheetOfSpray.get());
+	ParticleDraw(baseDirectX.cmdList.Get(), sheetOfSpray2.get());
 }
