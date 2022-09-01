@@ -12,6 +12,8 @@
 using namespace std;
 class BaseCollider;
 
+class Camera;
+
 struct ConstBufferData
 {
 	XMMATRIX mat;
@@ -94,6 +96,7 @@ public:
 	// 頂点インデックス配列
 	std::vector<unsigned short> indices;
 };
+
 class EachInfo
 {
 public:
@@ -103,6 +106,13 @@ public:
 	XMFLOAT3 scale = { 1,1,1 };
 	XMFLOAT3 rotation = { 0,0,0 };
 	XMVECTOR position = { 0,0,0 };
+	std::string m_eachName;
+};
+
+class EachManager
+{
+public:
+	static list<EachInfo *> eahcs;
 };
 
 template <typename T>
@@ -120,12 +130,16 @@ void CreateConstBuff0(T &each, ComPtr<ID3D12Device> &dev)
 	resdesc.SampleDesc.Count = 1;
 	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-	HRESULT result = dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&each.constBuff0));
+	HRESULT result;
+	result = dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&each.constBuff0));
 };
 template <typename T>
 void CreateConstBuff1(T &each, ComPtr<ID3D12Device>& dev)
 {
-	HRESULT result = dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&each.constBuff1));
+	HRESULT result;
+	CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
+	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) & ~0xff);
+	result = dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&each.constBuff1));
 };
 template <typename T>
 void CreateConstBuff2(T& each, ComPtr<ID3D12Device>& dev)
@@ -141,7 +155,8 @@ void CreateConstBuff2(T& each, ComPtr<ID3D12Device>& dev)
 	resdesc.MipLevels = 1;
 	resdesc.SampleDesc.Count = 1;
 	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	HRESULT result = dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&each.constBuff2));
+	HRESULT result;
+	result = dev->CreateCommittedResource(&heapprop, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&each.constBuff2));
 };
 template <typename T>
 void ConstInit(T &each, ComPtr<ID3D12Device>& dev)
@@ -157,7 +172,7 @@ public:
 	Model() = default;
 
 	virtual ~Model();
-	static void SetLight(shared_ptr<Light> light);
+	static void SetLight(shared_ptr<Light> Light);
 	Mesh mesh;
 	D3D12_CPU_DESCRIPTOR_HANDLE cpuDescHandleCBV = D3D12_CPU_DESCRIPTOR_HANDLE();
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuDescHandleCBV = D3D12_GPU_DESCRIPTOR_HANDLE();
@@ -165,6 +180,7 @@ public:
 	XMMATRIX matWorld = XMMatrixIdentity();
 	static shared_ptr<Light> light;
 	shared_ptr<BaseCollider> collider = nullptr;
+	string m_modelName;
 	//----基本いるもの-----------
 	float radi = 2.0f;
 	//-----------------------
@@ -188,7 +204,8 @@ public:
 	int materialCount = 0;
 	void CreateModel(BaseDirectX& baseDirectX, const char *name, HLSLShader &shader, bool smoothing = false, bool isTriangle = true);
 	//void Update();
-	virtual void Update(BaseDirectX& baseDirectX, EachInfo *each, bool rCamera = false);
+	virtual void Update(BaseDirectX& baseDirectX, EachInfo *f_each, bool rCamera = false);
+	virtual void Update(BaseDirectX& baseDirectX, EachInfo* f_each, Camera &f_camera);
 	void SendVertex(BaseDirectX& baseDirectX);
 	
 	void LoadFileContents(BaseDirectX& baseDirectX, const char* name, bool smoothing = false);
@@ -213,11 +230,13 @@ void ConstBufferInit(BaseDirectX &baseDirectX, T *model, U &eachInfo)
 	if (model == nullptr) return;
 	UINT sizeVB = static_cast<UINT>(sizeof(Vertex) * model->mesh.vertices.size());
 	UINT sizeIB = static_cast<UINT>(sizeof(unsigned short) * model->mesh.indices.size());
-	&CD3DX12_RESOURCE_DESC::Buffer(sizeVB);
-	&CD3DX12_RESOURCE_DESC::Buffer(sizeIB);
+	/*CD3DX12_RESOURCE_DESC::Buffer(sizeVB);
+	CD3DX12_RESOURCE_DESC::Buffer(sizeIB);*/
 	model->mesh.vbView.SizeInBytes = sizeVB;
 	model->mesh.ibView.SizeInBytes = sizeIB;
-	baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizeVB), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&model->mesh.vertBuff));
+	CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
+	CD3DX12_RESOURCE_DESC resourceDescVB = CD3DX12_RESOURCE_DESC::Buffer(sizeVB);
+	baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDescVB, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&model->mesh.vertBuff));
 	Vertex* vertMap = nullptr;
 	baseDirectX.result = model->mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
 	if (SUCCEEDED(baseDirectX.result))
@@ -226,7 +245,8 @@ void ConstBufferInit(BaseDirectX &baseDirectX, T *model, U &eachInfo)
 		model->mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
 	}
 	//インデックスバッファの生成
-	baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizeIB), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&model->mesh.indexBuff));
+	CD3DX12_RESOURCE_DESC resourceDescIB = CD3DX12_RESOURCE_DESC::Buffer(sizeIB);
+	baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDescIB, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&model->mesh.indexBuff));
 	unsigned short* indexMap = nullptr;
 	baseDirectX.result = model->mesh.indexBuff->Map(0, nullptr, (void**)&indexMap);
 	if (SUCCEEDED(baseDirectX.result))
@@ -287,6 +307,24 @@ void CalcMatrix(T *model, U *eachInfo)
 	model->matWorld *= matTrans;
 }
 void Set3DDraw(BaseDirectX& baseDirectX, const Model &model, bool triangle = true);
-void Draw3DObject(BaseDirectX& baseDirectX, const Model &model, int texNum = -1, bool triangle = true);
+void Draw3DObject(BaseDirectX& baseDirectX, const Model &model, bool triangle = true);
 bool ObjectColition(Model& object1, Model& object2);
 bool CiycleColition(const XMFLOAT3 &object1, const XMFLOAT3 &object2 , float radi1, float radi2);
+
+class ModelElement
+{
+public:
+	ModelElement(std::string name, Model *model)
+	{
+		m_model = model;
+		m_modelName = name;
+	}
+	std::string m_modelName;
+	Model *m_model;
+};
+
+class ModelManager
+{
+public:
+	static std::list<ModelElement *> m_models;
+};

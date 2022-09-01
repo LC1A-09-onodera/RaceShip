@@ -3,10 +3,11 @@
 
 using namespace std;
 shared_ptr<Light> Model::light = nullptr;
-
+std::list<ModelElement*> ModelManager::m_models;
+list<EachInfo*> EachManager::eahcs;
 Model::~Model()
 {
-	
+
 }
 inline size_t Model::GetVertexCount()
 {
@@ -40,13 +41,15 @@ void Model::CalculateSmoothedVertexNormals()
 	}
 }
 
-void Model::SetLight(shared_ptr<Light> light)
+void Model::SetLight(shared_ptr<Light> Light)
 {
-	Model::light = light;
+	Model::light = Light;
 }
 
 void Model::CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& shader, bool smoothing, bool isTriangle)
 {
+	m_modelName = name;
+
 	InitializeDescriptorHeap(baseDirectX);
 
 	InitializeGraphicsPipeline(baseDirectX, shader, isTriangle);
@@ -54,79 +57,74 @@ void Model::CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& 
 	LoadFileContents(baseDirectX, name, smoothing);
 
 	ConstBufferInit(baseDirectX, this, this->each);
+
+	ModelElement* model = new ModelElement(m_modelName, this);
+	/*if (ModelManager::m_models.size() > 0)
+	{
+		for (auto itr = ModelManager::m_models.begin(); itr != ModelManager::m_models.end(); ++itr)
+		{
+			if ((*itr)->m_modelName == m_modelName)
+			{
+				return;
+			}
+		}
+	}*/
+	ModelManager::m_models.push_back(model);
 }
 
-void Model::Update(BaseDirectX &baseDirectX, EachInfo* each, bool rCamera)
+void Model::Update(BaseDirectX& baseDirectX, EachInfo* f_each, bool rCamera)
 {
-	if (each != nullptr)
+	this->each = *f_each;
+	CalcMatrix(this, &this->each);
+	SendVertex(baseDirectX);
+	ConstBufferDataB0* constMap0 = nullptr;
+	if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
 	{
-		this->each = *each;
-		
-		CalcMatrix(this, each);
-
-		SendVertex(baseDirectX);
-
-		ConstBufferDataB0* constMap0 = nullptr;
-		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
+		//constMap0->mat = matWorld * Camera::matView * BaseDirectX::matProjection;
+		if (!rCamera)
 		{
-			//constMap0->mat = matWorld * Camera::matView * BaseDirectX::matProjection;
-			if (!rCamera)
-			{
-				constMap0->viewproj = Cameras::camera.matView * baseDirectX.matProjection;
-				constMap0->world = matWorld;
-				constMap0->cameraPos = Cameras::camera.eye;
-			}
-			else
-			{
-				constMap0->viewproj = Cameras::rCamera.matView * baseDirectX.matProjection;
-				constMap0->world = matWorld;
-				constMap0->cameraPos = Cameras::rCamera.eye;
-			}
-
-			this->each.constBuff0->Unmap(0, nullptr);
+			constMap0->viewproj = Cameras::camera.matView * baseDirectX.matProjection;
+			constMap0->world = matWorld;
+			constMap0->cameraPos = Cameras::camera.eye;
+		}
+		else
+		{
+			constMap0->viewproj = Cameras::rCamera.matView * baseDirectX.matProjection;
+			constMap0->world = matWorld;
+			constMap0->cameraPos = Cameras::rCamera.eye;
 		}
 
-		ConstBufferDataB1* constMap1 = nullptr;
-		baseDirectX.result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
-		constMap1->ambient = material.ambient;
-		constMap1->diffuse = material.diffuse;
-		constMap1->specular = material.specular;
-		constMap1->alpha = material.alpha;
-		this->each.constBuff1->Unmap(0, nullptr);
+		this->each.constBuff0->Unmap(0, nullptr);
 	}
-	else
+	ConstBufferDataB1* constMap1 = nullptr;
+	baseDirectX.result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
+	constMap1->ambient = material.ambient;
+	constMap1->diffuse = material.diffuse;
+	constMap1->specular = material.specular;
+	constMap1->alpha = material.alpha;
+	this->each.constBuff1->Unmap(0, nullptr);
+}
+
+void Model::Update(BaseDirectX& baseDirectX, EachInfo* f_each, Camera& f_camera)
+{
+	this->each = *f_each;
+	CalcMatrix(this, &this->each);
+	SendVertex(baseDirectX);
+	ConstBufferDataB0* constMap0 = nullptr;
+	if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
 	{
-		CalcMatrix(this, each);
-
-		SendVertex(baseDirectX);
-
-		ConstBufferDataB0* constMap0 = nullptr;
-		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
-		{
-			//constMap0->mat = matWorld * Camera::matView * BaseDirectX::matProjection;
-			if (!rCamera)
-			{
-				constMap0->viewproj = Cameras::camera.matView * baseDirectX.matProjection;
-				constMap0->world = matWorld;
-				constMap0->cameraPos = Cameras::camera.eye;
-			}
-			else
-			{
-				constMap0->viewproj = Cameras::rCamera.matView * baseDirectX.matProjection;
-				constMap0->world = matWorld;
-				constMap0->cameraPos = Cameras::rCamera.eye;
-			}
-			this->each.constBuff0->Unmap(0, nullptr);
-		}
-
-		ConstBufferDataB1* constMap1 = nullptr;
-		baseDirectX.result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
-		constMap1->ambient = material.ambient;
-		constMap1->diffuse = material.diffuse;
-		constMap1->specular = material.specular;
-		constMap1->alpha = material.alpha;
-		this->each.constBuff1->Unmap(0, nullptr);
+		constMap0->viewproj = f_camera.matView * baseDirectX.matProjection;
+		constMap0->world = matWorld;
+		constMap0->cameraPos = f_camera.eye;
+		this->each.constBuff0->Unmap(0, nullptr);
 	}
+	ConstBufferDataB1* constMap1 = nullptr;
+	baseDirectX.result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
+	constMap1->ambient = material.ambient;
+	constMap1->diffuse = material.diffuse;
+	constMap1->specular = material.specular;
+	constMap1->alpha = material.alpha;
+	this->each.constBuff1->Unmap(0, nullptr);
 }
 
 void Model::SendVertex(BaseDirectX& baseDirectX)
@@ -140,7 +138,7 @@ void Model::SendVertex(BaseDirectX& baseDirectX)
 	}
 }
 
-void Model::LoadFileContents(BaseDirectX &baseDirectX, const char* name, bool smoothing)
+void Model::LoadFileContents(BaseDirectX& baseDirectX, const char* name, bool smoothing)
 {
 	ifstream file;
 	const string modelname = name;
@@ -167,9 +165,9 @@ void Model::LoadFileContents(BaseDirectX &baseDirectX, const char* name, bool sm
 
 		if (key == "mtllib")
 		{   //マテリアル
-			string filename;
-			line_stream >> filename;
-			LoadMaterial(baseDirectX, directoryPath, filename);
+			string mFilename;
+			line_stream >> mFilename;
+			LoadMaterial(baseDirectX, directoryPath, mFilename);
 		}
 		if (key == "v")
 		{   //座標読み込み
@@ -365,7 +363,8 @@ bool Model::LoadTexture(BaseDirectX& baseDirectX, const string& directPath, cons
 	string filepath = directPath + filename;
 
 	wchar_t wfilepath[128];
-	int iBufferSize = MultiByteToWideChar(CP_ACP, 0, filepath.c_str(), -1, wfilepath, _countof(wfilepath));
+	int iBufferSize;
+	iBufferSize = MultiByteToWideChar(CP_ACP, 0, filepath.c_str(), -1, wfilepath, _countof(wfilepath));
 
 	result = LoadFromWICFile(wfilepath, WIC_FLAGS_NONE, &metadata, scratchImg);
 	if (FAILED(result))
@@ -383,10 +382,10 @@ bool Model::LoadTexture(BaseDirectX& baseDirectX, const string& directPath, cons
 		(UINT16)metadata.arraySize,
 		(UINT16)metadata.mipLevels
 	);
-
+	CD3DX12_HEAP_PROPERTIES heapProp(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0);
 	// テクスチャ用バッファの生成
 	result = baseDirectX.dev->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0),
+		&heapProp,
 		D3D12_HEAP_FLAG_NONE,
 		&texresDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ, // テクスチャ用指定
@@ -446,7 +445,7 @@ bool Model::InitializeDescriptorHeap(BaseDirectX& baseDirectX)
 	return true;
 }
 
-void Model::LoadMaterial(BaseDirectX &baseDirectX ,const string& directoryPath, const string& filename)
+void Model::LoadMaterial(BaseDirectX& baseDirectX, const string& directoryPath, const string& filename)
 {
 	ifstream file;
 	file.open(directoryPath + filename);
@@ -521,7 +520,7 @@ void Set3DDraw(BaseDirectX& baseDirectX, const Model& model, bool triangle)
 	}
 }
 
-void Draw3DObject(BaseDirectX& baseDirectX, const Model& model, int texNum, bool triangle)
+void Draw3DObject(BaseDirectX& baseDirectX, const Model& model, bool triangle)
 {
 	Set3DDraw(baseDirectX, model, triangle);
 	baseDirectX.cmdList->IASetVertexBuffers(0, 1, &model.mesh.vbView);

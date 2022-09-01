@@ -17,13 +17,13 @@ public:
 		XMFLOAT3 lighttatten;
 		unsigned int active;
 	};
-	inline void SetLightPos(const XMFLOAT3 &lightpos){this->lightpos = lightpos;}
+	inline void SetLightPos(const XMFLOAT3 &lightPos){this->lightpos = lightPos;}
 	inline const XMFLOAT3 &GetLightPos(){return lightpos;}
-	inline void SetLightColor(const XMFLOAT3 &lightcolor){this->lightcolor = lightcolor;}
+	inline void SetLightColor(const XMFLOAT3 &lightColor){this->lightcolor = lightColor;}
 	inline const XMFLOAT3 &GetColor(){return lightcolor;}
-	inline void SetLightAtten(const XMFLOAT3 &lightatten){this->lighttatten = lightatten;}
+	inline void SetLightAtten(const XMFLOAT3 &lightAtten){this->lighttatten = lightAtten;}
 	inline const XMFLOAT3 &GetAtten(){return lighttatten;}
-	inline void SetActive(bool active){this->active = active;}
+	inline void SetActive(bool Active){this->active = Active;}
 	inline bool isActive(){return active;}
 private:
 	//À•W

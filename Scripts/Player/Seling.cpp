@@ -4,6 +4,8 @@
 #include "../Shader/ShaderManager.h"
 #include "../LoadStage/StageObject.h"
 #include "../imgui/ImguiControl.h"
+#include "../Particle/Particle3D.h"
+
 
 void Seling::ForceUpdate()
 {
@@ -26,12 +28,18 @@ void Seling::LoadModel(BaseDirectX& baseDirectX)
 	Init();
 	
 	LoadKeys();
+
+	SpringBoard::LoadModel(baseDirectX);
+	springBorad.Init(baseDirectX, SpringBoard::Direction::UpToBottom);
+	springBorad.m_wid = 10.0f;
+	springBorad.m_hi = 2.0f;
 }
 
 void Seling::Init()
 {
 	selingModel.each.position = {0, 0, 0, 1.0f};
 	selingModel.each.scale = {1.0f, 1.0f, 0.8f};
+	selingModel.each.m_eachName = "player";
 	frontDirection = { 0, 0 ,1.0f };
 	addForce = { 0, 0 ,0 };
 	frontDirection = { 0.0f ,0.0f , 0.0f };
@@ -39,6 +47,8 @@ void Seling::Init()
 	isMoveForce = false;
 	addForce = { 0.0f ,0.0f , 0.0f };
 	isGoal = false;
+	m_isJump = false;
+	m_isLanding = false;
 }
 
 void Seling::Update()
@@ -56,11 +66,37 @@ void Seling::Update()
 		ForceAttach();
 	}
 }
+void Seling::Update(bool isPouse)
+{
+	if (!isGoal && !isPouse)
+	{
+		Move();
+
+		ForceUpdate();
+
+		HitWall();
+
+		HitGoal();
+
+		//
+		springBorad.Update((*this));
+
+		ForceAttach();
+	}
+}
 
 void Seling::Draw(BaseDirectX& baseDirectX, bool isRCamera)
 {
 	selingModel.Update(baseDirectX, &selingModel.each, isRCamera);
 	Draw3DObject(baseDirectX, selingModel);
+	springBorad.Draw(baseDirectX, isRCamera);
+}
+
+void Seling::Draw(BaseDirectX& baseDirectX, Camera& f_camera)
+{
+	selingModel.Update(baseDirectX, &selingModel.each, f_camera);
+	Draw3DObject(baseDirectX, selingModel);
+	springBorad.Draw(baseDirectX, f_camera);
 }
 
 void Seling::AddForce(XMFLOAT3& force)
@@ -79,10 +115,28 @@ void Seling::ForceAttach()
 	selingModel.each.position.m128_f32[0] += addForce.x;
 	selingModel.each.position.m128_f32[1] += addForce.y;
 	selingModel.each.position.m128_f32[2] += addForce.z;
+	if (selingModel.each.position.m128_f32[1] > 0 && !m_isJump)
+	{
+		selingModel.each.position.m128_f32[1] -= 0.02f;
+		if (selingModel.each.position.m128_f32[1] <= 0)
+		{
+			XMFLOAT3 emitterPos = ConvertXMVECTORtoXMFLOAT3(selingModel.each.position);
+			ParticleControl::sheetOfSpray2->Landing(emitterPos);
+		}
+	}
 }
 
 void Seling::Move()
 {
+	/*if (m_isJump)
+	{
+		
+		if (m_isLanding)
+		{
+			m_isJump = false;
+			m_isLanding = false;
+		}
+	}*/
 	if (VoiceReciver::GetRight() || lookToRightKey.GetKey())
 	{
 		angle += addSelingAngle;
@@ -96,11 +150,13 @@ void Seling::Move()
 
 	if (VoiceReciver::GetFront() || goFrontKey.GetKey())
 	{
-		AddForce(XMFLOAT3(frontDirection.x * addForcePower, frontDirection.y * addForcePower, frontDirection.z * addForcePower));
+		XMFLOAT3 force(frontDirection.x * addForcePower, frontDirection.y * addForcePower, frontDirection.z * addForcePower);
+		AddForce(force);
 	}
 	if (VoiceReciver::GetBack() || goBackKey.GetKey())
 	{
-		AddForce(XMFLOAT3(frontDirection.x * -addForcePower, frontDirection.y * -addForcePower, frontDirection.z * -addForcePower));
+		XMFLOAT3 force(frontDirection.x * -addForcePower, frontDirection.y * -addForcePower, frontDirection.z * -addForcePower);
+		AddForce(force);
 	}
 
 	VoiceReciver::SetRight(false);
@@ -108,7 +164,8 @@ void Seling::Move()
 	VoiceReciver::SetFront(false);
 	VoiceReciver::SetBack(false);
 
-	selingModel.each.rotation = ShlomonMath::EaseInQuad(selingModel.each.rotation, XMFLOAT3(selingModel.each.rotation.x, selingModel.each.rotation.y, angle), 0.3f);
+	XMFLOAT3 easeGoal(selingModel.each.rotation.x, selingModel.each.rotation.y, angle);
+	selingModel.each.rotation = ShlomonMath::EaseInQuad(selingModel.each.rotation, easeGoal, 0.3f);
 	Imgui::CameraRotation = -selingModel.each.rotation.z + 270.0f;
 }
 

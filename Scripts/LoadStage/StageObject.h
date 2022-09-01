@@ -1,15 +1,17 @@
 #pragma once
 #include "../3DModel/Model.h"
+#include "../Player/Seling.h"
 
 class WallObjectEach : public EachInfo
 {
-
+	
 };
 
 class WallModel : public Model
 {
 public:
-	void Update(BaseDirectX& baseDirectX, WallObjectEach *each = nullptr, bool rCamera = false);
+	void Update(BaseDirectX& baseDirectX, WallObjectEach *f_each = nullptr, bool rCamera = false);
+	void Update(BaseDirectX& baseDirectX, WallObjectEach* f_each, Camera &f_camera);
 };
 
 class WallObject
@@ -29,7 +31,8 @@ class GoalObjectEach : public EachInfo
 class GoalModel : public Model
 {
 public:
-	void Update(BaseDirectX& baseDirectX, GoalObjectEach* each = nullptr, bool rCamera = false);
+	void Update(BaseDirectX& baseDirectX, GoalObjectEach* f_each = nullptr, bool rCamera = false);
+	void Update(BaseDirectX& baseDirectX, GoalObjectEach* f_each ,Camera &f_camera);
 };
 
 class GoalObject
@@ -67,7 +70,8 @@ public:
 	static WallObject walls;
 	static GoalObject goals;
 	static EnemyObject enemys;
-	static void LoadFile(BaseDirectX& baseDirectX, const char *path);
+	static void LoadFile(BaseDirectX& baseDirectX, Seling& player, const char *path);
 	static void LoadModel(BaseDirectX &baseDirectX);
 	static void Draw(BaseDirectX &baseDirectX, bool isRCamera = false);
+	static void Draw(BaseDirectX& baseDirectX, Camera& f_camera);
 };

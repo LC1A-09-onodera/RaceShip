@@ -2,6 +2,7 @@
 #include <string>
 #include <list>
 #include <DirectXMath.h>
+#include "../Player/Seling.h"
 
 using namespace DirectX;
 using namespace std;
@@ -10,8 +11,15 @@ using namespace std;
 class LoadStage
 {
 public:
-	static list<XMFLOAT3> wallPosition;
-	static list<XMFLOAT3> goalPosition;
-	static list<XMFLOAT3> enemyPosition;
+	struct LoadInfo
+	{ 
+		XMFLOAT3 position;
+		XMFLOAT3 rotation;
+	};
+	static list<LoadInfo> wallPosition;
+	static list<LoadInfo> goalPosition;
+	static list<LoadInfo> enemyPosition;
+	static LoadInfo playerPos;
 	static void LoadStages(string stagePath);
+	static void LoadStages(string stagePath, Seling &selingPos);
 };

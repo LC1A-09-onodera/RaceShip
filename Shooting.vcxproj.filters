@@ -213,9 +213,6 @@
     <ClInclude Include="Scripts\VoiceUDPRecive\VoiceUDPSender.h">
       <Filter>Udp</Filter>
     </ClInclude>
-    <ClInclude Include="Scripts\IpAddress\IpAddress.h">
-      <Filter>Udp</Filter>
-    </ClInclude>
     <ClInclude Include="Scripts\WaterFace\WaterFace.h">
       <Filter>WaterFace</Filter>
     </ClInclude>
@@ -227,6 +224,12 @@
     </ClInclude>
     <ClInclude Include="Scripts\MenuUI\MenuUI.h">
       <Filter>MenuUI</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseScriptableObject.h">
+      <Filter>BaseDirectx</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\LoadStage\SpringBoard.h">
+      <Filter>LoadStage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -332,9 +335,6 @@
     <ClCompile Include="Scripts\VoiceUDPRecive\VoiceUDPSender.cpp">
       <Filter>Udp</Filter>
     </ClCompile>
-    <ClCompile Include="Scripts\IpAddress\IpAddress.cpp">
-      <Filter>Udp</Filter>
-    </ClCompile>
     <ClCompile Include="Scripts\WaterFace\WaterFace.cpp">
       <Filter>WaterFace</Filter>
     </ClCompile>
@@ -349,6 +349,9 @@
     </ClCompile>
     <ClCompile Include="Scripts\MenuUI\MenuUI.cpp">
       <Filter>MenuUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\LoadStage\SpringBoard.cpp">
+      <Filter>LoadStage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -372,6 +375,10 @@
     <FxCompile Include="Resource\HLSL\PostMosaicPS.hlsl" />
     <FxCompile Include="Resource\HLSL\PostWaterPS.hlsl" />
     <FxCompile Include="Resource\HLSL\WaterSamplePS.hlsl" />
+    <FxCompile Include="Resource\HLSL\NormalPlane.hlsl" />
+    <FxCompile Include="Resource\HLSL\ObjectMosicPS.hlsl" />
+    <FxCompile Include="Resource\HLSL\MonoPS.hlsl" />
+    <FxCompile Include="Resource\HLSL\BlurPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\HLSL\BSH.hlsli" />

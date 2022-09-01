@@ -15,6 +15,7 @@ enum class MapObjects
 	WALL,
 	GOAL,
 	ENEMY,
+	PLAYER,
 };
 
 //オブジェクトの名前たち
@@ -29,7 +30,6 @@ class MapObjectNames
 class MapEditorObject
 {
 public:
-
 	EachInfo piece;
 	bool isActive = false;
 	bool OnCollisionMouse(float posX, float posY);
@@ -49,11 +49,11 @@ class MapEditorObjects
 	static list<MapEditorObject> wall;
 	static list<MapEditorObject> goal;
 	static list<MapEditorObject> enemy;
-
+	static MapEditorObject player;
 	static Model wallModel;
 	static Model goalModel;
 	static Model enemyModel;
-
+	static Model playerModel;
 	static XMFLOAT3 lineMousePos;
 	static bool isLinePut;
 
@@ -64,12 +64,12 @@ public:
 	static MapObjects activeType;
 	static void LoadModels(BaseDirectX &baseDirectX);
 	static void LoadFile(string path);
-	static void Update(BaseDirectX& baseDirectX, XMFLOAT3& mousePos);
+	static void Update(BaseDirectX& baseDirectX, XMFLOAT3& f_mousePos);
 	static void Draw(BaseDirectX& baseDirectX);
 	static void SetObject(BaseDirectX& baseDirectX, XMFLOAT3& position);
 	static void SetObjectLine(BaseDirectX& baseDirectX, XMFLOAT3& position);
-	static bool ObjectCollision(XMFLOAT3& mousePos);
-	static void OutputFile(const char *path);
+	static bool ObjectCollision(XMFLOAT3& f_mousePos);
+	static bool OutputFile(const char *path);
 	static void DeleteObjects();
 	static void EraseObject();
 };

@@ -1,17 +1,26 @@
 #include "ImguiControl.h"
 #include "../imgui/imgui.h"
+#pragma warning(push)
+#pragma warning(disable:26451)
 #include "../imgui/imgui_impl_dx12.h"
+#pragma warning(pop)
 #include "../imgui/imgui_impl_win32.h"
 #include "../Camera/Camera.h"
 #include "../LoadStage/StageObject.h"
+#pragma warning(push)
+#pragma warning(disable:4505)
 #include "../BaseDirectX/DX12operator.h"
+#pragma warning(pop)
 #include "../MapLayout/MapLayout.h"
 #include <sstream>
 #include <fstream>
 #include <stdarg.h>
+#include "../3DModel/Model.h"
+#include "../Player/Seling.h"
+
+//#define _DEBUG
 
 ComPtr<ID3D12DescriptorHeap> Imgui::imguiDescHeap;
-ComPtr<ID3D12DescriptorHeap> Imgui::heapForImgui;
 int Imgui::effectType = -1;
 Imgui::ImguiType Imgui::tab;
 Imgui::DebugType Imgui::debugType;
@@ -36,8 +45,9 @@ int Imgui::LoadStageNum = 1;
 bool Imgui::isExport = false;
 bool Imgui::isLoadstage = false;
 bool Imgui::isDeleteObjects = false;
-
+bool Imgui::isFileOutputFalse = false;
 int Imgui::radioMode = 0;
+bool Imgui::isMulchthled = true;
 
 list<Rewired::RewiredKeys> Imgui::keyList;
 char Imgui::buf[256] = {};
@@ -60,7 +70,7 @@ void Imgui::RewiredUpdate()
     ImGui::InputText(fileName, buf, 256);
     if (ImGui::Button("AddFile"))
     {
-        Rewired::RewiredContainer::CreateRewired(buf);
+        Rewired::RewiredContainer::CreateRewired(buf, false);
     }
     ShowRewiredElement();
 }
@@ -75,14 +85,14 @@ void Imgui::ShowRewiredElement()
     //キーボードのの設定されている値
     if (itr->keys.size() > 0)
     {
-        for (auto keyListItr = Rewired::KeyCodeString::keyboardKeys.begin(); keyListItr != Rewired::KeyCodeString::keyboardKeys.end(); ++keyListItr)
+        for (auto keyListItr = Rewired::KeyCodeString::mKeyboardKeys.begin(); keyListItr != Rewired::KeyCodeString::mKeyboardKeys.end(); ++keyListItr)
         {
             for (auto keyItr = itr->keys.begin(); keyItr != itr->keys.end(); ++keyItr)
             {
-                if (*keyItr == keyListItr->second)
+                if (*keyItr == keyListItr->keyCode)
                 {
-                    string fileName = " " + keyListItr->first;
-                    ImGui::Text(fileName.c_str());
+                    string keyFileName = " " + keyListItr->keyName;
+                    ImGui::Text(keyFileName.c_str());
                 }
             }
         }
@@ -90,85 +100,38 @@ void Imgui::ShowRewiredElement()
     //XBoxPadの設定されている値
     if (itr->padKeys.size() > 0)
     {
-        for (auto keyListItr = Rewired::KeyCodeString::padKeys.begin(); keyListItr != Rewired::KeyCodeString::padKeys.end(); ++keyListItr)
+        for (auto keyListItr = Rewired::KeyCodeString::mPadKeys.begin(); keyListItr != Rewired::KeyCodeString::mPadKeys.end(); ++keyListItr)
         {
             for (auto keyItr = itr->padKeys.begin(); keyItr != itr->padKeys.end(); ++keyItr)
             {
-                if (*keyItr == keyListItr->second)
+                if (*keyItr == keyListItr->keyCode)
                 {
-                    string fileName = " " + keyListItr->first;
-                    ImGui::Text(fileName.c_str());
+                    string keyFileName = " " + keyListItr->keyName;
+                    ImGui::Text(keyFileName.c_str());
                 }
             }
         }
     }
     static int comboNum = 0;
-    string keyList;
-    for (auto keysItr = Rewired::KeyCodeString::keyboardKeys.begin(); keysItr != Rewired::KeyCodeString::keyboardKeys.end(); ++keysItr)
+    string sKeyList;
+    for (auto keysItr = Rewired::KeyCodeString::mKeyboardKeys.begin(); keysItr != Rewired::KeyCodeString::mKeyboardKeys.end(); ++keysItr)
     {
-        keyList = keyList + keysItr->first;
-        keyList.resize(keyList.size() + 1);
+        sKeyList = sKeyList + keysItr->keyName;
+        sKeyList.resize(sKeyList.size() + 1);
     }
-    for (auto padKeyItr = Rewired::KeyCodeString::padKeys.begin(); padKeyItr != Rewired::KeyCodeString::padKeys.end(); ++padKeyItr)
+    for (auto padKeyItr = Rewired::KeyCodeString::mPadKeys.begin(); padKeyItr != Rewired::KeyCodeString::mPadKeys.end(); ++padKeyItr)
     {
-        keyList = keyList + padKeyItr->first;
-        keyList.resize(keyList.size() + 1);
+        sKeyList = sKeyList + padKeyItr->keyName;
+        sKeyList.resize(sKeyList.size() + 1);
     }
-    keyList = keyList;
-    ImGui::Combo("", &comboNum, keyList.c_str());
+    ImGui::Combo("", &comboNum, sKeyList.c_str());
     if (ImGui::Button("AddKey"))
     {
-        if (static_cast<int>(KeyCode::KeyCodeMax) - 1 > comboNum)
-        {
-            auto keyStringItr = Rewired::KeyCodeString::keyboardKeys.begin();
-            if (Rewired::KeyCodeString::keyboardKeys.size() > 0)
-            {
-                for (int i = 0; i < comboNum; i++)
-                {
-                    keyStringItr++;
-                }
-            }
-            itr->AddKey(keyStringItr->second);
-        }
-        else
-        {
-            auto padStringItr = Rewired::KeyCodeString::padKeys.begin();
-            if (Rewired::KeyCodeString::padKeys.size() > 0)
-            {
-                for (int j = static_cast<int>(KeyCode::KeyCodeMax) - 1; j < comboNum - ((static_cast<int>(KeyCode::KeyCodeMax)) - 1); j++)
-                {
-                    padStringItr++;
-                }
-            }
-            itr->AddKey(padStringItr->second);
-        }
+        Rewired::RewiredContainer::AddKey(itr, comboNum);
     }
     if (ImGui::Button("SubKey"))
     {
-        if (static_cast<int>(KeyCode::KeyCodeMax) - 1 > comboNum)
-        {
-            auto keyStringItr = Rewired::KeyCodeString::keyboardKeys.begin();
-            if (Rewired::KeyCodeString::keyboardKeys.size() > 0)
-            {
-                for (int i = 0; i < comboNum; i++)
-                {
-                    keyStringItr++;
-                }
-            }
-            itr->Subkey(keyStringItr->second);
-        }
-        else
-        {
-            auto padStringItr = Rewired::KeyCodeString::padKeys.begin();
-            if (Rewired::KeyCodeString::padKeys.size() > 0)
-            {
-                for (int j = static_cast<int>(KeyCode::KeyCodeMax) - 1; j < comboNum - ((static_cast<int>(KeyCode::KeyCodeMax)) - 1); j++)
-                {
-                    padStringItr++;
-                }
-            }
-            itr->SubKey(padStringItr->second);
-        }
+        Rewired::RewiredContainer::SubKey(itr, comboNum);
     }
     if (ImGui::Button("Save"))
     {
@@ -195,18 +158,42 @@ ComPtr<ID3D12DescriptorHeap> Imgui::GetHeapForImgui()
 
 void Imgui::DrawImGui(BaseDirectX& baseDirectX)
 {
+    //#ifdef DEBUG
     if (!isActive) return;
+
     ImGui_ImplDX12_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
+
     ImGui::Begin("InfomationAndEdit", nullptr, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
     ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
+
     CreateMenuBar();
-    EachInfo(baseDirectX);
+    EachInfo();
+
     ImGui::End();
+
+    ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
+    ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
+
+    InspectorView();
+
+    ImGui::End();
+
+    if (isFileOutputFalse)
+    {
+        ImGui::Begin("Error", nullptr, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
+        ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
+
+        FileFalse();
+
+        ImGui::End();
+    }
+
     ImGui::Render();
     baseDirectX.cmdList->SetDescriptorHeaps(1, GetHeapForImgui().GetAddressOf());
     ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), baseDirectX.cmdList.Get());
+    //#endif//DEBUG
 }
 
 void Imgui::Init(BaseDirectX& baseDirectX)
@@ -232,42 +219,6 @@ void Imgui::Init(BaseDirectX& baseDirectX)
     blnResult = ImGui_ImplDX12_Init(baseDirectX.dev.Get(), 3, DXGI_FORMAT_R8G8B8A8_UNORM, GetHeapForImgui().Get(), GetHeapForImgui()->GetCPUDescriptorHandleForHeapStart(), GetHeapForImgui()->GetGPUDescriptorHandleForHeapStart());
 }
 
-void Imgui::ChangeInfo(int& intOriginal, int& imguiInfo)
-{
-    intOriginal = imguiInfo;
-    return;
-}
-
-void Imgui::ChangeInfo(float& floatOriginal, float& imguiInfo)
-{
-    floatOriginal = imguiInfo;
-    return;
-}
-
-void Imgui::ChangeInfo(XMFLOAT3& xmfloat3Original, XMFLOAT3& imguiInfo)
-{
-    xmfloat3Original = imguiInfo;
-    return;
-}
-
-void Imgui::GetAndDrawInfo(const int& intOriginal, int& imguiInfo)
-{
-    imguiInfo = intOriginal;
-    return;
-}
-
-void Imgui::GetAndDrawInfo(const float& floatOriginal, float& imguiInfo)
-{
-    imguiInfo = floatOriginal;
-    return;
-}
-
-void Imgui::GetAndDrawInfo(const XMFLOAT3& xmfloat3Original, XMFLOAT3& imguiInfo)
-{
-    imguiInfo = xmfloat3Original;
-    return;
-}
-
 void Imgui::CreateMenuBar()
 {
     if (ImGui::BeginMenuBar())
@@ -284,10 +235,6 @@ void Imgui::CreateMenuBar()
         {
             tab = ImguiType::Debug;
         }
-        /*if (ImGui::MenuItem("PostEffect"))
-        {
-            tab = ImguiType::PostEffect;
-        }*/
         if (ImGui::MenuItem("Rewired"))
         {
             tab = ImguiType::Rewired;
@@ -296,13 +243,28 @@ void Imgui::CreateMenuBar()
     }
 }
 
-void Imgui::EachInfo(BaseDirectX& baseDirectX)
+void Imgui::InspectorView()
+{
+    DebugUpdate();
+}
+
+void Imgui::FileFalse()
+{
+    ImGui::Text("File Export Is Failed");
+    if (ImGui::Button("Close"))
+    {
+        isFileOutputFalse = false;
+    }
+}
+
+void Imgui::EachInfo()
 {
     if (tab == ImguiType::Status)
     {
+        //ImGui::Image()
         ImGui::Text("FPS:%.2f", WindowsAPI::rate);
         ImGui::InputInt("WaterFaceType", &useWaterNum, 1, 1);
-        useWaterNum = ShlomonMath::Clamp(useWaterNum, 0, 2);
+        useWaterNum = ShlomonMath::Clamp(useWaterNum, 0, 4);
         if (useWaterNum == 0)
         {
             ImGui::Text("water");
@@ -313,9 +275,16 @@ void Imgui::EachInfo(BaseDirectX& baseDirectX)
         }
         else if (useWaterNum == 2)
         {
-            ImGui::Text("notiong");
+            ImGui::Text("mosaic");
         }
-
+        else if (useWaterNum == 3)
+        {
+            ImGui::Text("mono");
+        }
+        else if (useWaterNum == 4)
+        {
+            ImGui::Text("blur");
+        }
         ImGui::InputInt("LoadStageNum", &LoadStageNum, 1, 1);
         if (ImGui::Button("LoadStage"))
         {
@@ -331,6 +300,7 @@ void Imgui::EachInfo(BaseDirectX& baseDirectX)
         {
             isDeleteObjects = true;
         }
+        ImGui::Checkbox("mulchThled", &isMulchthled);
     }
     else if (tab == ImguiType::CameraInfo)
     {
@@ -348,7 +318,7 @@ void Imgui::EachInfo(BaseDirectX& baseDirectX)
     }
     else if (tab == ImguiType::Debug)
     {
-        //DebugUpdate();
+
     }
     else if (tab == ImguiType::PostEffect)
     {
@@ -381,39 +351,58 @@ void Imgui::EachInfo(BaseDirectX& baseDirectX)
 }
 void Imgui::DebugUpdate()
 {
-    if (debugType == DebugType::Player)
+    static int inspectorConbo = 1;
+    int count = 0;
+    auto itr = EachManager::eahcs.begin();
+    for (; itr != EachManager::eahcs.end(); ++itr)
     {
-        isSceneChange = false;
-        oldSceneNum = sceneNum;
-        ImGui::Combo("sceneNum", &sceneNum, "TITLE\0SELECT\0GAME\0END\0RESULT\0OP\0MAPEDIT\0\0");
-        if (oldSceneNum != sceneNum)
-        {
-            isSceneChange = true;
-        }
+        count++;
+        ImGui::RadioButton((*itr)->m_eachName.c_str(), &inspectorConbo, count);
     }
-    else if (debugType == DebugType::Water)
+    itr = EachManager::eahcs.begin();
+    for (int i = 1; i < inspectorConbo; i++)
     {
+        itr++;
+    }
 
+    XMFLOAT3 posXM = ConvertXMVECTORtoXMFLOAT3((*itr)->position);
+    float pos[3] = { posXM.x, posXM.y , posXM.z };
+    float rot[3] = { (*itr)->rotation.x, (*itr)->rotation.y ,(*itr)->rotation.z };
+    float scale[3] = { (*itr)->scale.x, (*itr)->scale.y, (*itr)->scale.z };
+    ImGui::DragFloat3("position", pos, 0.005f);
+    ImGui::DragFloat3("rotation", rot, 0.005f);
+    ImGui::DragFloat3("scale", scale, 0.005f);
+    (*itr)->position = { pos[0], pos[1], pos[2], 1.0f };
+    (*itr)->rotation = { rot[0], rot[1], rot[2] };
+    (*itr)->scale = { scale[0], scale[1], scale[2] };
+
+    ImGui::Text(" ");
+    for (auto modelItr = ModelManager::m_models.begin(); modelItr != ModelManager::m_models.end(); ++modelItr)
+    {
+        ImGui::Text((*modelItr)->m_modelName.c_str());
     }
 }
 
-void Imgui::SetWindowActive(bool isActive)
+void Imgui::SetWindowActive(bool f_isActive)
 {
-    Imgui::isActive = isActive;
+    Imgui::isActive = f_isActive;
 }
 
-void Imgui::Update(BaseDirectX& baseDirectX)
+void Imgui::Update(BaseDirectX& baseDirectX, Seling& player)
 {
     if (isLoadstage)
     {
         string path = "Resource/TextData/Stage/stage" + to_string(LoadStageNum) + ".txt";
-        StageObjects::LoadFile(baseDirectX, path.c_str());
+        StageObjects::LoadFile(baseDirectX, player, path.c_str());
         isLoadstage = false;
     }
     if (isExport)
     {
         string path = "Resource/TextData/Stage/stage" + to_string(exportStageNum) + ".txt";
-        MapEditorObjects::OutputFile(path.c_str());
+        if (MapEditorObjects::OutputFile(path.c_str()) == false)
+        {
+            isFileOutputFalse = true;
+        }
         isExport = false;
     }
     if (isDeleteObjects)

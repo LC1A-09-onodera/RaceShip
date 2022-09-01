@@ -2,6 +2,9 @@
 #include "../3DModel/Model.h"
 #include "../BaseDirectX/DX12operator.h"
 #include "../Rewired/Rewired.h"
+#include "../LoadStage/SpringBoard.h"
+
+class Camera;
 
 class Seling
 {
@@ -11,8 +14,7 @@ class Seling
 	float angle = 0;
 	//ìÆÇ≠Ç©Ç«Ç§Ç©ÇÃÉtÉâÉO
 	bool isMoveForce = false;
-	//ìÆÇ≠ó 
-	XMFLOAT3 addForce = { 0.0f ,0.0f , 0.0f};
+	
 	//ç≈ëÂílÇåàÇﬂÇƒÇ®Ç≠
 	const XMFLOAT3 maxForce = { 0.7f ,0.7f , 0.7f};
 
@@ -23,7 +25,15 @@ class Seling
 	const float MaxForce = 1.0f;
 	const float addSelingAngle = 1.0f;
 	const float subForce = 50.0f;
+
+	
+	bool m_isLanding = false;
 public:
+
+	SpringBoard springBorad;
+	bool m_isJump = false;
+	//ìÆÇ≠ó 
+	XMFLOAT3 addForce = { 0.0f ,0.0f , 0.0f};
 	Model selingModel;
 	void AddForce(XMFLOAT3& force);
 	XMFLOAT3 GetDirection()
@@ -35,7 +45,9 @@ public:
 	void LoadModel(BaseDirectX &baseDirectX);
 	void Init();
 	void Update();
+	void Update(bool isPouse);
 	void Draw(BaseDirectX& baseDirectX, bool isRCamera = false);
+	void Draw(BaseDirectX& baseDirectX, Camera &f_camera);
 
 	void ForceAttach();
 	void Move();

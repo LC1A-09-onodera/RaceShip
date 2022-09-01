@@ -11,6 +11,8 @@
 #include "../Rewired/Rewired.h"
 #include "../WaterFace/WaterFace.h"
 #include "../MenuUI/MenuUI.h"
+#include "../Particle/Particle3D.h"
+#include "../LoadStage/SpringBoard.h"
 
 enum GameSceneName { TITLE, SELECT, GAME, END, RESULT, OP , MAPEDIT, RewiredEdit};
 
@@ -50,6 +52,8 @@ private:
 	void PouseUpdate();
 	void PouseDraw();
 
+	void DrawPostEffect();
+
 	int SceneNum = TITLE;
 	BaseDirectX baseDirectX;
 
@@ -80,8 +84,11 @@ private:
 	Seling seling;
 	Seling rSeling;
 	//水面用
-	WaterFace waterFace;
+	WaterFace waterFace[2];
 	WaterFace normalWater;
+	WaterFace mosaicWater;
+	WaterFace monoWater;
+	WaterFace blurWater;
 	//ワイヤーフレームのドーム
 	Model world;
 	Model rWorld;

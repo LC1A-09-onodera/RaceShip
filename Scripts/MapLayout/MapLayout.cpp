@@ -13,10 +13,12 @@ string MapObjectNames::enemy = "enemy";
 list<MapEditorObject> MapEditorObjects::wall;
 list<MapEditorObject> MapEditorObjects::goal;
 list<MapEditorObject> MapEditorObjects::enemy;
+MapEditorObject MapEditorObjects::player;
 
 Model MapEditorObjects::wallModel;
 Model MapEditorObjects::goalModel;
 Model MapEditorObjects::enemyModel;
+Model MapEditorObjects::playerModel;
 MapObjects MapEditorObjects::activeType;
 
 XMFLOAT3 MapEditorObjects::lineMousePos;
@@ -43,7 +45,7 @@ void MapEditorObject::Init(BaseDirectX& baseDirectX, XMFLOAT3& position)
 {
 	ConstInit(piece, baseDirectX.dev);
 	piece.position = ConvertXMFLOAT3toXMVECTOR(position);
-	piece.rotation.y = 90.0f;
+	piece.rotation.y = 0.0f;
 	isActive = true;
 }
 
@@ -55,8 +57,14 @@ string MapEditorObject::PositionToString()
 	oss2 << piece.position.m128_f32[1];
 	ostringstream oss3;
 	oss3 << piece.position.m128_f32[2];
+	ostringstream oss4;
+	oss4 << piece.rotation.x;
+	ostringstream oss5;
+	oss5 << piece.rotation.y;
+	ostringstream oss6;
+	oss6 << piece.rotation.z;
 	string str;
-	str = oss1.str() + " " + oss2.str() + " " + oss3.str();
+	str = oss1.str() + " " + oss2.str() + " " + oss3.str() + " " + oss4.str() + " " + oss5.str() + " " + oss6.str();
 	return str;
 }
 
@@ -65,13 +73,14 @@ void MapEditorObjects::LoadModels(BaseDirectX& baseDirectX)
 	wallModel.CreateModel(baseDirectX, "MapWall", ShaderManager::playerShader);
 	goalModel.CreateModel(baseDirectX, "MapGoal", ShaderManager::playerShader);
 	enemyModel.CreateModel(baseDirectX, "MapEnemy", ShaderManager::playerShader);
+	playerModel.CreateModel(baseDirectX, "Mapplayer", ShaderManager::playerShader);
 }
 
 void MapEditorObjects::LoadFile(string path)
 {
 }
 
-void MapEditorObjects::Update(BaseDirectX& baseDirectX, XMFLOAT3& mousePos)
+void MapEditorObjects::Update(BaseDirectX& baseDirectX, XMFLOAT3& f_mousePos)
 {
 	if (Input::KeyTrigger(DIK_1))
 	{
@@ -81,10 +90,10 @@ void MapEditorObjects::Update(BaseDirectX& baseDirectX, XMFLOAT3& mousePos)
 	{
 		activeType = MapObjects::GOAL;
 	}
-	/*if (Input::KeyTrigger(DIK_3))
+	if (Input::KeyTrigger(DIK_3))
 	{
-		activeType = MapObjects::ENEMY;
-	}*/
+		activeType = MapObjects::PLAYER;
+	}
 	if (Input::KeyTrigger(DIK_0))
 	{
 		activeType = MapObjects::NONE;
@@ -92,10 +101,14 @@ void MapEditorObjects::Update(BaseDirectX& baseDirectX, XMFLOAT3& mousePos)
 	if (Input::MouseTrigger(MouseButton::LBUTTON))
 	{
 		isLinePut = true;
-		if (!ObjectCollision(mousePos))
+		if (!ObjectCollision(f_mousePos))
 		{
-			SetObject(baseDirectX, mousePos);
+			SetObject(baseDirectX, f_mousePos);
 		}
+	}
+	if (Input::MouseTrigger(MouseButton::RBUTTON))
+	{
+		ObjectCollision(f_mousePos);
 	}
 	else if (!Input::Mouse(MouseButton::LBUTTON))
 	{
@@ -103,7 +116,7 @@ void MapEditorObjects::Update(BaseDirectX& baseDirectX, XMFLOAT3& mousePos)
 	}
 	if (!Input::MouseTrigger(MouseButton::LBUTTON) && Input::Mouse(MouseButton::LBUTTON) && isLinePut)
 	{
-		SetObjectLine(baseDirectX, mousePos);
+		SetObjectLine(baseDirectX, f_mousePos);
 	}
 	if (Input::Key(DIK_D))
 	{
@@ -133,6 +146,11 @@ void MapEditorObjects::Draw(BaseDirectX& baseDirectX)
 		enemyModel.Update(baseDirectX, &itr->piece);
 		Draw3DObject(baseDirectX, enemyModel);
 	}
+	if (player.isActive)
+	{
+		playerModel.Update(baseDirectX, &player.piece);
+		Draw3DObject(baseDirectX, playerModel);
+	}
 }
 
 void MapEditorObjects::SetObject(BaseDirectX& baseDirectX, XMFLOAT3& position)
@@ -157,7 +175,7 @@ void MapEditorObjects::SetObject(BaseDirectX& baseDirectX, XMFLOAT3& position)
 		MapEditorObjects::wall.push_back(object);
 		auto itr = wall.end();
 		--itr;
-		pair<list<MapEditorObject>::iterator, MapObjects > ando = {itr, activeType};
+		pair<list<MapEditorObject>::iterator, MapObjects > ando = { itr, activeType };
 		andoList.push_back(ando);
 	}
 	else if (activeType == MapObjects::GOAL)
@@ -167,6 +185,10 @@ void MapEditorObjects::SetObject(BaseDirectX& baseDirectX, XMFLOAT3& position)
 		--itr;
 		pair<list<MapEditorObject>::iterator, MapObjects > ando = { itr, activeType };
 		andoList.push_back(ando);
+	}
+	else if (activeType == MapObjects::PLAYER)
+	{
+		player = object;
 	}
 }
 
@@ -200,59 +222,94 @@ void MapEditorObjects::SetObjectLine(BaseDirectX& baseDirectX, XMFLOAT3& positio
 	SetObject(baseDirectX, lineMousePos);
 }
 
-bool MapEditorObjects::ObjectCollision(XMFLOAT3& mousePos)
+bool MapEditorObjects::ObjectCollision(XMFLOAT3& f_mousePos)
 {
 	for (auto itr = wall.begin(); itr != wall.end(); ++itr)
 	{
-		if (itr->OnCollisionMouse(mousePos.x, mousePos.y))
+		if (itr->OnCollisionMouse(static_cast<float>(f_mousePos.x), static_cast<float>(f_mousePos.y)))
 		{
-			wall.erase(itr);
-			lineMousePos = mousePos;
+			if (Input::MouseTrigger(MouseButton::LBUTTON))
+			{
+				wall.erase(itr);
+			}
+			else if (Input::MouseTrigger(MouseButton::RBUTTON))
+			{
+				itr->piece.rotation.x += 90.0f;
+			}
+
+			lineMousePos = f_mousePos;
 			return true;
 		}
 	}
 	for (auto itr = goal.begin(); itr != goal.end(); ++itr)
 	{
-		if (itr->OnCollisionMouse(mousePos.x, mousePos.y))
+		if (itr->OnCollisionMouse(static_cast<float>(f_mousePos.x), static_cast<float>(f_mousePos.y)))
 		{
-			goal.erase(itr);
-			lineMousePos = mousePos;
+			if (Input::MouseTrigger(MouseButton::LBUTTON))goal.erase(itr);
+			else if (Input::MouseTrigger(MouseButton::RBUTTON))
+			{
+				itr->piece.rotation.x += 90.0f;
+			}
+			lineMousePos = f_mousePos;
 			return true;
 		}
 	}
 	for (auto itr = enemy.begin(); itr != enemy.end(); ++itr)
 	{
-		if (itr->OnCollisionMouse(mousePos.x, mousePos.y))
+		if (itr->OnCollisionMouse(static_cast<float>(f_mousePos.x), static_cast<float>(f_mousePos.y)))
 		{
-			enemy.erase(itr);
-			lineMousePos = mousePos;
+			if (Input::MouseTrigger(MouseButton::LBUTTON))enemy.erase(itr);
+			else if (Input::MouseTrigger(MouseButton::RBUTTON))
+			{
+				itr->piece.rotation.x += 90.0f;
+			}
+			lineMousePos = f_mousePos;
 			return true;
 		}
+	}
+	if (player.OnCollisionMouse(static_cast<float>(f_mousePos.x), static_cast<float>(f_mousePos.y)))
+	{
+		if (Input::MouseTrigger(MouseButton::RBUTTON))
+		{
+			player.piece.rotation.x += 90.0f;
+		}
+		lineMousePos = f_mousePos;
+		return true;
 	}
 	return false;
 }
 
-void MapEditorObjects::OutputFile(const char* path)
+bool MapEditorObjects::OutputFile(const char* path)
 {
 	string fileName = path;
 	ofstream ofs(fileName);
-	if (!ofs) return;
+	if (!ofs) return false;
+
+	if (goal.size() <= 0 || !player.isActive)
+	{
+		return false;
+	}
 	//ofs << "wall" << std::endl;
 	for (auto itr = wall.begin(); itr != wall.end(); ++itr)
 	{
 		ofs << "wall " + itr->PositionToString() << std::endl;
 	}
-
 	for (auto itr = goal.begin(); itr != goal.end(); ++itr)
 	{
 		ofs << "goal " + itr->PositionToString() << std::endl;
 	}
+	if (player.isActive)
+	{
+		ofs << "player " + player.PositionToString() << std::endl;
+	}
+	return true;
 }
 
 void MapEditorObjects::DeleteObjects()
 {
 	wall.clear();
 	goal.clear();
+	player.piece.position = { 0, 0, 0, 1 };
 }
 
 void MapEditorObjects::EraseObject()

@@ -24,10 +24,10 @@ void Camera::CameraTargetRot()
 	}
 }
 
-void Camera::Init(XMFLOAT3& eye, XMFLOAT3& target)
+void Camera::Init(XMFLOAT3& f_eye, XMFLOAT3& f_target)
 {
-	this->eye = eye;
-	this->target = target;
+	this->eye = f_eye;
+	this->target = f_target;
 	up = { 0.0f, 1.0f, 0.0f };
 
 	Update();
@@ -148,17 +148,17 @@ void Camera::ShakeUpdate()
 	}
 }
 
-void Camera::SetShake(float shakePower)
+void Camera::SetShake(float f_shakePower)
 {
-	Camera::shakePower = shakePower;
+	Camera::shakePower = f_shakePower;
 	Camera::eyeStartPosition = Camera::eye;
 	Camera::targetStartPosition = Camera::target;
 	isShake = true;
 }
 
-void Camera::SetTarget(XMFLOAT3 &target)
+void Camera::SetTarget(XMFLOAT3 &f_target)
 {
-	this->target = target;
+	this->target = f_target;
 }
 
 XMFLOAT3 Camera::GetTargetDirection()
@@ -179,8 +179,8 @@ XMFLOAT3 Camera::GetMousePosition(BaseDirectX &baseDirectX)
 {
 	//スクリーン系
 	POINT mouse = WindowsAPI::GetMousePos();
-	XMFLOAT2 mouseFloat;
-	mouseFloat = XMFLOAT2(static_cast<float>(mouse.x), static_cast<float>(mouse.y));
+	XMFLOAT3 mouseFloat;
+	mouseFloat = XMFLOAT3(static_cast<float>(mouse.x), static_cast<float>(mouse.y), 0);
 	//クリップ系
 	mouseFloat.x = mouseFloat.x / (float)window_width;
 	mouseFloat.y = mouseFloat.y / (float)window_height;
@@ -194,7 +194,8 @@ XMFLOAT3 Camera::GetMousePosition(BaseDirectX &baseDirectX)
 	XMMATRIX invProj, invView;
 	invProj = XMMatrixInverse(nullptr, baseDirectX.matProjection);
 	invView = XMMatrixInverse(nullptr, Camera::matView);
-	mousePosition = XMLoadFloat3(&XMFLOAT3(mouseFloat.x, mouseFloat.y, 0));
+
+	mousePosition = XMLoadFloat3(&mouseFloat);
 	mousePosition = XMVector3Transform(mousePosition, invProj);
 	mousePosition = XMVector3Transform(mousePosition, invView);
 	XMFLOAT3 result;

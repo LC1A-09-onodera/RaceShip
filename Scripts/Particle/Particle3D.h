@@ -36,7 +36,7 @@ private: // エイリアス
 	using XMMATRIX = DirectX::XMMATRIX;
 
 public:
-	static const int vertexCount = 2048;
+	static const int vertexCount = 2048 * 15;
 private: // 定数
 	//std::forward_list<Particle> particles;
 
@@ -44,7 +44,7 @@ public: // 静的メンバ関数
 	/// <summary>
 	/// 静的初期化
 	/// </summary>
-	static bool StaticInitialize(ID3D12Device *device,  int window_width, int window_height, XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up);
+	static bool StaticInitialize(ID3D12Device *f_device,  int f_window_width, int f_window_height, XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up);
 
 	/// <summary>
 	/// 視点座標の取得
@@ -56,7 +56,7 @@ public: // 静的メンバ関数
 	/// 視点座標の設定
 	/// </summary>
 	/// <param name="position">座標</param>
-	static void SetEye(XMFLOAT3 eye);
+	static void SetEye(XMFLOAT3 f_eye);
 
 	/// <summary>
 	/// 注視点座標の取得
@@ -68,7 +68,7 @@ public: // 静的メンバ関数
 	/// 注視点座標の設定
 	/// </summary>
 	/// <param name="position">座標</param>
-	static void SetTarget(XMFLOAT3 target);
+	static void SetTarget(XMFLOAT3 f_target);
 
 	/// <summary>
 	/// ベクトルによる移動
@@ -80,6 +80,13 @@ public: // 静的メンバ関数
 	/// ベクトルによる視点移動
 	/// </summary>
 	static void CameraMoveEyeVector(XMFLOAT3 move);
+
+	/// <summary>
+	/// カメラ初期化
+	/// </summary>
+	/// <param name="window_width">画面横幅</param>
+	/// <param name="window_height">画面縦幅</param>
+	static void InitializeCamera(int Window_width, int Window_height, XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up);
 	
 	// デバイス
 	static ID3D12Device *device;
@@ -110,20 +117,13 @@ private:// 静的メンバ関数
 	/// <summary>
 	/// カメラ初期化
 	/// </summary>
-	/// <param name="window_width">画面横幅</param>
-	/// <param name="window_height">画面縦幅</param>
-	static void InitializeCamera(int window_width, int window_height, XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up);
-
-	/// <summary>
-	/// カメラ初期化
-	/// </summary>
 	static void CameraUpdate();
 
 public: // メンバ関数
 	/// <summary>
 	/// ビュー行列を更新
 	/// </summary>
-	static void UpdateViewMatrix(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, bool isBillbord = true);
+	static void UpdateViewMatrix(XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up, bool isBillbord = true);
 	// コマンドリスト
 	static ID3D12GraphicsCommandList *cmdList;
 
@@ -147,6 +147,7 @@ class ParticleIndi
 		XMFLOAT3 position = {};
 		XMFLOAT3 velocity = {};
 		XMFLOAT3 accel = {};
+		XMFLOAT3 startPos = {};
 		int frame = 0;
 		int num_frame = 0;
 		//スケール
@@ -155,6 +156,7 @@ class ParticleIndi
 		float s_scale = 1.0f;
 		//最終地
 		float e_scale = 0.0f;
+		float angle = 0.0f;
 		
 	};
 	struct ConstBufferData
@@ -214,7 +216,7 @@ public:
 	/// 座標の設定
 	/// </summary>
 	/// <param name="position">座標</param>
-	void SetPosition(DirectX::XMFLOAT3 position) { this->position = position; }
+	void SetPosition(DirectX::XMFLOAT3 f_position) { this->position = f_position; }
 	/// <summary>
 	/// 3Dオブジェクト生成
 	/// </summary>
@@ -239,6 +241,11 @@ public:
 	void Update(DirectX::XMFLOAT3 eye, DirectX::XMFLOAT3 target, DirectX::XMFLOAT3 up , DirectX::XMFLOAT3 *pos = nullptr, bool isBilbord = true);
 
 	/// <summary>
+	/// 毎フレーム処理
+	/// </summary>
+	void ElementUpdate(DirectX::XMFLOAT3 eye, DirectX::XMFLOAT3 target, DirectX::XMFLOAT3 up, bool isBilbord = true);
+
+	/// <summary>
 	/// テクスチャ読み込み
 	/// </summary>
 	/// <returns>成否</returns>
@@ -247,8 +254,11 @@ public:
 	/// <summary>
 	/// パーティクルの追加
 	/// </summary>
-	void Add(int life, DirectX::XMFLOAT3 &position, DirectX::XMFLOAT3 &velocity, DirectX::XMFLOAT3 &accel, float start_scale = 1.0f, float end_scale = 0.0f);
-
+	void Add(int life, DirectX::XMFLOAT3 &f_position, DirectX::XMFLOAT3 &velocity, DirectX::XMFLOAT3 &accel, float start_scale = 1.0f, float end_scale = 0.0f);
+	/// <summary>
+	/// パーティクルの追加
+	/// </summary>
+	void Add(int life, DirectX::XMFLOAT3& f_position,DirectX::XMFLOAT3 &startPos, float angle , float start_scale = 1.0f, float end_scale = 0.0f);
 	/// <summary>
 	/// パーティクルの生成
 	/// </summary>
@@ -277,6 +287,11 @@ public:
 	void LuckParticle(const DirectX::XMFLOAT3 emitterPosition = {0, 0, 0}, float startSize = 1.0f, float endSize = 0.0f, int life = 60);
 
 	/// <summary>
+	/// 水しぶき的なパーティクル
+	/// </summary>
+	void SheetOfSprayParticle(const DirectX::XMFLOAT3 emitterPosition = { 0, 0, 0 }, const DirectX::XMFLOAT3 angle = {0, 0, 1}, const DirectX::XMFLOAT3 changePos = {0, 0, 0}, float startSize = 1.0f, float endSize = 0.0f, int life = 60);
+
+	/// <summary>
 	/// ネガティブなパーティクル
 	/// </summary>
 	void DownParticle(const DirectX::XMFLOAT3 emitterPosition = { 0, 0, 0 }, float startSize = 1.0f, float endSize = 0.0f, int life = 60);
@@ -286,6 +301,7 @@ public:
 	/// </summary>
 	void UI(const DirectX::XMFLOAT3 emitterPosition = { 0, 0, 0 }, float startSize = 5.0f, float endSize = 5.0f, int life = 1);
 	void UI2(const DirectX::XMFLOAT3 emitterPosition = { 0, 0, 0 }, float startSize = 130.0f, float endSize = 130.0f);
+
 	/// <summary>
 	/// パーティクルが収束してくる
 	/// </summary>
@@ -315,6 +331,12 @@ public:
 	void BackParticle(const DirectX::XMFLOAT3 emitterPosition = { 0, 0, 0 }, float startSize = 2.0f, float endSize = 2.0f, int life = 180);
 
 	void FlashParticle(const DirectX::XMFLOAT3 emitterPosition = { 0, 0, 0 }, float startSize = 2.0f, float endSize = 2.0f, int life = 60);
+
+	void LifeParticle(const DirectX::XMFLOAT3 cameraPosition = {0, 0, 0}, float R = 20.0f, float startSize = 2.0f, float endSize = 0.0f, int life = 60);
+
+	void Landing(const DirectX::XMFLOAT3 emitterPosition = {0, 0, 0}, float power = 10.0f, float startSize = 0.5f, float endSize = 0.0f, int life = 60);
+
+	void LandingUpdate(DirectX::XMFLOAT3 eye, DirectX::XMFLOAT3 target, DirectX::XMFLOAT3 up, bool isBilbord = true);
 };
 /// <summary>
 	/// 描画
@@ -333,8 +355,11 @@ private:
 public:
 	ParticleControl(const ParticleControl &obj) = delete;
 	ParticleControl &operator=(const ParticleControl &obj) = delete;
-	static std::shared_ptr<ParticleIndi> attackEffect;
+	static std::shared_ptr<ParticleIndi> elementEffect;
+	//水しぶき
+	static std::shared_ptr<ParticleIndi> sheetOfSpray;
+	static std::shared_ptr<ParticleIndi> sheetOfSpray2;
 	static void Update();
 	static void Init(BaseDirectX &baseDirectX);
-	static void Draw();
+	static void Draw(BaseDirectX& baseDirectX);
 };

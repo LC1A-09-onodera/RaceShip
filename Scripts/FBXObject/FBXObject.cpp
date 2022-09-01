@@ -15,8 +15,11 @@ ComPtr<ID3D12PipelineState> FBXObject::pipelineState;
 void FBXObject::Initialize()
 {
 	HRESULT result;
-	result = dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataTransform) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuffTrabsform));
-	result = dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataSkin) + 0xff) & ~0xff), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBufferSkin));
+	CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
+	CD3DX12_RESOURCE_DESC resourceDescTrans = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataTransform) + 0xff) & ~0xff);
+	CD3DX12_RESOURCE_DESC resourceDescSkin = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataSkin) + 0xff) & ~0xff);
+	result = dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDescTrans, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBuffTrabsform));
+	result = dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDescSkin, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constBufferSkin));
 	frameTime.SetTime(0, 0, 0, 1, 0, FbxTime::EMode::eFrames60);
 	ConstBufferDataSkin* constMapSkin = nullptr;
 	result = constBufferSkin->Map(0, nullptr, (void**)&constMapSkin);
@@ -43,8 +46,8 @@ void FBXObject::Update(BaseDirectX& baseDirectX)
 	matWorld *= matRot;
 	matWorld *= matTrans;
 
-	const XMMATRIX& matViewProjection = Cameras::camera.matView;
-	const XMMATRIX& modelTransform = model->GetModelTransform();
+	//const XMMATRIX& matViewProjection = Cameras::camera.matView;
+	//const XMMATRIX& modelTransform = model->GetModelTransform();
 	const XMFLOAT3& cameraPos = Cameras::camera.eye;
 
 	HRESULT result;
@@ -244,7 +247,7 @@ void FBXObject::CreateGraphicsPipeline()
 	descRangeSRV.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0); // t0 レジスタ
 
 	// ルートパラメータ
-	CD3DX12_ROOT_PARAMETER rootparams[3];
+	CD3DX12_ROOT_PARAMETER rootparams[3] = {};
 	// CBV（座標変換行列用）
 	rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 	// SRV（テクスチャ）

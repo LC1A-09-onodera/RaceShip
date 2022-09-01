@@ -3,6 +3,10 @@
 HLSLShader ShaderManager::playerShader;
 HLSLShader ShaderManager::waterShader;
 HLSLShader ShaderManager::normalPlaneShader;
+HLSLShader ShaderManager::mosaicPlaneShader;
+HLSLShader ShaderManager::monoPlaneShader;
+HLSLShader ShaderManager::blurPlaneShader;
+
 HLSLShader ShaderManager::postWater;
 HLSLShader ShaderManager::postMosaic;
 HLSLShader ShaderManager::postBlur;
@@ -15,6 +19,12 @@ void ShaderManager::LoadShaders()
 	waterShader.psBlob = LoadShader(L"Resource/HLSL/WaterSamplePS.hlsl", "ps_5_0");
 	normalPlaneShader.vsBlob = LoadShader(L"Resource/HLSL/OBJVertexShader.hlsl", "vs_5_0");
 	normalPlaneShader.psBlob = LoadShader(L"Resource/HLSL/NormalPlane.hlsl", "ps_5_0");
+	mosaicPlaneShader.vsBlob = LoadShader(L"Resource/HLSL/OBJVertexShader.hlsl", "vs_5_0");
+	mosaicPlaneShader.psBlob = LoadShader(L"Resource/HLSL/ObjectMosicPS.hlsl", "ps_5_0");
+	monoPlaneShader.vsBlob = LoadShader(L"Resource/HLSL/OBJVertexShader.hlsl", "vs_5_0");
+	monoPlaneShader.psBlob = LoadShader(L"Resource/HLSL/MonoPS.hlsl", "ps_5_0");
+	blurPlaneShader.vsBlob = LoadShader(L"Resource/HLSL/OBJVertexShader.hlsl", "vs_5_0");
+	blurPlaneShader.psBlob = LoadShader(L"Resource/HLSL/BlurPS.hlsl", "ps_5_0");
 
 	postWater.vsBlob = LoadShader(L"Resource/HLSL/PostEffectTestVS.hlsl", "vs_5_0");
 	postWater.psBlob = LoadShader(L"Resource/HLSL/PostWaterPS.hlsl", "ps_5_0");

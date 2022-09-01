@@ -1,20 +1,27 @@
 #pragma once
 #include "../BaseDirectX/Input.h"
 #include "../Sprite/Sprite.h"
-#include <tuple>
 
 namespace Rewired
 {
+	template <typename T>
+	struct KeyInfo
+	{
+		string keyName;
+		T keyCode;
+		Sprite icon;
+	};
 	class KeyCodeString
 	{
 	public:
 		static void KeyCodeStringInit(BaseDirectX &baseDirectX);
+		static bool GetAnyInput(KeyInfo<KeyCode> &key);
+		static bool GetPadAnyInput(KeyInfo<PadKeyCode> &key );
 		//Keyborad
-		static list<tuple<string, KeyCode, Sprite>> keyboardKeys;
+		static list<KeyInfo<KeyCode>> mKeyboardKeys;
 		//XBoxPad
-		static list<tuple<string, PadKeyCode, Sprite>> padKeys;
+		static list<KeyInfo<PadKeyCode>> mPadKeys;
 	};
-
 	class RewiredKeys
 	{
 		string fileName;
@@ -33,7 +40,6 @@ namespace Rewired
 		list<KeyCode> keys;
 		list<PadKeyCode> padKeys;
 	};
-
 	class RewiredContainer
 	{
 	public:
@@ -42,10 +48,12 @@ namespace Rewired
 		static list<RewiredKeys> rewiredsC;
 		static void AddRewired(RewiredKeys &rewired);
 		//ImGuiでファイル作成する
-		static void CreateRewired(string rewiredName);
+		static void CreateRewired(string rewiredName, bool isAdd);
 		//ファイル名は既存のを使うので初期化時には使えない
 		static void ReloadRewired();
 		static void LoadAllRewired();
 		static void GetFilesName();
+		static void AddKey(std::list<RewiredKeys>::iterator itr, int keyIndex);
+		static void SubKey(std::list<RewiredKeys>::iterator itr, int keyIndex);
 	};
 }

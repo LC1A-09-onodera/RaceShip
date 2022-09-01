@@ -61,6 +61,9 @@ public:
 	bool back;
 	float rotation = 0.0f;
 	int texNum;
+	float pad1 = 0.0f;
+	float pad2 = 0.0f;
+	float pad3 = 0.0f;
 	//射影行列
 	XMVECTOR position{};
 	XMMATRIX matProjection{};
@@ -69,8 +72,8 @@ public:
 	XMFLOAT2 texSize = {100,100};
 
 	//スプライトの生成
-	void CreateSprite(BaseDirectX& baseDirectX, const wchar_t* graph, XMFLOAT3 position, ComPtr<ID3D12Resource> texBuff = nullptr, bool back = false, bool TexSize = true);
-	void CreateSprite(BaseDirectX& baseDirectX, Tex tex, XMFLOAT3 position, ComPtr<ID3D12Resource> texBuff = nullptr, bool back = false, bool TexSize = true);
+	void CreateSprite(BaseDirectX& baseDirectX, const wchar_t* graph, XMFLOAT3 f_position, ComPtr<ID3D12Resource> texBuff = nullptr, bool f_back = false, bool TexSize = true);
+	void CreateSprite(BaseDirectX& baseDirectX, Tex f_tex, XMFLOAT3 f_position, ComPtr<ID3D12Resource> texBuff = nullptr, bool f_back = false, bool TexSize = true);
 	//スプライト用パイプラインの設定コマンド
 	
 	//スプライト用描画コマンド

@@ -2,6 +2,8 @@
 #include "../3DModel/Model.h"
 #include "../PostEffect/PostEffect.h"
 
+class Camera;
+
 class WaterConstBuff0 : public ConstBufferDataB0
 {
 public:
@@ -25,25 +27,32 @@ public:
 	ComPtr<ID3D12Resource> depthBuff;
 	ComPtr<ID3D12DescriptorHeap> descHeapRTV;
 	ComPtr<ID3D12DescriptorHeap> descHeapDSV;
+	PostEffect m_renderTarget;
 	UINT frameTime = 0;
 	//EachInfo each;
-	void CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& shader,PostEffect &postEffect, bool smoothing = false);
-	bool LoadTexture(BaseDirectX& baseDirectX, const string& directPath, const string& filename, PostEffect &postEffect);
-	void LoadMaterial(BaseDirectX& baseDirectX, const string& directoryPath, const string& filename, PostEffect& postEffect);
-	void InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& shader, PostEffect &postEffect);
+	void CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& shader, bool smoothing = false);
+	bool LoadTexture(BaseDirectX& baseDirectX);
+	void LoadMaterial(BaseDirectX& baseDirectX, const string& directoryPath, const string& filename);
+	void InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& shader);
 	void Update(BaseDirectX& baseDirectX);
 	void PreDraw();
 	void PostDraw();
-	void Draw(BaseDirectX& baseDirectX, WaterEachInfo&each, PostEffect& postEffect);
+	void Draw(BaseDirectX& baseDirectX, WaterEachInfo &f_each);
 };
 
 class WaterFace
 {
 public:
 	WaterFaceModel waterModel;
-
-	void LoadModel(BaseDirectX& baseDirectX, HLSLShader &useShader, PostEffect &postEffect);
+	shared_ptr<Camera> m_camera;
+	void LoadModel(BaseDirectX& baseDirectX, HLSLShader &useShader, XMFLOAT3 &f_cameraPos, XMFLOAT3 &f_cameraTarget);
 	void Init(BaseDirectX& baseDirectX);
 	void Update();
-	void Draw(BaseDirectX& baseDirectX, PostEffect& postEffect, XMVECTOR &selingPos);
+	void Draw(BaseDirectX& baseDirectX,  XMVECTOR &selingPos);
+};
+
+class WaterCameraManager
+{
+public:
+	static list<shared_ptr<Camera>> f_cameras;
 };

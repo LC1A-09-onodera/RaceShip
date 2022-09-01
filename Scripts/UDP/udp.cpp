@@ -1,15 +1,16 @@
 #include "udp.h"
 
-void UDPClass::SetPortNum(int port)
+void UDPClass::SetPortNum(int f_port)
 {
-	this->port = port;
+	this->port = static_cast<u_short>(f_port);
 }
 
 void UDPClass::StartUp()
 {
-	WSAStartup(MAKEWORD(2, 0), &wsaData);//MAKEWORD(2, 0)はバージョン
-	sock = static_cast<int>(socket(AF_INET, SOCK_DGRAM, 0));//AF_INETはIPv4、SOCK_DGRAMはUDP通信、0は？
-
+	if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0)//MAKEWORD(2, 0)はバージョン
+	{
+		sock = static_cast<int>(socket(AF_INET, SOCK_DGRAM, 0));//AF_INETはIPv4、SOCK_DGRAMはUDP通信、0は？
+	}
 	addr.sin_family = AF_INET;  //IPv4
 	addr.sin_port = htons(port);   //通信ポート番号設定
 	addr.sin_addr.S_un.S_addr = INADDR_ANY; // INADDR_ANYはすべてのアドレスからのパケットを受信する
@@ -18,15 +19,20 @@ void UDPClass::StartUp()
 	ioctlsocket(sock, FIONBIO, &val);
 }
 
+void UDPClass::SendData(const char* data)
+{
+	sendto(sock, data, sizeof(data), 0, (struct sockaddr*)&addr, sizeof(addr));//addrに文字列送信
+}
+
 void UDPClass::Recive()
 {
-	char buf[100];
+	char buf[100] = {};
 	memset(buf, 0, 100);
-	int data_size = recv(sock, buf, 100, 0);
+	//int data_size = recv(sock, buf, 100, 0);
 	tex = buf;
 }
 
-void UDPClass::EndRecive()
+void UDPClass::End()
 {
 	closesocket(sock);
 	WSACleanup();

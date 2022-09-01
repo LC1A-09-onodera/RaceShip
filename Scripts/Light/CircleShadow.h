@@ -27,18 +27,18 @@ private:
 	XMFLOAT2 factorAngleCos = {0.2f, 0.5f};
 	bool active = false;
 public:
-	inline void SetDir(const XMVECTOR &dir){this->dir = dir;}
+	inline void SetDir(const XMVECTOR &Dir){this->dir = Dir;}
 	inline const XMVECTOR &GetDir(){return dir;}
-	inline void SetCasterPos(const XMFLOAT3 &casterPos){this->casterPos = casterPos;}
+	inline void SetCasterPos(const XMFLOAT3 &CasterPos){this->casterPos = CasterPos;}
 	inline const XMFLOAT3 &GetCasterPos(){return casterPos;}
-	inline void SetDistanceCasterLight(float distanceCasterLight){this->distanceCasterLight = distanceCasterLight;}
+	inline void SetDistanceCasterLight(float DistanceCasterLight){this->distanceCasterLight = DistanceCasterLight;}
 	inline float GetDistanceCasterLight(){return distanceCasterLight;}
-	inline void SetAtten(const XMFLOAT3 &atten) {this->atten = atten;}
+	inline void SetAtten(const XMFLOAT3 &Atten) {this->atten = Atten;}
 	inline const XMFLOAT3 GetAtten(){return atten;}
 	inline void SetFactorAngle(const XMFLOAT2 &factorAngle){this->factorAngleCos.x = cosf(XMConvertToRadians(factorAngle.x));
 															this->factorAngleCos.y = cosf(XMConvertToRadians(factorAngle.y));
 	}
 	inline const XMFLOAT2 &GetFactorAngleCos(){return factorAngleCos;}
-	inline void SetActive(bool active){this->active = active;}
+	inline void SetActive(bool isActive){this->active = isActive;}
 	inline bool isActive(){return active;}
 };

@@ -5,7 +5,9 @@ void FBXModel::CreateBuffers(ID3D12Device* dev)
 	HRESULT result;
 	//頂点関係
 	UINT sizeVB = static_cast<UINT>(sizeof(VertexPosNormalUvSkin) * vertices.size());
-	result = dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizeVB), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertBuff));
+	CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
+	CD3DX12_RESOURCE_DESC resourceDescVB = CD3DX12_RESOURCE_DESC::Buffer(sizeVB);
+	result = dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDescVB, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertBuff));
 	VertexPosNormalUvSkin *vertMap = nullptr;
 	result = vertBuff->Map(0, nullptr, (void **)&vertMap);
 	if (SUCCEEDED(result))
@@ -19,7 +21,8 @@ void FBXModel::CreateBuffers(ID3D12Device* dev)
 
 	//インデックス関係
 	UINT sizeIB = static_cast<UINT>(sizeof(unsigned short) *indices.size());
-	result = dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizeIB), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&indexBuff));
+	CD3DX12_RESOURCE_DESC resourceDescIB = CD3DX12_RESOURCE_DESC::Buffer(sizeIB);
+	result = dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDescIB, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&indexBuff));
 	unsigned short *indexMap = nullptr;
 	result = indexBuff->Map(0, nullptr, (void **) &indexMap);
 	if (SUCCEEDED(result))
@@ -35,7 +38,8 @@ void FBXModel::CreateBuffers(ID3D12Device* dev)
 	const DirectX::Image *img = scratchImg.GetImage(0, 0 ,0);
 	assert(img);
 	CD3DX12_RESOURCE_DESC texresDesc = CD3DX12_RESOURCE_DESC::Tex2D(metadata.format, metadata.width, (UINT)metadata.height, (UINT16)metadata.arraySize, (UINT16)metadata.mipLevels);
-	result = dev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0), D3D12_HEAP_FLAG_NONE, &texresDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&texbuff));
+	CD3DX12_HEAP_PROPERTIES heapPropWri(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0);
+	result = dev->CreateCommittedResource(&heapPropWri, D3D12_HEAP_FLAG_NONE, &texresDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&texbuff));
 	result = texbuff->WriteToSubresource(0 ,nullptr, img->pixels, (UINT)img->rowPitch, (UINT)img->slicePitch);
 
 	//SRV

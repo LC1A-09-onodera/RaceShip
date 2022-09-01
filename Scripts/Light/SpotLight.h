@@ -31,17 +31,17 @@ private:
 	bool active = false;
 
 public:
-	inline void SetLightDir(const XMVECTOR &lightdir){this->lightdir = lightdir;}
+	inline void SetLightDir(const XMVECTOR &lightDir){this->lightdir = lightDir;}
 	inline const XMVECTOR &GetLightDir(){return lightdir;};
-	inline void SetLightPos(const XMFLOAT3& lightpos) { this->lightpos = lightpos; }
+	inline void SetLightPos(const XMFLOAT3& lightPos) { this->lightpos = lightPos; }
 	inline const XMFLOAT3& GetLightPos() { return lightpos; };
-	inline void SetLightColor(const XMFLOAT3& lightcolor) { this->lightcolor = lightcolor; }
+	inline void SetLightColor(const XMFLOAT3& lightColor) { this->lightcolor = lightColor; }
 	inline const XMFLOAT3& GetLightColor() { return lightcolor; };
-	inline void SetLightAtten(const XMFLOAT3& lightAtten) { this->lightAtten = lightAtten; }
+	inline void SetLightAtten(const XMFLOAT3& lightatten) { this->lightAtten = lightatten; }
 	inline const XMFLOAT3& GetLightAtten() { return lightAtten; };
-	inline void SetLightFactorAngle(const XMFLOAT2& lightFactorAngle) { this->lightFactorAngleCos.x = cosf(XMConvertToRadians(lightFactorAngle.x));
-																		this->lightFactorAngleCos.y = cosf(XMConvertToRadians(lightFactorAngle.y));}
+	inline void SetLightFactorAngle(const XMFLOAT2& LightFactorAngle) { this->lightFactorAngleCos.x = cosf(XMConvertToRadians(LightFactorAngle.x));
+																		this->lightFactorAngleCos.y = cosf(XMConvertToRadians(LightFactorAngle.y));}
 	inline const XMFLOAT2& GetLightFactorAngleCos() { return lightFactorAngleCos; };
-	inline void SetActive(bool active){this->active = active;}
+	inline void SetActive(bool isActive){this->active = isActive;}
 	inline bool isActive(){return active;}
 };

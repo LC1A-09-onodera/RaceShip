@@ -32,13 +32,13 @@ using namespace std;
 class XAudio2VoiceCallback : public IXAudio2VoiceCallback
 {
 public:
-	STDMETHOD_(void, OnVoiceProcessingPassStart) (THIS_ UINT32 BytesRequires) {};
-	STDMETHOD_(void, OnVoiceProcessingPassEnd) (THIS) {};
-	STDMETHOD_(void, OnStreamEnd) (THIS) {};
-	STDMETHOD_(void, OnBufferStart) (THIS_ void *pBufferContext) {};
-	STDMETHOD_(void, OnBufferEnd) (THIS_ void *pBufferContext) { delete[] pBufferContext; };
-	STDMETHOD_(void, OnLoopEnd) (THIS_ void *pBufferContext) {};
-	STDMETHOD_(void, OnVoiceError) (THIS_ void *pBufferCountext, HRESULT Error) {};
+	//STDMETHOD_(void, OnVoiceProcessingPassStart) (THIS_ UINT32 BytesRequires) {};
+	//STDMETHOD_(void, OnVoiceProcessingPassEnd) (THIS) {};
+	//STDMETHOD_(void, OnStreamEnd) (THIS) {};
+	//STDMETHOD_(void, OnBufferStart) (THIS_ void *pBufferContext) {};
+	//STDMETHOD_(void, OnBufferEnd) (THIS_ void *pBufferContext) { delete[] pBufferContext; };
+	//STDMETHOD_(void, OnLoopEnd) (THIS_ void *pBufferContext) {};
+	//STDMETHOD_(void, OnVoiceError) (THIS_ void *pBufferCountext, HRESULT Error) {};
 };
 
 struct PeraVertex
@@ -77,13 +77,13 @@ public:
 	ComPtr<ID3D12DescriptorHeap> dsvHeap;
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = D3D12_DEPTH_STENCIL_VIEW_DESC();
 	//static const int ObjectNum = 200;
-	static const int TexBufferNum = 100;
+	static const int TexBufferNum = 200;
 	D3D12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV[BaseDirectX::TexBufferNum] = {};
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuDescHandleSRV[BaseDirectX::TexBufferNum] = {};
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvH = D3D12_CPU_DESCRIPTOR_HANDLE();
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline = D3D12_GRAPHICS_PIPELINE_STATE_DESC();
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipelineMeth = D3D12_GRAPHICS_PIPELINE_STATE_DESC();
-	D3D12_RENDER_TARGET_BLEND_DESC &blenddesc = D3D12_RENDER_TARGET_BLEND_DESC();
+	//D3D12_RENDER_TARGET_BLEND_DESC &blenddesc;
 	ComPtr<ID3DBlob> vsBlob;
 	ComPtr<ID3DBlob> psBlob;
 	ComPtr<ID3DBlob> errorBlob;

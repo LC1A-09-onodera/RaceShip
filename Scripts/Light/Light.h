@@ -9,7 +9,10 @@
 #include "../Light/PointLight.h"
 #include "../Light/SpotLight.h"
 #include "../Light/CircleShadow.h"
+#pragma warning(push)
+#pragma warning(disable:4505)
 #include "../BaseDirectX/DX12operator.h"
+#pragma warning(pop)
 
 using namespace Microsoft::WRL;
 using namespace DirectX;
@@ -34,22 +37,22 @@ public:
 		SpotLight::ConstBufferData spotLights[SpotLightNum];
 		CircleShadow::ConstBufferData circleShadows[CircleShadowNum];
 	};
-	static void StaticInitialize(ID3D12Device *device);
+	static void StaticInitialize(ID3D12Device *Device);
 	void Update();
 	void Draw(ID3D12GraphicsCommandList *cmdList, UINT rootParameterIndex);
 	static Light *Create();
-	void SetLightDir(const XMVECTOR &lightdir);
-	void SetLightColor(const XMFLOAT3 &lightcolor);
+	void SetLightDir(const XMVECTOR &lightDir);
+	void SetLightColor(const XMFLOAT3 &lightColor);
 	void SetPointLightActive(int index, bool active);
 	void SetPointLightPos(int index, const XMFLOAT3 &lightpos);
-	void SetPointLightColor(int index, const XMFLOAT3 &lightcolor);
-	void SetPointLightAtten(int index, const XMFLOAT3 &lightatten);
+	void SetPointLightColor(int index, const XMFLOAT3 &lightColor);
+	void SetPointLightAtten(int index, const XMFLOAT3 &lightAtten);
 
 	void SetSpotLightActive(int index, bool active);
-	void SetSpotLightDir(int index, const XMVECTOR &lightdir);
-	void SetSpotLightPos(int index, const XMFLOAT3 &lightpos);
-	void SetSpotLightColor(int index, const XMFLOAT3 &lightcolor);
-	void SetSpotLightAtten(int index, const XMFLOAT3 &lightatten);
+	void SetSpotLightDir(int index, const XMVECTOR &lightDir);
+	void SetSpotLightPos(int index, const XMFLOAT3 &lightPos);
+	void SetSpotLightColor(int index, const XMFLOAT3 &lightColor);
+	void SetSpotLightAtten(int index, const XMFLOAT3 &lightAtten);
 	void SetSpotLightAngle(int index, const XMFLOAT2 &lightFactorAngle);
 
 	void SetCircleShadowActive(int index, bool active);
@@ -64,6 +67,8 @@ public:
 private:
 	//定数バッファ
 	ComPtr<ID3D12Resource> constBuff;
+	float pad1 = 0.0f;
+	float pad2 = 0.0f;
 	//ライト方向ベクトル
 	XMVECTOR lightdir = {0, 0, 1.0f, 0};
 	//ライトの色
