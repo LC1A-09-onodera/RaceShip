@@ -26,7 +26,7 @@ struct Node
 	/*float pad1 = 0.0f;
 	float pad2 = 0.0f;*/
 	//スケール
-	DirectX::XMVECTOR scaling ;
+	DirectX::XMVECTOR scaling;
 	//回転角
 	DirectX::XMVECTOR rotation ;
 	//ローカル移動

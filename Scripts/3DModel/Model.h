@@ -107,6 +107,7 @@ public:
 	XMFLOAT3 rotation = { 0,0,0 };
 	XMVECTOR position = { 0,0,0 };
 	std::string m_eachName;
+	bool isActive = true;
 };
 
 class EachManager

@@ -7,10 +7,10 @@ SamplerState smp : register(s0);
 
 float4 main(VSOutput input) : SV_TARGET
 {
-    float2 smpUV;
-    smpUV.x = 1.0 - input.uv.x;
-    smpUV.y = input.uv.y;
-    return tex.Sample(smp, smpUV);
+    //float2 smpUV;
+    //smpUV.x = 1.0 - input.uv.x;
+    //smpUV.y = input.uv.y;
+    //return tex.Sample(smp, smpUV);
     //êÖñ Ç€Ç¢ÇÃ
     float2 windowSize;
     windowSize.x = 1280 * 2;

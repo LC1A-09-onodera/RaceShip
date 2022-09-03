@@ -4,10 +4,10 @@
 
 Model SpringBoard::m_model;
 
-void SpringBoard::Update(Seling& seling)
+void SpringBoard::Update(Seling& seling, EachInfo &each)
 {
 	XMFLOAT3 selingPos = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
-	XMFLOAT3 thisPos = ConvertXMVECTORtoXMFLOAT3(m_model.each.position);
+	XMFLOAT3 thisPos = ConvertXMVECTORtoXMFLOAT3(each.position);
 	m_OldHit = m_isHit;
 	if (Collition(seling, thisPos))
 	{
@@ -163,7 +163,6 @@ bool SpringBoard::Collition(Seling& seling, XMFLOAT3 thisPos)
 	}
 	else if (m_hitDirection == m_direction && m_direction == Direction::UpToBottom)
 	{
-		
 		float part = ShlomonMath::Clamp(m_wid - ZLenght, 0.0f, 100.0f);
 		frontAndRearPart = (part) / 10.0f;
 		seling.selingModel.each.position.m128_f32[1] = frontAndRearPart * m_hi * sensityUB + selingHi;

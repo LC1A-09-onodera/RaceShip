@@ -105,6 +105,7 @@ StyleCopReport.xml
 !/Resource/Model/MapEnemy/MapEnemy.obj
 !/Resource/Model/MapGoal/MapGoal.obj
 !/Resource/Model/MapPlayer/MapPlayer.obj
+!/Resource/Model/MapSB/MapSB.obj
 !/Resource/Model/MapW/MapW.obj
 !/Resource/Model/MapWall/MapWall.obj
 !/Resource/Model/maru/maru.obj
@@ -117,7 +118,6 @@ StyleCopReport.xml
 !/Resource/Model/SpringBorad/SpringBorad.obj
 !/Resource/Model/Triangle/Triangle.obj
 !/Resource/Model/WaterFace/WaterFace.obj
-
 
 # Chutzpah Test files
 _Chutzpah*

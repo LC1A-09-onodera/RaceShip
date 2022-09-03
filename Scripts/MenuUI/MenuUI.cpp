@@ -66,6 +66,7 @@ void MenuUI::LoadFile(BaseDirectX& baseDirectX)
 	mSRight.CreateSprite(baseDirectX, L"Resource/Image/KeyRight.png", XMFLOAT3(0, 0, 0));
 	mSLeft.CreateSprite(baseDirectX, L"Resource/Image/KeyLeft.png", XMFLOAT3(0, 0, 0));
 	mSInputWait.CreateSprite(baseDirectX, L"Resource/Image/InputWait.png", XMFLOAT3(0, 0, 0));
+	mSAlreadyUse.CreateSprite(baseDirectX, L"Resource/Image/AlreadyUse.png", XMFLOAT3(0, 0, 0));
 }
 
 void MenuUI::Update()
@@ -77,6 +78,22 @@ void MenuUI::Update()
 		if (Rewired::KeyCodeString::GetAnyInput(keyInfo))
 		{
 			auto itr = selectKey->keys.begin();
+			for (auto Citr = Rewired::RewiredContainer::rewiredsC.begin(); Citr != Rewired::RewiredContainer::rewiredsC.end(); ++Citr)
+			{
+				auto keysItr = Citr->keys.begin();
+				for (int i = 0; i < Citr->keys.size(); i++)
+				{
+					if (*keysItr == keyInfo.keyCode)
+					{
+						mInputReception = false;
+						mIsAlreadyInUse = true;
+						selectKey->SaveKey();
+						Rewired::RewiredContainer::ReloadRewired();
+						return;
+					}
+					keysItr++;
+				}
+			}
 			*itr = keyInfo.keyCode;
 			mInputReception = false;
 			selectKey->SaveKey();
@@ -131,5 +148,16 @@ void MenuUI::DrawUI(BaseDirectX& baseDirectX)
 	{
 		mSInputWait.position = {static_cast<float>(window_width) / 2.0f - 64.0f, static_cast<float>(window_height) / 2.0f - 32.0f, 0, 1.0f};
 		mSInputWait.SpriteDraw(baseDirectX);
+	}
+	if (mIsAlreadyInUse)
+	{
+		alreadyTimer++;
+		if (alreadyTimer >= MaxAlreadyTime)
+		{
+			mIsAlreadyInUse = false;
+			alreadyTimer = 0;
+		}
+		mSAlreadyUse.position = { static_cast<float>(window_width) / 2.0f - 64.0f, static_cast<float>(window_height) / 2.0f - 32.0f, 0, 1.0f };
+		mSAlreadyUse.SpriteDraw(baseDirectX);
 	}
 }

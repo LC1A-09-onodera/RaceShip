@@ -20,6 +20,10 @@ protected:
 	list<pair<string, Sprite>> keySprites;
 
 	bool mInputReception = false;
+	//Šù‚Ég‚í‚ê‚Ä‚¢‚éƒL[‚ª‰Ÿ‚³‚ê‚½‚Æ‚«
+	bool mIsAlreadyInUse = false;
+	int alreadyTimer = 0;
+	const int MaxAlreadyTime = 60;
 
 	Rewired::RewiredKeys *selectKey = nullptr;
 	Sprite mSMenu;
@@ -28,6 +32,7 @@ protected:
 	Sprite mSRight;
 	Sprite mSLeft;
 	Sprite mSInputWait;
+	Sprite mSAlreadyUse;
 	void ShowKeySprite(BaseDirectX& baseDirectX, int index, int hiIndex);
 
 public:

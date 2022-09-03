@@ -5,7 +5,7 @@
 #include "../LoadStage/StageObject.h"
 #include "../imgui/ImguiControl.h"
 #include "../Particle/Particle3D.h"
-
+#include "../LoadStage/LoadStage.h"
 
 void Seling::ForceUpdate()
 {
@@ -24,21 +24,21 @@ void Seling::ForceUpdate()
 void Seling::LoadModel(BaseDirectX& baseDirectX)
 {
 	selingModel.CreateModel(baseDirectX, "boat_v3", ShaderManager::playerShader, false);
-	
-	Init();
-	
+
+	Init(baseDirectX);
+
 	LoadKeys();
 
 	SpringBoard::LoadModel(baseDirectX);
-	springBorad.Init(baseDirectX, SpringBoard::Direction::UpToBottom);
+	/*springBorad.Init(baseDirectX, SpringBoard::Direction::UpToBottom);
 	springBorad.m_wid = 10.0f;
-	springBorad.m_hi = 2.0f;
+	springBorad.m_hi = 2.0f;*/
 }
 
-void Seling::Init()
+void Seling::Init(BaseDirectX& baseDirectX)
 {
-	selingModel.each.position = {0, 0, 0, 1.0f};
-	selingModel.each.scale = {1.0f, 1.0f, 0.8f};
+	selingModel.each.position = { 0, 0, 0, 1.0f };
+	selingModel.each.scale = { 1.0f, 1.0f, 0.8f };
 	selingModel.each.m_eachName = "player";
 	frontDirection = { 0, 0 ,1.0f };
 	addForce = { 0, 0 ,0 };
@@ -49,6 +49,20 @@ void Seling::Init()
 	isGoal = false;
 	m_isJump = false;
 	m_isLanding = false;
+	XMFLOAT3 easeGoal(selingModel.each.rotation.x, selingModel.each.rotation.y, angle);
+	selingModel.each.rotation = ShlomonMath::EaseInQuad(selingModel.each.rotation, easeGoal, 1.0f);
+	Imgui::CameraRotation = -selingModel.each.rotation.z + 270.0f;
+	springBorad.clear();
+	for (auto itr = LoadStage::springBoradPosition.begin(); itr != LoadStage::springBoradPosition.end(); ++itr)
+	{
+		SpringBoard *sp = new SpringBoard();
+		sp->m_wid = 2.0f;
+		sp->m_vert = 2.0f;
+		sp->m_hi = 2.0f;
+		sp->m_partEach.position = {itr->position.x, itr->position.y, itr->position.z, 1.0f};
+		sp->Init(baseDirectX, SpringBoard::Direction::BottomToUp);
+		springBorad.push_back(sp);
+	}
 }
 
 void Seling::Update()
@@ -62,6 +76,8 @@ void Seling::Update()
 		HitWall();
 
 		HitGoal();
+
+		SpringBorad();
 
 		ForceAttach();
 	}
@@ -78,8 +94,7 @@ void Seling::Update(bool isPouse)
 
 		HitGoal();
 
-		//
-		springBorad.Update((*this));
+		SpringBorad();
 
 		ForceAttach();
 	}
@@ -89,14 +104,22 @@ void Seling::Draw(BaseDirectX& baseDirectX, bool isRCamera)
 {
 	selingModel.Update(baseDirectX, &selingModel.each, isRCamera);
 	Draw3DObject(baseDirectX, selingModel);
-	springBorad.Draw(baseDirectX, isRCamera);
+	for (auto itr = springBorad.begin(); itr != springBorad.end(); ++itr)
+	{
+		(*itr)->Draw(baseDirectX, isRCamera);
+	}
+	//springBorad.Draw(baseDirectX, isRCamera);
 }
 
 void Seling::Draw(BaseDirectX& baseDirectX, Camera& f_camera)
 {
 	selingModel.Update(baseDirectX, &selingModel.each, f_camera);
 	Draw3DObject(baseDirectX, selingModel);
-	springBorad.Draw(baseDirectX, f_camera);
+	for (auto itr = springBorad.begin(); itr != springBorad.end(); ++itr)
+	{
+		(*itr)->Draw(baseDirectX, f_camera);
+	}
+	//springBorad.Draw(baseDirectX, f_camera);
 }
 
 void Seling::AddForce(XMFLOAT3& force)
@@ -117,7 +140,7 @@ void Seling::ForceAttach()
 	selingModel.each.position.m128_f32[2] += addForce.z;
 	if (selingModel.each.position.m128_f32[1] > 0 && !m_isJump)
 	{
-		selingModel.each.position.m128_f32[1] -= 0.02f;
+		selingModel.each.position.m128_f32[1] -= 0.05f;
 		if (selingModel.each.position.m128_f32[1] <= 0)
 		{
 			XMFLOAT3 emitterPos = ConvertXMVECTORtoXMFLOAT3(selingModel.each.position);
@@ -130,7 +153,7 @@ void Seling::Move()
 {
 	/*if (m_isJump)
 	{
-		
+
 		if (m_isLanding)
 		{
 			m_isJump = false;
@@ -195,16 +218,22 @@ void Seling::HitWall()
 			}
 		}
 	}
+	
 }
 
 void Seling::HitGoal()
 {
-	for (auto itr = StageObjects::goals.goalsPos.begin(); itr != StageObjects::goals.goalsPos.end(); ++itr)
+	if (Lenght(selingModel.each.position, StageObjects::goals.goalsPos.position) <= 2.0f)
 	{
-		if (Lenght(selingModel.each.position, itr->position) <= 2.0f)
-		{
-			isGoal = true;
-		}
+		isGoal = true;
+	}
+}
+
+void Seling::SpringBorad()
+{
+	for (auto itr = springBorad.begin(); itr != springBorad.end(); ++itr)
+	{
+		(*itr)->Update((*this), (*itr)->m_partEach);
 	}
 }
 
