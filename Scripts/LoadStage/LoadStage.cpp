@@ -3,11 +3,16 @@
 #include <sstream>
 
 list<LoadStage::LoadInfo> LoadStage::wallPosition;
-list<LoadStage::LoadInfo> LoadStage::goalPosition;
+LoadStage::LoadInfo LoadStage::goalPosition;
 list<LoadStage::LoadInfo> LoadStage::enemyPosition;
+list<LoadStage::LoadInfo> LoadStage::springBoradPosition;
 LoadStage::LoadInfo LoadStage::playerPos;
 void LoadStage::LoadStages(string stagePath)
 {
+	wallPosition.clear();
+	goalPosition;
+	enemyPosition.clear();
+	springBoradPosition.clear();
 	ifstream file;
 	file.open(stagePath);
 	if (file.fail())
@@ -36,11 +41,15 @@ void LoadStage::LoadStages(string stagePath)
 		}
 		else if (key == "goal")
 		{
-			goalPosition.push_back(info);
+			goalPosition = (info);
 		}
 		else if (key == "enemy")
 		{
 			enemyPosition.push_back(info);
+		}
+		else if (key == "SpringBorad")
+		{
+			springBoradPosition.push_back(info);
 		}
 		else if (key == "player")
 		{
@@ -59,9 +68,8 @@ void LoadStage::LoadStages(string stagePath, Seling& selingPos)
 	}
 	string line;
 	wallPosition.clear();
-	goalPosition.clear();
 	enemyPosition.clear();
-
+	springBoradPosition.clear();
 	while (getline(file, line))
 	{
 		istringstream line_stream(line);
@@ -82,11 +90,15 @@ void LoadStage::LoadStages(string stagePath, Seling& selingPos)
 		}
 		else if (key == "goal")
 		{
-			goalPosition.push_back(info);
+			goalPosition = info;
 		}
 		else if (key == "enemy")
 		{
 			enemyPosition.push_back(info);
+		}
+		else if (key == "SpringBorad")
+		{
+			springBoradPosition.push_back(info);
 		}
 		else if (key == "player")
 		{

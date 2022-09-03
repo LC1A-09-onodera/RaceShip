@@ -122,8 +122,6 @@ void GameScene::Init()
 	EachManager::eahcs.clear();
 	//ポストエフェクトの初期化
 	PostEffects::Init(baseDirectX);
-	//ステージをテキストからロード
-	LoadStage::LoadStages("Resource/TextData/Stage/stage1.txt");
 
 	StageObjects::LoadModel(baseDirectX);
 
@@ -147,7 +145,6 @@ void GameScene::Init()
 	seling.LoadModel(baseDirectX);
 	EachManager::eahcs.push_back(&seling.selingModel.each);
 	rSeling.LoadModel(baseDirectX);
-
 	//ボイスコマンドの通信受付スタート
 	//送信側はまた違うアプリケーションで行う
 	VoiceReciver::StartUp();
@@ -156,6 +153,8 @@ void GameScene::Init()
 	XMFLOAT3 cameraPos2 = { 0.0f, -67.0f + 89.0f, -10.1f };
 	XMFLOAT3 targetPos2 = { 0, 0 + 89.0f, 0 };
 	waterFace[0].LoadModel(baseDirectX, ShaderManager::waterShader, cameraPos, targetPos);
+	waterFace[0].waterModel.eachData.m_eachName = "water0";
+	EachManager::eahcs.push_back((&waterFace[0].waterModel.eachData));
 	waterFace[1].LoadModel(baseDirectX, ShaderManager::waterShader, cameraPos2, targetPos2);
 	waterFace[1].waterModel.eachData.position.m128_f32[2] = 20.0f;
 	normalWater.LoadModel(baseDirectX, ShaderManager::normalPlaneShader, cameraPos, targetPos);
@@ -189,6 +188,12 @@ void GameScene::Init()
 	}
 	pouseUI.LoadFile(baseDirectX);
 	Rewired::RewiredContainer::LoadAllRewired();
+
+	seling.Init(baseDirectX);
+	rSeling.Init(baseDirectX);
+	//ステージをテキストからロード
+	LoadStage::LoadStages("Resource/TextData/Stage/stage1.txt");
+	StageObjects::LoadFile(baseDirectX, seling, "Resource/TextData/Stage/stage1.txt");
 }
 
 void GameScene::TitleUpdate()
@@ -211,10 +216,9 @@ void GameScene::TitleUpdate()
 	XMFLOAT3 spaceEndPos = { window_width / 2.0f - 80.0f, 600.0f, 0 };
 	XMFLOAT3 titleEndPos = { window_width / 2.0f - 80.0f, 250.0f, 0 };
 
-	Cameras::camera.isRCamera = false;
-	seling.Update();
+	//seling.Update();
 	rSeling.selingModel.each.position = seling.selingModel.each.position;
-	rSeling.Update();
+	//rSeling.Update();
 	waterFace[0].Update();
 	waterFace[1].Update();
 	normalWater.Update();
@@ -227,6 +231,10 @@ void GameScene::TitleUpdate()
 	{
 		Imgui::sceneNum = GAME;
 	}
+
+	XMFLOAT3 selingPos = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
+	selingPos.y -= 0.2f;
+	ParticleControl::sheetOfSpray->SheetOfSprayParticle(selingPos, seling.selingModel.each.rotation, seling.addForce, 0.5f, 0.0f);
 
 	static int particleTimer = 0;
 	particleTimer++;
@@ -243,7 +251,7 @@ void GameScene::TitleUpdate()
 	const float lengY = 6.0f;
 	const float lengXY = 1.0f;
 	Cameras::rCamera.eye = { Cameras::camera.eye.x * lengXY, Cameras::camera.eye.y * lengY, Cameras::camera.eye.z * lengXY };
-	Cameras::rCamera.up = { 0, 1, 0 };
+	Cameras::rCamera.up = { 0, -1, 0 };
 	Cameras::rCamera.target = Cameras::camera.target;
 	Cameras::rCamera.Update();
 
@@ -284,8 +292,8 @@ void GameScene::GameUpdate()
 	waterFace[1].Update();
 	normalWater.Update();
 	mosaicWater.Update();
+	
 	XMFLOAT3 selingPos = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
-
 	selingPos.y -= 0.2f;
 	ParticleControl::sheetOfSpray->SheetOfSprayParticle(selingPos, seling.selingModel.each.rotation, seling.addForce, 0.5f, 0.0f);
 
@@ -305,11 +313,6 @@ void GameScene::GameUpdate()
 	Cameras::rCamera.up = { 0, -1, 0 };
 	Cameras::rCamera.target = Cameras::camera.target;
 	Cameras::rCamera.Update();
-
-	if (Input::KeyTrigger(DIK_SPACE))
-	{
-		ParticleControl::sheetOfSpray2->Landing(selingPos, 10.0f);
-	}
 
 	static int particleTimer = 0;
 	particleTimer++;
@@ -346,14 +349,17 @@ void GameScene::ResultUpdate()
 		VoiceReciver::VoiceUDPUpdate();
 	}
 	//カメラのイージングを行う　
-	XMFLOAT3 cameraStart(Imgui::CameraRotation, 0, 0);
+	/*XMFLOAT3 cameraStart(Imgui::CameraRotation, 0, 0);
 	XMFLOAT3 cameraEnd(350.0f, 0, 0);
-	Imgui::CameraRotation = ShlomonMath::EaseInOutQuad(cameraStart, cameraEnd, 0.1f).x;
+	Imgui::CameraRotation = ShlomonMath::EaseInOutQuad(cameraStart, cameraEnd, 0.1f).x;*/
 	Cameras::camera.target = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
 	Cameras::camera.Update();
 
-	Cameras::rCamera.eye = { 0.0f, -66.0f, -10.1f };
-	Cameras::rCamera.up = { 0, 1, 0 };
+	const float lengY = 6.0f;
+	const float lengXY = 1.0f;
+	Cameras::rCamera.eye = { Cameras::camera.eye.x * lengXY, Cameras::camera.eye.y * lengY, Cameras::camera.eye.z * lengXY };
+	Cameras::rCamera.up = { 0, -1, 0 };
+	Cameras::rCamera.target = Cameras::camera.target;
 	Cameras::rCamera.Update();
 
 	//スプライトのイージング
@@ -368,8 +374,8 @@ void GameScene::ResultUpdate()
 	if (Input::KeyTrigger(DIK_SPACE))
 	{
 		Imgui::sceneNum = TITLE;
-		seling.Init();
-		rSeling.Init();
+		seling.Init(baseDirectX);
+		rSeling.Init(baseDirectX);
 		string path = "Resource/TextData/Stage/stage" + to_string(Imgui::LoadStageNum) + ".txt";
 		StageObjects::LoadFile(baseDirectX, seling, path.c_str());
 		Imgui::CameraRotation = 270.0f;
@@ -510,12 +516,12 @@ void GameScene::TitleDraw()
 
 	PostEffects::Draw(baseDirectX);
 
-	PostEffects::PostDraw(baseDirectX);
+	//PostEffects::PostDraw(baseDirectX);
 
 	DrawSprites();
 	PouseDraw();
 
-	
+	PostEffects::PostDraw(baseDirectX);
 	Imgui::DrawImGui(baseDirectX);
 	//描画コマンドここまで
 	baseDirectX.UpdateBack();

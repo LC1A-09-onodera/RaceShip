@@ -30,7 +30,7 @@ class Seling
 	bool m_isLanding = false;
 public:
 
-	SpringBoard springBorad;
+	list<SpringBoard *> springBorad;
 	bool m_isJump = false;
 	//“®‚­—Ê
 	XMFLOAT3 addForce = { 0.0f ,0.0f , 0.0f};
@@ -43,7 +43,7 @@ public:
 	bool GetIsGoal() { return isGoal; }
 	void ForceUpdate();
 	void LoadModel(BaseDirectX &baseDirectX);
-	void Init();
+	void Init(BaseDirectX& baseDirectX);
 	void Update();
 	void Update(bool isPouse);
 	void Draw(BaseDirectX& baseDirectX, bool isRCamera = false);
@@ -54,6 +54,8 @@ public:
 
 	void HitWall();
 	void HitGoal();
+
+	void SpringBorad();
 
 	void LoadKeys();
 	Rewired::RewiredKeys goFrontKey;

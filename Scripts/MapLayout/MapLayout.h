@@ -16,6 +16,7 @@ enum class MapObjects
 	GOAL,
 	ENEMY,
 	PLAYER,
+	SpringBorad,
 };
 
 //オブジェクトの名前たち
@@ -47,13 +48,15 @@ class MapPreservation
 class MapEditorObjects
 {
 	static list<MapEditorObject> wall;
-	static list<MapEditorObject> goal;
+	static MapEditorObject goal;
 	static list<MapEditorObject> enemy;
+	static list<MapEditorObject> springBorads;
 	static MapEditorObject player;
 	static Model wallModel;
 	static Model goalModel;
 	static Model enemyModel;
 	static Model playerModel;
+	static Model sprinfBoradModel;
 	static XMFLOAT3 lineMousePos;
 	static bool isLinePut;
 

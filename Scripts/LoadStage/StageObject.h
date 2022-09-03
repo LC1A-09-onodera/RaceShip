@@ -38,8 +38,9 @@ public:
 class GoalObject
 {
 public:
-	list<GoalObjectEach> goalsPos;
-	list<GoalObjectEach> rGoalsPos;
+	bool isActive = false;
+	GoalObjectEach goalsPos;
+	GoalObjectEach rGoalsPos;
 	GoalModel goalModel;
 	void LoadPosition(BaseDirectX& baseDirectX);
 };
@@ -52,7 +53,8 @@ class EnemyObjectEach : public EachInfo
 class EnemyModel : public Model
 {
 public:
-	void Update(BaseDirectX& baseDirectX, EnemyObjectEach* each = nullptr, bool rCamera = false);
+	void Update(BaseDirectX& baseDirectX, GoalObjectEach* f_each = nullptr, bool rCamera = false);
+	void Update(BaseDirectX& baseDirectX, GoalObjectEach* f_each, Camera& f_camera);
 };
 
 class EnemyObject
@@ -64,12 +66,34 @@ public:
 	void LoadPosition(BaseDirectX& baseDirectX);
 };
 
+class SpringBoradEach : public EachInfo
+{
+	
+};
+
+class SpringBoradModel : public Model
+{
+public:
+	void Update(BaseDirectX& baseDirectX, SpringBoradEach* f_each = nullptr, bool rCamera = false);
+	void Update(BaseDirectX& baseDirectX, SpringBoradEach* f_each, Camera& f_camera);
+};
+
+class SpringBoradObject
+{
+public:
+	list<SpringBoradEach> springPos;
+	list<SpringBoradEach> rSpringPos;
+	SpringBoradModel springBoradModel;
+	void LoadPosition(BaseDirectX& baseDirectX);
+};
+
 class StageObjects
 {
 public:
 	static WallObject walls;
 	static GoalObject goals;
 	static EnemyObject enemys;
+	static SpringBoradObject springs;
 	static void LoadFile(BaseDirectX& baseDirectX, Seling& player, const char *path);
 	static void LoadModel(BaseDirectX &baseDirectX);
 	static void Draw(BaseDirectX &baseDirectX, bool isRCamera = false);

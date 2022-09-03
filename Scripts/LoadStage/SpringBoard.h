@@ -20,9 +20,9 @@ public:
 	float m_hi = 1.0f;
 	//èc
 	float m_vert = 1.0f;
+	EachInfo m_partEach;
 private:
 	static Model m_model;
-	EachInfo m_partEach;
 	bool m_isHit = false;
 	bool m_OldHit = false;
 	Direction m_direction = Direction::RightToLeft;
@@ -34,11 +34,10 @@ private:
 	const float MaxAfterTaste = 1.0f;
 
 public:
-	void Update(Seling &seling);
+	void Update(Seling &seling, EachInfo &each);
 	void Draw(BaseDirectX &baseDirectX);
 	void Draw(BaseDirectX& baseDirectX, bool isR);
 	void Draw(BaseDirectX& baseDirectX, Camera &isR);
-	void LoadStage();
 	void Init(BaseDirectX &baseDirectX, SpringBoard::Direction direction);
 	static void LoadModel(BaseDirectX & baseDirectX);
 	bool Collition(Seling& seling,XMFLOAT3 thisPos);
