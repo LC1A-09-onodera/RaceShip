@@ -241,7 +241,8 @@ void GameScene::TitleUpdate()
 	if (particleTimer > 1)
 	{
 		XMFLOAT3 emitpos = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
-		ParticleControl::elementEffect->LifeParticle(emitpos, 11.0f, 0.5f, 0.0f, 250);
+		ParticleControl::sheetOfSpray->cubeParticle(emitpos, {50.0f, 50.0f, 50.0f});
+		//ParticleControl::elementEffect->LifeParticle(emitpos, 11.0f, 0.5f, 0.0f, 250);
 		particleTimer = 0;
 	}
 
@@ -319,7 +320,7 @@ void GameScene::GameUpdate()
 	if (particleTimer > 1)
 	{
 		XMFLOAT3 emitpos = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
-		ParticleControl::elementEffect->LifeParticle(emitpos, 11.0f, 0.5f, 0.0f, 250);
+		ParticleControl::sheetOfSpray->cubeParticle(emitpos, { 50.0f, 50.0f, 50.0f });
 		particleTimer = 0;
 	}
 
@@ -387,7 +388,7 @@ void GameScene::ResultUpdate()
 	if (particleTimer > 1)
 	{
 		XMFLOAT3 emitpos = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
-		ParticleControl::elementEffect->LifeParticle(emitpos, 11.0f, 0.8f, 0.0f, 200);
+		ParticleControl::sheetOfSpray->cubeParticle(emitpos, { 50.0f, 50.0f, 50.0f });
 		particleTimer = 0;
 	}
 
