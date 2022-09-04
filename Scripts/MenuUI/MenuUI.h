@@ -23,7 +23,7 @@ protected:
 	//Šù‚Ég‚í‚ê‚Ä‚¢‚éƒL[‚ª‰Ÿ‚³‚ê‚½‚Æ‚«
 	bool mIsAlreadyInUse = false;
 	int alreadyTimer = 0;
-	const int MaxAlreadyTime = 60;
+	const int MaxAlreadyTime = 180;
 
 	Rewired::RewiredKeys *selectKey = nullptr;
 	Sprite mSMenu;

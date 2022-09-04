@@ -148,9 +148,9 @@ bool SpringBoard::Collition(Seling& seling, XMFLOAT3 thisPos)
 			m_hitDirection = Direction::BottomToUp;
 		}
 	}
-	const float sensityRL = 1.0f;
-	const float sensityUB = 1.0f;
-	const float selingHi = 0.25f;
+	const float sensityRL = 4.0f;
+	const float sensityUB = 4.0f;
+	const float selingHi = 0.50f;
 	if (m_hitDirection == m_direction && m_direction == Direction::RightToLeft)
 	{
 		shidePart = (m_wid - XLenght) / 10.0f;

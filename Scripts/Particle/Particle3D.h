@@ -337,6 +337,8 @@ public:
 	void Landing(const DirectX::XMFLOAT3 emitterPosition = {0, 0, 0}, float power = 10.0f, float startSize = 0.5f, float endSize = 0.0f, int life = 60);
 
 	void LandingUpdate(DirectX::XMFLOAT3 eye, DirectX::XMFLOAT3 target, DirectX::XMFLOAT3 up, bool isBilbord = true);
+
+	void cubeParticle(const DirectX::XMFLOAT3 emitterPosition = { 0, 0, 0 }, XMFLOAT3 cubeSize = {10.0f, 10.0f, 10.0f}, float startSize = 0.5f, float endSize = 0.0f, int life = 60);
 };
 /// <summary>
 	/// •`‰æ

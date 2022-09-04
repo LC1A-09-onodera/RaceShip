@@ -619,7 +619,7 @@ void ParticleIndi::ElementUpdate(DirectX::XMFLOAT3 eye, DirectX::XMFLOAT3 target
 		it->angle += 0.2f;
 		XMFLOAT3 newPos = it->position;
 		newPos.x = it->startPos.x + (ShlomonMath::Cos(it->angle) * 35.0f);
-		newPos.z  = it->startPos.z + (ShlomonMath::Sin(it->angle) * 35.0f);
+		newPos.z = it->startPos.z + (ShlomonMath::Sin(it->angle) * 35.0f);
 		//移動
 		it->position = newPos;
 		//スケールの変更
@@ -870,7 +870,7 @@ void ParticleIndi::LuckParticle(const DirectX::XMFLOAT3 emitterPosition, float s
 		{
 			vel.x = -vel.x;
 		}
-		vel.y = static_cast<float>(rand()  % 10) / 200.0f;
+		vel.y = static_cast<float>(rand() % 10) / 200.0f;
 
 		acc.x = -vel.x / 100.0f;
 		acc.y = -vel.y / 100.0f;
@@ -1111,9 +1111,9 @@ void ParticleIndi::Landing(const DirectX::XMFLOAT3 emitterPosition, float power,
 		XMFLOAT3 pos;
 		pos = emitterPosition;
 		XMFLOAT3 vel;
-		vel = {ShlomonMath::Cos(angle) / 3.3f, hihi, ShlomonMath::Sin(angle) / 3.3f };
+		vel = { ShlomonMath::Cos(angle) / 3.3f, hihi, ShlomonMath::Sin(angle) / 3.3f };
 		XMFLOAT3 acc;
-		acc = {-vel.x / life , -vel.y / life * 2.0f, -vel.z / life };
+		acc = { -vel.x / life , -vel.y / life * 2.0f, -vel.z / life };
 		Add(life, pos, vel, acc, startSize, endSize);
 	}
 }
@@ -1172,6 +1172,20 @@ void ParticleIndi::LandingUpdate(DirectX::XMFLOAT3 eye, DirectX::XMFLOAT3 target
 	constMap->matBillboard = ParticleManager::matBillboard;
 	constMap->alpha = this->alpha;
 	constBuff->Unmap(0, nullptr);
+}
+
+void ParticleIndi::cubeParticle(const DirectX::XMFLOAT3 emitterPosition, XMFLOAT3 cubeSize, float startSize, float endSize, int life)
+{
+	for (int i = 0; i < 5; i++)
+	{
+		XMFLOAT3 pos;
+		pos.x = rand() % (static_cast<int>(cubeSize.x) * 2) - cubeSize.x + (rand() % 10 / 10) + (rand() % 10 / 100);
+		pos.y = rand() % (static_cast<int>(cubeSize.y) * 2) - cubeSize.y + (rand() % 10 / 10) + (rand() % 10 / 100);
+		pos.z = rand() % (static_cast<int>(cubeSize.z) * 2) - cubeSize.z + (rand() % 10 / 10) + (rand() % 10 / 100);
+		XMFLOAT3 vel = {};
+		XMFLOAT3 acc = {};
+		Add(life, pos, vel, acc, startSize, endSize);
+	}
 }
 
 ParticleControl::ParticleControl()

@@ -60,7 +60,25 @@ void Seling::Init(BaseDirectX& baseDirectX)
 		sp->m_vert = 2.0f;
 		sp->m_hi = 2.0f;
 		sp->m_partEach.position = {itr->position.x, itr->position.y, itr->position.z, 1.0f};
-		sp->Init(baseDirectX, SpringBoard::Direction::BottomToUp);
+		SpringBoard::Direction dir;
+		int rot = static_cast<int>(itr->rotation.x) % 360;
+		if (rot == 90)
+		{
+			dir = SpringBoard::Direction::RightToLeft;
+		}
+		else if (rot == 180)
+		{
+			dir = SpringBoard::Direction::UpToBottom;
+		}
+		else if (rot == 270)
+		{
+			dir = SpringBoard::Direction::LeftToRight;
+		}
+		else if (rot == 0)
+		{
+			dir = SpringBoard::Direction::BottomToUp;
+		}
+		sp->Init(baseDirectX, dir);
 		springBorad.push_back(sp);
 	}
 }
@@ -140,7 +158,7 @@ void Seling::ForceAttach()
 	selingModel.each.position.m128_f32[2] += addForce.z;
 	if (selingModel.each.position.m128_f32[1] > 0 && !m_isJump)
 	{
-		selingModel.each.position.m128_f32[1] -= 0.05f;
+		selingModel.each.position.m128_f32[1] -= 0.1f;
 		if (selingModel.each.position.m128_f32[1] <= 0)
 		{
 			XMFLOAT3 emitterPos = ConvertXMVECTORtoXMFLOAT3(selingModel.each.position);
