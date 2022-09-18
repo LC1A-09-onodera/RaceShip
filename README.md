@@ -13,5 +13,17 @@
 ### マウスホイールで拡縮  
 ### マウス右クリック+マウス移動で視点の移動  
 ### マウス左クリックでオブジェクトの配置、消去  
-  
-# 工夫点や特徴  
+
+# ポートフォリオまとめ    
+<details>
+<summary>ポートフォリオ  画像</summary>
+
+![](PDFPhoto/作品紹介.png)  
+![](PDFPhoto/作品紹介(1).png)   
+![](PDFPhoto/作品紹介(4).png)  
+![](PDFPhoto/作品紹介(2).png)  
+![](PDFPhoto/作品紹介(3).png)  
+![](PDFPhoto/作品紹介(5).png)  
+![](PDFPhoto/作品紹介(6).png)  
+![](PDFPhoto/作品紹介(7).png)  
+</details>
