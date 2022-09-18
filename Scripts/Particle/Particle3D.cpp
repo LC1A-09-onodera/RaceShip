@@ -600,6 +600,33 @@ void ParticleIndi::Update(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, XMFLOAT3* 
 	constBuff->Unmap(0, nullptr);
 
 }
+void ParticleIndi::UpdateParticleEdit(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, bool isBilbord)
+{
+	ParticleManager::UpdateViewMatrix(eye, target, up, isBilbord);
+
+	//頂点バッファへデータ転送
+	VertexPos* vertMap = nullptr;
+	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
+	if (SUCCEEDED(result))
+	{
+		for (std::forward_list<Particle>::iterator it = particles.begin(); it != particles.end(); it++)
+		{
+			vertMap->pos = it->position;
+			vertMap->scale = it->scale;
+			vertMap++;
+		}
+		vertBuff->Unmap(0, nullptr);
+	}
+
+	// 定数バッファへデータ転送
+	ConstBufferData* constMap = nullptr;
+	result = constBuff->Map(0, nullptr, (void**)&constMap);
+	//constMap->color = color;
+	constMap->mat = ParticleManager::matView * ParticleManager::matProjection;	// 行列の合成
+	constMap->matBillboard = ParticleManager::matBillboard;
+	constMap->alpha = this->alpha;
+	constBuff->Unmap(0, nullptr);
+}
 void ParticleIndi::ElementUpdate(DirectX::XMFLOAT3 eye, DirectX::XMFLOAT3 target, DirectX::XMFLOAT3 up, bool isBilbord)
 {
 	HRESULT result;
