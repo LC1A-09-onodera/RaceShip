@@ -14,7 +14,7 @@
 #include "../Particle/Particle3D.h"
 #include "../LoadStage/SpringBoard.h"
 
-enum GameSceneName { TITLE, SELECT, GAME, END, RESULT, OP , MAPEDIT, RewiredEdit};
+enum GameSceneName { TITLE, SELECT, GAME, END, RESULT, OP , MAPEDIT, RewiredEdit, ParticleEdit};
 
 class GameScene
 {
@@ -28,7 +28,7 @@ private:
 
 	void OPUpdate();
 	void MapEditUpdate();
-
+	void ParticleEditUpdate();
 	//•`‰æ
 	void GameDraw();
 	void TitleDraw();
@@ -38,6 +38,8 @@ private:
 
 	void OPDraw();
 	void MapEditDraw();
+	void ParticleEditDraw();
+
 
 	void RewiredEditUpdate();
 	void RewiredEditDraw();

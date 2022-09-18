@@ -239,6 +239,7 @@ public:
 	/// 毎フレーム処理
 	/// </summary>
 	void Update(DirectX::XMFLOAT3 eye, DirectX::XMFLOAT3 target, DirectX::XMFLOAT3 up , DirectX::XMFLOAT3 *pos = nullptr, bool isBilbord = true);
+	void UpdateParticleEdit(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, bool isBilbord = true);
 
 	/// <summary>
 	/// 毎フレーム処理

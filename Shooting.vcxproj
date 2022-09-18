@@ -172,6 +172,7 @@
     <ClInclude Include="Scripts\BaseDirectX\DirectInput.h" />
     <ClInclude Include="Scripts\BaseDirectX\dirent.h" />
     <ClInclude Include="Scripts\BaseDirectX\DX12operator.h" />
+    <ClInclude Include="Scripts\BaseDirectX\FileLoad.h" />
     <ClInclude Include="Scripts\BaseDirectX\GameScene.h" />
     <ClInclude Include="Scripts\BaseDirectX\Input.h" />
     <ClInclude Include="Scripts\BaseDirectX\Library.h" />
@@ -200,6 +201,7 @@
     <ClInclude Include="Scripts\MapLayout\MapLayout.h" />
     <ClInclude Include="Scripts\MenuUI\MenuUI.h" />
     <ClInclude Include="Scripts\Particle\Particle3D.h" />
+    <ClInclude Include="Scripts\Particle\ParticleEdit.h" />
     <ClInclude Include="Scripts\Player\Seling.h" />
     <ClInclude Include="Scripts\PostEffect\PostEffect.h" />
     <ClInclude Include="Scripts\RenderTarget\RenderTarget.h" />
@@ -242,6 +244,7 @@
     <ClCompile Include="Scripts\MapLayout\MapLayout.cpp" />
     <ClCompile Include="Scripts\MenuUI\MenuUI.cpp" />
     <ClCompile Include="Scripts\Particle\Particle3D.cpp" />
+    <ClCompile Include="Scripts\Particle\ParticleEdit.cpp" />
     <ClCompile Include="Scripts\Player\Seling.cpp" />
     <ClCompile Include="Scripts\PostEffect\PostEffect.cpp" />
     <ClCompile Include="Scripts\RenderTarget\RenderTarget.cpp" />

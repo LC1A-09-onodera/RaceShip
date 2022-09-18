@@ -46,6 +46,11 @@ void GameScene::SceneManageUpdateAndDraw()
 		XMFLOAT3 cameraTargetReset(0, 0, 0);
 		Cameras::camera.Init(cameraEeyReset, cameraTargetReset);
 	}
+	if (Input::KeyTrigger(DIK_F3))
+	{
+		Imgui::sceneNum = ParticleEdit;
+
+	}
 	switch (Imgui::sceneNum)
 	{
 	case OP:
@@ -77,7 +82,11 @@ void GameScene::SceneManageUpdateAndDraw()
 		MapEditDraw();
 		break;
 	case RewiredEdit:
-
+		break;
+	case ParticleEdit:
+		ParticleEditUpdate();
+		ParticleEditDraw();
+		break;
 	default:
 		break;
 	}
@@ -427,6 +436,10 @@ void GameScene::MapEditUpdate()
 	Cameras::camera.Update();
 }
 
+void GameScene::ParticleEditUpdate()
+{
+}
+
 void GameScene::EndUpdate()
 {
 	if (Input::KeyTrigger(DIK_SPACE) || Input::directInput->IsButtonPush(DirectInput::ButtonKind::Button01))
@@ -598,6 +611,15 @@ void GameScene::MapEditDraw()
 	Draw3DObject(baseDirectX, mapFrameV, false);
 	Draw3DObject(baseDirectX, mapFrameH, false);
 	MapEditorObjects::Draw(baseDirectX);
+	Imgui::DrawImGui(baseDirectX);
+	//描画コマンドここまで
+	baseDirectX.UpdateBack();
+}
+
+void GameScene::ParticleEditDraw()
+{
+	baseDirectX.UpdateFront();
+
 	Imgui::DrawImGui(baseDirectX);
 	//描画コマンドここまで
 	baseDirectX.UpdateBack();
