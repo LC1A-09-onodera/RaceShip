@@ -12,7 +12,10 @@ class Camera
 	XMFLOAT3 rotation = {0, 0.2f, -1.0f};
 	float targetR = 10.0f;
 
+	
+
 public:
+	static std::array<float, 2> angle;
 	//ˆÊ’u
 	XMFLOAT3 eye = {0, 0, 0};
 	XMFLOAT3 eyeStartPosition = {0, 0, 0};
@@ -37,6 +40,8 @@ public:
 
 	std::array<float, 2> mouseClickPos = { 0, 0 };
 	std::array<float, 2> mouseMoveAmount = { 0, 0 };
+	std::array<float, 2> nowMousePos = {0, 0};
+	std::array<float, 2> oldMousePos = {0, 0};
 	
 	void CameraTargetRot();
 	void Init(XMFLOAT3 &f_eye, XMFLOAT3 &f_target);
@@ -51,7 +56,10 @@ public:
 	XMFLOAT3 EyeToMouseVec(BaseDirectX& baseDirectX);
 	XMFLOAT3 MousePosition(BaseDirectX& baseDirectX, float z);
 	void MouseWheelY();
+
+	static float editorCameraLength;
 	void MouseRightPushMove(BaseDirectX& baseDirectX);
+	void EditorMouseControl(BaseDirectX& baseDirectX);
 };
 
 class Cameras

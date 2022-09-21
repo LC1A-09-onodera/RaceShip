@@ -25,5 +25,5 @@
 ![](PDFPhoto/作品紹介(3).png)  
 ![](PDFPhoto/作品紹介(5).png)  
 ![](PDFPhoto/作品紹介(6).png)  
-![](PDFPhoto/作品紹介(7).png)  
+
 </details>

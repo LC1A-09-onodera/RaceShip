@@ -151,6 +151,8 @@ void GameScene::Init()
 	mapFrameH.each.rotation.y = 0.0f;
 	mapFrameH.each.rotation.z = 90.0f;
 
+	particleAreaModel.CreateModel(baseDirectX, "ParticleArea", ShaderManager::playerShader, false, false);
+
 	seling.LoadModel(baseDirectX);
 	EachManager::eahcs.push_back(&seling.selingModel.each);
 	rSeling.LoadModel(baseDirectX);
@@ -438,6 +440,14 @@ void GameScene::MapEditUpdate()
 
 void GameScene::ParticleEditUpdate()
 {
+	ParticleControl::editorParticle->EditorParticle();
+
+	ParticleControl::Update();
+	particleAreaModel.each.position = {0, 0, 0, 1};
+	particleAreaModel.each.scale = { static_cast<float>(Imgui::particleSpornArea[0]), static_cast<float>(Imgui::particleSpornArea[1]) , static_cast<float>(Imgui::particleSpornArea[2]) };
+	particleAreaModel.Update(baseDirectX, &particleAreaModel.each, Cameras::camera);
+	light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
+	LightUpdate();
 }
 
 void GameScene::EndUpdate()
@@ -620,6 +630,9 @@ void GameScene::ParticleEditDraw()
 {
 	baseDirectX.UpdateFront();
 
+	Draw3DObject(baseDirectX, particleAreaModel, true);
+	ParticleControl::Draw(baseDirectX);
+	Cameras::camera.EditorMouseControl(baseDirectX);
 	Imgui::DrawImGui(baseDirectX);
 	//•`‰æƒRƒ}ƒ“ƒh‚±‚±‚Ü‚Å
 	baseDirectX.UpdateBack();

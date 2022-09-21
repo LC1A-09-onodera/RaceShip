@@ -3,7 +3,8 @@
 #include "../Camera/Camera.h"
 #include "../BaseDirectX/DX12operator.h"
 #include "../BaseDirectX/Library.h"
-
+#include "../imgui/ImguiControl.h"
+#include "../BaseDirectX/DX12operator.h"
 //const XMFLOAT3 operator+(const XMFLOAT3 &lhs, const XMFLOAT3 &rhs)
 //{
 //	XMFLOAT3 result;
@@ -32,6 +33,9 @@ XMMATRIX ParticleManager::matBillboardY = XMMatrixIdentity();
 std::shared_ptr<ParticleIndi> ParticleControl::elementEffect = nullptr;
 std::shared_ptr<ParticleIndi> ParticleControl::sheetOfSpray = nullptr;
 std::shared_ptr<ParticleIndi> ParticleControl::sheetOfSpray2 = nullptr;
+
+std::shared_ptr<ParticleIndi> ParticleControl::editorParticle = nullptr;
+int ParticleIndi::editorSpanTimer = 0;
 
 bool ParticleManager::StaticInitialize(ID3D12Device* f_device, int f_window_width, int f_window_height, XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up)
 {
@@ -98,6 +102,32 @@ void ParticleDraw(ID3D12GraphicsCommandList* cmdList, const ParticleIndi* partic
 	//cmdList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
 	//cmdList->DrawInstanced(_countof(vertices), 1, 0, 0);
 	cmdList->DrawInstanced((UINT)std::distance(particle->particles.begin(), particle->particles.end()), 1, 0, 0);
+	PostDraw();
+}
+void EdiotrParticleDraw(ID3D12GraphicsCommandList* cmdList, const ParticleIndi* particle)
+{
+	PreDraw(cmdList, particle);
+	// nullptrチェック
+	assert(ParticleManager::device);
+	assert(ParticleManager::cmdList);
+
+	// 頂点バッファの設定
+	cmdList->IASetVertexBuffers(0, 1, &particle->vbView);
+	// インデックスバッファの設定
+	//cmdList->IASetIndexBuffer(&ibView);
+
+	// デスクリプタヒープの配列
+	ID3D12DescriptorHeap* ppHeaps[] = { particle->descHeap.Get() };
+	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
+
+	// 定数バッファビューをセット
+	cmdList->SetGraphicsRootConstantBufferView(0, particle->constBuff->GetGPUVirtualAddress());
+	// シェーダリソースビューをセット
+	cmdList->SetGraphicsRootDescriptorTable(1, particle->gpuDescHandleSRV);
+	// 描画コマンド
+	//cmdList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
+	//cmdList->DrawInstanced(_countof(vertices), 1, 0, 0);
+	cmdList->DrawInstanced((UINT)std::distance(particle->editorParticles.begin(), particle->editorParticles.end()), 1, 0, 0);
 	PostDraw();
 }
 void PostDraw()
@@ -602,6 +632,7 @@ void ParticleIndi::Update(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, XMFLOAT3* 
 }
 void ParticleIndi::UpdateParticleEdit(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, bool isBilbord)
 {
+	HRESULT result;
 	ParticleManager::UpdateViewMatrix(eye, target, up, isBilbord);
 
 	//頂点バッファへデータ転送
@@ -1200,7 +1231,6 @@ void ParticleIndi::LandingUpdate(DirectX::XMFLOAT3 eye, DirectX::XMFLOAT3 target
 	constMap->alpha = this->alpha;
 	constBuff->Unmap(0, nullptr);
 }
-
 void ParticleIndi::cubeParticle(const DirectX::XMFLOAT3 emitterPosition, XMFLOAT3 cubeSize, float startSize, float endSize, int life)
 {
 	for (int i = 0; i < 5; i++)
@@ -1214,11 +1244,147 @@ void ParticleIndi::cubeParticle(const DirectX::XMFLOAT3 emitterPosition, XMFLOAT
 		Add(life, pos, vel, acc, startSize, endSize);
 	}
 }
+void ParticleIndi::EditorParticle()
+{
+	if (editorSpanTimer < Imgui::particleSpornSpan)
+	{
+		editorSpanTimer++;
+		return;
+	}
+	editorSpanTimer = 0;
+	if (Imgui::particleType == 0)
+	{
+		for (int i = 0; i < Imgui::particleCount; i++)
+		{
+			editorParticles.emplace_front();
+			ParticleEditorElement& p = editorParticles.front();
+			int random = rand();
+			p.position = { static_cast<float>(rand() % (Imgui::particleSpornArea[0] * 2 + 1) - Imgui::particleSpornArea[0]),
+						   static_cast<float>(rand() % (Imgui::particleSpornArea[1] * 2 + 1) - Imgui::particleSpornArea[1]), static_cast<float>(rand() % (Imgui::particleSpornArea[2] * 2 + 1) - Imgui::particleSpornArea[2]) };
+			if (random % 2 == 0)
+			{
+				p.velocity = { Imgui::particleSpeed[0] + static_cast<float>((random % (Imgui::particleSpeedDiff[0] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[0])) / 10.0f, Imgui::particleSpeed[1] + static_cast<float>((random % (Imgui::particleSpeedDiff[1] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[1])) / 10.0f,
+							   Imgui::particleSpeed[2] + static_cast<float>((random % (Imgui::particleSpeedDiff[2] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[2])) / 10.0f };
+			}
+			else
+			{
+				p.velocity = { Imgui::particleSpeed[0] - static_cast<float>((random % (Imgui::particleSpeedDiff[0] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[0])) / 10.0f, Imgui::particleSpeed[1] - static_cast<float>((random % (Imgui::particleSpeedDiff[1] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[1])) / 10.0f,
+							   Imgui::particleSpeed[2] - static_cast<float>((random % (Imgui::particleSpeedDiff[2] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[2])) / 10.0f };
+			}
+			p.accel = { Imgui::particleAcc[0], Imgui::particleAcc[1], Imgui::particleAcc[2] };
+			p.num_frame = Imgui::particleLife;
+			p.s_scale = Imgui::particleStartSize;
+			p.e_scale = Imgui::particleEndSize;
+			p.scale = p.s_scale;
+			p.m_type = Imgui::particleType;
+		}
+	}
+	if (Imgui::particleType == 1)
+	{
+		for (int i = 0; i < Imgui::particleCount; i++)
+		{
+			editorParticles.emplace_front();
+			ParticleEditorElement& p = editorParticles.front();
+			p.position = { static_cast<float>(rand() % (Imgui::particleSpornArea[0] * 2 + 1) - Imgui::particleSpornArea[0]),
+						   static_cast<float>(rand() % (Imgui::particleSpornArea[1] * 2 + 1) - Imgui::particleSpornArea[1]), static_cast<float>(rand() % (Imgui::particleSpornArea[2] * 2 + 1) - Imgui::particleSpornArea[2]) };
+			p.startPos = p.position;
+			p.endPos = { -Imgui::particleEndPosition[0], Imgui::particleEndPosition[1], Imgui::particleEndPosition[2] };
+			p.num_frame = Imgui::particleLife;
+			p.s_scale = Imgui::particleStartSize;
+			p.e_scale = Imgui::particleEndSize;
+			p.scale = p.s_scale;
+			p.m_type = Imgui::particleType;
+		}
+	}
+}
+
+void ParticleIndi::EditorUpdate(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, bool isBilbord)
+{
+	HRESULT result;
+
+	//パーティクルの消滅
+	editorParticles.remove_if(
+		[](ParticleEditorElement& x)
+		{
+			return x.frame >= x.num_frame;
+		}
+	);
+	//全パーティクルの更新
+	for (std::forward_list<ParticleEditorElement>::iterator it = editorParticles.begin(); it != editorParticles.end(); it++)
+	{
+		//フレームの増加
+		it->frame++;
+		if (it->m_type == Imgui::ParticleType::Normal)
+		{
+			//速度に加速度を追加
+			it->velocity = it->velocity + it->accel;
+			//移動
+			it->position = it->position + it->velocity;
+		}
+		else if (it->m_type == Imgui::ParticleType::Easeeing)
+		{
+			if (Imgui::particleEaseType == Imgui::ParticleEaseType::InQuad)
+			{
+				it->position = ShlomonMath::EaseInQuad(it->startPos, it->endPos, static_cast<float>(it->frame) / static_cast<float>(it->num_frame));
+			}
+			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::OutQuad)
+			{
+				it->position = ShlomonMath::EaseOutQuad(it->startPos, it->endPos, static_cast<float>(it->frame) / static_cast<float>(it->num_frame));
+			}
+			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::InOutQuad)
+			{
+				it->position = ShlomonMath::EaseInOutQuad(it->startPos, it->endPos, static_cast<float>(it->frame) / static_cast<float>(it->num_frame));
+			}
+			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::InBack)
+			{
+				it->position = ShlomonMath::EaseInBack(it->startPos, it->endPos, static_cast<float>(it->frame) / static_cast<float>(it->num_frame));
+			}
+			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::OutBack)
+			{
+				it->position = ShlomonMath::EaseOutBack(it->startPos, it->endPos, static_cast<float>(it->frame) / static_cast<float>(it->num_frame));
+			}
+		}
+		else if (it->m_type == Imgui::ParticleType::Lerp)
+		{
+
+		}
+		//スケールの変更
+		float f = (float)it->num_frame / it->frame;
+		//スケールの線形補間
+		it->scale = (it->e_scale - it->s_scale) / f;
+		it->scale += it->s_scale;
+	}
+
+	ParticleManager::UpdateViewMatrix(eye, target, up, isBilbord);
+
+	//頂点バッファへデータ転送
+	VertexPos* vertMap = nullptr;
+	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
+	if (SUCCEEDED(result))
+	{
+		for (std::forward_list<ParticleEditorElement>::iterator it = editorParticles.begin(); it != editorParticles.end(); it++)
+		{
+			vertMap->pos = it->position;
+			vertMap->scale = it->scale;
+			vertMap++;
+		}
+		vertBuff->Unmap(0, nullptr);
+	}
+
+	// 定数バッファへデータ転送
+	ConstBufferData* constMap = nullptr;
+	result = constBuff->Map(0, nullptr, (void**)&constMap);
+	//constMap->color = color;
+	constMap->mat = ParticleManager::matView * ParticleManager::matProjection;	// 行列の合成
+	constMap->matBillboard = ParticleManager::matBillboard;
+	constMap->alpha = this->alpha;
+	constBuff->Unmap(0, nullptr);
+
+}
 
 ParticleControl::ParticleControl()
 {
 }
-
 ParticleControl::~ParticleControl()
 {
 
@@ -1229,6 +1395,7 @@ void ParticleControl::Update()
 	elementEffect->ElementUpdate(Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up);
 	sheetOfSpray->Update(Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up);
 	sheetOfSpray2->LandingUpdate(Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up);
+	editorParticle->EditorUpdate(Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up, true);
 }
 
 void ParticleControl::Init(BaseDirectX& baseDirectX)
@@ -1241,6 +1408,7 @@ void ParticleControl::Init(BaseDirectX& baseDirectX)
 	elementEffect.reset(elementEffect->Create(L"Resource/Image/element.png"));
 	sheetOfSpray.reset(sheetOfSpray->Create(L"Resource/Image/element.png"));
 	sheetOfSpray2.reset(sheetOfSpray->Create(L"Resource/Image/element.png"));
+	editorParticle.reset(editorParticle->Create(L"Resource/Image/element.png"));
 }
 
 void ParticleControl::Draw(BaseDirectX& baseDirectX)
@@ -1248,4 +1416,5 @@ void ParticleControl::Draw(BaseDirectX& baseDirectX)
 	ParticleDraw(baseDirectX.cmdList.Get(), elementEffect.get());
 	ParticleDraw(baseDirectX.cmdList.Get(), sheetOfSpray.get());
 	ParticleDraw(baseDirectX.cmdList.Get(), sheetOfSpray2.get());
+	EdiotrParticleDraw(baseDirectX.cmdList.Get(), editorParticle.get());
 }
