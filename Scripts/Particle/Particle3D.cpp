@@ -1252,29 +1252,49 @@ void ParticleIndi::EditorParticle()
 		return;
 	}
 	editorSpanTimer = 0;
-	for (int i = 0; i < Imgui::particleCount; i++)
+	if (Imgui::particleType == 0)
 	{
-		editorParticles.emplace_front();
-		ParticleEditorElement& p = editorParticles.front();
-		int random = rand();
-		p.position = { static_cast<float>(rand() % (Imgui::particleSpornArea[0] * 2 + 1) - Imgui::particleSpornArea[0]),
-					   static_cast<float>(rand() % (Imgui::particleSpornArea[1] * 2 + 1) - Imgui::particleSpornArea[1]), static_cast<float>(rand() % (Imgui::particleSpornArea[2] * 2 + 1) - Imgui::particleSpornArea[2]) };
-		if (random % 2 == 0)
+		for (int i = 0; i < Imgui::particleCount; i++)
 		{
-			p.velocity = { Imgui::particleSpeed[0] + static_cast<float>((random % (Imgui::particleSpeedDiff[0] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[0])) / 10.0f, Imgui::particleSpeed[1] + static_cast<float>((random % (Imgui::particleSpeedDiff[1] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[1])) / 10.0f,
-						   Imgui::particleSpeed[2] + static_cast<float>((random % (Imgui::particleSpeedDiff[2] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[2])) / 10.0f };
+			editorParticles.emplace_front();
+			ParticleEditorElement& p = editorParticles.front();
+			int random = rand();
+			p.position = { static_cast<float>(rand() % (Imgui::particleSpornArea[0] * 2 + 1) - Imgui::particleSpornArea[0]),
+						   static_cast<float>(rand() % (Imgui::particleSpornArea[1] * 2 + 1) - Imgui::particleSpornArea[1]), static_cast<float>(rand() % (Imgui::particleSpornArea[2] * 2 + 1) - Imgui::particleSpornArea[2]) };
+			if (random % 2 == 0)
+			{
+				p.velocity = { Imgui::particleSpeed[0] + static_cast<float>((random % (Imgui::particleSpeedDiff[0] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[0])) / 10.0f, Imgui::particleSpeed[1] + static_cast<float>((random % (Imgui::particleSpeedDiff[1] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[1])) / 10.0f,
+							   Imgui::particleSpeed[2] + static_cast<float>((random % (Imgui::particleSpeedDiff[2] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[2])) / 10.0f };
+			}
+			else
+			{
+				p.velocity = { Imgui::particleSpeed[0] - static_cast<float>((random % (Imgui::particleSpeedDiff[0] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[0])) / 10.0f, Imgui::particleSpeed[1] - static_cast<float>((random % (Imgui::particleSpeedDiff[1] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[1])) / 10.0f,
+							   Imgui::particleSpeed[2] - static_cast<float>((random % (Imgui::particleSpeedDiff[2] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[2])) / 10.0f };
+			}
+			p.accel = { Imgui::particleAcc[0], Imgui::particleAcc[1], Imgui::particleAcc[2] };
+			p.num_frame = Imgui::particleLife;
+			p.s_scale = Imgui::particleStartSize;
+			p.e_scale = Imgui::particleEndSize;
+			p.scale = p.s_scale;
+			p.m_type = Imgui::particleType;
 		}
-		else
+	}
+	if (Imgui::particleType == 1)
+	{
+		for (int i = 0; i < Imgui::particleCount; i++)
 		{
-			p.velocity = { Imgui::particleSpeed[0] - static_cast<float>((random % (Imgui::particleSpeedDiff[0] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[0])) / 10.0f, Imgui::particleSpeed[1] - static_cast<float>((random % (Imgui::particleSpeedDiff[1] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[1])) / 10.0f,
-						   Imgui::particleSpeed[2] - static_cast<float>((random % (Imgui::particleSpeedDiff[2] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[2])) / 10.0f };
+			editorParticles.emplace_front();
+			ParticleEditorElement& p = editorParticles.front();
+			p.position = { static_cast<float>(rand() % (Imgui::particleSpornArea[0] * 2 + 1) - Imgui::particleSpornArea[0]),
+						   static_cast<float>(rand() % (Imgui::particleSpornArea[1] * 2 + 1) - Imgui::particleSpornArea[1]), static_cast<float>(rand() % (Imgui::particleSpornArea[2] * 2 + 1) - Imgui::particleSpornArea[2]) };
+			p.startPos = p.position;
+			p.endPos = { -Imgui::particleEndPosition[0], Imgui::particleEndPosition[1], Imgui::particleEndPosition[2] };
+			p.num_frame = Imgui::particleLife;
+			p.s_scale = Imgui::particleStartSize;
+			p.e_scale = Imgui::particleEndSize;
+			p.scale = p.s_scale;
+			p.m_type = Imgui::particleType;
 		}
-		p.accel = { Imgui::particleAcc[0], Imgui::particleAcc[1], Imgui::particleAcc[2] };
-		p.num_frame = Imgui::particleLife;
-		p.s_scale = Imgui::particleStartSize;
-		p.e_scale = Imgui::particleEndSize;
-		p.scale = p.s_scale;
-		p.m_type = Imgui::particleType;
 	}
 }
 
@@ -1303,7 +1323,26 @@ void ParticleIndi::EditorUpdate(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, bool
 		}
 		else if (it->m_type == Imgui::ParticleType::Easeeing)
 		{
-			it->position = ShlomonMath::EaseInQuad(it->startPos, it->endPos, static_cast<float>(it->frame) / static_cast<float>(it->num_frame));
+			if (Imgui::particleEaseType == Imgui::ParticleEaseType::InQuad)
+			{
+				it->position = ShlomonMath::EaseInQuad(it->startPos, it->endPos, static_cast<float>(it->frame) / static_cast<float>(it->num_frame));
+			}
+			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::OutQuad)
+			{
+				it->position = ShlomonMath::EaseOutQuad(it->startPos, it->endPos, static_cast<float>(it->frame) / static_cast<float>(it->num_frame));
+			}
+			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::InOutQuad)
+			{
+				it->position = ShlomonMath::EaseInOutQuad(it->startPos, it->endPos, static_cast<float>(it->frame) / static_cast<float>(it->num_frame));
+			}
+			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::InBack)
+			{
+				it->position = ShlomonMath::EaseInBack(it->startPos, it->endPos, static_cast<float>(it->frame) / static_cast<float>(it->num_frame));
+			}
+			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::OutBack)
+			{
+				it->position = ShlomonMath::EaseOutBack(it->startPos, it->endPos, static_cast<float>(it->frame) / static_cast<float>(it->num_frame));
+			}
 		}
 		else if (it->m_type == Imgui::ParticleType::Lerp)
 		{

@@ -58,7 +58,7 @@ int Imgui::particleType = ParticleType::Normal;
 
 int Imgui::particleCount = 1;
 float Imgui::particleSpeed[3] = { 1.0f ,0 , 0 };
-int Imgui::particleSpeedDiff[3] = { 0, 0 ,0};
+int Imgui::particleSpeedDiff[3] = { 0, 0 ,0 };
 float Imgui::particleAcc[3] = { -0.1f ,0 , 0 };
 float Imgui::particleStartPosition[3] = { 0 ,0 , 0 };
 float Imgui::particleEndPosition[3] = { 0 ,0 , 0 };
@@ -69,6 +69,7 @@ float Imgui::particleEndSize = 0;
 int Imgui::particleLife = 60;
 int Imgui::particleSpornArea[3] = { 1, 1, 1 };
 int Imgui::particleSpornSpan;
+int Imgui::particleEaseType = ParticleEaseType::InQuad;
 
 void Imgui::RewiredUpdate()
 {
@@ -276,6 +277,11 @@ void Imgui::InspectorView()
 void Imgui::ParticleEdit()
 {
     ImGui::Combo("", &particleType, "Normal\0Easeeing\0Lerp\0\0");
+    if (particleType == 1)
+    {
+        ImGui::InputInt("particleEaseType", &particleEaseType);
+        particleEaseType = ShlomonMath::Clamp(particleEaseType, 0, 4);
+    }
 
     ImGui::DragInt("count", &particleCount, 1, 1, 100);
     ImGui::DragInt("span", &particleSpornSpan, 1, 1, 120);
@@ -313,7 +319,7 @@ void Imgui::ParticleEdit()
         if (ImGui::TreeNode("EndPosistion"))
         {
             ImGui::Text("EndPosistion");
-            ImGui::InputFloat3("x y z", particleEndPosition, "%.2f");
+            ImGui::DragFloat3("x y z", particleEndPosition, 0.1f, -100.0f, 100.0f, "%.2f");
             ImGui::TreePop();
         }
 

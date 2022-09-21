@@ -310,8 +310,8 @@ void Camera::EditorMouseControl(BaseDirectX& baseDirectX)
 		angle[1] -= 1.0f;
 	}*/
 	
-	editorCameraLength -= Input::mouseWheel;
-	editorCameraLength = ShlomonMath::Clamp(editorCameraLength, 1.0f, 100.0f);
+	editorCameraLength -= Input::mouseWheel * 3.0f;
+	editorCameraLength = ShlomonMath::Clamp(editorCameraLength, 1.0f, 250.0f);
 	Cameras::camera.eye = { ShlomonMath::Sin(angle[0]) * editorCameraLength, ShlomonMath::Sin(angle[1]) * editorCameraLength, ShlomonMath::Cos(angle[0]) * editorCameraLength };
 	Cameras::camera.target = { 0 ,0 ,0 };
 	Cameras::camera.up = { 0, 1, 0 };

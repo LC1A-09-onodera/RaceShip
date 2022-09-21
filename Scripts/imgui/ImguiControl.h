@@ -111,6 +111,15 @@ public:
         Easeeing,
         Lerp,
     };
+    enum ParticleEaseType
+    {
+        InQuad,
+        OutQuad,
+        InOutQuad,
+        InBack,
+        OutBack,
+    };
+    static int particleEaseType;
     static int particleCount;
     static float particleSpeed[3];
     static int particleSpeedDiff[3];
