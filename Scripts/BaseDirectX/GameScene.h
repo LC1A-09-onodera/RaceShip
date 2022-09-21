@@ -109,6 +109,8 @@ private:
 
 	MenuUI pouseUI;
 
+	Model particleAreaModel;
+
 public:
 	GameScene();
 	~GameScene();

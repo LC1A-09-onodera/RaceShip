@@ -38,6 +38,7 @@ private:
     static void ShowRewiredElement();
     static void CreateMenuBar();
     static void InspectorView();
+    static void ParticleEdit();
     static void FileFalse();
     static void EachInfo();
     static ComPtr<ID3D12DescriptorHeap> CreateDescrriptorHeapForImgui(BaseDirectX& baseDirectX);
@@ -103,4 +104,25 @@ public:
     static list<Rewired::RewiredKeys> keyList;
     static const char *fileName;
     static char buf[256];
+
+    enum ParticleType
+    {
+        Normal,
+        Easeeing,
+        Lerp,
+    };
+    static int particleCount;
+    static float particleSpeed[3];
+    static int particleSpeedDiff[3];
+    static float particleAcc[3];
+    static float particleStartPosition[3];
+    static float particleEndPosition[3] ;
+    static float particleEaseSpeed[3];
+    static float particleHalfwayPoint[3];
+    static float particleStartSize;
+    static float particleEndSize;
+    static int particleLife;
+    static int particleType;
+    static int particleSpornArea[3];
+    static int particleSpornSpan;
 };

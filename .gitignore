@@ -109,6 +109,7 @@ StyleCopReport.xml
 !/Resource/Model/MapW/MapW.obj
 !/Resource/Model/MapWall/MapWall.obj
 !/Resource/Model/maru/maru.obj
+!/Resource/Model/ParticleArea/ParticleArea.obj
 !/Resource/Model/Plane2/Plane2.obj
 !/Resource/Model/seling/seling.obj
 !/Resource/Model/shield/shield.obj

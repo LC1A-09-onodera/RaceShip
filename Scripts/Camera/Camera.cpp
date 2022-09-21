@@ -6,7 +6,8 @@
 
 Camera Cameras::camera;
 Camera Cameras::rCamera;
-
+float Camera::editorCameraLength = 50.0f;
+std::array<float, 2> Camera::angle = {0, 0};
 void Camera::CameraTargetRot()
 {
 	isControl = Imgui::CameraControl;
@@ -156,7 +157,7 @@ void Camera::SetShake(float f_shakePower)
 	isShake = true;
 }
 
-void Camera::SetTarget(XMFLOAT3 &f_target)
+void Camera::SetTarget(XMFLOAT3& f_target)
 {
 	this->target = f_target;
 }
@@ -175,7 +176,7 @@ XMFLOAT3 Camera::GetTargetDirection()
 	return dire;
 }
 
-XMFLOAT3 Camera::GetMousePosition(BaseDirectX &baseDirectX)
+XMFLOAT3 Camera::GetMousePosition(BaseDirectX& baseDirectX)
 {
 	//ÉXÉNÉäÅ[Éìån
 	POINT mouse = WindowsAPI::GetMousePos();
@@ -288,6 +289,35 @@ void Camera::MouseRightPushMove(BaseDirectX& baseDirectX)
 		}
 		mouseClickPos = nowMousePos;
 	}
+}
+
+void Camera::EditorMouseControl(BaseDirectX& baseDirectX)
+{
+	if (Input::Key(DIK_RIGHT))
+	{
+		angle[0] += 1.0f;
+	}
+	if (Input::Key(DIK_LEFT))
+	{
+		angle[0] -= 1.0f;
+	}
+	/*if (Input::Key(DIK_UP))
+	{
+		angle[1] += 1.0f;
+	}
+	if (Input::Key(DIK_DOWN))
+	{
+		angle[1] -= 1.0f;
+	}*/
+	
+	editorCameraLength -= Input::mouseWheel;
+	editorCameraLength = ShlomonMath::Clamp(editorCameraLength, 1.0f, 100.0f);
+	Cameras::camera.eye = { ShlomonMath::Sin(angle[0]) * editorCameraLength, ShlomonMath::Sin(angle[1]) * editorCameraLength, ShlomonMath::Cos(angle[0]) * editorCameraLength };
+	Cameras::camera.target = { 0 ,0 ,0 };
+	Cameras::camera.up = { 0, 1, 0 };
+	Cameras::camera.isRCamera = true;
+	Cameras::camera.Update();
+	
 }
 
 float Camera::TargetLength()

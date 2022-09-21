@@ -17,6 +17,7 @@
 #include <stdarg.h>
 #include "../3DModel/Model.h"
 #include "../Player/Seling.h"
+#include "../Particle/ParticleEdit.h"
 
 //#define _DEBUG
 
@@ -52,6 +53,23 @@ bool Imgui::isMulchthled = true;
 list<Rewired::RewiredKeys> Imgui::keyList;
 char Imgui::buf[256] = {};
 const char* Imgui::fileName = " ";
+
+int Imgui::particleType = ParticleType::Normal;
+
+int Imgui::particleCount = 1;
+float Imgui::particleSpeed[3] = { 1.0f ,0 , 0 };
+int Imgui::particleSpeedDiff[3] = { 0, 0 ,0};
+float Imgui::particleAcc[3] = { -0.1f ,0 , 0 };
+float Imgui::particleStartPosition[3] = { 0 ,0 , 0 };
+float Imgui::particleEndPosition[3] = { 0 ,0 , 0 };
+float Imgui::particleEaseSpeed[3] = { 0 ,0 , 0 };
+float Imgui::particleHalfwayPoint[3] = { 0 ,0 , 0 };
+float Imgui::particleStartSize = 1.0f;
+float Imgui::particleEndSize = 0;
+int Imgui::particleLife = 60;
+int Imgui::particleSpornArea[3] = { 1, 1, 1 };
+int Imgui::particleSpornSpan;
+
 void Imgui::RewiredUpdate()
 {
     //ラジオボタン用
@@ -190,6 +208,13 @@ void Imgui::DrawImGui(BaseDirectX& baseDirectX)
         ImGui::End();
     }
 
+    ImGui::Begin("ParticleSystem", nullptr, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
+    ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
+
+    ParticleEdit();
+
+    ImGui::End();
+
     ImGui::Render();
     baseDirectX.cmdList->SetDescriptorHeaps(1, GetHeapForImgui().GetAddressOf());
     ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), baseDirectX.cmdList.Get());
@@ -248,6 +273,74 @@ void Imgui::InspectorView()
     DebugUpdate();
 }
 
+void Imgui::ParticleEdit()
+{
+    ImGui::Combo("", &particleType, "Normal\0Easeeing\0Lerp\0\0");
+
+    ImGui::DragInt("count", &particleCount, 1, 1, 100);
+    ImGui::DragInt("span", &particleSpornSpan, 1, 1, 120);
+    if (particleType == 0)
+    {
+        if (ImGui::TreeNode("speed"))
+        {
+            ImGui::Text("Speed");
+            ImGui::DragFloat3("x y z", particleSpeed, 0.1f, -100.0f, 100.0f, "%.2f");
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNode("speedDiff"))
+        {
+            ImGui::Text("SpeedDiff");
+            ImGui::DragInt3("x y z", particleSpeedDiff, 1, 0, 100, "%.2f");
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNode("Acc"))
+        {
+
+            ImGui::Text("Acc");
+            ImGui::DragFloat3("x y z", particleAcc, 0.1f, -100.0f, 100.0f, "%.2f");
+            ImGui::TreePop();
+        }
+    }
+
+    else if (particleType == 1 || particleType == 2)
+    {
+        if (ImGui::TreeNode("StartPosistion"))
+        {
+            ImGui::Text("StartPosistion");
+            ImGui::DragFloat3("x y z", particleStartPosition, 0.1f, -100.0f, 100.0f, "%.2f");
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNode("EndPosistion"))
+        {
+            ImGui::Text("EndPosistion");
+            ImGui::InputFloat3("x y z", particleEndPosition, "%.2f");
+            ImGui::TreePop();
+        }
+
+        ImGui::Text("EaseSpeed");
+        ImGui::DragFloat("speed", particleEaseSpeed, 0.01f, 0.0f, 1.0f, "%.2f");
+    }
+
+    if (particleType == 2)
+    {
+        ImGui::Text("HalfwayPoint");
+        ImGui::InputFloat3("x y z", particleHalfwayPoint, "%.2f");
+    }
+
+    ImGui::Text("StartSize");
+    ImGui::DragFloat("StartSize", &particleStartSize, 0.01f, 0.0f, 100.0f, "%.2f");
+    ImGui::Text("EndSize");
+    ImGui::DragFloat("EndSize", &particleEndSize, 0.01f, 0.0f, 100.0f, "%.2f");
+
+    ImGui::Text("Life");
+    ImGui::DragInt("life", &particleLife, 1, 0, 1000);
+    if (ImGui::TreeNode("Area"))
+    {
+        ImGui::Text("Area");
+        ImGui::DragInt3("x y z", particleSpornArea, 1, 1, 100);
+        ImGui::TreePop();
+    }
+}
 void Imgui::FileFalse()
 {
     ImGui::Text("File Export Is Failed");
@@ -304,6 +397,7 @@ void Imgui::EachInfo()
     }
     else if (tab == ImguiType::CameraInfo)
     {
+        ImGui::Text("angle[0] : %.2f, angle[1] : %.2f", Camera::angle[0], Camera::angle[1]);
         ImGui::Text("eye:%.2f, %.2f, %.2f", Cameras::camera.eye.x, Cameras::camera.eye.y, Cameras::camera.eye.z);
         ImGui::Text("target:%.2f, %.2f, %.2f", Cameras::camera.target.x, Cameras::camera.target.y, Cameras::camera.target.z);
         ImGui::Text("Reye:%.2f, %.2f, %.2f", Cameras::rCamera.eye.x, Cameras::rCamera.eye.y, Cameras::rCamera.eye.z);

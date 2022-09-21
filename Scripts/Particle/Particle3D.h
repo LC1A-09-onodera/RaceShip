@@ -159,6 +159,24 @@ class ParticleIndi
 		float angle = 0.0f;
 		
 	};
+	struct ParticleEditorElement
+	{
+		using XMFLOAT3 = DirectX::XMFLOAT3;
+		XMFLOAT3 position = {};
+		XMFLOAT3 velocity = {};
+		XMFLOAT3 accel = {};
+		XMFLOAT3 startPos = {};
+		XMFLOAT3 endPos = {};
+		int frame = 0;
+		int num_frame = 0;
+		//スケール
+		float scale = 1.0f;
+		//スケール初期値
+		float s_scale = 1.0f;
+		//最終地
+		float e_scale = 0.0f;
+		int m_type = 0;
+	};
 	struct ConstBufferData
 	{
 		DirectX::XMMATRIX mat;
@@ -182,6 +200,8 @@ public:
 	VertexPos vertices[ParticleManager::vertexCount];
 	//パーティクルのコンテナ
 	std::forward_list<Particle> particles;
+	//パーティクルのコンテナ
+	std::forward_list<ParticleEditorElement> editorParticles;
 	// デスクリプタサイズ
 	UINT descriptorHandleIncrementSize = 0;
 
@@ -340,11 +360,21 @@ public:
 	void LandingUpdate(DirectX::XMFLOAT3 eye, DirectX::XMFLOAT3 target, DirectX::XMFLOAT3 up, bool isBilbord = true);
 
 	void cubeParticle(const DirectX::XMFLOAT3 emitterPosition = { 0, 0, 0 }, XMFLOAT3 cubeSize = {10.0f, 10.0f, 10.0f}, float startSize = 0.5f, float endSize = 0.0f, int life = 60);
+
+	//エディタで確認するよう関数
+	static int editorSpanTimer;
+	void EditorParticleAdd(int type);
+	void EditorParticle();
+	void EditorUpdate(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, bool isBilbord);
 };
 /// <summary>
 	/// 描画
 	/// </summary>
 void ParticleDraw(ID3D12GraphicsCommandList *cmdList, const ParticleIndi *particle);
+/// <summary>
+	/// 描画
+	/// </summary>
+void EdiotrParticleDraw(ID3D12GraphicsCommandList* cmdList, const ParticleIndi* particle);
 /// <summary>
 /// 描画後処理
 /// </summary>
@@ -362,6 +392,9 @@ public:
 	//水しぶき
 	static std::shared_ptr<ParticleIndi> sheetOfSpray;
 	static std::shared_ptr<ParticleIndi> sheetOfSpray2;
+
+
+	static std::shared_ptr<ParticleIndi> editorParticle;
 	static void Update();
 	static void Init(BaseDirectX &baseDirectX);
 	static void Draw(BaseDirectX& baseDirectX);
