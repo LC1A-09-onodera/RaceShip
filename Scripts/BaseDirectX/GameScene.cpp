@@ -11,6 +11,8 @@
 #include "../LoadStage/LoadStage.h"
 #include "../LoadStage/StageObject.h"
 #include "../MapLayout/MapLayout.h"
+#include "../Particle/ParticleEdit.h"
+
 #include <thread>
 
 GameScene::GameScene()
@@ -205,6 +207,11 @@ void GameScene::Init()
 	//ステージをテキストからロード
 	LoadStage::LoadStages("Resource/TextData/Stage/stage1.txt");
 	StageObjects::LoadFile(baseDirectX, seling, "Resource/TextData/Stage/stage1.txt");
+
+	ParticleData par;
+	ParticleLoader::ParticleLoad("sample", par);
+
+
 }
 
 void GameScene::TitleUpdate()
@@ -440,7 +447,11 @@ void GameScene::MapEditUpdate()
 
 void GameScene::ParticleEditUpdate()
 {
-	ParticleControl::editorParticle->EditorParticle();
+	if (Imgui::emitterPlayTimer > 0)
+	{
+		ParticleControl::editorParticle->EditorParticle();
+	}
+	Imgui::emitterPlayTimer--;
 
 	ParticleControl::Update();
 	particleAreaModel.each.position = {0, 0, 0, 1};

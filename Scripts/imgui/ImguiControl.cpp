@@ -18,7 +18,6 @@
 #include "../3DModel/Model.h"
 #include "../Player/Seling.h"
 #include "../Particle/ParticleEdit.h"
-
 //#define _DEBUG
 
 ComPtr<ID3D12DescriptorHeap> Imgui::imguiDescHeap;
@@ -54,6 +53,9 @@ list<Rewired::RewiredKeys> Imgui::keyList;
 char Imgui::buf[256] = {};
 const char* Imgui::fileName = " ";
 
+const char* Imgui::particleFileName = " ";
+char Imgui::particleBuf[256] = {};
+
 int Imgui::particleType = ParticleType::Normal;
 
 int Imgui::particleCount = 1;
@@ -70,6 +72,8 @@ int Imgui::particleLife = 60;
 int Imgui::particleSpornArea[3] = { 1, 1, 1 };
 int Imgui::particleSpornSpan;
 int Imgui::particleEaseType = ParticleEaseType::InQuad;
+int Imgui::emitterLife = 60;
+int Imgui::emitterPlayTimer = 0;
 
 void Imgui::RewiredUpdate()
 {
@@ -277,6 +281,21 @@ void Imgui::InspectorView()
 void Imgui::ParticleEdit()
 {
     ImGui::Combo("", &particleType, "Normal\0Easeeing\0Lerp\0\0");
+    ImGui::InputText(particleFileName, particleBuf, 256);
+    if (ImGui::Button("AddFile"))
+    {
+        //Rewired::RewiredContainer::CreateRewired(buf, false);
+        ParticleExport::CreatePartileFile(particleBuf);
+    }
+    if (ImGui::TreeNode("EmitterLife"))
+    {
+        ImGui::InputInt("EmitterLife", &emitterLife);
+        ImGui::TreePop();
+    }
+    if (ImGui::Button("Play"))
+    {
+        emitterPlayTimer = emitterLife;
+    }
     if (particleType == 1)
     {
         ImGui::InputInt("particleEaseType", &particleEaseType);

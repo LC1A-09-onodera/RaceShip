@@ -105,6 +105,9 @@ public:
     static const char *fileName;
     static char buf[256];
 
+    static const char* particleFileName;
+    static char particleBuf[256];
+
     enum ParticleType
     {
         Normal,
@@ -134,4 +137,7 @@ public:
     static int particleType;
     static int particleSpornArea[3];
     static int particleSpornSpan;
+
+    static int emitterLife;
+    static int emitterPlayTimer;
 };
