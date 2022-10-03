@@ -3,6 +3,12 @@
 class ParticleData
 {
 public:
+	enum ParticleType
+	{
+		Normal,
+		Easeeing,
+		Lerp,
+	};
 	int type;
 	int count;
 	int emitterLife;

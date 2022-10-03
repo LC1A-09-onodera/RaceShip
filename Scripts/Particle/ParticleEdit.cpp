@@ -86,7 +86,6 @@ void ParticleExport::CreatePartileFile(const char* f_fileName)
 
 void ParticleLoader::ParticleLoad(const char* f_fileName, ParticleData& data)
 {
-	ParticleData particleData = {};
 	string pathName = f_fileName;
 	string fullPath = "Resource/TextData/Particle/" + pathName + ".csv";
 
@@ -109,49 +108,88 @@ void ParticleLoader::ParticleLoad(const char* f_fileName, ParticleData& data)
 			getline(line_stream, key, ',');
 			if (key == "Normal")
 			{
-				
+				data.type = ParticleData::ParticleType::Normal;
 			}
 			else if (key == "Easeeing")
 			{
-
+				data.type = ParticleData::ParticleType::Easeeing;
 			}
 			else if (key == "Lerp")
 			{
-
+				data.type = ParticleData::ParticleType::Lerp;
 			}
 		}
 		else if (key == "Count")
 		{
-			line_stream >> particleData.count;
+			line_stream >> data.count;
 		}
 		else if (key == "EmitterLife")
 		{
-			line_stream >> particleData.emitterLife;
+			line_stream >> data.emitterLife;
 		}
 		else if (key == "ParticleLife")
 		{
-			line_stream >> particleData.particleLife;
+			line_stream >> data.particleLife;
 		}
 		else if (key == "SpornSpan")
 		{
-			line_stream >> particleData.spornSpan;
+			line_stream >> data.spornSpan;
 		}
 		else if (key == "SpornArea")
 		{
-			line_stream >> particleData.spornArea[0];
+			line_stream >> data.spornArea[0];
 			getline(line_stream, key, ',');
-			line_stream >> particleData.spornArea[1];
+			line_stream >> data.spornArea[1];
 			getline(line_stream, key, ',');
-			line_stream >> particleData.spornArea[2];
+			line_stream >> data.spornArea[2];
 		}
 		else if (key == "StartSize")
 		{
-
+			line_stream >> data.startSize;
 		}
 		else if (key == "EndSize")
 		{
-
+			line_stream >> data.endsize;
 		}
-
+		else if (key == "Speed")
+		{
+			line_stream >> data.speed[0];
+			getline(line_stream, key, ',');
+			line_stream >> data.speed[1];
+			getline(line_stream, key, ',');
+			line_stream >> data.speed[2];
+		}
+		else if (key == "SpeedDiff")
+		{
+			line_stream >> data.speedDiff[0];
+			getline(line_stream, key, ',');
+			line_stream >> data.speedDiff[1];
+			getline(line_stream, key, ',');
+			line_stream >> data.speedDiff[2];
+		}
+		else if (key == "Acc")
+		{
+			line_stream >> data.acc[0];
+			getline(line_stream, key, ',');
+			line_stream >> data.acc[1];
+			getline(line_stream, key, ',');
+			line_stream >> data.acc[2];
+		}
+		else if (key == "StartPosition")
+		{
+			line_stream >> data.startPosition[0];
+			getline(line_stream, key, ',');
+			line_stream >> data.startPosition[1];
+			getline(line_stream, key, ',');
+			line_stream >> data.startPosition[2];
+		}
+		else if (key == "EndPosition")
+		{
+			line_stream >> data.endPosition[0];
+			getline(line_stream, key, ',');
+			line_stream >> data.endPosition[1];
+			getline(line_stream, key, ',');
+			line_stream >> data.endPosition[2];
+		}
 	}
 }
