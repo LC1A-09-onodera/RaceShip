@@ -1,0 +1,11 @@
+Type,Normal
+Count,20
+EmitterLife,1
+ParticleLife,60
+SpornSpan,1
+SpornArea,1,1,1
+StartSize,4.080000
+EndSize,0.000000
+Speed0.000000,1.000000,0.000000
+SpeedDiff6,0,0
+Acc0.000000,-0.050000,0.000000

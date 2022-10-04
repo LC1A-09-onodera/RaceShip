@@ -11,6 +11,7 @@
 #include "../LoadStage/LoadStage.h"
 #include "../LoadStage/StageObject.h"
 #include "../MapLayout/MapLayout.h"
+
 #include <thread>
 
 GameScene::GameScene()
@@ -235,6 +236,9 @@ void GameScene::TitleUpdate()
 	normalWater.Update();
 	mosaicWater.Update();
 
+	XMFLOAT3 po = {0, 0, 0};
+	//ParticleControl::customParticle->CustomParticle(ParticleControl::customParticle->baseParticleData, po);
+	ParticleEditUpdate();
 
 	spaceSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(spaceSp.position), spaceEndPos, spriteSpeed));
 	titleSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(titleSp.position), titleEndPos, spriteSpeed));
@@ -440,14 +444,18 @@ void GameScene::MapEditUpdate()
 
 void GameScene::ParticleEditUpdate()
 {
-	ParticleControl::editorParticle->EditorParticle();
+	//if (Imgui::emitterPlayTimer > 0)
+	//{
+		ParticleControl::editorParticle->EditorParticle();
+	//}
+	//Imgui::emitterPlayTimer--;
 
-	ParticleControl::Update();
-	particleAreaModel.each.position = {0, 0, 0, 1};
+	//ParticleControl::Update();
+	particleAreaModel.each.position = {static_cast<float>(Imgui::emitterPosition[0]), static_cast<float>(Imgui::emitterPosition[1]), static_cast<float>(Imgui::emitterPosition[2]), 1};
 	particleAreaModel.each.scale = { static_cast<float>(Imgui::particleSpornArea[0]), static_cast<float>(Imgui::particleSpornArea[1]) , static_cast<float>(Imgui::particleSpornArea[2]) };
 	particleAreaModel.Update(baseDirectX, &particleAreaModel.each, Cameras::camera);
-	light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
-	LightUpdate();
+	/*light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
+	LightUpdate();*/
 }
 
 void GameScene::EndUpdate()
@@ -498,6 +506,8 @@ void GameScene::PostWaterFaceDraw()
 	//world.Update(baseDirectX, &world.each, false);
 	Draw3DObject(baseDirectX, world);
 	ParticleManager::InitializeCamera(window_width, window_height, Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up);
+
+	Draw3DObject(baseDirectX, particleAreaModel, true);
 	ParticleControl::Draw(baseDirectX);
 	/*skyDome.Update(baseDirectX, &skyDome.each);
 	Draw3DObject(baseDirectX, skyDome);*/

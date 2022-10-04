@@ -111,6 +111,7 @@ private:
 
 	Model particleAreaModel;
 
+
 public:
 	GameScene();
 	~GameScene();
