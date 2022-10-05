@@ -76,6 +76,7 @@ int Imgui::emitterLife = 60;
 int Imgui::emitterPlayTimer = 0;
 
 int Imgui::emitterPosition[3] = { 0, 0, 0 };
+bool Imgui::isParticleEditActive = false;
 
 void Imgui::RewiredUpdate()
 {
@@ -282,6 +283,7 @@ void Imgui::InspectorView()
 
 void Imgui::ParticleEdit()
 {
+    ImGui::Checkbox("Active", &isParticleEditActive);
     ImGui::Combo("", &particleType, "Normal\0Easeeing\0Lerp\0\0");
     ImGui::InputText(particleFileName, particleBuf, 256);
     if (ImGui::Button("AddFile"))
@@ -377,6 +379,7 @@ void Imgui::ParticleEdit()
 void Imgui::FileFalse()
 {
     ImGui::Text("File Export Is Failed");
+
     if (ImGui::Button("Close"))
     {
         isFileOutputFalse = false;

@@ -141,4 +141,5 @@ public:
     static int emitterLife;
     static int emitterPlayTimer;
     static int emitterPosition[3];
+    static bool isParticleEditActive;
 };

@@ -86,6 +86,9 @@ void GameScene::SceneManageUpdateAndDraw()
 		break;
 	case ParticleEdit:
 		ParticleEditUpdate();
+		ParticleControl::Update();
+		light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
+		LightUpdate();
 		ParticleEditDraw();
 		break;
 	default:
@@ -236,10 +239,12 @@ void GameScene::TitleUpdate()
 	normalWater.Update();
 	mosaicWater.Update();
 
-	XMFLOAT3 po = {0, 0, 0};
+	XMFLOAT3 po = { 0, 0, 0 };
 	//ParticleControl::customParticle->CustomParticle(ParticleControl::customParticle->baseParticleData, po);
-	ParticleEditUpdate();
-
+	if (Imgui::isParticleEditActive)
+	{
+		ParticleEditUpdate();
+	}
 	spaceSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(spaceSp.position), spaceEndPos, spriteSpeed));
 	titleSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(titleSp.position), titleEndPos, spriteSpeed));
 	if (Input::KeyTrigger(DIK_SPACE))
@@ -256,7 +261,7 @@ void GameScene::TitleUpdate()
 	if (particleTimer > 1)
 	{
 		XMFLOAT3 emitpos = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
-		ParticleControl::sheetOfSpray->cubeParticle(emitpos, {50.0f, 50.0f, 50.0f});
+		ParticleControl::sheetOfSpray->cubeParticle(emitpos, { 50.0f, 50.0f, 50.0f });
 		//ParticleControl::elementEffect->LifeParticle(emitpos, 11.0f, 0.5f, 0.0f, 250);
 		particleTimer = 0;
 	}
@@ -308,7 +313,12 @@ void GameScene::GameUpdate()
 	waterFace[1].Update();
 	normalWater.Update();
 	mosaicWater.Update();
-	
+
+	if (Imgui::isParticleEditActive)
+	{
+		ParticleEditUpdate();
+	}
+
 	XMFLOAT3 selingPos = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
 	selingPos.y -= 0.2f;
 	ParticleControl::sheetOfSpray->SheetOfSprayParticle(selingPos, seling.selingModel.each.rotation, seling.addForce, 0.5f, 0.0f);
@@ -325,7 +335,7 @@ void GameScene::GameUpdate()
 
 	const float lengY = 6.0f;
 	const float lengXY = 1.0f;
-	Cameras::rCamera.eye = { Cameras::camera.eye.x * lengXY, Cameras::camera.eye.y * lengY, Cameras::camera.eye.z * lengXY};
+	Cameras::rCamera.eye = { Cameras::camera.eye.x * lengXY, Cameras::camera.eye.y * lengY, Cameras::camera.eye.z * lengXY };
 	Cameras::rCamera.up = { 0, -1, 0 };
 	Cameras::rCamera.target = Cameras::camera.target;
 	Cameras::rCamera.Update();
@@ -446,12 +456,12 @@ void GameScene::ParticleEditUpdate()
 {
 	//if (Imgui::emitterPlayTimer > 0)
 	//{
-		ParticleControl::editorParticle->EditorParticle();
+	ParticleControl::editorParticle->EditorParticle();
 	//}
 	//Imgui::emitterPlayTimer--;
 
 	//ParticleControl::Update();
-	particleAreaModel.each.position = {static_cast<float>(Imgui::emitterPosition[0]), static_cast<float>(Imgui::emitterPosition[1]), static_cast<float>(Imgui::emitterPosition[2]), 1};
+	particleAreaModel.each.position = { static_cast<float>(Imgui::emitterPosition[0]), static_cast<float>(Imgui::emitterPosition[1]), static_cast<float>(Imgui::emitterPosition[2]), 1 };
 	particleAreaModel.each.scale = { static_cast<float>(Imgui::particleSpornArea[0]), static_cast<float>(Imgui::particleSpornArea[1]) , static_cast<float>(Imgui::particleSpornArea[2]) };
 	particleAreaModel.Update(baseDirectX, &particleAreaModel.each, Cameras::camera);
 	/*light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
@@ -506,8 +516,10 @@ void GameScene::PostWaterFaceDraw()
 	//world.Update(baseDirectX, &world.each, false);
 	Draw3DObject(baseDirectX, world);
 	ParticleManager::InitializeCamera(window_width, window_height, Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up);
-
-	Draw3DObject(baseDirectX, particleAreaModel, true);
+	if (Imgui::isParticleEditActive)
+	{
+		Draw3DObject(baseDirectX, particleAreaModel, true);
+	}
 	ParticleControl::Draw(baseDirectX);
 	/*skyDome.Update(baseDirectX, &skyDome.each);
 	Draw3DObject(baseDirectX, skyDome);*/
