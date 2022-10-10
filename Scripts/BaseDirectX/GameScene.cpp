@@ -211,7 +211,8 @@ void GameScene::Init()
 	ParticleData par;
 	ParticleLoader::ParticleLoad("sample", par);
 
-
+	log.SetFileName("log");
+	
 }
 
 void GameScene::TitleUpdate()
@@ -242,12 +243,15 @@ void GameScene::TitleUpdate()
 	normalWater.Update();
 	mosaicWater.Update();
 
+	log.Recording();
+
 
 	spaceSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(spaceSp.position), spaceEndPos, spriteSpeed));
 	titleSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(titleSp.position), titleEndPos, spriteSpeed));
 	if (Input::KeyTrigger(DIK_SPACE))
 	{
 		Imgui::sceneNum = GAME;
+		log.SaveLog();
 	}
 
 	XMFLOAT3 selingPos = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);

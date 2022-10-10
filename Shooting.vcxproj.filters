@@ -85,6 +85,9 @@
     <Filter Include="ParticleEdit">
       <UniqueIdentifier>{1af13906-64e1-482f-9cfd-703c52bbfc60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="KeyLog">
+      <UniqueIdentifier>{a2e963a2-a709-47f2-9239-b2985573ce29}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scripts\3DModel\Model.h">
@@ -240,6 +243,9 @@
     <ClInclude Include="Scripts\BaseDirectX\FileLoad.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Scripts\KeyLog\KeyLog.h">
+      <Filter>KeyLog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scripts\3DModel\Model.cpp">
@@ -364,6 +370,9 @@
     </ClCompile>
     <ClCompile Include="Scripts\Particle\ParticleEdit.cpp">
       <Filter>ParticleEdit</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\KeyLog\KeyLog.cpp">
+      <Filter>KeyLog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

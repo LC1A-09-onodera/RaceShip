@@ -15,8 +15,14 @@ namespace Rewired
 	{
 	public:
 		static void KeyCodeStringInit(BaseDirectX &baseDirectX);
-		static bool GetAnyInput(KeyInfo<KeyCode> &key);
-		static bool GetPadAnyInput(KeyInfo<PadKeyCode> &key );
+		static bool GetAnyTriggerInput(KeyInfo<KeyCode> &key);
+		static bool GetAnyTriggerInput();
+		static bool GetAnyReleaseInput(KeyInfo<KeyCode>& key);
+		static bool GetAnyReleaseInput();
+		static bool GetPadAnyTriggerInput(KeyInfo<PadKeyCode> &key);
+		static bool GetPadAnyTriggerInput();
+		static bool GetPadAnyReleaseInput(KeyInfo<PadKeyCode>& key);
+		static bool GetPadAnyReleaseInput();
 		//Keyborad
 		static list<KeyInfo<KeyCode>> mKeyboardKeys;
 		//XBoxPad

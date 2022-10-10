@@ -140,4 +140,12 @@ public:
 
     static int emitterLife;
     static int emitterPlayTimer;
+
+    enum KeyRec
+    {
+        None,
+        Rec,
+        PlayBack,
+    };
+    static int isKeyRec;
 };

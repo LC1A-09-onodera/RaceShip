@@ -43,7 +43,7 @@ bool MapEditorObject::OnCollisionMouse(float posX, float posY)
 	return false;
 }
 
-void MapEditorObject::Init(BaseDirectX& baseDirectX, XMFLOAT3& position)
+void MapEditorObject::Init(BaseDirectX& baseDirectX, const XMFLOAT3& position)
 {
 	ConstInit(piece, baseDirectX.dev);
 	piece.position = ConvertXMFLOAT3toXMVECTOR(position);
@@ -79,11 +79,11 @@ void MapEditorObjects::LoadModels(BaseDirectX& baseDirectX)
 	sprinfBoradModel.CreateModel(baseDirectX, "MapSB", ShaderManager::playerShader);
 }
 
-void MapEditorObjects::LoadFile(string path)
+void MapEditorObjects::LoadFile(const string path)
 {
 }
 
-void MapEditorObjects::Update(BaseDirectX& baseDirectX, XMFLOAT3& f_mousePos)
+void MapEditorObjects::Update(BaseDirectX& baseDirectX, const XMFLOAT3& f_mousePos)
 {
 	if (Input::KeyTrigger(DIK_1))
 	{
@@ -165,7 +165,7 @@ void MapEditorObjects::Draw(BaseDirectX& baseDirectX)
 	}
 }
 
-void MapEditorObjects::SetObject(BaseDirectX& baseDirectX, XMFLOAT3& position)
+void MapEditorObjects::SetObject(BaseDirectX& baseDirectX, const XMFLOAT3& position)
 {
 	if (position.x > MapW || position.x < -MapW || position.y > MapH || position.y < -MapH)
 	{
@@ -208,7 +208,7 @@ void MapEditorObjects::SetObject(BaseDirectX& baseDirectX, XMFLOAT3& position)
 	}
 }
 
-void MapEditorObjects::SetObjectLine(BaseDirectX& baseDirectX, XMFLOAT3& position)
+void MapEditorObjects::SetObjectLine(BaseDirectX& baseDirectX, const XMFLOAT3& position)
 {
 	if (position.x > MapW || position.x < -MapW || position.y > MapH || position.y < -MapH)
 	{
@@ -238,7 +238,7 @@ void MapEditorObjects::SetObjectLine(BaseDirectX& baseDirectX, XMFLOAT3& positio
 	SetObject(baseDirectX, lineMousePos);
 }
 
-bool MapEditorObjects::ObjectCollision(XMFLOAT3& f_mousePos)
+bool MapEditorObjects::ObjectCollision(const XMFLOAT3& f_mousePos)
 {
 	for (auto itr = wall.begin(); itr != wall.end(); ++itr)
 	{

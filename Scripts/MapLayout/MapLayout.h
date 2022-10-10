@@ -34,7 +34,7 @@ public:
 	EachInfo piece;
 	bool isActive = false;
 	bool OnCollisionMouse(float posX, float posY);
-	void Init(BaseDirectX &baseDirectX, XMFLOAT3& position);
+	void Init(BaseDirectX &baseDirectX, const XMFLOAT3& position);
 	string PositionToString();
 };
 
@@ -66,12 +66,12 @@ public:
 	static const int MapH;
 	static MapObjects activeType;
 	static void LoadModels(BaseDirectX &baseDirectX);
-	static void LoadFile(string path);
-	static void Update(BaseDirectX& baseDirectX, XMFLOAT3& f_mousePos);
+	static void LoadFile(const string path);
+	static void Update(BaseDirectX& baseDirectX, const XMFLOAT3& f_mousePos);
 	static void Draw(BaseDirectX& baseDirectX);
-	static void SetObject(BaseDirectX& baseDirectX, XMFLOAT3& position);
-	static void SetObjectLine(BaseDirectX& baseDirectX, XMFLOAT3& position);
-	static bool ObjectCollision(XMFLOAT3& f_mousePos);
+	static void SetObject(BaseDirectX& baseDirectX, const XMFLOAT3& position);
+	static void SetObjectLine(BaseDirectX& baseDirectX, const XMFLOAT3& position);
+	static bool ObjectCollision(const XMFLOAT3& f_mousePos);
 	static bool OutputFile(const char *path);
 	static void DeleteObjects();
 	static void EraseObject();

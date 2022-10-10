@@ -11,7 +11,7 @@ void MenuUI::ShowKeySprite(BaseDirectX& baseDirectX, int index, int hiIndex)
 	const float baseY = 300.0f;
 
 	XMFLOAT3 mousePosi = { static_cast<float>(WindowsAPI::GetMousePos().x), static_cast<float>(WindowsAPI::GetMousePos().y), 0 };
-	XMFLOAT3 leftUp = {baseX, baseY + (uiSize * hiIndex), 0};
+	XMFLOAT3 leftUp = { baseX, baseY + (uiSize * hiIndex), 0 };
 	if (CollisionRectangle2D(leftUp, actionUIWid, actionUIWid, mousePosi) && Input::MouseTrigger(MouseButton::LBUTTON))
 	{
 		mInputReception = true;
@@ -31,28 +31,24 @@ void MenuUI::ShowKeySprite(BaseDirectX& baseDirectX, int index, int hiIndex)
 	{
 		for (auto keysItr = itr->keys.begin(); keysItr != itr->keys.end(); ++keysItr)
 		{
-			if (keyItr->keyCode == *keysItr)
-			{
-				Sprite sp = keyItr->icon;
-				sp.position.m128_f32[0] = i * uiSize + baseX + actionUIWid;
-				sp.position.m128_f32[1] = j * uiSize + baseY;
-				sp.SpriteDraw(baseDirectX);
-				i++;
-			}
+			if (keyItr->keyCode != *keysItr)continue;
+			Sprite sp = keyItr->icon;
+			sp.position.m128_f32[0] = i * uiSize + baseX + actionUIWid;
+			sp.position.m128_f32[1] = j * uiSize + baseY;
+			sp.SpriteDraw(baseDirectX);
+			i++;
 		}
 	}
 	for (auto padItr = Rewired::KeyCodeString::mPadKeys.begin(); padItr != Rewired::KeyCodeString::mPadKeys.end(); ++padItr)
 	{
 		for (auto padsItr = itr->padKeys.begin(); padsItr != itr->padKeys.end(); ++padsItr)
 		{
-			if (padItr->keyCode == *padsItr)
-			{
-				Sprite sp = padItr->icon;
-				sp.position.m128_f32[0] = i * uiSize + baseX + actionUIWid;
-				sp.position.m128_f32[1] = j * uiSize + baseY;
-				sp.SpriteDraw(baseDirectX);
-				i++;
-			}
+			if (padItr->keyCode != *padsItr)continue;
+			Sprite sp = padItr->icon;
+			sp.position.m128_f32[0] = i * uiSize + baseX + actionUIWid;
+			sp.position.m128_f32[1] = j * uiSize + baseY;
+			sp.SpriteDraw(baseDirectX);
+			i++;
 		}
 	}
 }
@@ -75,7 +71,7 @@ void MenuUI::Update()
 	{
 		Rewired::KeyInfo<KeyCode> keyInfo;
 		Rewired::KeyInfo<PadKeyCode> padInfo;
-		if (Rewired::KeyCodeString::GetAnyInput(keyInfo))
+		if (Rewired::KeyCodeString::GetAnyTriggerInput(keyInfo))
 		{
 			auto itr = selectKey->keys.begin();
 			for (auto Citr = Rewired::RewiredContainer::rewiredsC.begin(); Citr != Rewired::RewiredContainer::rewiredsC.end(); ++Citr)
@@ -99,7 +95,7 @@ void MenuUI::Update()
 			selectKey->SaveKey();
 			Rewired::RewiredContainer::ReloadRewired();
 		}
-		else if (Rewired::KeyCodeString::GetPadAnyInput(padInfo))
+		else if (Rewired::KeyCodeString::GetPadAnyTriggerInput(padInfo))
 		{
 			mInputReception = false;
 		}
@@ -120,7 +116,7 @@ void MenuUI::DrawUI(BaseDirectX& baseDirectX)
 	pouseBack.ChangeSize(baseDirectX, static_cast<float>(window_width), static_cast<float>(window_height));
 	pouseBack.SpriteDraw(baseDirectX);
 
-	mSMenu.position = {580, 250, 0, 1};
+	mSMenu.position = { 580, 250, 0, 1 };
 	mSMenu.SpriteDraw(baseDirectX);
 
 	const float actionUIWid = 128.0f;
@@ -128,7 +124,7 @@ void MenuUI::DrawUI(BaseDirectX& baseDirectX)
 	const float baseX = 550.0f;
 	const float baseY = 300.0f;
 
-	mSFront.position = {baseX, baseY, 0, 1};
+	mSFront.position = { baseX, baseY, 0, 1 };
 	mSFront.SpriteDraw(baseDirectX);
 	ShowKeySprite(baseDirectX, 1, 0);
 
@@ -146,7 +142,7 @@ void MenuUI::DrawUI(BaseDirectX& baseDirectX)
 
 	if (mInputReception)
 	{
-		mSInputWait.position = {static_cast<float>(window_width) / 2.0f - 64.0f, static_cast<float>(window_height) / 2.0f - 32.0f, 0, 1.0f};
+		mSInputWait.position = { static_cast<float>(window_width) / 2.0f - 64.0f, static_cast<float>(window_height) / 2.0f - 32.0f, 0, 1.0f };
 		mSInputWait.SpriteDraw(baseDirectX);
 	}
 	if (mIsAlreadyInUse)

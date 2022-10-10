@@ -75,6 +75,8 @@ int Imgui::particleEaseType = ParticleEaseType::InQuad;
 int Imgui::emitterLife = 60;
 int Imgui::emitterPlayTimer = 0;
 
+int Imgui::isKeyRec = Imgui::KeyRec::None;
+
 void Imgui::RewiredUpdate()
 {
     //ラジオボタン用
