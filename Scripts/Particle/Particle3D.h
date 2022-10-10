@@ -14,6 +14,8 @@
 #pragma warning(pop)
 #include "../BaseDirectX/BaseDirectX.h"
 
+#include "ParticleEdit.h"
+
 #pragma comment(lib, "d3dcompiler.lib")
 
 using namespace DirectX;
@@ -140,7 +142,6 @@ class ParticleIndi
 		DirectX::XMFLOAT3 pos;
 		float scale;
 	};
-
 	struct Particle
 	{
 		using XMFLOAT3 = DirectX::XMFLOAT3;
@@ -202,6 +203,10 @@ public:
 	std::forward_list<Particle> particles;
 	//パーティクルのコンテナ
 	std::forward_list<ParticleEditorElement> editorParticles;
+	//
+	std::forward_list<ParticleData> customParticles;
+	ParticleData baseParticleData;
+
 	// デスクリプタサイズ
 	UINT descriptorHandleIncrementSize = 0;
 
@@ -366,6 +371,9 @@ public:
 	void EditorParticleAdd(int type);
 	void EditorParticle();
 	void EditorUpdate(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, bool isBilbord);
+
+	void CustomParticle(ParticleData& particleData, XMFLOAT3 &position);
+	void CustomUpdate();
 };
 /// <summary>
 	/// 描画
@@ -375,6 +383,10 @@ void ParticleDraw(ID3D12GraphicsCommandList *cmdList, const ParticleIndi *partic
 	/// 描画
 	/// </summary>
 void EdiotrParticleDraw(ID3D12GraphicsCommandList* cmdList, const ParticleIndi* particle);
+/// <summary>
+	/// 描画
+	/// </summary>
+void CustomParticleDraw(ID3D12GraphicsCommandList* cmdList, const ParticleIndi* particle);
 /// <summary>
 /// 描画後処理
 /// </summary>
@@ -393,8 +405,9 @@ public:
 	static std::shared_ptr<ParticleIndi> sheetOfSpray;
 	static std::shared_ptr<ParticleIndi> sheetOfSpray2;
 
-
 	static std::shared_ptr<ParticleIndi> editorParticle;
+
+	static std::shared_ptr<ParticleIndi> customParticle;
 	static void Update();
 	static void Init(BaseDirectX &baseDirectX);
 	static void Draw(BaseDirectX& baseDirectX);

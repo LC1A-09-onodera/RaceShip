@@ -1,5 +1,6 @@
 #include <array>
 
+
 class ParticleData
 {
 public:
@@ -17,11 +18,17 @@ public:
 	std::array<float, 3> spornArea;
 	float startSize;
 	float endsize;
+	float nowSize;
 	std::array<float, 3> speed;
 	std::array<float, 3> speedDiff;
 	std::array<float, 3> acc;
 	std::array<float, 3> startPosition;
 	std::array<float, 3> endPosition;
+	
+	std::array<float, 3> position;
+	int nowLife;
+
+	int particleSpanTimer = 0;
 };
 
 class ParticleLoader

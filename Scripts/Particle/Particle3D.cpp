@@ -5,14 +5,6 @@
 #include "../BaseDirectX/Library.h"
 #include "../imgui/ImguiControl.h"
 #include "../BaseDirectX/DX12operator.h"
-//const XMFLOAT3 operator+(const XMFLOAT3 &lhs, const XMFLOAT3 &rhs)
-//{
-//	XMFLOAT3 result;
-//	result.x = lhs.x + rhs.x;
-//	result.y = lhs.y + rhs.y;
-//	result.z = lhs.z + rhs.z;
-//	return result;
-//}
 
 /// <summary>
 /// 静的メンバ変数の実体
@@ -35,6 +27,8 @@ std::shared_ptr<ParticleIndi> ParticleControl::sheetOfSpray = nullptr;
 std::shared_ptr<ParticleIndi> ParticleControl::sheetOfSpray2 = nullptr;
 
 std::shared_ptr<ParticleIndi> ParticleControl::editorParticle = nullptr;
+
+std::shared_ptr<ParticleIndi> ParticleControl::customParticle = nullptr;
 int ParticleIndi::editorSpanTimer = 0;
 
 bool ParticleManager::StaticInitialize(ID3D12Device* f_device, int f_window_width, int f_window_height, XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up)
@@ -128,6 +122,32 @@ void EdiotrParticleDraw(ID3D12GraphicsCommandList* cmdList, const ParticleIndi* 
 	//cmdList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
 	//cmdList->DrawInstanced(_countof(vertices), 1, 0, 0);
 	cmdList->DrawInstanced((UINT)std::distance(particle->editorParticles.begin(), particle->editorParticles.end()), 1, 0, 0);
+	PostDraw();
+}
+void CustomParticleDraw(ID3D12GraphicsCommandList* cmdList, const ParticleIndi* particle)
+{
+	PreDraw(cmdList, particle);
+	// nullptrチェック
+	assert(ParticleManager::device);
+	assert(ParticleManager::cmdList);
+
+	// 頂点バッファの設定
+	cmdList->IASetVertexBuffers(0, 1, &particle->vbView);
+	// インデックスバッファの設定
+	//cmdList->IASetIndexBuffer(&ibView);
+
+	// デスクリプタヒープの配列
+	ID3D12DescriptorHeap* ppHeaps[] = { particle->descHeap.Get() };
+	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
+
+	// 定数バッファビューをセット
+	cmdList->SetGraphicsRootConstantBufferView(0, particle->constBuff->GetGPUVirtualAddress());
+	// シェーダリソースビューをセット
+	cmdList->SetGraphicsRootDescriptorTable(1, particle->gpuDescHandleSRV);
+	// 描画コマンド
+	//cmdList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
+	//cmdList->DrawInstanced(_countof(vertices), 1, 0, 0);
+	cmdList->DrawInstanced((UINT)std::distance(particle->customParticles.begin(), particle->customParticles.end()), 1, 0, 0);
 	PostDraw();
 }
 void PostDraw()
@@ -1244,6 +1264,7 @@ void ParticleIndi::cubeParticle(const DirectX::XMFLOAT3 emitterPosition, XMFLOAT
 		Add(life, pos, vel, acc, startSize, endSize);
 	}
 }
+
 void ParticleIndi::EditorParticle()
 {
 	if (editorSpanTimer < Imgui::particleSpornSpan)
@@ -1259,8 +1280,8 @@ void ParticleIndi::EditorParticle()
 			editorParticles.emplace_front();
 			ParticleEditorElement& p = editorParticles.front();
 			int random = rand();
-			p.position = { static_cast<float>(rand() % (Imgui::particleSpornArea[0] * 2 + 1) - Imgui::particleSpornArea[0]),
-						   static_cast<float>(rand() % (Imgui::particleSpornArea[1] * 2 + 1) - Imgui::particleSpornArea[1]), static_cast<float>(rand() % (Imgui::particleSpornArea[2] * 2 + 1) - Imgui::particleSpornArea[2]) };
+			p.position = { Imgui::emitterPosition[0] + static_cast<float>(rand() % (Imgui::particleSpornArea[0] * 2 + 1) - Imgui::particleSpornArea[0]),
+						   Imgui::emitterPosition[1] + static_cast<float>(rand() % (Imgui::particleSpornArea[1] * 2 + 1) - Imgui::particleSpornArea[1]), Imgui::emitterPosition[2] + static_cast<float>(rand() % (Imgui::particleSpornArea[2] * 2 + 1) - Imgui::particleSpornArea[2]) };
 			if (random % 2 == 0)
 			{
 				p.velocity = { Imgui::particleSpeed[0] + static_cast<float>((random % (Imgui::particleSpeedDiff[0] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[0])) / 10.0f, Imgui::particleSpeed[1] + static_cast<float>((random % (Imgui::particleSpeedDiff[1] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[1])) / 10.0f,
@@ -1297,7 +1318,6 @@ void ParticleIndi::EditorParticle()
 		}
 	}
 }
-
 void ParticleIndi::EditorUpdate(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, bool isBilbord)
 {
 	HRESULT result;
@@ -1382,6 +1402,137 @@ void ParticleIndi::EditorUpdate(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, bool
 
 }
 
+void ParticleIndi::CustomParticle(ParticleData& particleData, XMFLOAT3& position)
+{
+	if (baseParticleData.particleSpanTimer < baseParticleData.spornSpan)
+	{
+		baseParticleData.particleSpanTimer++;
+		return;
+	}
+	baseParticleData.particleSpanTimer = 0;
+
+	for (int i = 0; i < particleData.count; i++)
+	{
+		customParticles.emplace_front();
+		ParticleData& p = customParticles.front();
+		int random = rand();
+		p.position[0] = position.x + static_cast<float>(rand() % static_cast<int>((particleData.spornArea[0] * 2 + 1) - particleData.spornArea[0]));
+		p.position[1] = position.y + static_cast<float>(rand() % static_cast<int>((particleData.spornArea[1] * 2 + 1) - particleData.spornArea[1]));
+		p.position[2] = position.z + static_cast<float>(rand() % static_cast<int>((particleData.spornArea[2] * 2 + 1) - particleData.spornArea[2]));
+		if (random % 2 == 0)
+		{
+			p.speed = { particleData.speed[0] + static_cast<float>((random % static_cast<int>((particleData.speedDiff[0] * 2 + 1))) - static_cast<float>(particleData.speedDiff[0])) / 10.0f, particleData.speed[1] + static_cast<float>((random % (static_cast<int>(particleData.speedDiff[1] * 2 + 1))) - static_cast<float>(particleData.speedDiff[1])) / 10.0f,
+						particleData.speed[2] + static_cast<float>((random % static_cast<int>((particleData.speedDiff[2] * 2 + 1))) - static_cast<float>(particleData.speedDiff[2])) / 10.0f };
+		}
+		else
+		{
+			p.speed = { particleData.speed[0] - static_cast<float>((random % static_cast<int>((particleData.speedDiff[0] * 2 + 1))) - static_cast<float>(particleData.speedDiff[0])) / 10.0f, particleData.speed[1] - static_cast<float>((random % (static_cast<int>(particleData.speedDiff[1] * 2 + 1))) - static_cast<float>(particleData.speedDiff[1])) / 10.0f,
+						particleData.speed[2] - static_cast<float>((random % static_cast<int>((particleData.speedDiff[2] * 2 + 1))) - static_cast<float>(particleData.speedDiff[2])) / 10.0f };
+		}
+		p.acc = particleData.acc;
+		p.particleLife = particleData.particleLife;
+		p.nowLife = 0;
+		p.startSize = particleData.startSize;
+		p.endsize = particleData.endsize;
+		p.nowSize = p.startSize;
+		p.type = particleData.type;
+	}
+}
+void ParticleIndi::CustomUpdate()
+{
+	HRESULT result;
+
+	//パーティクルの消滅
+	customParticles.remove_if(
+		[](ParticleData& x)
+		{
+			return x.nowLife >= x.particleLife;
+		}
+	);
+	//全パーティクルの更新
+	for (std::forward_list<ParticleData>::iterator it = customParticles.begin(); it != customParticles.end(); it++)
+	{
+		//フレームの増加
+		it->nowLife++;
+		if (it->type == Imgui::ParticleType::Normal)
+		{
+			//速度に加速度を追加
+			it->speed[0] = it->speed[0] + it->acc[0];
+			it->speed[1] = it->speed[1] + it->acc[1];
+			it->speed[2] = it->speed[2] + it->acc[2];
+			//移動
+			it->position[0] = it->position[0] + it->speed[0];
+			it->position[1] = it->position[1] + it->speed[1];
+			it->position[2] = it->position[2] + it->speed[2];
+		}
+		else if (it->type == Imgui::ParticleType::Easeeing)
+		{
+			XMFLOAT3 startPos = { it->startPosition[0],it->startPosition[1] ,it->startPosition[2] };
+			XMFLOAT3 endPos = { it->endPosition[0],it->endPosition[1] ,it->endPosition[2] };
+			XMFLOAT3 pos;
+			if (Imgui::particleEaseType == Imgui::ParticleEaseType::InQuad)
+			{
+				pos = ShlomonMath::EaseInQuad(startPos, endPos, static_cast<float>(it->nowLife) / static_cast<float>(it->particleLife));
+				it->position = { pos.x, pos.y, pos.z };
+			}
+			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::OutQuad)
+			{
+				pos = ShlomonMath::EaseOutQuad(startPos, endPos, static_cast<float>(it->nowLife) / static_cast<float>(it->particleLife));
+				it->position = { pos.x, pos.y, pos.z };
+			}
+			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::InOutQuad)
+			{
+				pos = ShlomonMath::EaseInOutQuad(startPos, endPos, static_cast<float>(it->nowLife) / static_cast<float>(it->particleLife));
+				it->position = { pos.x, pos.y, pos.z };
+			}
+			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::InBack)
+			{
+				pos = ShlomonMath::EaseInBack(startPos, endPos, static_cast<float>(it->nowLife) / static_cast<float>(it->particleLife));
+				it->position = { pos.x, pos.y, pos.z };
+			}
+			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::OutBack)
+			{
+				pos = ShlomonMath::EaseOutBack(startPos, endPos, static_cast<float>(it->nowLife) / static_cast<float>(it->particleLife));
+				it->position = { pos.x, pos.y, pos.z };
+			}
+		}
+		else if (it->type == Imgui::ParticleType::Lerp)
+		{
+
+		}
+		//スケールの変更
+		float f = (float)it->particleLife / (float)it->nowLife;
+		//スケールの線形補間
+		it->nowSize = (it->endsize - it->startSize) / f;
+		it->nowSize += it->startSize;
+	}
+
+	ParticleManager::UpdateViewMatrix(Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up, true);
+
+	//頂点バッファへデータ転送
+	VertexPos* vertMap = nullptr;
+	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
+	if (SUCCEEDED(result))
+	{
+		for (std::forward_list<ParticleData>::iterator it = customParticles.begin(); it != customParticles.end(); it++)
+		{
+			vertMap->pos = { it->position[0], it->position[1] , it->position[2] };
+			vertMap->scale = it->nowSize;
+			vertMap++;
+		}
+		vertBuff->Unmap(0, nullptr);
+	}
+
+	// 定数バッファへデータ転送
+	ConstBufferData* constMap = nullptr;
+	result = constBuff->Map(0, nullptr, (void**)&constMap);
+	//constMap->color = color;
+	constMap->mat = ParticleManager::matView * ParticleManager::matProjection;	// 行列の合成
+	constMap->matBillboard = ParticleManager::matBillboard;
+	constMap->alpha = this->alpha;
+	constBuff->Unmap(0, nullptr);
+}
+
 ParticleControl::ParticleControl()
 {
 }
@@ -1396,6 +1547,7 @@ void ParticleControl::Update()
 	sheetOfSpray->Update(Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up);
 	sheetOfSpray2->LandingUpdate(Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up);
 	editorParticle->EditorUpdate(Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up, true);
+	customParticle->CustomUpdate();
 }
 
 void ParticleControl::Init(BaseDirectX& baseDirectX)
@@ -1409,6 +1561,8 @@ void ParticleControl::Init(BaseDirectX& baseDirectX)
 	sheetOfSpray.reset(sheetOfSpray->Create(L"Resource/Image/element.png"));
 	sheetOfSpray2.reset(sheetOfSpray->Create(L"Resource/Image/element.png"));
 	editorParticle.reset(editorParticle->Create(L"Resource/Image/element.png"));
+	customParticle.reset(customParticle->Create(L"Resource/Image/element.png"));
+	ParticleLoader::ParticleLoad("sample", customParticle->baseParticleData);
 }
 
 void ParticleControl::Draw(BaseDirectX& baseDirectX)
@@ -1416,5 +1570,9 @@ void ParticleControl::Draw(BaseDirectX& baseDirectX)
 	ParticleDraw(baseDirectX.cmdList.Get(), elementEffect.get());
 	ParticleDraw(baseDirectX.cmdList.Get(), sheetOfSpray.get());
 	ParticleDraw(baseDirectX.cmdList.Get(), sheetOfSpray2.get());
-	EdiotrParticleDraw(baseDirectX.cmdList.Get(), editorParticle.get());
+	if (!editorParticle->editorParticles.empty())
+	{
+		EdiotrParticleDraw(baseDirectX.cmdList.Get(), editorParticle.get());
+	}
+	CustomParticleDraw(baseDirectX.cmdList.Get(), customParticle.get());
 }
