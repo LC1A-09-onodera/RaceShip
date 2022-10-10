@@ -112,8 +112,6 @@ private:
 
 	Model particleAreaModel;
 
-	KeyLog log;
-
 public:
 	GameScene();
 	~GameScene();

@@ -31,17 +31,21 @@ public:
 class KeyLog
 {
 private:
-	string _fileName;
-	list<LogData<KeyCode>> _keyLogs;
-	list<LogData<PadKeyCode>> _padLogs;
+	static string _fileName;
+	static list<LogData<KeyCode>> _keyLogs;
+	static list<LogData<PadKeyCode>> _padLogs;
+
+	static list<LogData<KeyCode>> activeKeyList;
 public:
 	static UINT64 timer;
+	static UINT64 playBackTimer;
 	//ò^âÊ
-	void Recording();
+	static void Recording();
 	//çƒê∂
-	void Playback();
+	static void Playback();
+	static void PlaybackInit();
 
-	void SaveLog();
+	static void SaveLog();
 
-	void SetFileName(string name);
+	static void SetFileName(string name);
 };

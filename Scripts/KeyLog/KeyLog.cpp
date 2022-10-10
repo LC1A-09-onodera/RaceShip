@@ -2,6 +2,11 @@
 #include "../imgui/ImguiControl.h"
 
 UINT64 KeyLog::timer = 0;
+string KeyLog::_fileName;
+list<LogData<KeyCode>> KeyLog::_keyLogs;
+list<LogData<PadKeyCode>> KeyLog::_padLogs;
+UINT64 KeyLog::playBackTimer = 0;
+
 
 void KeyLog::Recording()
 {
@@ -26,7 +31,7 @@ void KeyLog::Recording()
 	if (Rewired::KeyCodeString::GetPadAnyReleaseInput() || Rewired::KeyCodeString::GetPadAnyReleaseInput())
 	{
 		Rewired::KeyInfo<PadKeyCode> key
-		;LogData<PadKeyCode>* log = new LogData<PadKeyCode>();
+			; LogData<PadKeyCode>* log = new LogData<PadKeyCode>();
 		if (Rewired::KeyCodeString::GetPadAnyReleaseInput())
 		{
 			Rewired::KeyCodeString::GetPadAnyReleaseInput(key);
@@ -44,7 +49,45 @@ void KeyLog::Recording()
 
 void KeyLog::Playback()
 {
+	//activeKeyを実際の入力に適応させる
+	for (auto activeItr = activeKeyList.begin(); activeItr != activeKeyList.end(); ++activeItr)
+	{
 
+	}
+	//Releaseのキーを削除させる
+}
+
+void KeyLog::PlaybackInit()
+{
+	//ファイル読み込み
+	string pathName = _fileName;
+	string fullPath = "Resource/TextData/Log/" + pathName + ".csv";
+
+	ifstream file;
+	file.open(fullPath);
+	if (file.fail())
+	{
+		assert(0);
+	}
+	string keyType;
+	while (getline(file, keyType))
+	{
+		istringstream line_stream(keyType);
+		string key;
+		getline(line_stream, key, ',');
+		if (key == "Frame")
+		{
+			getline(line_stream, key, ',');
+			
+		}
+
+	}
+
+	//activeKeyListにキー登録
+	for (auto keyLogItr = _keyLogs.begin(); keyLogItr != _keyLogs.end(); ++keyLogItr)
+	{
+
+	}
 }
 
 void KeyLog::SaveLog()

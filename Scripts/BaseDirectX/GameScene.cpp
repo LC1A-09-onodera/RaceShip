@@ -11,7 +11,6 @@
 #include "../LoadStage/LoadStage.h"
 #include "../LoadStage/StageObject.h"
 #include "../MapLayout/MapLayout.h"
-#include "../Particle/ParticleEdit.h"
 
 #include <thread>
 
@@ -211,7 +210,7 @@ void GameScene::Init()
 	ParticleData par;
 	ParticleLoader::ParticleLoad("sample", par);
 
-	log.SetFileName("log");
+	KeyLog::SetFileName("log");
 	
 }
 
@@ -243,7 +242,7 @@ void GameScene::TitleUpdate()
 	normalWater.Update();
 	mosaicWater.Update();
 
-	log.Recording();
+	KeyLog::Recording();
 
 
 	spaceSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(spaceSp.position), spaceEndPos, spriteSpeed));
@@ -251,7 +250,7 @@ void GameScene::TitleUpdate()
 	if (Input::KeyTrigger(DIK_SPACE))
 	{
 		Imgui::sceneNum = GAME;
-		log.SaveLog();
+		KeyLog::SaveLog();
 	}
 
 	XMFLOAT3 selingPos = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);

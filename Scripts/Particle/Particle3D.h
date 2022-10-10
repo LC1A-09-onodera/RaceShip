@@ -13,9 +13,7 @@
 #include <DirectXTex.h>
 #pragma warning(pop)
 #include "../BaseDirectX/BaseDirectX.h"
-
 #include "ParticleEdit.h"
-
 #pragma comment(lib, "d3dcompiler.lib")
 
 using namespace DirectX;

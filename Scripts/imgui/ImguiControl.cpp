@@ -74,6 +74,7 @@ int Imgui::particleSpornSpan;
 int Imgui::particleEaseType = ParticleEaseType::InQuad;
 int Imgui::emitterLife = 60;
 int Imgui::emitterPlayTimer = 0;
+float Imgui::emitterPosition[3];
 
 int Imgui::isKeyRec = Imgui::KeyRec::None;
 

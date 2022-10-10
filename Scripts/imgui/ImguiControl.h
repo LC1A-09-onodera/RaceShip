@@ -141,6 +141,8 @@ public:
     static int emitterLife;
     static int emitterPlayTimer;
 
+    static float emitterPosition[3];
+
     enum KeyRec
     {
         None,
