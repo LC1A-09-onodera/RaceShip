@@ -26,10 +26,18 @@ GameScene::~GameScene()
 
 void GameScene::SceneManageUpdateAndDraw()
 {
+	Imgui::Update(baseDirectX, seling);
 	Input::Update(baseDirectX);
+	if (Imgui::isKeyRec == Imgui::KeyRec::PlayBack)
+	{
+		KeyLog::Playback();
+	}
+	else if (Imgui::isKeyRec == Imgui::KeyRec::Rec)
+	{
+		KeyLog::Recording();
+	}
 	WindowsAPI::CheckMsg();
 	light->Update();
-	Imgui::Update(baseDirectX, seling);
 	if (Input::KeyTrigger(DIK_F1))
 	{
 		Imgui::sceneNum = TITLE;
@@ -246,12 +254,10 @@ void GameScene::TitleUpdate()
 	mosaicWater.Update();
 
 	XMFLOAT3 po = { 0, 0, 0 };
-	//ParticleControl::customParticle->CustomParticle(ParticleControl::customParticle->baseParticleData, po);
 	if (Imgui::isParticleEditActive)
 	{
 		ParticleEditUpdate();
 	}
-	KeyLog::Recording();
 
 
 	spaceSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(spaceSp.position), spaceEndPos, spriteSpeed));
@@ -259,7 +265,6 @@ void GameScene::TitleUpdate()
 	if (Input::KeyTrigger(DIK_SPACE))
 	{
 		Imgui::sceneNum = GAME;
-		KeyLog::SaveLog();
 	}
 
 	XMFLOAT3 selingPos = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);

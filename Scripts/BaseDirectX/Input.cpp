@@ -6,7 +6,8 @@ std::shared_ptr<IDirectInput8> Input::dinput = nullptr;
 IDirectInputDevice8 *Input::devkeyboard = nullptr;
 DirectInput* Input::directInput = DirectInput::GetInstance();
 int Input::mouseWheel = 0;
-
+BYTE Input::keys[256] = {};
+BYTE Input::oldkeys[256] = {};
 void Input::Update(BaseDirectX &baseDirectX)
 {
 	baseDirectX.result = devkeyboard->Acquire();

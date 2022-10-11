@@ -6,8 +6,9 @@ string KeyLog::_fileName;
 list<LogData<KeyCode>> KeyLog::_keyLogs;
 list<LogData<PadKeyCode>> KeyLog::_padLogs;
 UINT64 KeyLog::playBackTimer = 0;
-
-
+list<LogData<KeyCode>> KeyLog::loadKeyList;
+list<KeyCode> KeyLog::activeKeyList;
+list<list<KeyCode>::iterator> KeyLog::deleteKeyList;
 void KeyLog::Recording()
 {
 	timer++;
@@ -30,8 +31,8 @@ void KeyLog::Recording()
 	}
 	if (Rewired::KeyCodeString::GetPadAnyReleaseInput() || Rewired::KeyCodeString::GetPadAnyReleaseInput())
 	{
-		Rewired::KeyInfo<PadKeyCode> key
-			; LogData<PadKeyCode>* log = new LogData<PadKeyCode>();
+		Rewired::KeyInfo<PadKeyCode> key;
+		LogData<PadKeyCode>* log = new LogData<PadKeyCode>();
 		if (Rewired::KeyCodeString::GetPadAnyReleaseInput())
 		{
 			Rewired::KeyCodeString::GetPadAnyReleaseInput(key);
@@ -47,18 +48,55 @@ void KeyLog::Recording()
 	}
 }
 
+void KeyLog::RecordingInit()
+{
+	_keyLogs.clear();
+	_padLogs.clear();
+	timer = 0;
+}
+
 void KeyLog::Playback()
 {
+	playBackTimer++;
 	//activeKeyを実際の入力に適応させる
+	for (auto loadItr = loadKeyList.begin(); loadItr != loadKeyList.end(); ++loadItr)
+	{
+		if (loadItr->GetFrame() == playBackTimer)
+		{
+			if (loadItr->GetInputType())
+			{
+				activeKeyList.push_back(loadItr->GetKey());
+			}
+			else
+			{
+				for (auto activeItr = activeKeyList.begin(); activeItr != activeKeyList.end(); ++activeItr)
+				{
+					if (*activeItr == loadItr->GetKey())
+					{
+						deleteKeyList.push_back(activeItr);
+					}
+				}
+			}
+		}
+	}
+	//Releaseされたキーの削除
+	for (auto deleteItr = deleteKeyList.begin(); deleteItr != deleteKeyList.end(); ++deleteItr)
+	{
+		activeKeyList.remove(*(*deleteItr));
+	}
+	deleteKeyList.clear();
+	//有効キーを入力状態にする
 	for (auto activeItr = activeKeyList.begin(); activeItr != activeKeyList.end(); ++activeItr)
 	{
-
+		int keyNum = static_cast<int>(*activeItr);
+		Input::keys[keyNum] = (BYTE)true;
 	}
-	//Releaseのキーを削除させる
 }
 
 void KeyLog::PlaybackInit()
 {
+	loadKeyList.clear();
+	playBackTimer = 0;
 	//ファイル読み込み
 	string pathName = _fileName;
 	string fullPath = "Resource/TextData/Log/" + pathName + ".csv";
@@ -75,19 +113,34 @@ void KeyLog::PlaybackInit()
 		istringstream line_stream(keyType);
 		string key;
 		getline(line_stream, key, ',');
-		if (key == "Frame")
+		//Frame
+		LogData<KeyCode> log;
+		getline(line_stream, key, ',');
+		UINT64 frame = std::stoi(key);
+		log.SetFrame(frame);
+		//Key
+		getline(line_stream, key, ',');
+		getline(line_stream, key, ',');
+		for (auto keyListItr = Rewired::KeyCodeString::mKeyboardKeys.begin(); keyListItr != Rewired::KeyCodeString::mKeyboardKeys.end(); ++keyListItr)
 		{
-			getline(line_stream, key, ',');
-			
+			if (keyListItr->keyName == key)
+			{
+				log.SetKey(keyListItr->keyCode);
+			}
 		}
-
+		//InputType
+		getline(line_stream, key, ',');
+		if (key == "Trigger")
+		{
+			log.SetInputType(true);
+		}
+		else
+		{
+			log.SetInputType(false);
+		}
+		loadKeyList.push_back(log);
 	}
-
-	//activeKeyListにキー登録
-	for (auto keyLogItr = _keyLogs.begin(); keyLogItr != _keyLogs.end(); ++keyLogItr)
-	{
-
-	}
+	int a = static_cast<int>(loadKeyList.size());
 }
 
 void KeyLog::SaveLog()

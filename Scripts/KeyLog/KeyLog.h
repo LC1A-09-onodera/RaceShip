@@ -35,12 +35,16 @@ private:
 	static list<LogData<KeyCode>> _keyLogs;
 	static list<LogData<PadKeyCode>> _padLogs;
 
-	static list<LogData<KeyCode>> activeKeyList;
+	static list<LogData<KeyCode>> loadKeyList;
+
+	static list<KeyCode> activeKeyList;
+	static list<list<KeyCode>::iterator> deleteKeyList;
 public:
 	static UINT64 timer;
 	static UINT64 playBackTimer;
 	//ò^âÊ
 	static void Recording();
+	static void RecordingInit();
 	//çƒê∂
 	static void Playback();
 	static void PlaybackInit();

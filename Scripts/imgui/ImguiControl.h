@@ -150,6 +150,5 @@ public:
         PlayBack,
     };
     static int isKeyRec;
-    static int emitterPosition[3];
     static bool isParticleEditActive;
 };

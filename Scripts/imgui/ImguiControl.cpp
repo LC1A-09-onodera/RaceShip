@@ -18,6 +18,8 @@
 #include "../3DModel/Model.h"
 #include "../Player/Seling.h"
 #include "../Particle/ParticleEdit.h"
+#include "../KeyLog/KeyLog.h"
+
 //#define _DEBUG
 
 ComPtr<ID3D12DescriptorHeap> Imgui::imguiDescHeap;
@@ -75,7 +77,7 @@ int Imgui::particleEaseType = ParticleEaseType::InQuad;
 int Imgui::emitterLife = 60;
 int Imgui::emitterPlayTimer = 0;
 
-int Imgui::emitterPosition[3] = { 0, 0, 0 };
+float Imgui::emitterPosition[3] = { 0, 0, 0 };
 bool Imgui::isParticleEditActive = false;
 int Imgui::isKeyRec = Imgui::KeyRec::None;
 
@@ -425,6 +427,34 @@ void Imgui::EachInfo()
             isDeleteObjects = true;
         }
         ImGui::Checkbox("mulchThled", &isMulchthled);
+        if (isKeyRec == KeyRec::None)
+        {
+            if (ImGui::Button("Recording"))
+            {
+                isKeyRec = KeyRec::Rec;
+                KeyLog::RecordingInit();
+            }
+            if (ImGui::Button("KeyPlayback"))
+            {
+                isKeyRec = KeyRec::PlayBack;
+                KeyLog::PlaybackInit();
+            }
+        }
+        else if (isKeyRec == KeyRec::Rec)
+        {
+            if (ImGui::Button("Stop"))
+            {
+                isKeyRec = KeyRec::None;
+                KeyLog::SaveLog();
+            }
+        }
+        else if (isKeyRec == KeyRec::PlayBack)
+        {
+            if (ImGui::Button("Stop"))
+            {
+                isKeyRec = KeyRec::None;
+            }
+        }
     }
     else if (tab == ImguiType::CameraInfo)
     {
