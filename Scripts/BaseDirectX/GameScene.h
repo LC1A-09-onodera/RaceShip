@@ -13,6 +13,7 @@
 #include "../MenuUI/MenuUI.h"
 #include "../Particle/Particle3D.h"
 #include "../LoadStage/SpringBoard.h"
+#include "../KeyLog/KeyLog.h"
 
 enum GameSceneName { TITLE, SELECT, GAME, END, RESULT, OP , MAPEDIT, RewiredEdit, ParticleEdit};
 
@@ -110,7 +111,6 @@ private:
 	MenuUI pouseUI;
 
 	Model particleAreaModel;
-
 
 public:
 	GameScene();

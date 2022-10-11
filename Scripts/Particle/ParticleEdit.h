@@ -1,6 +1,5 @@
 #include <array>
 
-
 class ParticleData
 {
 public:

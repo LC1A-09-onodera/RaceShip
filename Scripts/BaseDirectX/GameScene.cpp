@@ -209,6 +209,12 @@ void GameScene::Init()
 	//ステージをテキストからロード
 	LoadStage::LoadStages("Resource/TextData/Stage/stage1.txt");
 	StageObjects::LoadFile(baseDirectX, seling, "Resource/TextData/Stage/stage1.txt");
+
+	ParticleData par;
+	ParticleLoader::ParticleLoad("sample", par);
+
+	KeyLog::SetFileName("log");
+	
 }
 
 void GameScene::TitleUpdate()
@@ -245,11 +251,15 @@ void GameScene::TitleUpdate()
 	{
 		ParticleEditUpdate();
 	}
+	KeyLog::Recording();
+
+
 	spaceSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(spaceSp.position), spaceEndPos, spriteSpeed));
 	titleSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(titleSp.position), titleEndPos, spriteSpeed));
 	if (Input::KeyTrigger(DIK_SPACE))
 	{
 		Imgui::sceneNum = GAME;
+		KeyLog::SaveLog();
 	}
 
 	XMFLOAT3 selingPos = ConvertXMVECTORtoXMFLOAT3(seling.selingModel.each.position);
@@ -464,8 +474,8 @@ void GameScene::ParticleEditUpdate()
 	particleAreaModel.each.position = { static_cast<float>(Imgui::emitterPosition[0]), static_cast<float>(Imgui::emitterPosition[1]), static_cast<float>(Imgui::emitterPosition[2]), 1 };
 	particleAreaModel.each.scale = { static_cast<float>(Imgui::particleSpornArea[0]), static_cast<float>(Imgui::particleSpornArea[1]) , static_cast<float>(Imgui::particleSpornArea[2]) };
 	particleAreaModel.Update(baseDirectX, &particleAreaModel.each, Cameras::camera);
-	/*light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
-	LightUpdate();*/
+	light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
+	LightUpdate();
 }
 
 void GameScene::EndUpdate()

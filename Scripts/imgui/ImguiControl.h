@@ -140,6 +140,16 @@ public:
 
     static int emitterLife;
     static int emitterPlayTimer;
+
+    static float emitterPosition[3];
+
+    enum KeyRec
+    {
+        None,
+        Rec,
+        PlayBack,
+    };
+    static int isKeyRec;
     static int emitterPosition[3];
     static bool isParticleEditActive;
 };

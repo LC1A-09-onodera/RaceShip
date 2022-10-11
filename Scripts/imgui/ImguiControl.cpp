@@ -77,6 +77,7 @@ int Imgui::emitterPlayTimer = 0;
 
 int Imgui::emitterPosition[3] = { 0, 0, 0 };
 bool Imgui::isParticleEditActive = false;
+int Imgui::isKeyRec = Imgui::KeyRec::None;
 
 void Imgui::RewiredUpdate()
 {
@@ -367,12 +368,6 @@ void Imgui::ParticleEdit()
     {
         ImGui::Text("Area");
         ImGui::DragInt3("x y z", particleSpornArea, 1, 1, 100);
-        ImGui::TreePop();
-    }
-    if (ImGui::TreeNode("EmitterPosition"))
-    {
-        ImGui::Text("EmitterPosition");
-        ImGui::DragInt3("x y z", emitterPosition, 1, -100, 100);
         ImGui::TreePop();
     }
 }

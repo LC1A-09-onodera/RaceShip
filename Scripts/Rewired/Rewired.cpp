@@ -389,7 +389,7 @@ void Rewired::KeyCodeString::KeyCodeStringInit(BaseDirectX& baseDirectX)
 	mPadKeys.push_back(PadPouse);
 }
 
-bool Rewired::KeyCodeString::GetAnyInput(KeyInfo<KeyCode> &key)
+bool Rewired::KeyCodeString::GetAnyTriggerInput(KeyInfo<KeyCode> &key)
 {
 	for (auto itr = mKeyboardKeys.begin(); itr != mKeyboardKeys.end(); ++itr)
 	{
@@ -402,13 +402,87 @@ bool Rewired::KeyCodeString::GetAnyInput(KeyInfo<KeyCode> &key)
 	return false;
 }
 
-bool Rewired::KeyCodeString::GetPadAnyInput(KeyInfo<PadKeyCode>& key)
+bool Rewired::KeyCodeString::GetAnyTriggerInput()
+{
+	for (auto itr = mKeyboardKeys.begin(); itr != mKeyboardKeys.end(); ++itr)
+	{
+		if (Input::KeyTrigger(itr->keyCode))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Rewired::KeyCodeString::GetAnyReleaseInput(KeyInfo<KeyCode>& key)
+{
+	for (auto itr = mKeyboardKeys.begin(); itr != mKeyboardKeys.end(); ++itr)
+	{
+		if (Input::KeyEnd(itr->keyCode))
+		{
+			key = (*itr);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Rewired::KeyCodeString::GetAnyReleaseInput()
+{
+	for (auto itr = mKeyboardKeys.begin(); itr != mKeyboardKeys.end(); ++itr)
+	{
+		if (Input::KeyEnd(itr->keyCode))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Rewired::KeyCodeString::GetPadAnyTriggerInput(KeyInfo<PadKeyCode>& key)
 {
 	for (auto itr = mPadKeys.begin(); itr != mPadKeys.end(); ++itr)
 	{
 		if (Input::directInput->IsButtonDown(itr->keyCode))
 		{
 			key = (*itr);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Rewired::KeyCodeString::GetPadAnyTriggerInput()
+{
+	for (auto itr = mPadKeys.begin(); itr != mPadKeys.end(); ++itr)
+	{
+		if (Input::directInput->IsButtonDown(itr->keyCode))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Rewired::KeyCodeString::GetPadAnyReleaseInput(KeyInfo<PadKeyCode>& key)
+{
+	for (auto itr = mPadKeys.begin(); itr != mPadKeys.end(); ++itr)
+	{
+		if (Input::directInput->IsButtonUp(itr->keyCode))
+		{
+			key = (*itr);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Rewired::KeyCodeString::GetPadAnyReleaseInput()
+{
+	for (auto itr = mPadKeys.begin(); itr != mPadKeys.end(); ++itr)
+	{
+		if (Input::directInput->IsButtonDown(itr->keyCode))
+		{
 			return true;
 		}
 	}
