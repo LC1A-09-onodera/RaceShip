@@ -1,4 +1,10 @@
 #include <array>
+#pragma warning(push)
+#pragma warning(disable:4996)
+#include "../single_include/nlohmann/json.hpp"
+#pragma warning(pop)
+
+using json = nlohmann::json;
 
 class ParticleData
 {
@@ -23,21 +29,26 @@ public:
 	std::array<float, 3> acc;
 	std::array<float, 3> startPosition;
 	std::array<float, 3> endPosition;
-	
 	std::array<float, 3> position;
 	int nowLife;
-
 	int particleSpanTimer = 0;
-};
 
+	void ToJson(json& j);
+	void FromJson(json& j);
+};
 class ParticleLoader
 {
 public:
-	static void ParticleLoad(const char* f_fileName, ParticleData &data);
+	static void ParticleLoad(const char* f_fileName, ParticleData& data);
 };
 
 class ParticleExport
 {
 public:
 	static void CreatePartileFile(const char* f_fileName);
+};
+
+class ImguiParticleDatas
+{
+	static ParticleData particle[3];
 };

@@ -1562,7 +1562,7 @@ void ParticleControl::Init(BaseDirectX& baseDirectX)
 	sheetOfSpray2.reset(sheetOfSpray->Create(L"Resource/Image/element.png"));
 	editorParticle.reset(editorParticle->Create(L"Resource/Image/element.png"));
 	customParticle.reset(customParticle->Create(L"Resource/Image/element.png"));
-	ParticleLoader::ParticleLoad("sample", customParticle->baseParticleData);
+	//ParticleLoader::ParticleLoad("sample", customParticle->baseParticleData);
 }
 
 void ParticleControl::Draw(BaseDirectX& baseDirectX)

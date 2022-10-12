@@ -215,11 +215,11 @@ void GameScene::Init()
 	seling.Init(baseDirectX);
 	rSeling.Init(baseDirectX);
 	//ステージをテキストからロード
-	LoadStage::LoadStages("Resource/TextData/Stage/stage1.txt");
+	//LoadStage::LoadStages("Resource/TextData/Stage/stage1.txt");
 	StageObjects::LoadFile(baseDirectX, seling, "Resource/TextData/Stage/stage1.txt");
 
 	ParticleData par;
-	ParticleLoader::ParticleLoad("sample", par);
+	ParticleLoader::ParticleLoad("sampleJson", par);
 
 	KeyLog::SetFileName("log");
 	

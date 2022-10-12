@@ -88,6 +88,9 @@
     <Filter Include="KeyLog">
       <UniqueIdentifier>{a2e963a2-a709-47f2-9239-b2985573ce29}</UniqueIdentifier>
     </Filter>
+    <Filter Include="json">
+      <UniqueIdentifier>{75a14077-fd83-4d58-a19a-ea67d98d6952}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scripts\3DModel\Model.h">
@@ -245,6 +248,9 @@
     </ClInclude>
     <ClInclude Include="Scripts\KeyLog\KeyLog.h">
       <Filter>KeyLog</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\json\json.h">
+      <Filter>json</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
