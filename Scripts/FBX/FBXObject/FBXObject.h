@@ -33,7 +33,7 @@ public:
 		XMMATRIX bones[MAX_BONES];
 	};
 	void Initialize();
-	void Update(BaseDirectX& baseDirectX);
+	void Update();
 	void Draw(ID3D12GraphicsCommandList *cmdList);
 	void SetModel(FBXModel* f_model){this->model = f_model;}
 	void PlayAnimation();

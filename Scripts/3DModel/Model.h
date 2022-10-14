@@ -203,30 +203,30 @@ public:
 	Material material;
 	//マテリアルの数
 	int materialCount = 0;
-	void CreateModel(BaseDirectX& baseDirectX, const char *name, HLSLShader &shader, bool smoothing = false, bool isTriangle = true);
+	void CreateModel( const char *name, HLSLShader &shader, bool smoothing = false, bool isTriangle = true);
 	//void Update();
-	virtual void Update(BaseDirectX& baseDirectX, EachInfo *f_each, bool rCamera = false);
-	virtual void Update(BaseDirectX& baseDirectX, EachInfo* f_each, Camera &f_camera);
-	void SendVertex(BaseDirectX& baseDirectX);
+	virtual void Update( EachInfo *f_each, bool rCamera = false);
+	virtual void Update( EachInfo* f_each, Camera &f_camera);
+	void SendVertex();
 	
-	void LoadFileContents(BaseDirectX& baseDirectX, const char* name, bool smoothing = false);
+	void LoadFileContents( const char* name, bool smoothing = false);
 	//スムージング
 	unordered_map<unsigned short, vector<unsigned short>> smoothData;
 	inline size_t GetVertexCount();
 	//エッジ平滑化データの追加
 	void AddAmoothData(unsigned short indexPosition, unsigned short indexVertex);
 	void CalculateSmoothedVertexNormals();
-	bool InitializeGraphicsPipeline(BaseDirectX &baseDirectX, HLSLShader &shader, bool isTriangle = true);
+	bool InitializeGraphicsPipeline(HLSLShader &shader, bool isTriangle = true);
 	//bool LoadTexture(const wchar_t *texName = nullptr);
-	bool LoadTexture(BaseDirectX& baseDirectX, const string &directPath, const string &filename);
-	bool InitializeDescriptorHeap(BaseDirectX& baseDirectX);
-	void LoadMaterial(BaseDirectX& baseDirectX ,const string &directoryPath, const string &filename);
+	bool LoadTexture( const string &directPath, const string &filename);
+	bool InitializeDescriptorHeap();
+	void LoadMaterial(const string &directoryPath, const string &filename);
 	const XMMATRIX &GetMatWorld() { return matWorld; }
 	inline const std::vector<Vertex> &GetVertices(){ return mesh.vertices; }
 	inline const std::vector<unsigned short> &GetIndices(){ return mesh.indices; }
 };
 template <typename T, typename U>
-void ConstBufferInit(BaseDirectX &baseDirectX, T *model, U &eachInfo)
+void ConstBufferInit(T *model, U &eachInfo)
 {
 	if (model == nullptr) return;
 	UINT sizeVB = static_cast<UINT>(sizeof(Vertex) * model->mesh.vertices.size());
@@ -237,20 +237,20 @@ void ConstBufferInit(BaseDirectX &baseDirectX, T *model, U &eachInfo)
 	model->mesh.ibView.SizeInBytes = sizeIB;
 	CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
 	CD3DX12_RESOURCE_DESC resourceDescVB = CD3DX12_RESOURCE_DESC::Buffer(sizeVB);
-	baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDescVB, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&model->mesh.vertBuff));
+	BaseDirectX::GetInstance()->result = BaseDirectX::GetInstance()->dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDescVB, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&model->mesh.vertBuff));
 	Vertex* vertMap = nullptr;
-	baseDirectX.result = model->mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
-	if (SUCCEEDED(baseDirectX.result))
+	BaseDirectX::GetInstance()->result = model->mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
+	if (SUCCEEDED(BaseDirectX::GetInstance()->result))
 	{
 		copy(model->mesh.vertices.begin(), model->mesh.vertices.end(), vertMap);
 		model->mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
 	}
 	//インデックスバッファの生成
 	CD3DX12_RESOURCE_DESC resourceDescIB = CD3DX12_RESOURCE_DESC::Buffer(sizeIB);
-	baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDescIB, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&model->mesh.indexBuff));
+	BaseDirectX::GetInstance()->result = BaseDirectX::GetInstance()->dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &resourceDescIB, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&model->mesh.indexBuff));
 	unsigned short* indexMap = nullptr;
-	baseDirectX.result = model->mesh.indexBuff->Map(0, nullptr, (void**)&indexMap);
-	if (SUCCEEDED(baseDirectX.result))
+	BaseDirectX::GetInstance()->result = model->mesh.indexBuff->Map(0, nullptr, (void**)&indexMap);
+	if (SUCCEEDED(BaseDirectX::GetInstance()->result))
 	{
 		copy(model->mesh.indices.begin(), model->mesh.indices.end(), indexMap);
 		model->mesh.indexBuff->Unmap(0, nullptr);
@@ -264,20 +264,20 @@ void ConstBufferInit(BaseDirectX &baseDirectX, T *model, U &eachInfo)
 	model->mesh.ibView.Format = DXGI_FORMAT_R16_UINT;
 	//ibView.SizeInBytes = sizeIB;
 
-	ConstInit(eachInfo, baseDirectX.dev);
+	ConstInit(eachInfo, BaseDirectX::GetInstance()->dev);
 	
-	UINT descHadleIncSize = baseDirectX.dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	model->cpuDescHandleCBV = baseDirectX.basicDescHeap->GetCPUDescriptorHandleForHeapStart();
+	UINT descHadleIncSize = BaseDirectX::GetInstance()->dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	model->cpuDescHandleCBV = BaseDirectX::GetInstance()->basicDescHeap->GetCPUDescriptorHandleForHeapStart();
 	model->cpuDescHandleCBV.ptr += descHadleIncSize;
 
-	model->gpuDescHandleCBV = baseDirectX.basicDescHeap->GetGPUDescriptorHandleForHeapStart();
+	model->gpuDescHandleCBV = BaseDirectX::GetInstance()->basicDescHeap->GetGPUDescriptorHandleForHeapStart();
 	model->gpuDescHandleCBV.ptr += descHadleIncSize;
 
 	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc{};
 	cbvDesc.BufferLocation = eachInfo.constBuff0->GetGPUVirtualAddress();
 	cbvDesc.SizeInBytes = static_cast<UINT>(eachInfo.constBuff0->GetDesc().Width);
 	
-	baseDirectX.dev->CreateConstantBufferView(&cbvDesc, model->cpuDescHandleCBV);
+	BaseDirectX::GetInstance()->dev->CreateConstantBufferView(&cbvDesc, model->cpuDescHandleCBV);
 }
 template <typename T, typename U>
 void CalcMatrix(T *model, U *eachInfo)
@@ -307,8 +307,8 @@ void CalcMatrix(T *model, U *eachInfo)
 	model->matWorld *= matRot;
 	model->matWorld *= matTrans;
 }
-void Set3DDraw(BaseDirectX& baseDirectX, const Model &model, bool triangle = true);
-void Draw3DObject(BaseDirectX& baseDirectX, const Model &model, bool triangle = true);
+void Set3DDraw(  const Model &model, bool triangle = true);
+void Draw3DObject(  const Model &model, bool triangle = true);
 bool ObjectColition(Model& object1, Model& object2);
 bool CiycleColition(const XMFLOAT3 &object1, const XMFLOAT3 &object2 , float radi1, float radi2);
 

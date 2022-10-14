@@ -72,20 +72,21 @@ public:
 	XMFLOAT2 texSize = {100,100};
 
 	//スプライトの生成
-	void CreateSprite(BaseDirectX& baseDirectX, const wchar_t* graph, XMFLOAT3 f_position, ComPtr<ID3D12Resource> texBuff = nullptr, bool f_back = false, bool TexSize = true);
-	void CreateSprite(BaseDirectX& baseDirectX, Tex f_tex, XMFLOAT3 f_position, ComPtr<ID3D12Resource> texBuff = nullptr, bool f_back = false, bool TexSize = true);
+	void CreateSprite( const wchar_t* graph, XMFLOAT3 f_position, ComPtr<ID3D12Resource> texBuff = nullptr, bool f_back = false, bool TexSize = true);
+	void CreateSprite( Tex f_tex, XMFLOAT3 f_position, ComPtr<ID3D12Resource> texBuff = nullptr, bool f_back = false, bool TexSize = true);
 	//スプライト用パイプラインの設定コマンド
 	
 	//スプライト用描画コマンド
 	//描画毎フレーム処理
-	void SpriteDraw(BaseDirectX& baseDirectX);
+	void SpriteDraw();
 	//座標変更
-	void Move(BaseDirectX& baseDirectX);
+	void Move();
 	//表示サイズの変更
-	void ChangeSize(BaseDirectX& baseDirectX, float wid,float hei);
-	void ChangeSizeOther(BaseDirectX& baseDirectX, float wid, float hei);
+	void ChangeSize( float wid,float hei);
+	void ChangeSizeOther( float wid, float hei);
 	
 	//毎フレーム処理
 	private:
-	void SpritePipelineEdit(BaseDirectX& baseDirectX);
+	void SpritePipelineEdit(
+	);
 };

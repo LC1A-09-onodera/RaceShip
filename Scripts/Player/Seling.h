@@ -42,12 +42,12 @@ public:
 	}
 	bool GetIsGoal() { return isGoal; }
 	void ForceUpdate();
-	void LoadModel(BaseDirectX &baseDirectX);
-	void Init(BaseDirectX& baseDirectX);
+	void LoadModel();
+	void Init();
 	void Update();
 	void Update(bool isPouse);
-	void Draw(BaseDirectX& baseDirectX, bool isRCamera = false);
-	void Draw(BaseDirectX& baseDirectX, Camera &f_camera);
+	void Draw(  bool isRCamera = false);
+	void Draw(  Camera &f_camera);
 
 	void ForceAttach();
 	void Move();

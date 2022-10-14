@@ -58,7 +58,7 @@ private:
 	void DrawPostEffect();
 
 	int SceneNum = TITLE;
-	BaseDirectX baseDirectX;
+	//BaseDirectX baseDirectX;
 
 	int opAnimationTime = 0;
 	const int MaxOPAnimationTime = 120;

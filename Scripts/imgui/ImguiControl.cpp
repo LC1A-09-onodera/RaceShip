@@ -168,7 +168,7 @@ void Imgui::ShowRewiredElement()
     }
 }
 
-ComPtr<ID3D12DescriptorHeap> Imgui::CreateDescrriptorHeapForImgui(BaseDirectX& baseDirectX)
+ComPtr<ID3D12DescriptorHeap> Imgui::CreateDescrriptorHeapForImgui()
 {
     ComPtr<ID3D12DescriptorHeap> ret;
     D3D12_DESCRIPTOR_HEAP_DESC desc = {};
@@ -176,7 +176,7 @@ ComPtr<ID3D12DescriptorHeap> Imgui::CreateDescrriptorHeapForImgui(BaseDirectX& b
     desc.NodeMask = 0;
     desc.NumDescriptors = 1;
     desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-    baseDirectX.dev->CreateDescriptorHeap(&desc, IID_PPV_ARGS(ret.ReleaseAndGetAddressOf()));
+    BaseDirectX::GetInstance()->dev->CreateDescriptorHeap(&desc, IID_PPV_ARGS(ret.ReleaseAndGetAddressOf()));
     return ret;
 }
 
@@ -185,7 +185,7 @@ ComPtr<ID3D12DescriptorHeap> Imgui::GetHeapForImgui()
     return imguiDescHeap;
 }
 
-void Imgui::DrawImGui(BaseDirectX& baseDirectX)
+void Imgui::DrawImGui()
 {
     //#ifdef DEBUG
     if (!isActive) return;
@@ -227,15 +227,15 @@ void Imgui::DrawImGui(BaseDirectX& baseDirectX)
     ImGui::End();
 
     ImGui::Render();
-    baseDirectX.cmdList->SetDescriptorHeaps(1, GetHeapForImgui().GetAddressOf());
-    ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), baseDirectX.cmdList.Get());
+    BaseDirectX::GetInstance()->cmdList->SetDescriptorHeaps(1, GetHeapForImgui().GetAddressOf());
+    ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), BaseDirectX::GetInstance()->cmdList.Get());
     //#endif//DEBUG
 }
 
-void Imgui::Init(BaseDirectX& baseDirectX)
+void Imgui::Init()
 {
     //imgui
-    imguiDescHeap = CreateDescrriptorHeapForImgui(baseDirectX);
+    imguiDescHeap = CreateDescrriptorHeapForImgui();
     if (imguiDescHeap == nullptr)
     {
         return;
@@ -252,7 +252,7 @@ void Imgui::Init(BaseDirectX& baseDirectX)
         assert(0);
         return;
     }
-    blnResult = ImGui_ImplDX12_Init(baseDirectX.dev.Get(), 3, DXGI_FORMAT_R8G8B8A8_UNORM, GetHeapForImgui().Get(), GetHeapForImgui()->GetCPUDescriptorHandleForHeapStart(), GetHeapForImgui()->GetGPUDescriptorHandleForHeapStart());
+    blnResult = ImGui_ImplDX12_Init(BaseDirectX::GetInstance()->dev.Get(), 3, DXGI_FORMAT_R8G8B8A8_UNORM, GetHeapForImgui().Get(), GetHeapForImgui()->GetCPUDescriptorHandleForHeapStart(), GetHeapForImgui()->GetGPUDescriptorHandleForHeapStart());
 }
 
 void Imgui::CreateMenuBar()
@@ -543,12 +543,12 @@ void Imgui::SetWindowActive(bool f_isActive)
     Imgui::isActive = f_isActive;
 }
 
-void Imgui::Update(BaseDirectX& baseDirectX, Seling& player)
+void Imgui::Update(Seling& player)
 {
     if (isLoadstage)
     {
         string path = "Resource/TextData/Stage/stage" + to_string(LoadStageNum) + ".txt";
-        StageObjects::LoadFile(baseDirectX, player, path.c_str());
+        StageObjects::LoadFile(player, path.c_str());
         isLoadstage = false;
     }
     if (isExport)

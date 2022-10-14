@@ -14,10 +14,10 @@ class WaterEachInfo : public EachInfo
 {
 public:
 	UINT frame = 0;
-	void CreateConstBuff0(BaseDirectX& baseDirectX);
-	void CreateConstBuff1(BaseDirectX& baseDirectX);
-	void CreateConstBuff2(BaseDirectX& baseDirectX);
-	void ConstInit(BaseDirectX& baseDirectX);
+	void CreateConstBuff0();
+	void CreateConstBuff1();
+	void CreateConstBuff2();
+	void ConstInit();
 };
 
 class WaterFaceModel : public Model
@@ -30,14 +30,14 @@ public:
 	PostEffect m_renderTarget;
 	UINT frameTime = 0;
 	//EachInfo each;
-	void CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& shader, bool smoothing = false);
-	bool LoadTexture(BaseDirectX& baseDirectX);
-	void LoadMaterial(BaseDirectX& baseDirectX, const string& directoryPath, const string& filename);
-	void InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& shader);
-	void Update(BaseDirectX& baseDirectX);
+	void CreateModel( const char* name, HLSLShader& shader, bool smoothing = false);
+	bool LoadTexture();
+	void LoadMaterial( const string& directoryPath, const string& filename);
+	void InitializeGraphicsPipeline( HLSLShader& shader);
+	void Update();
 	void PreDraw();
 	void PostDraw();
-	void Draw(BaseDirectX& baseDirectX, WaterEachInfo &f_each);
+	void Draw( WaterEachInfo &f_each);
 };
 
 class WaterFace
@@ -45,10 +45,10 @@ class WaterFace
 public:
 	WaterFaceModel waterModel;
 	shared_ptr<Camera> m_camera;
-	void LoadModel(BaseDirectX& baseDirectX, HLSLShader &useShader, XMFLOAT3 &f_cameraPos, XMFLOAT3 &f_cameraTarget);
-	void Init(BaseDirectX& baseDirectX);
+	void LoadModel( HLSLShader &useShader, XMFLOAT3 &f_cameraPos, XMFLOAT3 &f_cameraTarget);
+	void Init();
 	void Update();
-	void Draw(BaseDirectX& baseDirectX,  XMVECTOR &selingPos);
+	void Draw(  XMVECTOR &selingPos);
 };
 
 class WaterCameraManager

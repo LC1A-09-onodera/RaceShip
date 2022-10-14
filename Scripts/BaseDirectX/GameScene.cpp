@@ -26,8 +26,8 @@ GameScene::~GameScene()
 
 void GameScene::SceneManageUpdateAndDraw()
 {
-	Imgui::Update(baseDirectX, seling);
-	Input::Update(baseDirectX);
+	Imgui::Update( seling);
+	Input::Update();
 	if (Imgui::isKeyRec == Imgui::KeyRec::PlayBack)
 	{
 		KeyLog::Playback();
@@ -107,11 +107,11 @@ void GameScene::SceneManageUpdateAndDraw()
 void GameScene::Init()
 {
 	SceneNum = TITLE;
-	baseDirectX.Set();
+	BaseDirectX::GetInstance()->Set();
 	//サウンド
-	Sound::CreateVoice(baseDirectX);
+	Sound::CreateVoice();
 	//SRVのアドレス確保
-	baseDirectX.GetAdress();
+	BaseDirectX::GetInstance()->GetAdress();
 	//カメラ初期化
 	//Cameras::camera.isRCamera = true;
 	XMFLOAT3 cameraEye(0, 0, 20.0f);
@@ -122,18 +122,18 @@ void GameScene::Init()
 	Cameras::rCamera.Init(rCameraEye, rCameraTarget);
 	Cameras::rCamera.isRCamera = true;
 	//Imguiの初期化
-	Imgui::Init(baseDirectX);
+	Imgui::Init();
 	//ライトの初期化
-	Light::StaticInitialize(baseDirectX.dev.Get());
+	Light::StaticInitialize(BaseDirectX::GetInstance()->dev.Get());
 	//シェーダーのロード
 	ShaderManager::LoadShaders();
 	// 3Dパーティクル静的初期化
-	ParticleControl::Init(baseDirectX);
+	ParticleControl::Init();
 	//インプット初期化
-	Input::KeySet(baseDirectX, WindowsAPI::w, WindowsAPI::hwnd);
+	Input::KeySet(WindowsAPI::w, WindowsAPI::hwnd);
 	//FBX系
-	/*FbxLoader::GetInstance()->Initialize(baseDirectX.dev.Get());
-	FBXObject::SetDevice(baseDirectX.dev.Get());
+	/*FbxLoader::GetInstance()->Initialize(.dev.Get());
+	FBXObject::SetDevice(.dev.Get());
 	FBXObject::CreateGraphicsPipeline();*/
 	//ライト初期化
 	light.reset(Light::Create());
@@ -142,20 +142,20 @@ void GameScene::Init()
 	//inspector初期化
 	EachManager::eahcs.clear();
 	//ポストエフェクトの初期化
-	PostEffects::Init(baseDirectX);
+	PostEffects::Init();
 
-	StageObjects::LoadModel(baseDirectX);
+	StageObjects::LoadModel();
 
-	MapEditorObjects::LoadModels(baseDirectX);
+	MapEditorObjects::LoadModels();
 
 	//Rewiredの要素初期化
-	Rewired::KeyCodeString::KeyCodeStringInit(baseDirectX);
+	Rewired::KeyCodeString::KeyCodeStringInit();
 	Rewired::RewiredContainer::GetFilesName();
 
-	mapFrameV.CreateModel(baseDirectX, "Map", ShaderManager::playerShader, false, false);
+	mapFrameV.CreateModel( "Map", ShaderManager::playerShader, false, false);
 	mapFrameV.each.m_eachName = "MapV";
 	EachManager::eahcs.push_back(&mapFrameV.each);
-	mapFrameH.CreateModel(baseDirectX, "Map", ShaderManager::playerShader, false, false);
+	mapFrameH.CreateModel("Map", ShaderManager::playerShader, false, false);
 	mapFrameH.each.m_eachName = "MapH";
 	EachManager::eahcs.push_back(&mapFrameH.each);
 	mapFrameV.each.rotation.y = 90.0f;
@@ -163,11 +163,11 @@ void GameScene::Init()
 	mapFrameH.each.rotation.y = 0.0f;
 	mapFrameH.each.rotation.z = 90.0f;
 
-	particleAreaModel.CreateModel(baseDirectX, "ParticleArea", ShaderManager::playerShader, false, false);
+	particleAreaModel.CreateModel("ParticleArea", ShaderManager::playerShader, false, false);
 
-	seling.LoadModel(baseDirectX);
+	seling.LoadModel();
 	EachManager::eahcs.push_back(&seling.selingModel.each);
-	rSeling.LoadModel(baseDirectX);
+	rSeling.LoadModel();
 	//ボイスコマンドの通信受付スタート
 	//送信側はまた違うアプリケーションで行う
 	VoiceReciver::StartUp();
@@ -175,54 +175,54 @@ void GameScene::Init()
 	XMFLOAT3 targetPos = { 0, 0, 0 };
 	XMFLOAT3 cameraPos2 = { 0.0f, -67.0f + 89.0f, -10.1f };
 	XMFLOAT3 targetPos2 = { 0, 0 + 89.0f, 0 };
-	waterFace[0].LoadModel(baseDirectX, ShaderManager::waterShader, cameraPos, targetPos);
+	waterFace[0].LoadModel( ShaderManager::waterShader, cameraPos, targetPos);
 	waterFace[0].waterModel.eachData.m_eachName = "water0";
 	EachManager::eahcs.push_back((&waterFace[0].waterModel.eachData));
-	waterFace[1].LoadModel(baseDirectX, ShaderManager::waterShader, cameraPos2, targetPos2);
+	waterFace[1].LoadModel( ShaderManager::waterShader, cameraPos2, targetPos2);
 	waterFace[1].waterModel.eachData.position.m128_f32[2] = 20.0f;
-	normalWater.LoadModel(baseDirectX, ShaderManager::normalPlaneShader, cameraPos, targetPos);
-	mosaicWater.LoadModel(baseDirectX, ShaderManager::mosaicPlaneShader, cameraPos, targetPos);
-	monoWater.LoadModel(baseDirectX, ShaderManager::monoPlaneShader, cameraPos, targetPos);
-	blurWater.LoadModel(baseDirectX, ShaderManager::blurPlaneShader, cameraPos, targetPos);
+	normalWater.LoadModel( ShaderManager::normalPlaneShader, cameraPos, targetPos);
+	mosaicWater.LoadModel( ShaderManager::mosaicPlaneShader, cameraPos, targetPos);
+	monoWater.LoadModel( ShaderManager::monoPlaneShader, cameraPos, targetPos);
+	blurWater.LoadModel( ShaderManager::blurPlaneShader, cameraPos, targetPos);
 
 	const float worldSize = 40.0f;
-	world.CreateModel(baseDirectX, "SphereW", ShaderManager::playerShader);
+	world.CreateModel( "SphereW", ShaderManager::playerShader);
 	world.each.scale = { worldSize, worldSize, worldSize };
-	rWorld.CreateModel(baseDirectX, "SphereW", ShaderManager::playerShader);
+	rWorld.CreateModel( "SphereW", ShaderManager::playerShader);
 	rWorld.each.scale = { worldSize, worldSize, worldSize };
-	skyDome.CreateModel(baseDirectX, "sky", ShaderManager::playerShader, true);
+	skyDome.CreateModel( "sky", ShaderManager::playerShader, true);
 	const float skyDomeSize = 60.0f;
 	skyDome.each.scale = { skyDomeSize , skyDomeSize , skyDomeSize };
 
-	spaceSp.CreateSprite(baseDirectX, L"Resource/Image/space.png", XMFLOAT3(static_cast<float>(window_width), 600.0f, 0));
-	goalSp.CreateSprite(baseDirectX, L"Resource/Image/Goal.png", XMFLOAT3(static_cast<float>(window_width), window_height / 2.0f, 0));
-	titleSp.CreateSprite(baseDirectX, L"Resource/Image/Title.png", XMFLOAT3(window_width / 2.0f - 128.0f, -128.0f, 0));
+	spaceSp.CreateSprite( L"Resource/Image/space.png", XMFLOAT3(static_cast<float>(window_width), 600.0f, 0));
+	goalSp.CreateSprite( L"Resource/Image/Goal.png", XMFLOAT3(static_cast<float>(window_width), window_height / 2.0f, 0));
+	titleSp.CreateSprite( L"Resource/Image/Title.png", XMFLOAT3(window_width / 2.0f - 128.0f, -128.0f, 0));
 	for (int i = 0; i < 10; i++)
 	{
 		string path = "Resource/Image/Numbers/Num" + to_string(i) + ".png";
-		numTex[i].LoadGraph(baseDirectX, ConvertStringToWchaer(path));
+		numTex[i].LoadGraph( ConvertStringToWchaer(path));
 	}
 	for (int i = 0; i < 10; i++)
 	{
-		resultNumSprite[i].CreateSprite(baseDirectX, numTex[i], XMFLOAT3(window_width / 2.0f - 100.0f, 600.0f, 0));
-		resultNumSprite[i + 10].CreateSprite(baseDirectX, numTex[i], XMFLOAT3(window_width / 2.0f - 100.0f, 600.0f, 0));
-		resultNumSprite[i + 20].CreateSprite(baseDirectX, numTex[i], XMFLOAT3(window_width / 2.0f - 100.0f, 600.0f, 0));
-		resultNumSprite[i + 30].CreateSprite(baseDirectX, numTex[i], XMFLOAT3(window_width / 2.0f - 100.0f, 600.0f, 0));
+		resultNumSprite[i].CreateSprite( numTex[i], XMFLOAT3(window_width / 2.0f - 100.0f, 600.0f, 0));
+		resultNumSprite[i + 10].CreateSprite( numTex[i], XMFLOAT3(window_width / 2.0f - 100.0f, 600.0f, 0));
+		resultNumSprite[i + 20].CreateSprite( numTex[i], XMFLOAT3(window_width / 2.0f - 100.0f, 600.0f, 0));
+		resultNumSprite[i + 30].CreateSprite( numTex[i], XMFLOAT3(window_width / 2.0f - 100.0f, 600.0f, 0));
 	}
-	pouseUI.LoadFile(baseDirectX);
+	pouseUI.LoadFile();
 	Rewired::RewiredContainer::LoadAllRewired();
 
-	seling.Init(baseDirectX);
-	rSeling.Init(baseDirectX);
+	seling.Init();
+	rSeling.Init();
 	//ステージをテキストからロード
 	//LoadStage::LoadStages("Resource/TextData/Stage/stage1.txt");
-	StageObjects::LoadFile(baseDirectX, seling, "Resource/TextData/Stage/stage1.txt");
+	StageObjects::LoadFile( seling, "Resource/TextData/Stage/stage1.txt");
 
 	ParticleData par;
 	ParticleLoader::ParticleLoad("sampleJson", par);
 
 	KeyLog::SetFileName("log");
-	sanbasimodel.CreateModel(baseDirectX, "sambasi", ShaderManager::playerShader, true);
+	sanbasimodel.CreateModel( "sambasi", ShaderManager::playerShader, true);
 	sanbasimodel.each.scale = {0.2f, 0.2f, 0.2f};
 }
 
@@ -416,10 +416,10 @@ void GameScene::ResultUpdate()
 	if (Input::KeyTrigger(DIK_SPACE))
 	{
 		Imgui::sceneNum = TITLE;
-		seling.Init(baseDirectX);
-		rSeling.Init(baseDirectX);
+		seling.Init();
+		rSeling.Init();
 		string path = "Resource/TextData/Stage/stage" + to_string(Imgui::LoadStageNum) + ".txt";
-		StageObjects::LoadFile(baseDirectX, seling, path.c_str());
+		StageObjects::LoadFile( seling, path.c_str());
 		Imgui::CameraRotation = 270.0f;
 		goalSp.position = { static_cast<float>(window_width), window_height / 2.0f, 0 , 1.0f };
 	}
@@ -449,22 +449,22 @@ void GameScene::OPUpdate()
 void GameScene::MapEditUpdate()
 {
 	light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
-	mapFrameV.Update(baseDirectX, &mapFrameV.each);
-	mapFrameH.Update(baseDirectX, &mapFrameH.each);
+	mapFrameV.Update( &mapFrameV.each);
+	mapFrameH.Update( &mapFrameH.each);
 	//deleteした後のオブジェクトを描画しようとしてエラーを出さないための応急処置
 	//Update段階でオブジェクトをなくしたい
-	Imgui::DrawImGui(baseDirectX);
-	XMFLOAT3 nowMousePos = Cameras::camera.MousePosition(baseDirectX, 0.0f);
+	Imgui::DrawImGui();
+	XMFLOAT3 nowMousePos = Cameras::camera.MousePosition( 0.0f);
 	if (!Imgui::touchedImgui)
 	{
 		XMFLOAT3 mousePosi(nowMousePos.x - Cameras::camera.mouseMoveAmount[0], nowMousePos.y - Cameras::camera.mouseMoveAmount[1], nowMousePos.z);
-		MapEditorObjects::Update(baseDirectX, mousePosi);
+		MapEditorObjects::Update( mousePosi);
 	}
 	Imgui::touchedImgui = false;
 	LightUpdate();
 	Imgui::CameraControl = false;
 	Cameras::camera.MouseWheelY();
-	Cameras::camera.MouseRightPushMove(baseDirectX);
+	Cameras::camera.MouseRightPushMove();
 	Cameras::camera.Update();
 }
 
@@ -479,7 +479,7 @@ void GameScene::ParticleEditUpdate()
 	//ParticleControl::Update();
 	particleAreaModel.each.position = { static_cast<float>(Imgui::emitterPosition[0]), static_cast<float>(Imgui::emitterPosition[1]), static_cast<float>(Imgui::emitterPosition[2]), 1 };
 	particleAreaModel.each.scale = { static_cast<float>(Imgui::particleSpornArea[0]), static_cast<float>(Imgui::particleSpornArea[1]) , static_cast<float>(Imgui::particleSpornArea[2]) };
-	particleAreaModel.Update(baseDirectX, &particleAreaModel.each, Cameras::camera);
+	particleAreaModel.Update( &particleAreaModel.each, Cameras::camera);
 	light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
 	LightUpdate();
 }
@@ -510,40 +510,40 @@ void GameScene::PreWaterFaceDraw()
 	XMVECTOR waterFacePosition = { 0, -0.8f, 0.0f, 1.0 };
 	XMVECTOR waterFacePosition2 = { waterFacePosition.m128_f32[0], -0.8f, waterFacePosition.m128_f32[2] + 89.0f, 1.0 };
 
-	waterFace[0].waterModel.m_renderTarget.PreDraw(baseDirectX);
+	waterFace[0].waterModel.m_renderTarget.PreDraw();
 	light->SetLightDir(XMFLOAT3(Cameras::rCamera.GetTargetDirection()));
 	LightUpdate();
-	rSeling.Draw(baseDirectX, waterFace[0].m_camera.get());
-	//rWorld.Update(baseDirectX, &rWorld.each, waterFace[0].m_camera.get());
-	Draw3DObject(baseDirectX, rWorld);
-	StageObjects::Draw(baseDirectX, waterFace[0].m_camera.get());
+	rSeling.Draw( waterFace[0].m_camera.get());
+	//rWorld.Update( &rWorld.each, waterFace[0].m_camera.get());
+	Draw3DObject( rWorld);
+	StageObjects::Draw( waterFace[0].m_camera.get());
 	ParticleManager::InitializeCamera(window_width, window_height, Cameras::rCamera.eye, Cameras::rCamera.target, Cameras::rCamera.up);
-	waterFace[0].waterModel.m_renderTarget.PostDraw(baseDirectX);
-	/*sanbasimodel.Update(baseDirectX, &sanbasimodel.each, false);
-	Draw3DObject(baseDirectX, sanbasimodel);*/
-	//ParticleControl::Draw(baseDirectX);
-	//waterFace[0].Draw(baseDirectX, waterFacePosition);
-	//waterFace[0].waterModel.m_renderTarget.PostDraw(baseDirectX);
+	waterFace[0].waterModel.m_renderTarget.PostDraw();
+	/*sanbasimodel.Update( &sanbasimodel.each, false);
+	Draw3DObject( sanbasimodel);*/
+	//ParticleControl::Draw();
+	//waterFace[0].Draw( waterFacePosition);
+	//waterFace[0].waterModel.m_renderTarget.PostDraw();
 }
 
 void GameScene::PostWaterFaceDraw()
 {
 	light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
 	LightUpdate();
-	seling.Draw(baseDirectX);
-	//world.Update(baseDirectX, &world.each, false);
-	Draw3DObject(baseDirectX, world);
-	sanbasimodel.Update(baseDirectX, &sanbasimodel.each);
-	Draw3DObject(baseDirectX, sanbasimodel);
+	seling.Draw();
+	//world.Update( &world.each, false);
+	Draw3DObject( world);
+	sanbasimodel.Update( &sanbasimodel.each);
+	Draw3DObject( sanbasimodel);
 	ParticleManager::InitializeCamera(window_width, window_height, Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up);
 	if (Imgui::isParticleEditActive)
 	{
-		Draw3DObject(baseDirectX, particleAreaModel, true);
+		Draw3DObject( particleAreaModel, true);
 	}
-	ParticleControl::Draw(baseDirectX);
-	/*skyDome.Update(baseDirectX, &skyDome.each);
-	Draw3DObject(baseDirectX, skyDome);*/
-	StageObjects::Draw(baseDirectX, false);
+	ParticleControl::Draw();
+	/*skyDome.Update( &skyDome.each);
+	Draw3DObject( skyDome);*/
+	StageObjects::Draw( false);
 }
 
 void GameScene::DrawSprites()
@@ -553,16 +553,16 @@ void GameScene::DrawSprites()
 	case OP:
 		break;
 	case TITLE:
-		spaceSp.SpriteDraw(baseDirectX);
-		titleSp.SpriteDraw(baseDirectX);
+		spaceSp.SpriteDraw();
+		titleSp.SpriteDraw();
 		break;
 	case GAME:
-		spaceSp.SpriteDraw(baseDirectX);
-		titleSp.SpriteDraw(baseDirectX);
+		spaceSp.SpriteDraw();
+		titleSp.SpriteDraw();
 		break;
 	case RESULT:
-		spaceSp.SpriteDraw(baseDirectX);
-		goalSp.SpriteDraw(baseDirectX);
+		spaceSp.SpriteDraw();
+		goalSp.SpriteDraw();
 		break;
 	}
 }
@@ -570,87 +570,87 @@ void GameScene::DrawSprites()
 void GameScene::TitleDraw()
 {
 	//PostEffectのPreDraw
-	PostEffects::PreDraw(baseDirectX);
+	PostEffects::PreDraw();
 
 	PreWaterFaceDraw();
 
-	baseDirectX.UpdateFront();
+	BaseDirectX::GetInstance()->UpdateFront();
 
 	PostWaterFaceDraw();
 
 	DrawPostEffect();
 
-	PostEffects::Draw(baseDirectX);
+	PostEffects::Draw();
 
-	//PostEffects::PostDraw(baseDirectX);
+	//PostEffects::PostDraw();
 
 	DrawSprites();
 	PouseDraw();
 
-	PostEffects::PostDraw(baseDirectX);
-	Imgui::DrawImGui(baseDirectX);
+	PostEffects::PostDraw();
+	Imgui::DrawImGui();
 	//描画コマンドここまで
-	baseDirectX.UpdateBack();
+	BaseDirectX::GetInstance()->UpdateBack();
 }
 
 void GameScene::SelectDraw()
 {
-	baseDirectX.UpdateFront();
+	BaseDirectX::GetInstance()->UpdateFront();
 
 	DrawSprites();
-	Imgui::DrawImGui(baseDirectX);
+	Imgui::DrawImGui();
 	//描画コマンドここまで
-	baseDirectX.UpdateBack();
+	BaseDirectX::GetInstance()->UpdateBack();
 }
 
 void GameScene::GameDraw()
 {
 	//PostEffectのPreDraw
-	PostEffects::PreDraw(baseDirectX);
+	PostEffects::PreDraw();
 
 	PreWaterFaceDraw();
 
-	baseDirectX.UpdateFront();
+	BaseDirectX::GetInstance()->UpdateFront();
 
 	PostWaterFaceDraw();
 
 	DrawPostEffect();
 
-	PostEffects::Draw(baseDirectX);
+	PostEffects::Draw();
 
 	DrawSprites();
 	PouseDraw();
 
-	PostEffects::PostDraw(baseDirectX);
-	Imgui::DrawImGui(baseDirectX);
+	PostEffects::PostDraw();
+	Imgui::DrawImGui();
 	//描画コマンドここまで
-	baseDirectX.UpdateBack();
+	BaseDirectX::GetInstance()->UpdateBack();
 }
 
 void GameScene::ResultDraw()
 {
 	//PostEffectのPreDraw
-	PostEffects::PreDraw(baseDirectX);
+	PostEffects::PreDraw();
 
 	PreWaterFaceDraw();
 
-	baseDirectX.UpdateFront();
+	BaseDirectX::GetInstance()->UpdateFront();
 
 	PostWaterFaceDraw();
 
 	DrawPostEffect();
 
-	PostEffects::Draw(baseDirectX);
+	PostEffects::Draw();
 
 	DrawSprites();
 	PouseDraw();
 
-	PostEffects::PostDraw(baseDirectX);
+	PostEffects::PostDraw();
 
 	//
-	Imgui::DrawImGui(baseDirectX);
+	Imgui::DrawImGui();
 	//描画コマンドここまで
-	baseDirectX.UpdateBack();
+	BaseDirectX::GetInstance()->UpdateBack();
 }
 
 void GameScene::OPDraw()
@@ -659,25 +659,25 @@ void GameScene::OPDraw()
 
 void GameScene::MapEditDraw()
 {
-	baseDirectX.UpdateFront();
-	Draw3DObject(baseDirectX, mapFrameV, false);
-	Draw3DObject(baseDirectX, mapFrameH, false);
-	MapEditorObjects::Draw(baseDirectX);
-	Imgui::DrawImGui(baseDirectX);
+	BaseDirectX::GetInstance()->UpdateFront();
+	Draw3DObject( mapFrameV, false);
+	Draw3DObject( mapFrameH, false);
+	MapEditorObjects::Draw();
+	Imgui::DrawImGui();
 	//描画コマンドここまで
-	baseDirectX.UpdateBack();
+	BaseDirectX::GetInstance()->UpdateBack();
 }
 
 void GameScene::ParticleEditDraw()
 {
-	baseDirectX.UpdateFront();
+	BaseDirectX::GetInstance()->UpdateFront();
 
-	Draw3DObject(baseDirectX, particleAreaModel, true);
-	ParticleControl::Draw(baseDirectX);
-	Cameras::camera.EditorMouseControl(baseDirectX);
-	Imgui::DrawImGui(baseDirectX);
+	Draw3DObject( particleAreaModel, true);
+	ParticleControl::Draw();
+	Cameras::camera.EditorMouseControl();
+	Imgui::DrawImGui();
 	//描画コマンドここまで
-	baseDirectX.UpdateBack();
+	BaseDirectX::GetInstance()->UpdateBack();
 }
 
 void GameScene::RewiredEditUpdate()
@@ -693,11 +693,11 @@ void GameScene::RewiredEditDraw()
 void GameScene::EndDraw()
 {
 	//PostEffectのPreDraw
-	PostEffects::PreDraw(baseDirectX);
+	PostEffects::PreDraw();
 
 	PreWaterFaceDraw();
 
-	baseDirectX.UpdateFront();
+	BaseDirectX::GetInstance()->UpdateFront();
 
 	PostWaterFaceDraw();
 
@@ -706,24 +706,24 @@ void GameScene::EndDraw()
 	//水面の切り替え
 	if (Imgui::useWaterNum == 0)
 	{
-		waterFace[0].Draw(baseDirectX, waterFacePosition);
-		waterFace[1].Draw(baseDirectX, waterFacePosition);
+		waterFace[0].Draw( waterFacePosition);
+		waterFace[1].Draw( waterFacePosition);
 	}
 	else if (Imgui::useWaterNum == 1)
 	{
-		normalWater.Draw(baseDirectX, waterFacePosition);
+		normalWater.Draw( waterFacePosition);
 	}
 
-	PostEffects::Draw(baseDirectX);
+	PostEffects::Draw();
 
 	DrawSprites();
 
-	PostEffects::PostDraw(baseDirectX);
+	PostEffects::PostDraw();
 
 	//
-	Imgui::DrawImGui(baseDirectX);
+	Imgui::DrawImGui();
 	//描画コマンドここまで
-	baseDirectX.UpdateBack();
+	BaseDirectX::GetInstance()->UpdateBack();
 }
 
 void GameScene::LightUpdate()
@@ -756,7 +756,7 @@ void GameScene::PouseUpdate()
 void GameScene::PouseDraw()
 {
 	if (!isPouse)return;
-	pouseUI.DrawUI(baseDirectX);
+	pouseUI.DrawUI();
 }
 
 void GameScene::DrawPostEffect()
@@ -776,22 +776,22 @@ void GameScene::DrawPostEffect()
 			waterFace[0].waterModel.eachData.rotation.z += rotAngle;
 		}*/
 		waterFace[0].waterModel.eachData.rotation.z = seling.selingModel.each.rotation.z;
-		waterFace[0].Draw(baseDirectX, waterFacePosition);
+		waterFace[0].Draw( waterFacePosition);
 	}
 	else if (Imgui::useWaterNum == 1)
 	{
-		normalWater.Draw(baseDirectX, waterFacePosition);
+		normalWater.Draw( waterFacePosition);
 	}
 	else if (Imgui::useWaterNum == 2)
 	{
-		mosaicWater.Draw(baseDirectX, waterFacePosition);
+		mosaicWater.Draw( waterFacePosition);
 	}
 	else if (Imgui::useWaterNum == 3)
 	{
-		monoWater.Draw(baseDirectX, waterFacePosition);
+		monoWater.Draw( waterFacePosition);
 	}
 	else if (Imgui::useWaterNum == 4)
 	{
-		blurWater.Draw(baseDirectX, waterFacePosition);
+		blurWater.Draw( waterFacePosition);
 	}
 }

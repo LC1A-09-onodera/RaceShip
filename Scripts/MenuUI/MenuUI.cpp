@@ -1,7 +1,7 @@
 #include "MenuUI.h"
 #include "../Tools/Rewired/Rewired.h"
 
-void MenuUI::ShowKeySprite(BaseDirectX& baseDirectX, int index, int hiIndex)
+void MenuUI::ShowKeySprite( int index, int hiIndex)
 {
 	int i = 0;
 	int j = hiIndex;
@@ -35,7 +35,7 @@ void MenuUI::ShowKeySprite(BaseDirectX& baseDirectX, int index, int hiIndex)
 			Sprite sp = keyItr->icon;
 			sp.position.m128_f32[0] = i * uiSize + baseX + actionUIWid;
 			sp.position.m128_f32[1] = j * uiSize + baseY;
-			sp.SpriteDraw(baseDirectX);
+			sp.SpriteDraw();
 			i++;
 		}
 	}
@@ -47,22 +47,22 @@ void MenuUI::ShowKeySprite(BaseDirectX& baseDirectX, int index, int hiIndex)
 			Sprite sp = padItr->icon;
 			sp.position.m128_f32[0] = i * uiSize + baseX + actionUIWid;
 			sp.position.m128_f32[1] = j * uiSize + baseY;
-			sp.SpriteDraw(baseDirectX);
+			sp.SpriteDraw();
 			i++;
 		}
 	}
 }
 
-void MenuUI::LoadFile(BaseDirectX& baseDirectX)
+void MenuUI::LoadFile()
 {
-	pouseBack.CreateSprite(baseDirectX, L"Resource/Image/PouseBackground.png", XMFLOAT3(0, 0, 0));
-	mSMenu.CreateSprite(baseDirectX, L"Resource/Image/Menu.png", XMFLOAT3(0, 0, 0));
-	mSFront.CreateSprite(baseDirectX, L"Resource/Image/KeyForward.png", XMFLOAT3(0, 0, 0));
-	mSBack.CreateSprite(baseDirectX, L"Resource/Image/KeyBackward.png", XMFLOAT3(0, 0, 0));
-	mSRight.CreateSprite(baseDirectX, L"Resource/Image/KeyRight.png", XMFLOAT3(0, 0, 0));
-	mSLeft.CreateSprite(baseDirectX, L"Resource/Image/KeyLeft.png", XMFLOAT3(0, 0, 0));
-	mSInputWait.CreateSprite(baseDirectX, L"Resource/Image/InputWait.png", XMFLOAT3(0, 0, 0));
-	mSAlreadyUse.CreateSprite(baseDirectX, L"Resource/Image/AlreadyUse.png", XMFLOAT3(0, 0, 0));
+	pouseBack.CreateSprite( L"Resource/Image/PouseBackground.png", XMFLOAT3(0, 0, 0));
+	mSMenu.CreateSprite( L"Resource/Image/Menu.png", XMFLOAT3(0, 0, 0));
+	mSFront.CreateSprite( L"Resource/Image/KeyForward.png", XMFLOAT3(0, 0, 0));
+	mSBack.CreateSprite( L"Resource/Image/KeyBackward.png", XMFLOAT3(0, 0, 0));
+	mSRight.CreateSprite( L"Resource/Image/KeyRight.png", XMFLOAT3(0, 0, 0));
+	mSLeft.CreateSprite( L"Resource/Image/KeyLeft.png", XMFLOAT3(0, 0, 0));
+	mSInputWait.CreateSprite( L"Resource/Image/InputWait.png", XMFLOAT3(0, 0, 0));
+	mSAlreadyUse.CreateSprite( L"Resource/Image/AlreadyUse.png", XMFLOAT3(0, 0, 0));
 }
 
 void MenuUI::Update()
@@ -110,14 +110,14 @@ void MenuUI::Update()
 	}
 }
 
-void MenuUI::DrawUI(BaseDirectX& baseDirectX)
+void MenuUI::DrawUI()
 {
 	Update();
-	pouseBack.ChangeSize(baseDirectX, static_cast<float>(window_width), static_cast<float>(window_height));
-	pouseBack.SpriteDraw(baseDirectX);
+	pouseBack.ChangeSize( static_cast<float>(window_width), static_cast<float>(window_height));
+	pouseBack.SpriteDraw();
 
 	mSMenu.position = { 580, 250, 0, 1 };
-	mSMenu.SpriteDraw(baseDirectX);
+	mSMenu.SpriteDraw();
 
 	const float actionUIWid = 128.0f;
 	const float actionUIHi = 32.0f;
@@ -125,25 +125,25 @@ void MenuUI::DrawUI(BaseDirectX& baseDirectX)
 	const float baseY = 300.0f;
 
 	mSFront.position = { baseX, baseY, 0, 1 };
-	mSFront.SpriteDraw(baseDirectX);
-	ShowKeySprite(baseDirectX, 1, 0);
+	mSFront.SpriteDraw();
+	ShowKeySprite(1, 0);
 
 	mSBack.position = { baseX, baseY + 32.0f, 0, 1 };
-	mSBack.SpriteDraw(baseDirectX);
-	ShowKeySprite(baseDirectX, 0, 1);
+	mSBack.SpriteDraw();
+	ShowKeySprite(0, 1);
 
 	mSRight.position = { baseX, baseY + 64.0f, 0, 1 };
-	mSRight.SpriteDraw(baseDirectX);
-	ShowKeySprite(baseDirectX, 2, 2);
+	mSRight.SpriteDraw();
+	ShowKeySprite(2, 2);
 
 	mSLeft.position = { baseX, baseY + 96.0f, 0, 1 };
-	mSLeft.SpriteDraw(baseDirectX);
-	ShowKeySprite(baseDirectX, 3, 3);
+	mSLeft.SpriteDraw();
+	ShowKeySprite(3, 3);
 
 	if (mInputReception)
 	{
 		mSInputWait.position = { static_cast<float>(window_width) / 2.0f - 64.0f, static_cast<float>(window_height) / 2.0f - 32.0f, 0, 1.0f };
-		mSInputWait.SpriteDraw(baseDirectX);
+		mSInputWait.SpriteDraw();
 	}
 	if (mIsAlreadyInUse)
 	{
@@ -154,6 +154,6 @@ void MenuUI::DrawUI(BaseDirectX& baseDirectX)
 			alreadyTimer = 0;
 		}
 		mSAlreadyUse.position = { static_cast<float>(window_width) / 2.0f - 64.0f, static_cast<float>(window_height) / 2.0f - 32.0f, 0, 1.0f };
-		mSAlreadyUse.SpriteDraw(baseDirectX);
+		mSAlreadyUse.SpriteDraw();
 	}
 }

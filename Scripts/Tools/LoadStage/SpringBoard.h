@@ -35,10 +35,10 @@ private:
 
 public:
 	void Update(Seling &seling, EachInfo &each);
-	void Draw(BaseDirectX &baseDirectX);
-	void Draw(BaseDirectX& baseDirectX, bool isR);
-	void Draw(BaseDirectX& baseDirectX, Camera &isR);
-	void Init(BaseDirectX &baseDirectX, SpringBoard::Direction direction);
-	static void LoadModel(BaseDirectX & baseDirectX);
+	void Draw();
+	void Draw(bool isR);
+	void Draw(Camera &isR);
+	void Init(SpringBoard::Direction direction);
+	static void LoadModel();
 	bool Collition(Seling& seling,XMFLOAT3 thisPos);
 };

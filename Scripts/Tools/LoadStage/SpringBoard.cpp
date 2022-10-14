@@ -37,37 +37,37 @@ void SpringBoard::Update(Seling& seling, EachInfo &each)
 	}
 }
 
-void SpringBoard::Draw(BaseDirectX& baseDirectX)
+void SpringBoard::Draw()
 {
 	m_partEach.scale = { m_wid, m_hi, m_vert };
-	SpringBoard::m_model.Update(baseDirectX, &m_partEach);
-	Draw3DObject(baseDirectX, SpringBoard::m_model);
+	SpringBoard::m_model.Update( &m_partEach);
+	Draw3DObject( SpringBoard::m_model);
 }
 
-void SpringBoard::Draw(BaseDirectX& baseDirectX, bool isR)
+void SpringBoard::Draw( bool isR)
 {
 	m_partEach.position.m128_f32[1] = m_hi;
 	m_partEach.scale = { m_wid, m_hi, m_vert };
-	SpringBoard::m_model.Update(baseDirectX, &m_partEach, isR);
-	Draw3DObject(baseDirectX, SpringBoard::m_model);
+	SpringBoard::m_model.Update( &m_partEach, isR);
+	Draw3DObject( SpringBoard::m_model);
 }
 
-void SpringBoard::Draw(BaseDirectX& baseDirectX, Camera& isR)
+void SpringBoard::Draw( Camera& isR)
 {
 	m_partEach.scale = { m_wid, m_hi, m_vert };
 	m_partEach.position.m128_f32[1] = m_hi;
-	SpringBoard::m_model.Update(baseDirectX, &m_partEach, isR);
-	Draw3DObject(baseDirectX, SpringBoard::m_model);
+	SpringBoard::m_model.Update(&m_partEach, isR);
+	Draw3DObject(SpringBoard::m_model);
 }
 
-void SpringBoard::LoadModel(BaseDirectX& baseDirectX)
+void SpringBoard::LoadModel()
 {
-	SpringBoard::m_model.CreateModel(baseDirectX, "SpringBorad", ShaderManager::playerShader);
+	SpringBoard::m_model.CreateModel("SpringBorad", ShaderManager::playerShader);
 }
 
-void SpringBoard::Init(BaseDirectX& baseDirectX, SpringBoard::Direction direction)
+void SpringBoard::Init( SpringBoard::Direction direction)
 {
-	ConstInit<EachInfo>(m_partEach, baseDirectX.dev);
+	ConstInit<EachInfo>(m_partEach, BaseDirectX::GetInstance()->dev);
 	m_direction = direction;
 	float angle = 0.0f;
 	if (direction == Direction::RightToLeft)

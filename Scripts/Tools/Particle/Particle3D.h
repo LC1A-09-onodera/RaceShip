@@ -12,7 +12,7 @@
 #pragma warning(disable:26812)
 #include <DirectXTex.h>
 #pragma warning(pop)
-#include "../BaseDirectX/BaseDirectX.h"
+#include "../../BaseDirectX/BaseDirectX.h"
 #include "ParticleEdit.h"
 #pragma comment(lib, "d3dcompiler.lib")
 
@@ -407,6 +407,6 @@ public:
 
 	static std::shared_ptr<ParticleIndi> customParticle;
 	static void Update();
-	static void Init(BaseDirectX &baseDirectX);
-	static void Draw(BaseDirectX& baseDirectX);
+	static void Init();
+	static void Draw();
 };

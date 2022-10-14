@@ -33,11 +33,11 @@ protected:
 	Sprite mSLeft;
 	Sprite mSInputWait;
 	Sprite mSAlreadyUse;
-	void ShowKeySprite(BaseDirectX& baseDirectX, int index, int hiIndex);
+	void ShowKeySprite( int index, int hiIndex);
 
 public:
-	void LoadFile(BaseDirectX& baseDirectX);
+	void LoadFile();
 	void Init(float height = 5.0f);
 	void Update();
-	void DrawUI(BaseDirectX& baseDirectX);
+	void DrawUI();
 };

@@ -1,10 +1,10 @@
 #include "Particle3D.h"
-#include "../BaseDirectX/viewport.h"
-#include "../Camera/Camera.h"
-#include "../BaseDirectX/DX12operator.h"
-#include "../BaseDirectX/Library.h"
-#include "../imgui/ImguiControl.h"
-#include "../BaseDirectX/DX12operator.h"
+#include "../../BaseDirectX/viewport.h"
+#include "../../Camera/Camera.h"
+#include "../../BaseDirectX/DX12operator.h"
+#include "../../BaseDirectX/Library.h"
+#include "../../imgui/ImguiControl.h"
+#include "../../BaseDirectX/DX12operator.h"
 
 /// <summary>
 /// 静的メンバ変数の実体
@@ -1550,10 +1550,11 @@ void ParticleControl::Update()
 	customParticle->CustomUpdate();
 }
 
-void ParticleControl::Init(BaseDirectX& baseDirectX)
+void ParticleControl::Init(
+)
 {
 	// 3Dパーティクル静的初期化
-	if (!ParticleManager::StaticInitialize(baseDirectX.dev.Get(), window_width, window_height, Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up))
+	if (!ParticleManager::StaticInitialize(BaseDirectX::GetInstance()->dev.Get(), window_width, window_height, Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up))
 	{
 		assert(0);
 	}
@@ -1565,14 +1566,14 @@ void ParticleControl::Init(BaseDirectX& baseDirectX)
 	//ParticleLoader::ParticleLoad("sample", customParticle->baseParticleData);
 }
 
-void ParticleControl::Draw(BaseDirectX& baseDirectX)
+void ParticleControl::Draw()
 {
-	ParticleDraw(baseDirectX.cmdList.Get(), elementEffect.get());
-	ParticleDraw(baseDirectX.cmdList.Get(), sheetOfSpray.get());
-	ParticleDraw(baseDirectX.cmdList.Get(), sheetOfSpray2.get());
+	ParticleDraw(BaseDirectX::GetInstance()->cmdList.Get(), elementEffect.get());
+	ParticleDraw(BaseDirectX::GetInstance()->cmdList.Get(), sheetOfSpray.get());
+	ParticleDraw(BaseDirectX::GetInstance()->cmdList.Get(), sheetOfSpray2.get());
 	if (!editorParticle->editorParticles.empty())
 	{
-		EdiotrParticleDraw(baseDirectX.cmdList.Get(), editorParticle.get());
+		EdiotrParticleDraw(BaseDirectX::GetInstance()->cmdList.Get(), editorParticle.get());
 	}
-	CustomParticleDraw(baseDirectX.cmdList.Get(), customParticle.get());
+	CustomParticleDraw(BaseDirectX::GetInstance()->cmdList.Get(), customParticle.get());
 }

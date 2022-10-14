@@ -41,15 +41,15 @@ private:
     static void ParticleEdit();
     static void FileFalse();
     static void EachInfo();
-    static ComPtr<ID3D12DescriptorHeap> CreateDescrriptorHeapForImgui(BaseDirectX& baseDirectX);
+    static ComPtr<ID3D12DescriptorHeap> CreateDescrriptorHeapForImgui();
     static ComPtr<ID3D12DescriptorHeap> GetHeapForImgui();
 public:
     
-    static void DrawImGui(BaseDirectX& baseDirectX);
-    static void Init(BaseDirectX& baseDirectX);
+    static void DrawImGui();
+    static void Init();
     static void DebugUpdate();
     static void SetWindowActive(bool f_isActive);
-    static void Update(BaseDirectX &baseDirectX, Seling& player);
+    static void Update(Seling& player);
     static bool isMulchthled;
     static int effectType;
     static bool isFileOutputFalse;

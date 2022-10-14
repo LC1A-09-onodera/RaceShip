@@ -3,17 +3,17 @@
 ComPtr<IXAudio2> Sound::xAudio2;
 IXAudio2MasteringVoice *Sound::masterVoice;
 
-void Sound::CreateVoice(BaseDirectX& baseDirectX)
+void Sound::CreateVoice()
 {
     //音
-    baseDirectX.result = XAudio2Create(&xAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
-    baseDirectX.result = xAudio2->CreateMasteringVoice(&masterVoice);
+    BaseDirectX::GetInstance()->result = XAudio2Create(&xAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
+    BaseDirectX::GetInstance()->result = xAudio2->CreateMasteringVoice(&masterVoice);
 }
 void Sound::Updete(float volume)
 {
     masterVoice->SetVolume(volume);
 }
-void SoundLoad(BaseDirectX& baseDirectX, const char *filename, SoundData &sound)
+void SoundLoad( const char *filename, SoundData &sound)
 {
     //ファイルオープン---------------
     ifstream file;
@@ -62,8 +62,8 @@ void SoundLoad(BaseDirectX& baseDirectX, const char *filename, SoundData &sound)
     sounddata.pBuffer.reset(reinterpret_cast<BYTE *>(pBuffer));
     sounddata.bufferSize = data.size;
     sounddata.pSourceVoice = nullptr;
-    baseDirectX.result = Sound::xAudio2->CreateSourceVoice(&sounddata.pSourceVoice, &sounddata.wfex);
-    assert(SUCCEEDED(baseDirectX.result));
+    BaseDirectX::GetInstance()->result = Sound::xAudio2->CreateSourceVoice(&sounddata.pSourceVoice, &sounddata.wfex);
+    assert(SUCCEEDED(BaseDirectX::GetInstance()->result));
     sounddata.buf.pAudioData = sounddata.pBuffer.get();
     sounddata.buf.AudioBytes = sounddata.bufferSize;
     sounddata.buf.Flags = XAUDIO2_END_OF_STREAM;
@@ -76,41 +76,41 @@ void SoundUnload(SoundData *sounddata)
     sounddata->bufferSize = 0;
     sounddata->wfex = {};
 }
-void SoundPlayerWave(BaseDirectX& baseDirectX, SoundData &soundData)
+void SoundPlayerWave( SoundData &soundData)
 {
-    baseDirectX.result = soundData.pSourceVoice->SubmitSourceBuffer(&soundData.buf);
-    baseDirectX.result = soundData.pSourceVoice->Start();
+    BaseDirectX::GetInstance()->result = soundData.pSourceVoice->SubmitSourceBuffer(&soundData.buf);
+    BaseDirectX::GetInstance()->result = soundData.pSourceVoice->Start();
 }
-void SoundStopWave(BaseDirectX& baseDirectX, SoundData &soundData)
+void SoundStopWave( SoundData &soundData)
 {
-    baseDirectX.result = soundData.pSourceVoice->Stop();
-    baseDirectX.result = soundData.pSourceVoice->FlushSourceBuffers();
+    BaseDirectX::GetInstance()->result = soundData.pSourceVoice->Stop();
+    BaseDirectX::GetInstance()->result = soundData.pSourceVoice->FlushSourceBuffers();
     //BaseDirectX::result = soundData.pSourceVoice->SubmitSourceBuffer(&soundData.buf);//これあると安定しない
 }
-void SoundPlayOnce(BaseDirectX& baseDirectX, SoundData &soundData)
+void SoundPlayOnce( SoundData &soundData)
 {
     IXAudio2SourceVoice *pSourceVoice = nullptr;
-    baseDirectX.result = Sound::xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
-    assert(SUCCEEDED(baseDirectX.result));
+    BaseDirectX::GetInstance()->result = Sound::xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
+    assert(SUCCEEDED(BaseDirectX::GetInstance()->result));
     XAUDIO2_BUFFER buf{};
     buf.pAudioData = soundData.pBuffer.get();
     buf.AudioBytes = soundData.bufferSize;
     buf.Flags = XAUDIO2_END_OF_STREAM;
-    baseDirectX.result = soundData.pSourceVoice->SubmitSourceBuffer(&soundData.buf);
-    baseDirectX.result = soundData.pSourceVoice->Start();
+    BaseDirectX::GetInstance()->result = soundData.pSourceVoice->SubmitSourceBuffer(&soundData.buf);
+    BaseDirectX::GetInstance()->result = soundData.pSourceVoice->Start();
 }
-void SoundPlayLoop(BaseDirectX& baseDirectX, SoundData& soundData)
+void SoundPlayLoop( SoundData& soundData)
 {
     IXAudio2SourceVoice* pSourceVoice = nullptr;
-    baseDirectX.result = Sound::xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
-    assert(SUCCEEDED(baseDirectX.result));
+    BaseDirectX::GetInstance()->result = Sound::xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
+    assert(SUCCEEDED(BaseDirectX::GetInstance()->result));
     XAUDIO2_BUFFER buf{};
     buf.pAudioData = soundData.pBuffer.get();
     buf.AudioBytes = soundData.bufferSize;
     buf.Flags = XAUDIO2_END_OF_STREAM;
     buf.LoopCount = XAUDIO2_LOOP_INFINITE;
-    baseDirectX.result = soundData.pSourceVoice->SubmitSourceBuffer(&soundData.buf);
-    baseDirectX.result = soundData.pSourceVoice->Start();
+    BaseDirectX::GetInstance()->result = soundData.pSourceVoice->SubmitSourceBuffer(&soundData.buf);
+    BaseDirectX::GetInstance()->result = soundData.pSourceVoice->Start();
 }
 void SoundVolume(SoundData &soundData, float volume)
 {

@@ -14,7 +14,7 @@ namespace Rewired
 	class KeyCodeString
 	{
 	public:
-		static void KeyCodeStringInit(BaseDirectX &baseDirectX);
+		static void KeyCodeStringInit();
 		static bool GetAnyTriggerInput(KeyInfo<KeyCode> &key);
 		static bool GetAnyTriggerInput();
 		static bool GetAnyReleaseInput(KeyInfo<KeyCode>& key);

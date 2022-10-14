@@ -30,7 +30,7 @@ void FBXObject::Initialize()
 	constBufferSkin->Unmap(0, nullptr);
 }
 
-void FBXObject::Update(BaseDirectX& baseDirectX)
+void FBXObject::Update()
 {
 	XMMATRIX matScale, matRot, matTrans;
 
@@ -55,7 +55,7 @@ void FBXObject::Update(BaseDirectX& baseDirectX)
 	result = constBuffTrabsform->Map(0, nullptr, (void**)&constMap);
 	if (SUCCEEDED(result))
 	{
-		constMap->viewproj = Cameras::camera.matView * baseDirectX.matProjection;
+		constMap->viewproj = Cameras::camera.matView * BaseDirectX::GetInstance()->matProjection;
 		constMap->world = matWorld;
 		constMap->cameraPos = cameraPos;
 		constBuffTrabsform->Unmap(0, nullptr);

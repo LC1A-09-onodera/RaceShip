@@ -1,7 +1,7 @@
 #include <array>
 #pragma warning(push)
 #pragma warning(disable:4996)
-#include "../single_include/nlohmann/json.hpp"
+#include "../../single_include/nlohmann/json.hpp"
 #pragma warning(pop)
 
 using json = nlohmann::json;

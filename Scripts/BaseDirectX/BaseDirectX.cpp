@@ -16,6 +16,12 @@ BaseDirectX::~BaseDirectX()
 	
 }
 
+BaseDirectX* BaseDirectX::GetInstance()
+{
+	static BaseDirectX instance;
+	return &instance;
+}
+
 void BaseDirectX::DebugLayerOn()
 {
 
