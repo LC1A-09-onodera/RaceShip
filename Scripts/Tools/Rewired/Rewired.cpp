@@ -1,5 +1,5 @@
 #include "Rewired.h"
-#include "../BaseDirectX/dirent.h"
+#include "../../BaseDirectX/dirent.h"
 #include <fstream>
 #include <string>
 #include <sstream>

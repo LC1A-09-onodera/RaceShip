@@ -1,7 +1,7 @@
 #include "FBXObject.h"
 #include <d3dcompiler.h>
-#include "../Camera/Camera.h"
-#include "../BaseDirectX/BaseDirectX.h"
+#include "../../Camera/Camera.h"
+#include "../../BaseDirectX/BaseDirectX.h"
 #include "../FbxLoader/FbxLoader.h"
 #pragma comment(lib, "d3dcompiler.lib")
 

@@ -5,12 +5,12 @@
 #include "Input.h"
 #include "viewport.h"
 #include "../imgui/ImguiControl.h"
-#include "../FBXObject/FBXObject.h"
+#include "../FBX/FBXObject/FBXObject.h"
 #include "../Shader/ShaderManager.h"
 #include "../Sound/Sound.h"
-#include "../LoadStage/LoadStage.h"
-#include "../LoadStage/StageObject.h"
-#include "../MapLayout/MapLayout.h"
+#include "../Tools/LoadStage/LoadStage.h"
+#include "../Tools/LoadStage/StageObject.h"
+#include "../Tools/MapLayout/MapLayout.h"
 
 #include <thread>
 
@@ -222,7 +222,8 @@ void GameScene::Init()
 	ParticleLoader::ParticleLoad("sampleJson", par);
 
 	KeyLog::SetFileName("log");
-	
+	sanbasimodel.CreateModel(baseDirectX, "sambasi", ShaderManager::playerShader, true);
+	sanbasimodel.each.scale = {0.2f, 0.2f, 0.2f};
 }
 
 void GameScene::TitleUpdate()
@@ -518,6 +519,8 @@ void GameScene::PreWaterFaceDraw()
 	StageObjects::Draw(baseDirectX, waterFace[0].m_camera.get());
 	ParticleManager::InitializeCamera(window_width, window_height, Cameras::rCamera.eye, Cameras::rCamera.target, Cameras::rCamera.up);
 	waterFace[0].waterModel.m_renderTarget.PostDraw(baseDirectX);
+	/*sanbasimodel.Update(baseDirectX, &sanbasimodel.each, false);
+	Draw3DObject(baseDirectX, sanbasimodel);*/
 	//ParticleControl::Draw(baseDirectX);
 	//waterFace[0].Draw(baseDirectX, waterFacePosition);
 	//waterFace[0].waterModel.m_renderTarget.PostDraw(baseDirectX);
@@ -530,6 +533,8 @@ void GameScene::PostWaterFaceDraw()
 	seling.Draw(baseDirectX);
 	//world.Update(baseDirectX, &world.each, false);
 	Draw3DObject(baseDirectX, world);
+	sanbasimodel.Update(baseDirectX, &sanbasimodel.each);
+	Draw3DObject(baseDirectX, sanbasimodel);
 	ParticleManager::InitializeCamera(window_width, window_height, Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up);
 	if (Imgui::isParticleEditActive)
 	{

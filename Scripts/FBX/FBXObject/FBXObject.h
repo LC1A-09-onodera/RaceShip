@@ -1,6 +1,6 @@
 #pragma once
 #include "../FBXModel/FBXModel.h"
-#include "../BaseDirectX/BaseDirectX.h"
+#include "../../BaseDirectX/BaseDirectX.h"
 #include <wrl.h>
 #include <d3d12.h>
 #pragma warning(push)

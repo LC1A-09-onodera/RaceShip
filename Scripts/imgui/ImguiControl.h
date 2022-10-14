@@ -5,7 +5,7 @@
 #pragma warning(pop)
 #include <DirectXMath.h>
 #include "../BaseDirectX/BaseDirectX.h"
-#include "../Rewired/Rewired.h"
+#include "../Tools/Rewired/Rewired.h"
 #include "../Player/Seling.h"
 using namespace Microsoft::WRL;
 using namespace DirectX;

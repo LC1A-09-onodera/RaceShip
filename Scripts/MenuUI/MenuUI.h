@@ -1,7 +1,7 @@
 #pragma once
 #include "../Sprite/Sprite.h"
 #include "../BaseDirectX/BaseDirectX.h"
-#include "../Rewired/Rewired.h"
+#include "../Tools/Rewired/Rewired.h"
 
 class MenuUI
 {

@@ -6,19 +6,19 @@
 #pragma warning(pop)
 #include "../imgui/imgui_impl_win32.h"
 #include "../Camera/Camera.h"
-#include "../LoadStage/StageObject.h"
+#include "../Tools/LoadStage/StageObject.h"
 #pragma warning(push)
 #pragma warning(disable:4505)
 #include "../BaseDirectX/DX12operator.h"
 #pragma warning(pop)
-#include "../MapLayout/MapLayout.h"
+#include "../Tools/MapLayout/MapLayout.h"
 #include <sstream>
 #include <fstream>
 #include <stdarg.h>
 #include "../3DModel/Model.h"
 #include "../Player/Seling.h"
-#include "../Particle/ParticleEdit.h"
-#include "../KeyLog/KeyLog.h"
+#include "../Tools/Particle/ParticleEdit.h"
+#include "../Tools/KeyLog/KeyLog.h"
 
 //#define _DEBUG
 

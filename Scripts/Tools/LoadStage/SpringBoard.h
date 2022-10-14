@@ -1,5 +1,5 @@
 #pragma once
-#include "../3DModel/Model.h"
+#include "../../3DModel/Model.h"
 
 class Seling;
 class Camera;

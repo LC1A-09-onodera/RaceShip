@@ -1,7 +1,7 @@
 #include "StageObject.h"
 #include "LoadStage.h"
-#include "../Camera/Camera.h"
-#include "../Shader/ShaderManager.h"
+#include "../../Camera/Camera.h"
+#include "../../Shader/ShaderManager.h"
 
 WallObject StageObjects::walls;
 GoalObject StageObjects::goals;
@@ -20,7 +20,7 @@ void WallObject::LoadPosition(BaseDirectX& baseDirectX)
 		/*each.rotation.y = itr->rotation.y;
 		each.rotation.z = itr->rotation.z;*/
 		each.position.m128_f32[2] = itr->position.y;
-		each.scale = { 2.0f, 4.0f, 2.0f };
+		each.scale = { 1.5f, 2.0f, 0.5f };
 		each.m_eachName.clear();
 		each.m_eachName = each.m_eachName + "wall";
 		wallsPos.push_back(each);
@@ -32,7 +32,7 @@ void WallObject::LoadPosition(BaseDirectX& baseDirectX)
 		eachR.rotation.z = itr->rotation.x;
 		/*eachR.rotation.y = itr->rotation.y;
 		eachR.rotation.z = itr->rotation.z;*/
-		eachR.scale = { 2.0f, 4.0f, 2.0f };
+		eachR.scale = { 1.5f, 2.0f, 0.5f };
 		eachR.m_eachName.clear();
 		eachR.m_eachName = eachR.m_eachName + "rWall";
 		rWallsPos.push_back(eachR);
@@ -59,7 +59,7 @@ void StageObjects::LoadFile(BaseDirectX& baseDirectX, Seling& player, const char
 
 void StageObjects::LoadModel(BaseDirectX& baseDirectX)
 {
-	walls.wallModel.CreateModel(baseDirectX, "MapWall", ShaderManager::playerShader);
+	walls.wallModel.CreateModel(baseDirectX, "Base_Block", ShaderManager::playerShader);
 	walls.LoadPosition(baseDirectX);
 	goals.goalModel.CreateModel(baseDirectX, "Goal", ShaderManager::playerShader);
 	goals.LoadPosition(baseDirectX);

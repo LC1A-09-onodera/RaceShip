@@ -1,5 +1,5 @@
 #include "MenuUI.h"
-#include "../Rewired/Rewired.h"
+#include "../Tools/Rewired/Rewired.h"
 
 void MenuUI::ShowKeySprite(BaseDirectX& baseDirectX, int index, int hiIndex)
 {

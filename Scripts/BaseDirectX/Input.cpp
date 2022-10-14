@@ -1,5 +1,5 @@
 #include "Input.h"
-#include "../Rewired/Rewired.h"
+#include "../Tools/Rewired/Rewired.h"
 #include "../imgui/ImguiControl.h"
 
 std::shared_ptr<IDirectInput8> Input::dinput = nullptr;

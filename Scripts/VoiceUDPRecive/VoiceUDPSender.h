@@ -11,7 +11,7 @@
 class VoiceUDPSender
 {
 	UDPClass udp;
-
+public:
 	void StartUp();
 	void SendData();
 	void EndSend();

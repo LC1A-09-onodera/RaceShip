@@ -1,6 +1,6 @@
 #include "SpringBoard.h"
-#include "../Shader/ShaderManager.h"
-#include "../Player/Seling.h"
+#include "../../Shader/ShaderManager.h"
+#include "../../Player/Seling.h"
 
 Model SpringBoard::m_model;
 
@@ -96,13 +96,15 @@ bool SpringBoard::Collition(Seling& seling, XMFLOAT3 thisPos)
 	float ZLenght = playerPos.z - thisPos.z;
 
 	bool Hit = false;
+	const float baseXHi = 1.0f;
+	const float baseZHi = 2.0f;
 	if (m_direction == Direction::LeftToRight || m_direction == Direction::RightToLeft)
 	{
-		Hit = abs(XLenght) < m_wid + 1.0f && abs(ZLenght) < m_vert + 2.0f;
+		Hit = abs(XLenght) < m_wid + baseXHi && abs(ZLenght) < m_vert + baseZHi;
 	}
 	else if (m_direction == Direction::UpToBottom || m_direction == Direction::BottomToUp)
 	{
-		Hit = abs(XLenght) < m_vert + 1.0f && abs(ZLenght) < m_wid + 2.0f;
+		Hit = abs(XLenght) < m_vert + baseXHi && abs(ZLenght) < m_wid + baseZHi;
 	}
 	if (!Hit) return false;
 
@@ -111,20 +113,22 @@ bool SpringBoard::Collition(Seling& seling, XMFLOAT3 thisPos)
 	bool vertHit = false;
 	if (m_direction == Direction::LeftToRight || m_direction == Direction::RightToLeft)
 	{
-		widHit = abs(XLenght) < m_wid + 1.0f;
-		vertHit = abs(ZLenght) < m_vert + 1.0f;
+		widHit = abs(XLenght) < m_wid + baseXHi;
+		vertHit = abs(ZLenght) < m_vert + baseXHi;
 	}
 	else if (m_direction == Direction::UpToBottom || m_direction == Direction::BottomToUp)
 	{
-		widHit = abs(XLenght) < m_vert + 1.0f;
-		vertHit = abs(ZLenght) < m_wid + 1.0f;
+		widHit = abs(XLenght) < m_vert + baseXHi;
+		vertHit = abs(ZLenght) < m_wid + baseXHi;
 	}
+	//‚ß‚èž‚Ý—p”÷’²®
+	const float fineTuning = 0.001f;
 	//true¨right false¨left
-	bool isRight = playerPos.x > thisPos.x + 0.001f;
-	bool isLeft = playerPos.x < thisPos.x - 0.001f;
+	bool isRight = playerPos.x > thisPos.x + fineTuning;
+	bool isLeft = playerPos.x < thisPos.x - fineTuning;
 	//true¨front false¨rear
-	bool isFront = playerPos.z > thisPos.z + 0.001f;
-	bool isRear = playerPos.z < thisPos.z - 0.001f;
+	bool isFront = playerPos.z > thisPos.z + fineTuning;
+	bool isRear = playerPos.z < thisPos.z - fineTuning;
 
 	//Š„‡
 	float shidePart = 0.0f;

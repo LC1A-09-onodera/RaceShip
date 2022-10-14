@@ -2,10 +2,10 @@
 #include "Seling.h"
 #include "../BaseDirectX/Input.h"
 #include "../Shader/ShaderManager.h"
-#include "../LoadStage/StageObject.h"
+#include "../Tools/LoadStage/StageObject.h"
 #include "../imgui/ImguiControl.h"
-#include "../Particle/Particle3D.h"
-#include "../LoadStage/LoadStage.h"
+#include "../Tools/Particle/Particle3D.h"
+#include "../Tools/LoadStage/LoadStage.h"
 
 void Seling::ForceUpdate()
 {

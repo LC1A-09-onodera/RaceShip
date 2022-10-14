@@ -1,6 +1,6 @@
 #pragma once
-#include "../BaseDirectX/Input.h"
-#include "../Sprite/Sprite.h"
+#include "../../BaseDirectX/Input.h"
+#include "../../Sprite/Sprite.h"
 
 namespace Rewired
 {

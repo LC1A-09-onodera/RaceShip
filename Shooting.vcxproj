@@ -135,6 +135,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -179,9 +180,9 @@
     <ClInclude Include="Scripts\BaseDirectX\ResouceBarrier.h" />
     <ClInclude Include="Scripts\BaseDirectX\viewport.h" />
     <ClInclude Include="Scripts\Camera\Camera.h" />
-    <ClInclude Include="Scripts\FbxLoader\FbxLoader.h" />
-    <ClInclude Include="Scripts\FBXModel\FBXModel.h" />
-    <ClInclude Include="Scripts\FBXObject\FBXObject.h" />
+    <ClInclude Include="Scripts\FBX\FbxLoader\FbxLoader.h" />
+    <ClInclude Include="Scripts\FBX\FBXModel\FBXModel.h" />
+    <ClInclude Include="Scripts\FBX\FBXObject\FBXObject.h" />
     <ClInclude Include="Scripts\imgui\imconfig.h" />
     <ClInclude Include="Scripts\imgui\imgui.h" />
     <ClInclude Include="Scripts\imgui\ImguiControl.h" />
@@ -192,28 +193,28 @@
     <ClInclude Include="Scripts\imgui\imstb_textedit.h" />
     <ClInclude Include="Scripts\imgui\imstb_truetype.h" />
     <ClInclude Include="Scripts\json\json.h" />
-    <ClInclude Include="Scripts\KeyLog\KeyLog.h" />
     <ClInclude Include="Scripts\Light\CircleShadow.h" />
     <ClInclude Include="Scripts\Light\Light.h" />
     <ClInclude Include="Scripts\Light\PointLight.h" />
     <ClInclude Include="Scripts\Light\SpotLight.h" />
-    <ClInclude Include="Scripts\LoadStage\LoadStage.h" />
-    <ClInclude Include="Scripts\LoadStage\SpringBoard.h" />
-    <ClInclude Include="Scripts\LoadStage\StageObject.h" />
-    <ClInclude Include="Scripts\MapLayout\MapLayout.h" />
     <ClInclude Include="Scripts\MenuUI\MenuUI.h" />
-    <ClInclude Include="Scripts\Particle\Particle3D.h" />
-    <ClInclude Include="Scripts\Particle\ParticleEdit.h" />
     <ClInclude Include="Scripts\Player\Seling.h" />
     <ClInclude Include="Scripts\PostEffect\PostEffect.h" />
     <ClInclude Include="Scripts\RenderTarget\RenderTarget.h" />
-    <ClInclude Include="Scripts\Rewired\Rewired.h" />
     <ClInclude Include="Scripts\Shader\Shader.h" />
     <ClInclude Include="Scripts\Shader\ShaderManager.h" />
     <ClInclude Include="Scripts\Sound\Sound.h" />
     <ClInclude Include="Scripts\Sprite\Sprite.h" />
     <ClInclude Include="Scripts\Sprite\SpriteCommon.h" />
     <ClInclude Include="Scripts\Texture\Texture.h" />
+    <ClInclude Include="Scripts\Tools\KeyLog\KeyLog.h" />
+    <ClInclude Include="Scripts\Tools\LoadStage\LoadStage.h" />
+    <ClInclude Include="Scripts\Tools\LoadStage\SpringBoard.h" />
+    <ClInclude Include="Scripts\Tools\LoadStage\StageObject.h" />
+    <ClInclude Include="Scripts\Tools\MapLayout\MapLayout.h" />
+    <ClInclude Include="Scripts\Tools\Particle\Particle3D.h" />
+    <ClInclude Include="Scripts\Tools\Particle\ParticleEdit.h" />
+    <ClInclude Include="Scripts\Tools\Rewired\Rewired.h" />
     <ClInclude Include="Scripts\UDP\udp.h" />
     <ClInclude Include="Scripts\VoiceUDPRecive\VoiceUDPRecive.h" />
     <ClInclude Include="Scripts\VoiceUDPRecive\VoiceUDPSender.h" />
@@ -227,9 +228,9 @@
     <ClCompile Include="Scripts\BaseDirectX\GameScene.cpp" />
     <ClCompile Include="Scripts\BaseDirectX\Input.cpp" />
     <ClCompile Include="Scripts\Camera\Camera.cpp" />
-    <ClCompile Include="Scripts\FbxLoader\FbxLoader.cpp" />
-    <ClCompile Include="Scripts\FBXModel\FBXModel.cpp" />
-    <ClCompile Include="Scripts\FBXObject\FBXObject.cpp" />
+    <ClCompile Include="Scripts\FBX\FbxLoader\FbxLoader.cpp" />
+    <ClCompile Include="Scripts\FBX\FBXModel\FBXModel.cpp" />
+    <ClCompile Include="Scripts\FBX\FBXObject\FBXObject.cpp" />
     <ClCompile Include="Scripts\imgui\imgui.cpp" />
     <ClCompile Include="Scripts\imgui\ImguiControl.cpp" />
     <ClCompile Include="Scripts\imgui\imgui_demo.cpp" />
@@ -238,26 +239,26 @@
     <ClCompile Include="Scripts\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="Scripts\imgui\imgui_tables.cpp" />
     <ClCompile Include="Scripts\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="Scripts\KeyLog\KeyLog.cpp" />
     <ClCompile Include="Scripts\Light\Light.cpp" />
-    <ClCompile Include="Scripts\LoadStage\LoadStage.cpp" />
-    <ClCompile Include="Scripts\LoadStage\SpringBoard.cpp" />
-    <ClCompile Include="Scripts\LoadStage\StageObject.cpp" />
     <ClCompile Include="Scripts\main.cpp" />
-    <ClCompile Include="Scripts\MapLayout\MapLayout.cpp" />
     <ClCompile Include="Scripts\MenuUI\MenuUI.cpp" />
-    <ClCompile Include="Scripts\Particle\Particle3D.cpp" />
-    <ClCompile Include="Scripts\Particle\ParticleEdit.cpp" />
     <ClCompile Include="Scripts\Player\Seling.cpp" />
     <ClCompile Include="Scripts\PostEffect\PostEffect.cpp" />
     <ClCompile Include="Scripts\RenderTarget\RenderTarget.cpp" />
-    <ClCompile Include="Scripts\Rewired\Rewired.cpp" />
     <ClCompile Include="Scripts\Shader\Shader.cpp" />
     <ClCompile Include="Scripts\Shader\ShaderManager.cpp" />
     <ClCompile Include="Scripts\Sound\Sound.cpp" />
     <ClCompile Include="Scripts\Sprite\Sprite.cpp" />
     <ClCompile Include="Scripts\Sprite\SpriteCommon.cpp" />
     <ClCompile Include="Scripts\Texture\Texture.cpp" />
+    <ClCompile Include="Scripts\Tools\KeyLog\KeyLog.cpp" />
+    <ClCompile Include="Scripts\Tools\LoadStage\LoadStage.cpp" />
+    <ClCompile Include="Scripts\Tools\LoadStage\SpringBoard.cpp" />
+    <ClCompile Include="Scripts\Tools\LoadStage\StageObject.cpp" />
+    <ClCompile Include="Scripts\Tools\MapLayout\MapLayout.cpp" />
+    <ClCompile Include="Scripts\Tools\Particle\Particle3D.cpp" />
+    <ClCompile Include="Scripts\Tools\Particle\ParticleEdit.cpp" />
+    <ClCompile Include="Scripts\Tools\Rewired\Rewired.cpp" />
     <ClCompile Include="Scripts\UDP\udp.cpp" />
     <ClCompile Include="Scripts\VoiceUDPRecive\VoiceUDPRecive.cpp" />
     <ClCompile Include="Scripts\VoiceUDPRecive\VoiceUDPSender.cpp" />

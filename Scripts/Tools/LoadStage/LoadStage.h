@@ -2,7 +2,7 @@
 #include <string>
 #include <list>
 #include <DirectXMath.h>
-#include "../Player/Seling.h"
+#include "../../Player/Seling.h"
 
 using namespace DirectX;
 using namespace std;

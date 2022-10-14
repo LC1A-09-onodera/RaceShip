@@ -1,6 +1,6 @@
 #pragma once
-#include "../3DModel/Model.h"
-#include "../Player/Seling.h"
+#include "../../3DModel/Model.h"
+#include "../../Player/Seling.h"
 
 class WallObjectEach : public EachInfo
 {

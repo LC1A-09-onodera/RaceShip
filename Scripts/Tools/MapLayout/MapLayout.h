@@ -4,7 +4,7 @@
 #include <string>
 #include <array>
 #include <DirectXMath.h>
-#include "../3DModel/Model.h"
+#include "../../3DModel/Model.h"
 
 using namespace std;
 using namespace DirectX;

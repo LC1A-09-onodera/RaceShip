@@ -1,8 +1,8 @@
 #pragma once
 #include "../3DModel/Model.h"
 #include "../BaseDirectX/DX12operator.h"
-#include "../Rewired/Rewired.h"
-#include "../LoadStage/SpringBoard.h"
+#include "../Tools/Rewired/Rewired.h"
+#include "../Tools/LoadStage/SpringBoard.h"
 
 class Camera;
 

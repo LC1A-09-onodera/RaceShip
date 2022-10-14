@@ -1,9 +1,9 @@
 #include <sstream>
 #include "MapLayout.h"
-#include "../BaseDirectX/DX12operator.h"
-#include "../BaseDirectX/Input.h"
-#include "../Camera/Camera.h"
-#include "../Shader/ShaderManager.h"
+#include "../../BaseDirectX/DX12operator.h"
+#include "../../BaseDirectX/Input.h"
+#include "../../Camera/Camera.h"
+#include "../../Shader/ShaderManager.h"
 #include <fstream>
 
 string MapObjectNames::wall = "wall";
@@ -72,7 +72,7 @@ string MapEditorObject::PositionToString()
 
 void MapEditorObjects::LoadModels(BaseDirectX& baseDirectX)
 {
-	wallModel.CreateModel(baseDirectX, "MapWall", ShaderManager::playerShader);
+	wallModel.CreateModel(baseDirectX, "Base_Block", ShaderManager::playerShader);
 	goalModel.CreateModel(baseDirectX, "MapGoal", ShaderManager::playerShader);
 	enemyModel.CreateModel(baseDirectX, "MapEnemy", ShaderManager::playerShader);
 	playerModel.CreateModel(baseDirectX, "Mapplayer", ShaderManager::playerShader);
@@ -182,6 +182,8 @@ void MapEditorObjects::SetObject(BaseDirectX& baseDirectX, const XMFLOAT3& posit
 	MapEditorObject object;
 	object.Init(baseDirectX, position);
 	lineMousePos = position;
+
+	//オブジェクトの配置
 	if (activeType == MapObjects::WALL)
 	{
 		MapEditorObjects::wall.push_back(object);
@@ -250,9 +252,9 @@ bool MapEditorObjects::ObjectCollision(const XMFLOAT3& f_mousePos)
 			}
 			else if (Input::MouseTrigger(MouseButton::RBUTTON))
 			{
+				//回転をかける
 				itr->piece.rotation.x += 90.0f;
 			}
-
 			lineMousePos = f_mousePos;
 			return true;
 		}
