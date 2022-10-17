@@ -74,14 +74,15 @@ namespace Editors
 		{
 			for (auto itr = walls.rWallsPos.begin(); itr != walls.rWallsPos.end(); ++itr)
 			{
+				
 				walls.wallModel.Update(&(*itr), isRCamera);
 				Draw3DObject(walls.wallModel);
 			}
-			/*for (auto itr = springs.rSpringPos.begin(); itr != springs.rSpringPos.end(); ++itr)
+			for (auto itr = springs.rSpringPos.begin(); itr != springs.rSpringPos.end(); ++itr)
 			{
-				springs.springBoradModel.Update(baseDirectX, &(*itr), isRCamera);
-				Draw3DObject(baseDirectX, springs.springBoradModel);
-			}*/
+				springs.springBoradModel.Update(&(*itr), isRCamera);
+				Draw3DObject(springs.springBoradModel);
+			}
 			if (goals.isActive)
 			{
 				goals.goalModel.Update(&(goals.rGoalsPos), isRCamera);
@@ -96,11 +97,11 @@ namespace Editors
 				Draw3DObject(walls.wallModel);
 
 			}
-			/*for (auto itr = springs.springPos.begin(); itr != springs.springPos.end(); ++itr)
+			for (auto itr = springs.springPos.begin(); itr != springs.springPos.end(); ++itr)
 			{
-				springs.springBoradModel.Update(baseDirectX, &(*itr), isRCamera);
-				Draw3DObject(baseDirectX, springs.springBoradModel);
-			}*/
+				springs.springBoradModel.Update(&(*itr), isRCamera);
+				Draw3DObject(springs.springBoradModel);
+			}
 			if (goals.isActive)
 			{
 				goals.goalModel.Update(&(goals.goalsPos), isRCamera);
@@ -116,11 +117,11 @@ namespace Editors
 			walls.wallModel.Update(&(*itr), f_camera);
 			Draw3DObject(walls.wallModel);
 		}
-		/*for (auto itr = springs.rSpringPos.begin(); itr != springs.rSpringPos.end(); ++itr)
+		for (auto itr = springs.rSpringPos.begin(); itr != springs.rSpringPos.end(); ++itr)
 		{
-			springs.springBoradModel.Update(baseDirectX, &(*itr), f_camera);
-			Draw3DObject(baseDirectX, walls.wallModel);
-		}*/
+			springs.springBoradModel.Update(&(*itr), f_camera);
+			Draw3DObject(springs.springBoradModel);
+		}
 		goals.goalModel.Update(&(goals.rGoalsPos), f_camera);
 		Draw3DObject(goals.goalModel);
 
