@@ -11,7 +11,7 @@
 #include "../Tools/LoadStage/LoadStage.h"
 #include "../Tools/LoadStage/StageObject.h"
 #include "../Tools/MapLayout/MapLayout.h"
-
+#include "../Tools/MapLayout/SceneMapLayout.h"
 #include <thread>
 
 GameScene::GameScene()
@@ -222,8 +222,9 @@ void GameScene::Init()
 	ParticleLoader::ParticleLoad("sampleJson", par);
 
 	KeyLog::SetFileName("log");
-	sanbasimodel.CreateModel( "sambasi", ShaderManager::playerShader, true);
-	sanbasimodel.each.scale = {0.2f, 0.2f, 0.2f};
+	
+	SceneMapLayout::LoadModel();
+	SceneMapLayout::Init();
 }
 
 void GameScene::TitleUpdate()
@@ -353,6 +354,7 @@ void GameScene::GameUpdate()
 	const float lengXY = 1.0f;
 	Cameras::rCamera.eye = { Cameras::camera.eye.x * lengXY, Cameras::camera.eye.y * lengY, Cameras::camera.eye.z * lengXY };
 	Cameras::rCamera.up = { 0, -1, 0 };
+	//Cameras::rCamera.up = { 0, 0, -1 };
 	Cameras::rCamera.target = Cameras::camera.target;
 	Cameras::rCamera.Update();
 
@@ -511,19 +513,18 @@ void GameScene::PreWaterFaceDraw()
 	XMVECTOR waterFacePosition2 = { waterFacePosition.m128_f32[0], -0.8f, waterFacePosition.m128_f32[2] + 89.0f, 1.0 };
 
 	waterFace[0].waterModel.m_renderTarget.PreDraw();
+
 	light->SetLightDir(XMFLOAT3(Cameras::rCamera.GetTargetDirection()));
 	LightUpdate();
-	rSeling.Draw( waterFace[0].m_camera.get());
+	rSeling.Draw(waterFace[0].m_camera.get());
 	//rWorld.Update( &rWorld.each, waterFace[0].m_camera.get());
-	Draw3DObject( rWorld);
-	StageObjects::Draw( waterFace[0].m_camera.get());
+	Draw3DObject(rWorld);
+	SceneMapLayout::WaterFaceDraw();
+	StageObjects::Draw(waterFace[0].m_camera.get());
+
 	ParticleManager::InitializeCamera(window_width, window_height, Cameras::rCamera.eye, Cameras::rCamera.target, Cameras::rCamera.up);
+	
 	waterFace[0].waterModel.m_renderTarget.PostDraw();
-	/*sanbasimodel.Update( &sanbasimodel.each, false);
-	Draw3DObject( sanbasimodel);*/
-	//ParticleControl::Draw();
-	//waterFace[0].Draw( waterFacePosition);
-	//waterFace[0].waterModel.m_renderTarget.PostDraw();
 }
 
 void GameScene::PostWaterFaceDraw()
@@ -533,8 +534,8 @@ void GameScene::PostWaterFaceDraw()
 	seling.Draw();
 	//world.Update( &world.each, false);
 	Draw3DObject( world);
-	sanbasimodel.Update( &sanbasimodel.each);
-	Draw3DObject( sanbasimodel);
+
+	SceneMapLayout::MainDraw();
 	ParticleManager::InitializeCamera(window_width, window_height, Cameras::camera.eye, Cameras::camera.target, Cameras::camera.up);
 	if (Imgui::isParticleEditActive)
 	{

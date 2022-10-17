@@ -31,6 +31,8 @@ std::shared_ptr<ParticleIndi> ParticleControl::editorParticle = nullptr;
 std::shared_ptr<ParticleIndi> ParticleControl::customParticle = nullptr;
 int ParticleIndi::editorSpanTimer = 0;
 
+using namespace Editors;
+
 bool ParticleManager::StaticInitialize(ID3D12Device* f_device, int f_window_width, int f_window_height, XMFLOAT3 f_eye, XMFLOAT3 f_target, XMFLOAT3 f_up)
 {
 	// nullptrチェック

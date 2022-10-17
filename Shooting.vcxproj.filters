@@ -204,9 +204,6 @@
     <ClInclude Include="Scripts\MenuUI\MenuUI.h">
       <Filter>MenuUI</Filter>
     </ClInclude>
-    <ClInclude Include="BaseScriptableObject.h">
-      <Filter>BaseDirectx</Filter>
-    </ClInclude>
     <ClInclude Include="Scripts\BaseDirectX\FileLoad.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -245,6 +242,9 @@
     </ClInclude>
     <ClInclude Include="Scripts\Tools\Rewired\Rewired.h">
       <Filter>BaseDirectx</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Tools\MapLayout\SceneMapLayout.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -373,6 +373,9 @@
     </ClCompile>
     <ClCompile Include="Scripts\Tools\Rewired\Rewired.cpp">
       <Filter>BaseDirectx</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Tools\MapLayout\SceneMapLayout.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

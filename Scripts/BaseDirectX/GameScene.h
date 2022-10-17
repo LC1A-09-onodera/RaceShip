@@ -111,8 +111,6 @@ private:
 	MenuUI pouseUI;
 
 	Model particleAreaModel;
-	Model sanbasimodel;
-
 public:
 	GameScene();
 	~GameScene();

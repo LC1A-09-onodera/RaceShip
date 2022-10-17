@@ -22,6 +22,8 @@
 
 //#define _DEBUG
 
+using namespace Editors;
+
 ComPtr<ID3D12DescriptorHeap> Imgui::imguiDescHeap;
 int Imgui::effectType = -1;
 Imgui::ImguiType Imgui::tab;

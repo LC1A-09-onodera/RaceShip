@@ -167,7 +167,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="BaseScriptableObject.h" />
     <ClInclude Include="Scripts\3DModel\Model.h" />
     <ClInclude Include="Scripts\BaseDirectX\BaseDirectX.h" />
     <ClInclude Include="Scripts\BaseDirectX\DirectInput.h" />
@@ -212,6 +211,7 @@
     <ClInclude Include="Scripts\Tools\LoadStage\SpringBoard.h" />
     <ClInclude Include="Scripts\Tools\LoadStage\StageObject.h" />
     <ClInclude Include="Scripts\Tools\MapLayout\MapLayout.h" />
+    <ClInclude Include="Scripts\Tools\MapLayout\SceneMapLayout.h" />
     <ClInclude Include="Scripts\Tools\Particle\Particle3D.h" />
     <ClInclude Include="Scripts\Tools\Particle\ParticleEdit.h" />
     <ClInclude Include="Scripts\Tools\Rewired\Rewired.h" />
@@ -256,6 +256,7 @@
     <ClCompile Include="Scripts\Tools\LoadStage\SpringBoard.cpp" />
     <ClCompile Include="Scripts\Tools\LoadStage\StageObject.cpp" />
     <ClCompile Include="Scripts\Tools\MapLayout\MapLayout.cpp" />
+    <ClCompile Include="Scripts\Tools\MapLayout\SceneMapLayout.cpp" />
     <ClCompile Include="Scripts\Tools\Particle\Particle3D.cpp" />
     <ClCompile Include="Scripts\Tools\Particle\ParticleEdit.cpp" />
     <ClCompile Include="Scripts\Tools\Rewired\Rewired.cpp" />
