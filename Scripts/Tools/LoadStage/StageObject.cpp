@@ -74,7 +74,6 @@ namespace Editors
 		{
 			for (auto itr = walls.rWallsPos.begin(); itr != walls.rWallsPos.end(); ++itr)
 			{
-				
 				walls.wallModel.Update(&(*itr), isRCamera);
 				Draw3DObject(walls.wallModel);
 			}
@@ -133,7 +132,7 @@ namespace Editors
 		{
 			this->each = *f_each;
 		}
-		CalcMatrix(this, &this->each);
+		CalcMatrix(this, *f_each);
 		SendVertex();
 		ConstBufferDataB0* constMap0 = nullptr;
 		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
@@ -141,13 +140,13 @@ namespace Editors
 			if (!rCamera)
 			{
 				constMap0->viewproj = Cameras::camera.matView * BaseDirectX::GetInstance()->matProjection;
-				constMap0->world = matWorld;
+				constMap0->world = f_each->matWorld;
 				constMap0->cameraPos = Cameras::camera.eye;
 			}
 			else
 			{
 				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::GetInstance()->matProjection;
-				constMap0->world = matWorld;
+				constMap0->world = f_each->matWorld;
 				constMap0->cameraPos = Cameras::rCamera.eye;
 			}
 
@@ -167,14 +166,14 @@ namespace Editors
 	{
 		this->each = *f_each;
 
-		CalcMatrix(this, &this->each);
+		CalcMatrix(this, *f_each);
 		SendVertex();
 		ConstBufferDataB0* constMap0 = nullptr;
 		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
 		{
 
 			constMap0->viewproj = f_camera.matView * BaseDirectX::GetInstance()->matProjection;
-			constMap0->world = matWorld;
+			constMap0->world = f_each->matWorld;
 			constMap0->cameraPos = f_camera.eye;
 
 			this->each.constBuff0->Unmap(0, nullptr);
@@ -194,7 +193,7 @@ namespace Editors
 		{
 			this->each = *f_each;
 		}
-		CalcMatrix(this, &this->each);
+		CalcMatrix(this, *f_each);
 
 		SendVertex();
 
@@ -204,13 +203,13 @@ namespace Editors
 			if (!rCamera)
 			{
 				constMap0->viewproj = Cameras::camera.matView * BaseDirectX::GetInstance()->matProjection;
-				constMap0->world = matWorld;
+				constMap0->world = f_each->matWorld;
 				constMap0->cameraPos = Cameras::camera.eye;
 			}
 			else
 			{
 				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::GetInstance()->matProjection;
-				constMap0->world = matWorld;
+				constMap0->world = f_each->matWorld;
 				constMap0->cameraPos = Cameras::rCamera.eye;
 			}
 
@@ -231,7 +230,7 @@ namespace Editors
 	{
 
 		this->each = *f_each;
-		CalcMatrix(this, &this->each);
+		CalcMatrix(this, *f_each);
 
 		SendVertex();
 
@@ -239,7 +238,7 @@ namespace Editors
 		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
 		{
 			constMap0->viewproj = f_camera.matView * BaseDirectX::GetInstance()->matProjection;
-			constMap0->world = matWorld;
+			constMap0->world = f_each->matWorld;
 			constMap0->cameraPos = f_camera.eye;
 			this->each.constBuff0->Unmap(0, nullptr);
 		}
@@ -282,7 +281,7 @@ namespace Editors
 		{
 			this->each = *f_each;
 		}
-		CalcMatrix(this, &this->each);
+		CalcMatrix(this, *f_each);
 		SendVertex();
 		ConstBufferDataB0* constMap0 = nullptr;
 		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
@@ -290,13 +289,13 @@ namespace Editors
 			if (!rCamera)
 			{
 				constMap0->viewproj = Cameras::camera.matView * BaseDirectX::GetInstance()->matProjection;
-				constMap0->world = matWorld;
+				constMap0->world = f_each->matWorld;
 				constMap0->cameraPos = Cameras::camera.eye;
 			}
 			else
 			{
 				constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::GetInstance()->matProjection;
-				constMap0->world = matWorld;
+				constMap0->world = f_each->matWorld;
 				constMap0->cameraPos = Cameras::rCamera.eye;
 			}
 
@@ -316,14 +315,14 @@ namespace Editors
 	{
 		this->each = *f_each;
 
-		CalcMatrix(this, &this->each);
+		CalcMatrix(this, *f_each);
 		SendVertex();
 		ConstBufferDataB0* constMap0 = nullptr;
 		if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
 		{
 
 			constMap0->viewproj = f_camera.matView * BaseDirectX::GetInstance()->matProjection;
-			constMap0->world = matWorld;
+			constMap0->world = f_each->matWorld;
 			constMap0->cameraPos = f_camera.eye;
 
 			this->each.constBuff0->Unmap(0, nullptr);

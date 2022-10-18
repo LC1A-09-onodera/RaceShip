@@ -75,7 +75,7 @@ void Model::CreateModel(const char* name, HLSLShader& shader, bool smoothing, bo
 void Model::Update(EachInfo* f_each, bool rCamera)
 {
 	this->each = *f_each;
-	CalcMatrix(this, &this->each);
+	CalcMatrix(this, *f_each);
 	SendVertex();
 	ConstBufferDataB0* constMap0 = nullptr;
 	if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
@@ -84,13 +84,13 @@ void Model::Update(EachInfo* f_each, bool rCamera)
 		if (!rCamera)
 		{
 			constMap0->viewproj = Cameras::camera.matView * BaseDirectX::GetInstance()->matProjection;
-			constMap0->world = matWorld;
+			constMap0->world = f_each->matWorld;
 			constMap0->cameraPos = Cameras::camera.eye;
 		}
 		else
 		{
 			constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::GetInstance()->matProjection;
-			constMap0->world = matWorld;
+			constMap0->world = f_each->matWorld;
 			constMap0->cameraPos = Cameras::rCamera.eye;
 		}
 
@@ -107,14 +107,14 @@ void Model::Update(EachInfo* f_each, bool rCamera)
 
 void Model::Update(EachInfo* f_each, Camera& f_camera)
 {
-	this->each = *f_each;
-	CalcMatrix(this, &this->each);
+	//this->each = *f_each;
+	CalcMatrix(this, *f_each);
 	SendVertex();
 	ConstBufferDataB0* constMap0 = nullptr;
 	if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
 	{
 		constMap0->viewproj = f_camera.matView * BaseDirectX::GetInstance()->matProjection;
-		constMap0->world = matWorld;
+		constMap0->world = f_each->matWorld;
 		constMap0->cameraPos = f_camera.eye;
 		this->each.constBuff0->Unmap(0, nullptr);
 	}

@@ -1,4 +1,4 @@
-#include "ImguiControl.h"
+﻿#include "ImguiControl.h"
 #include "../imgui/imgui.h"
 #pragma warning(push)
 #pragma warning(disable:26451)
@@ -15,7 +15,6 @@
 #include <sstream>
 #include <fstream>
 #include <stdarg.h>
-#include "../3DModel/Model.h"
 #include "../Player/Seling.h"
 #include "../Tools/Particle/ParticleEdit.h"
 #include "../Tools/KeyLog/KeyLog.h"
@@ -83,9 +82,13 @@ float Imgui::emitterPosition[3] = { 0, 0, 0 };
 bool Imgui::isParticleEditActive = false;
 int Imgui::isKeyRec = Imgui::KeyRec::None;
 
+ImGuiWindowFlags Imgui::gizmoWindowFlags = 0;
+XMMATRIX Imgui::gizmoTaget;
+EachInfo* Imgui::gizmoTargetObject;
+bool Imgui::isGizmoSelect = false;
 void Imgui::RewiredUpdate()
 {
-    //���W�I�{�^���p
+    //ラジオボタン用
     if (ImGui::Button("ReloadRewireds"))
     {
         Rewired::RewiredContainer::ReloadRewired();
@@ -94,7 +97,7 @@ void Imgui::RewiredUpdate()
     int count = 0;
     for (auto itr = Rewired::RewiredContainer::rewiredsC.begin(); itr != Rewired::RewiredContainer::rewiredsC.end(); ++itr)
     {
-        //�t�@�C�����̋L��
+        //ファイル名の記載
         ImGui::RadioButton(itr->GetFileName().c_str(), &radioMode, count);
         count++;
     }
@@ -113,7 +116,7 @@ void Imgui::ShowRewiredElement()
     {
         itr++;
     }
-    //�L�[�{�[�h�̂̐ݒ肳��Ă���l
+    //キーボードのの設定されている値
     if (itr->keys.size() > 0)
     {
         for (auto keyListItr = Rewired::KeyCodeString::mKeyboardKeys.begin(); keyListItr != Rewired::KeyCodeString::mKeyboardKeys.end(); ++keyListItr)
@@ -128,7 +131,7 @@ void Imgui::ShowRewiredElement()
             }
         }
     }
-    //XBoxPad�̐ݒ肳��Ă���l
+    //XBoxPadの設定されている値
     if (itr->padKeys.size() > 0)
     {
         for (auto keyListItr = Rewired::KeyCodeString::mPadKeys.begin(); keyListItr != Rewired::KeyCodeString::mPadKeys.end(); ++keyListItr)
@@ -196,15 +199,36 @@ void Imgui::DrawImGui()
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::Begin("InfomationAndEdit", nullptr, ImGuiWindowFlags_MenuBar);//�E�B���h�E�̖��O
+    //ウィンドウサイズを画面全体に
+    ImGui::SetNextWindowSize(ImVec2(static_cast<float>(window_width), static_cast<float>(window_height)), ImGuiCond_Appearing);
+    //座標を左上に
+    ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Appearing);
+    //背景色を透明に
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, (ImVec4)ImColor(0.0f, 0.0f, 0.0f, 0.0f));
+    //タイトルバーを消す
+    //gizmoWindowFlags |= ImGuiWindowFlagsNoTitleBar;
+    ImGui::Begin("Gizmo", 0, gizmoWindowFlags);//ウィンドウの名前
+    //ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond::ImGuiCond_FirstUseEver);
+    //これ必要
+    ImGuizmo::SetDrawlist();
+    float windowWidth = (float)ImGui::GetWindowWidth();
+    float windowHeight = (float)ImGui::GetWindowHeight();
+    ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+    //実際の処理
+    GizmoUpdate();
+    ImGui::End();
+    //背景色設定を削除
+    ImGui::PopStyleColor();
+
+    ImGui::Begin("InfomationAndEdit", nullptr, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
     ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
 
     CreateMenuBar();
-    EachInfo();
+    EachInfos();
 
     ImGui::End();
 
-    ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_MenuBar);//�E�B���h�E�̖��O
+    ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
     ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
 
     InspectorView();
@@ -213,7 +237,7 @@ void Imgui::DrawImGui()
 
     if (isFileOutputFalse)
     {
-        ImGui::Begin("Error", nullptr, ImGuiWindowFlags_MenuBar);//�E�B���h�E�̖��O
+        ImGui::Begin("Error", nullptr, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
         ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
 
         FileFalse();
@@ -221,7 +245,7 @@ void Imgui::DrawImGui()
         ImGui::End();
     }
 
-    ImGui::Begin("ParticleSystem", nullptr, ImGuiWindowFlags_MenuBar);//�E�B���h�E�̖��O
+    ImGui::Begin("ParticleSystem", nullptr, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
     ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
 
     ParticleEdit();
@@ -375,6 +399,43 @@ void Imgui::ParticleEdit()
         ImGui::TreePop();
     }
 }
+void Imgui::GizmoUpdate()
+{
+    //guiのウィンドウ取得
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    //Gizmo触ってもウィンドウを動かないように
+    gizmoWindowFlags = ImGui::IsWindowHovered() && ImGui::IsMouseHoveringRect(window->InnerRect.Min, window->InnerRect.Max) ? ImGuiWindowFlags_NoMove : 0;
+    //平行移動·回転·scaleの変更
+    static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
+    //座標系の決定
+    static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
+    //わからんとりま必要
+    static bool useSnap = true;
+    static float snap[3] = { 1.f, 1.f, 1.f };
+    //わからんとりま必要
+    float viewManipulateRight = static_cast<float>(window_width);
+    float viewManipulateTop = 0;
+    //対象オブジェクトのワールド行列を取得
+    ImGuizmo::Manipulate(
+        Cameras::camera.matView.r->m128_f32,
+        BaseDirectX::GetInstance()->matProjection.r->m128_f32,
+        mCurrentGizmoOperation, mCurrentGizmoMode, gizmoTaget.r->m128_f32, NULL, useSnap ? &snap[0] : NULL);
+    ImGuizmo::ViewManipulate(Cameras::camera.matView.r->m128_f32, Imgui::CameraR, ImVec2(viewManipulateRight, viewManipulateTop), ImVec2(128, 128), 0x10101010);
+    //平行移動をワールド行列から自身の座標系に移行
+    if (gizmoTargetObject == nullptr) return;
+    gizmoTargetObject->position.m128_f32[0] = gizmoTaget.r[3].m128_f32[0];
+    gizmoTargetObject->position.m128_f32[1] = gizmoTaget.r[3].m128_f32[1];
+    gizmoTargetObject->position.m128_f32[2] = gizmoTaget.r[3].m128_f32[2];
+    gizmoTargetObject->position.m128_f32[3] = gizmoTaget.r[3].m128_f32[3];
+}
+
+void Imgui::SetGizmoObject(EachInfo& each)
+{
+    gizmoTaget = each.matWorld;
+    gizmoTargetObject = &each;
+    isGizmoSelect = true;
+}
+
 void Imgui::FileFalse()
 {
     ImGui::Text("File Export Is Failed");
@@ -385,7 +446,7 @@ void Imgui::FileFalse()
     }
 }
 
-void Imgui::EachInfo()
+void Imgui::EachInfos()
 {
     if (tab == ImguiType::Status)
     {

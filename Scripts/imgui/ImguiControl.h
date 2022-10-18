@@ -7,6 +7,9 @@
 #include "../BaseDirectX/BaseDirectX.h"
 #include "../Tools/Rewired/Rewired.h"
 #include "../Player/Seling.h"
+#include "ImGuizmo.h"
+#include ".././3DModel/Model.h"
+
 using namespace Microsoft::WRL;
 using namespace DirectX;
 
@@ -40,9 +43,12 @@ private:
     static void InspectorView();
     static void ParticleEdit();
     static void FileFalse();
-    static void EachInfo();
+    static void EachInfos();
+    static void GizmoUpdate();
     static ComPtr<ID3D12DescriptorHeap> CreateDescrriptorHeapForImgui();
     static ComPtr<ID3D12DescriptorHeap> GetHeapForImgui();
+
+    static ImGuiWindowFlags gizmoWindowFlags;
 public:
     
     static void DrawImGui();
@@ -51,6 +57,10 @@ public:
     static void SetWindowActive(bool f_isActive);
     static void Update(Seling& player);
     static bool isMulchthled;
+    static void SetGizmoObject(EachInfo &each);
+    static bool isGizmoSelect;
+    static XMMATRIX gizmoTaget;
+    static EachInfo *gizmoTargetObject;
     static int effectType;
     static bool isFileOutputFalse;
     enum class ImguiType

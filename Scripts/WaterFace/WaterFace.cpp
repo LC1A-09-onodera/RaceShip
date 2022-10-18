@@ -310,7 +310,7 @@ void WaterFaceModel::InitializeGraphicsPipeline(HLSLShader& shader)
 
 void WaterFaceModel::Update()
 {
-	CalcMatrix(this, &eachData);
+	CalcMatrix(this, eachData);
 
 	SendVertex();
 

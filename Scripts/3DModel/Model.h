@@ -107,7 +107,9 @@ public:
 	XMFLOAT3 rotation = { 0,0,0 };
 	XMVECTOR position = { 0,0,0 };
 	std::string m_eachName;
+	XMMATRIX matWorld = XMMatrixIdentity();
 	bool isActive = true;
+	
 };
 
 class EachManager
@@ -279,18 +281,18 @@ void ConstBufferInit(T *model, U &eachInfo)
 	
 	BaseDirectX::GetInstance()->dev->CreateConstantBufferView(&cbvDesc, model->cpuDescHandleCBV);
 }
-template <typename T, typename U>
-void CalcMatrix(T *model, U *eachInfo)
+template <typename T>
+void CalcMatrix(T *model, EachInfo &eachInfo)
 {
 	if (model == nullptr) return;
-	if (eachInfo == nullptr) return;
+	//if (eachInfo == nullptr) return;
 	XMMATRIX matScale, matRot, matTrans;
-	matScale = XMMatrixScaling(eachInfo->scale.x, eachInfo->scale.y, eachInfo->scale.z);
+	matScale = XMMatrixScaling(eachInfo.scale.x, eachInfo.scale.y, eachInfo.scale.z);
 	matRot = XMMatrixIdentity();
-	matRot *= XMMatrixRotationZ(XMConvertToRadians(eachInfo->rotation.x));
-	matRot *= XMMatrixRotationX(XMConvertToRadians(eachInfo->rotation.y));
-	matRot *= XMMatrixRotationY(XMConvertToRadians(eachInfo->rotation.z));
-	matTrans = XMMatrixTranslation(eachInfo->position.m128_f32[0], eachInfo->position.m128_f32[1], eachInfo->position.m128_f32[2]);
+	matRot *= XMMatrixRotationZ(XMConvertToRadians(eachInfo.rotation.x));
+	matRot *= XMMatrixRotationX(XMConvertToRadians(eachInfo.rotation.y));
+	matRot *= XMMatrixRotationY(XMConvertToRadians(eachInfo.rotation.z));
+	matTrans = XMMatrixTranslation(eachInfo.position.m128_f32[0], eachInfo.position.m128_f32[1], eachInfo.position.m128_f32[2]);
 	model->matWorld = XMMatrixIdentity();
 
 	//ビルボード
@@ -306,6 +308,7 @@ void CalcMatrix(T *model, U *eachInfo)
 	model->matWorld *= matScale;
 	model->matWorld *= matRot;
 	model->matWorld *= matTrans;
+	eachInfo.matWorld = model->matWorld;
 }
 void Set3DDraw(  const Model &model, bool triangle = true);
 void Draw3DObject(  const Model &model, bool triangle = true);

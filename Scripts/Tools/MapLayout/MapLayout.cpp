@@ -4,6 +4,7 @@
 #include "../../BaseDirectX/Input.h"
 #include "../../Camera/Camera.h"
 #include "../../Shader/ShaderManager.h"
+#include "../../imgui/ImguiControl.h"
 #include <fstream>
 
 string MapObjectNames::wall = "wall";
@@ -167,6 +168,7 @@ void MapEditorObjects::Draw()
 
 void MapEditorObjects::SetObject(const XMFLOAT3& position)
 {
+	if (Imgui::isGizmoSelect)return;
 	if (position.x > MapW || position.x < -MapW || position.y > MapH || position.y < -MapH)
 	{
 		return;
@@ -208,6 +210,7 @@ void MapEditorObjects::SetObject(const XMFLOAT3& position)
 	{
 		player = object;
 	}
+	
 }
 
 void MapEditorObjects::SetObjectLine(const XMFLOAT3& position)
@@ -248,7 +251,8 @@ bool MapEditorObjects::ObjectCollision(const XMFLOAT3& f_mousePos)
 		{
 			if (Input::MouseTrigger(MouseButton::LBUTTON))
 			{
-				wall.erase(itr);
+				Imgui::SetGizmoObject(itr->piece);
+				//wall.erase(itr);
 			}
 			else if (Input::MouseTrigger(MouseButton::RBUTTON))
 			{
