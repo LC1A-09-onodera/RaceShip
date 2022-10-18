@@ -217,12 +217,7 @@ void GameScene::Init()
 	//ステージをテキストからロード
 	//LoadStage::LoadStages("Resource/TextData/Stage/stage1.txt");
 	StageObjects::LoadFile(baseDirectX, seling, "Resource/TextData/Stage/stage1.txt");
-
-	ParticleData par;
-	ParticleLoader::ParticleLoad("sampleJson", par);
-
 	KeyLog::SetFileName("log");
-	
 }
 
 void GameScene::TitleUpdate()
@@ -258,7 +253,8 @@ void GameScene::TitleUpdate()
 	{
 		ParticleEditUpdate();
 	}
-
+	XMFLOAT3 pos = {};
+	ParticleControl::customParticle->CustomParticle(ParticleControl::customParticle->baseParticleData, pos);
 
 	spaceSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(spaceSp.position), spaceEndPos, spriteSpeed));
 	titleSp.position = ConvertXMFLOAT3toXMVECTOR(Lerp(ConvertXMVECTORtoXMFLOAT3(titleSp.position), titleEndPos, spriteSpeed));

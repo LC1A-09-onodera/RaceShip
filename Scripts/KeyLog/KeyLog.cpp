@@ -57,7 +57,17 @@ void KeyLog::RecordingInit()
 
 void KeyLog::Playback()
 {
-	playBackTimer++;
+	if (Imgui::playBackFrame > playBackTimer)
+	{
+		playBackTimer++;
+	}
+	else
+	{
+		for (auto activeItr = activeKeyList.begin(); activeItr != activeKeyList.end(); ++activeItr)
+		{
+			deleteKeyList.push_back(activeItr);
+		}
+	}
 	//activeKey‚ğÀÛ‚Ì“ü—Í‚É“K‰‚³‚¹‚é
 	for (auto loadItr = loadKeyList.begin(); loadItr != loadKeyList.end(); ++loadItr)
 	{

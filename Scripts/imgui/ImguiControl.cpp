@@ -71,7 +71,7 @@ float Imgui::particleHalfwayPoint[3] = { 0 ,0 , 0 };
 float Imgui::particleStartSize = 1.0f;
 float Imgui::particleEndSize = 0;
 int Imgui::particleLife = 60;
-int Imgui::particleSpornArea[3] = { 1, 1, 1 };
+float Imgui::particleSpornArea[3] = { 1, 1, 1 };
 int Imgui::particleSpornSpan;
 int Imgui::particleEaseType = ParticleEaseType::InQuad;
 int Imgui::emitterLife = 60;
@@ -80,6 +80,8 @@ int Imgui::emitterPlayTimer = 0;
 float Imgui::emitterPosition[3] = { 0, 0, 0 };
 bool Imgui::isParticleEditActive = false;
 int Imgui::isKeyRec = Imgui::KeyRec::None;
+
+int Imgui::playBackFrame = 180;
 
 void Imgui::RewiredUpdate()
 {
@@ -287,6 +289,7 @@ void Imgui::InspectorView()
 void Imgui::ParticleEdit()
 {
     ImGui::Checkbox("Active", &isParticleEditActive);
+    ImGui::InputInt("Index", &ImguiParticleDatas::activeIndex);
     ImGui::Combo("", &particleType, "Normal\0Easeeing\0Lerp\0\0");
     ImGui::InputText(particleFileName, particleBuf, 256);
     if (ImGui::Button("AddFile"))
@@ -305,24 +308,26 @@ void Imgui::ParticleEdit()
     }
     if (particleType == 1)
     {
-        ImGui::InputInt("particleEaseType", &particleEaseType);
-        particleEaseType = ShlomonMath::Clamp(particleEaseType, 0, 4);
+        ImGui::InputInt("particleEaseType", &ImguiParticleDatas::particle[ImguiParticleDatas::activeIndex].type);
+        ImguiParticleDatas::particle[ImguiParticleDatas::activeIndex].type = ShlomonMath::Clamp(ImguiParticleDatas::particle[ImguiParticleDatas::activeIndex].type, 0, 4);
     }
 
-    ImGui::DragInt("count", &particleCount, 1, 1, 100);
-    ImGui::DragInt("span", &particleSpornSpan, 1, 1, 120);
+    ImGui::DragInt("count", &ImguiParticleDatas::particle[ImguiParticleDatas::activeIndex].count, 1, 1, 100);
+    ImGui::DragInt("span", &ImguiParticleDatas::particle[ImguiParticleDatas::activeIndex].spornSpan, 1, 1, 120);
     if (particleType == 0)
     {
         if (ImGui::TreeNode("speed"))
         {
             ImGui::Text("Speed");
             ImGui::DragFloat3("x y z", particleSpeed, 0.1f, -100.0f, 100.0f, "%.2f");
+            ImguiParticleDatas::particle[ImguiParticleDatas::activeIndex].speed = { particleSpeed[0], particleSpeed[1], particleSpeed[2] };
             ImGui::TreePop();
         }
         if (ImGui::TreeNode("speedDiff"))
         {
             ImGui::Text("SpeedDiff");
             ImGui::DragInt3("x y z", particleSpeedDiff, 1, 0, 100, "%.2f");
+            ImguiParticleDatas::particle[ImguiParticleDatas::activeIndex].speedDiff = { (float)particleSpeedDiff[0], (float)particleSpeedDiff[1], (float)particleSpeedDiff[2] };
             ImGui::TreePop();
         }
         if (ImGui::TreeNode("Acc"))
@@ -330,22 +335,25 @@ void Imgui::ParticleEdit()
 
             ImGui::Text("Acc");
             ImGui::DragFloat3("x y z", particleAcc, 0.1f, -100.0f, 100.0f, "%.2f");
+            ImguiParticleDatas::particle[ImguiParticleDatas::activeIndex].acc = { particleAcc[0], particleAcc[1], particleAcc[2] };
             ImGui::TreePop();
         }
     }
-
+    //----------------------------------------------------------------------
     else if (particleType == 1 || particleType == 2)
     {
         if (ImGui::TreeNode("StartPosistion"))
         {
             ImGui::Text("StartPosistion");
             ImGui::DragFloat3("x y z", particleStartPosition, 0.1f, -100.0f, 100.0f, "%.2f");
+            ImguiParticleDatas::particle[ImguiParticleDatas::activeIndex].startPosition = { particleStartPosition[0],particleStartPosition[1],particleStartPosition[2] };
             ImGui::TreePop();
         }
         if (ImGui::TreeNode("EndPosistion"))
         {
             ImGui::Text("EndPosistion");
             ImGui::DragFloat3("x y z", particleEndPosition, 0.1f, -100.0f, 100.0f, "%.2f");
+            ImguiParticleDatas::particle[ImguiParticleDatas::activeIndex].endPosition = { particleEndPosition[0],particleEndPosition[1],particleEndPosition[2] };
             ImGui::TreePop();
         }
 
@@ -360,16 +368,17 @@ void Imgui::ParticleEdit()
     }
 
     ImGui::Text("StartSize");
-    ImGui::DragFloat("StartSize", &particleStartSize, 0.01f, 0.0f, 100.0f, "%.2f");
+    ImGui::DragFloat("StartSize", &ImguiParticleDatas::particle[ImguiParticleDatas::activeIndex].startSize, 0.01f, 0.0f, 100.0f, "%.2f");
     ImGui::Text("EndSize");
-    ImGui::DragFloat("EndSize", &particleEndSize, 0.01f, 0.0f, 100.0f, "%.2f");
+    ImGui::DragFloat("EndSize", &ImguiParticleDatas::particle[ImguiParticleDatas::activeIndex].endsize, 0.01f, 0.0f, 100.0f, "%.2f");
 
     ImGui::Text("Life");
-    ImGui::DragInt("life", &particleLife, 1, 0, 1000);
+    ImGui::DragInt("life", &ImguiParticleDatas::particle[ImguiParticleDatas::activeIndex].particleLife, 1, 0, 1000);
     if (ImGui::TreeNode("Area"))
     {
         ImGui::Text("Area");
-        ImGui::DragInt3("x y z", particleSpornArea, 1, 1, 100);
+        ImGui::DragFloat3("x y z", particleSpornArea, 0.1f, 1, 100);
+        ImguiParticleDatas::particle[ImguiParticleDatas::activeIndex].spornArea = { particleSpornArea[0], particleSpornArea[1], particleSpornArea[2] };
         ImGui::TreePop();
     }
 }
@@ -427,6 +436,7 @@ void Imgui::EachInfo()
             isDeleteObjects = true;
         }
         ImGui::Checkbox("mulchThled", &isMulchthled);
+        ImGui::InputInt("playBack", &playBackFrame);
         if (isKeyRec == KeyRec::None)
         {
             if (ImGui::Button("Recording"))

@@ -2,8 +2,10 @@
 
 #pragma warning(push)
 #pragma warning(disable:26812)
+#pragma warning(disable:26813)
 #pragma warning(disable:26495)
 #pragma warning(disable:26451)
+#pragma warning(disable:6001)
 #include <fbxsdk.h>
 #include <DirectXTex.h>
 #pragma warning(pop)

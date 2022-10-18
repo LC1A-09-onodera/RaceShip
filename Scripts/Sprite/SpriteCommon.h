@@ -6,6 +6,10 @@
 #include <dxgi1_6.h>
 #include <DirectXMath.h>
 #include <d3dcompiler.h>
+#pragma warning(push)
+#pragma warning(disable:26812)
+#pragma warning(disable:26813)
+#pragma warning(disable:6001)
 #include <DirectXTex.h>
 #include "../BaseDirectX/Input.h"
 #include <wrl.h>

@@ -7,42 +7,39 @@
 #include "../imgui/ImguiControl.h"
 
 using namespace std;
-
+ParticleData ImguiParticleDatas::particle[3];
+int ImguiParticleDatas::activeIndex = 0;
 void ParticleExport::CreatePartileFile(const char* f_fileName)
 {
 	ParticleData particle;
-	particle.acc = { Imgui::particleAcc[0], Imgui::particleAcc[1], Imgui::particleAcc[2] };
+
+	particle.type = Imgui::particleType;
 	particle.count = Imgui::particleCount;
 	particle.emitterLife = Imgui::emitterLife;
-	particle.endPosition = { Imgui::particleEndPosition[0], Imgui::particleEndPosition[1], Imgui::particleEndPosition[2] };
-	particle.endsize = Imgui::particleEndSize;
-	particle.nowLife = 0;
-	particle.nowSize = Imgui::particleStartSize;
 	particle.particleLife = Imgui::particleLife;
-	//particle.particleSpanTimer = Imgui::particleSpornSpan;
+	particle.spornSpan = Imgui::particleSpornSpan;
+	particle.spornArea = { static_cast<float>(Imgui::particleSpornArea[0]), static_cast<float>(Imgui::particleSpornArea[1]) , static_cast<float>(Imgui::particleSpornArea[2]) };
+	particle.startSize = Imgui::particleStartSize;
+	particle.endsize = Imgui::particleEndSize;
 	particle.speed = { Imgui::particleSpeed[0],Imgui::particleSpeed[1],Imgui::particleSpeed[2] };
 	particle.speedDiff = { static_cast<float>(Imgui::particleSpeedDiff[0]), static_cast<float>(Imgui::particleSpeedDiff[1]) , static_cast<float>(Imgui::particleSpeedDiff[2]) };
-	particle.spornArea = { static_cast<float>(Imgui::particleSpornArea[0]), static_cast<float>(Imgui::particleSpornArea[1]) , static_cast<float>(Imgui::particleSpornArea[2]) };
-	particle.spornSpan = Imgui::particleSpornSpan;
-	particle.type = Imgui::particleType;
-	particle.startSize = Imgui::particleStartSize;
-	string allData = "";
+	particle.acc = { Imgui::particleAcc[0], Imgui::particleAcc[1], Imgui::particleAcc[2] };
+	
 	json js;
 	particle.ToJson(js);
-	allData = js.dump();
 	
 	string particleFileName = f_fileName;
 	//ÉtÉ@ÉCÉãÇçÏÇÈ
-	string saveFileName = "Resource/TextData/Particle/" + particleFileName + ".csv";
+	string saveFileName = "Resource/TextData/Particle/" + particleFileName + ".json";
 	ofstream ofs(saveFileName);
 	if (!ofs) return;
-	ofs << allData;
+	ofs << js.dump();
 }
 
 void ParticleLoader::ParticleLoad(const char* f_fileName, ParticleData& data)
 {
 	string pathName = f_fileName;
-	string fullPath = "Resource/TextData/Particle/" + pathName + ".csv";
+	string fullPath = "Resource/TextData/Particle/" + pathName + ".json";
 
 	ifstream file;
 	file.open(fullPath);

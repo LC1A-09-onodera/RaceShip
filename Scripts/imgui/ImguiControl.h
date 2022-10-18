@@ -135,7 +135,7 @@ public:
     static float particleEndSize;
     static int particleLife;
     static int particleType;
-    static int particleSpornArea[3];
+    static float particleSpornArea[3];
     static int particleSpornSpan;
 
     static int emitterLife;
@@ -151,4 +151,6 @@ public:
     };
     static int isKeyRec;
     static bool isParticleEditActive;
+
+    static int playBackFrame;
 };

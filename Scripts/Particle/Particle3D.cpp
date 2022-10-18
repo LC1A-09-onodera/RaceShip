@@ -1280,8 +1280,8 @@ void ParticleIndi::EditorParticle()
 			editorParticles.emplace_front();
 			ParticleEditorElement& p = editorParticles.front();
 			int random = rand();
-			p.position = { Imgui::emitterPosition[0] + static_cast<float>(rand() % (Imgui::particleSpornArea[0] * 2 + 1) - Imgui::particleSpornArea[0]),
-						   Imgui::emitterPosition[1] + static_cast<float>(rand() % (Imgui::particleSpornArea[1] * 2 + 1) - Imgui::particleSpornArea[1]), Imgui::emitterPosition[2] + static_cast<float>(rand() % (Imgui::particleSpornArea[2] * 2 + 1) - Imgui::particleSpornArea[2]) };
+			p.position = { Imgui::emitterPosition[0] + static_cast<float>(rand() % static_cast<int>(Imgui::particleSpornArea[0] * 2 + 1) - Imgui::particleSpornArea[0]),
+						   Imgui::emitterPosition[1] + static_cast<float>(rand() % static_cast<int>(Imgui::particleSpornArea[1] * 2 + 1) - Imgui::particleSpornArea[1]), Imgui::emitterPosition[2] + static_cast<float>(rand() % static_cast<int>(Imgui::particleSpornArea[2] * 2 + 1) - Imgui::particleSpornArea[2]) };
 			if (random % 2 == 0)
 			{
 				p.velocity = { Imgui::particleSpeed[0] + static_cast<float>((random % (Imgui::particleSpeedDiff[0] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[0])) / 10.0f, Imgui::particleSpeed[1] + static_cast<float>((random % (Imgui::particleSpeedDiff[1] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[1])) / 10.0f,
@@ -1306,8 +1306,8 @@ void ParticleIndi::EditorParticle()
 		{
 			editorParticles.emplace_front();
 			ParticleEditorElement& p = editorParticles.front();
-			p.position = { static_cast<float>(rand() % (Imgui::particleSpornArea[0] * 2 + 1) - Imgui::particleSpornArea[0]),
-						   static_cast<float>(rand() % (Imgui::particleSpornArea[1] * 2 + 1) - Imgui::particleSpornArea[1]), static_cast<float>(rand() % (Imgui::particleSpornArea[2] * 2 + 1) - Imgui::particleSpornArea[2]) };
+			p.position = { static_cast<float>(rand() % static_cast<int>(Imgui::particleSpornArea[0] * 2 + 1) - Imgui::particleSpornArea[0]),
+						   static_cast<float>(rand() % static_cast<int>(Imgui::particleSpornArea[1] * 2 + 1) - Imgui::particleSpornArea[1]), static_cast<float>(rand() % static_cast<int>(Imgui::particleSpornArea[2] * 2 + 1) - Imgui::particleSpornArea[2]) };
 			p.startPos = p.position;
 			p.endPos = { -Imgui::particleEndPosition[0], Imgui::particleEndPosition[1], Imgui::particleEndPosition[2] };
 			p.num_frame = Imgui::particleLife;
@@ -1562,7 +1562,7 @@ void ParticleControl::Init(BaseDirectX& baseDirectX)
 	sheetOfSpray2.reset(sheetOfSpray->Create(L"Resource/Image/element.png"));
 	editorParticle.reset(editorParticle->Create(L"Resource/Image/element.png"));
 	customParticle.reset(customParticle->Create(L"Resource/Image/element.png"));
-	//ParticleLoader::ParticleLoad("sample", customParticle->baseParticleData);
+	ParticleLoader::ParticleLoad("hogehoge", customParticle->baseParticleData);
 }
 
 void ParticleControl::Draw(BaseDirectX& baseDirectX)

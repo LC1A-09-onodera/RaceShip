@@ -1,6 +1,7 @@
 #include <array>
 #pragma warning(push)
 #pragma warning(disable:4996)
+#pragma warning(disable:26800)
 #include "../single_include/nlohmann/json.hpp"
 #pragma warning(pop)
 
@@ -50,5 +51,7 @@ public:
 
 class ImguiParticleDatas
 {
+public:
 	static ParticleData particle[3];
+	static int activeIndex;
 };
