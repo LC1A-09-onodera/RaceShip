@@ -2,10 +2,10 @@
 #include "Seling.h"
 #include "../BaseDirectX/Input.h"
 #include "../Shader/ShaderManager.h"
-#include "../LoadStage/StageObject.h"
+#include "../Tools/LoadStage/StageObject.h"
 #include "../imgui/ImguiControl.h"
-#include "../Particle/Particle3D.h"
-#include "../LoadStage/LoadStage.h"
+#include "../Tools/Particle/Particle3D.h"
+#include "../Tools/LoadStage/LoadStage.h"
 
 void Seling::ForceUpdate()
 {
@@ -21,21 +21,21 @@ void Seling::ForceUpdate()
 	}
 }
 
-void Seling::LoadModel(BaseDirectX& baseDirectX)
+void Seling::LoadModel()
 {
-	selingModel.CreateModel(baseDirectX, "boat_v3", ShaderManager::playerShader, false);
+	selingModel.CreateModel("boat_v3", ShaderManager::playerShader, false);
 
-	Init(baseDirectX);
+	Init();
 
 	LoadKeys();
 
-	SpringBoard::LoadModel(baseDirectX);
+	SpringBoard::LoadModel();
 	/*springBorad.Init(baseDirectX, SpringBoard::Direction::UpToBottom);
 	springBorad.m_wid = 10.0f;
 	springBorad.m_hi = 2.0f;*/
 }
 
-void Seling::Init(BaseDirectX& baseDirectX)
+void Seling::Init()
 {
 	selingModel.each.position = { 0, 0, 0, 1.0f };
 	selingModel.each.scale = { 1.0f, 1.0f, 0.8f };
@@ -78,7 +78,7 @@ void Seling::Init(BaseDirectX& baseDirectX)
 		{
 			dir = SpringBoard::Direction::BottomToUp;
 		}
-		sp->Init(baseDirectX, dir);
+		sp->Init(dir);
 		springBorad.push_back(sp);
 	}
 }
@@ -118,26 +118,26 @@ void Seling::Update(bool isPouse)
 	}
 }
 
-void Seling::Draw(BaseDirectX& baseDirectX, bool isRCamera)
+void Seling::Draw( bool isRCamera)
 {
-	selingModel.Update(baseDirectX, &selingModel.each, isRCamera);
-	Draw3DObject(baseDirectX, selingModel);
+	selingModel.Update(&selingModel.each, isRCamera);
+	Draw3DObject(selingModel);
 	for (auto itr = springBorad.begin(); itr != springBorad.end(); ++itr)
 	{
-		(*itr)->Draw(baseDirectX, isRCamera);
+		(*itr)->Draw(isRCamera);
 	}
-	//springBorad.Draw(baseDirectX, isRCamera);
+	//springBorad.Draw(, isRCamera);
 }
 
-void Seling::Draw(BaseDirectX& baseDirectX, Camera& f_camera)
+void Seling::Draw( Camera& f_camera)
 {
-	selingModel.Update(baseDirectX, &selingModel.each, f_camera);
-	Draw3DObject(baseDirectX, selingModel);
+	selingModel.Update( &selingModel.each, f_camera);
+	Draw3DObject(selingModel);
 	for (auto itr = springBorad.begin(); itr != springBorad.end(); ++itr)
 	{
-		(*itr)->Draw(baseDirectX, f_camera);
+		(*itr)->Draw(f_camera);
 	}
-	//springBorad.Draw(baseDirectX, f_camera);
+	//springBorad.Draw(, f_camera);
 }
 
 void Seling::AddForce(XMFLOAT3& force)

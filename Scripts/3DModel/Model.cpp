@@ -46,17 +46,17 @@ void Model::SetLight(shared_ptr<Light> Light)
 	Model::light = Light;
 }
 
-void Model::CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& shader, bool smoothing, bool isTriangle)
+void Model::CreateModel(const char* name, HLSLShader& shader, bool smoothing, bool isTriangle)
 {
 	m_modelName = name;
 
-	InitializeDescriptorHeap(baseDirectX);
+	InitializeDescriptorHeap();
 
-	InitializeGraphicsPipeline(baseDirectX, shader, isTriangle);
+	InitializeGraphicsPipeline(shader, isTriangle);
 
-	LoadFileContents(baseDirectX, name, smoothing);
+	LoadFileContents(name, smoothing);
 
-	ConstBufferInit(baseDirectX, this, this->each);
+	ConstBufferInit(this, this->each);
 
 	ModelElement* model = new ModelElement(m_modelName, this);
 	/*if (ModelManager::m_models.size() > 0)
@@ -72,24 +72,24 @@ void Model::CreateModel(BaseDirectX& baseDirectX, const char* name, HLSLShader& 
 	ModelManager::m_models.push_back(model);
 }
 
-void Model::Update(BaseDirectX& baseDirectX, EachInfo* f_each, bool rCamera)
+void Model::Update(EachInfo* f_each, bool rCamera)
 {
 	this->each = *f_each;
-	CalcMatrix(this, &(*f_each));
-	SendVertex(baseDirectX);
+	CalcMatrix(this, *f_each);
+	SendVertex();
 	ConstBufferDataB0* constMap0 = nullptr;
 	if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
 	{
 		//constMap0->mat = matWorld * Camera::matView * BaseDirectX::matProjection;
 		if (!rCamera)
 		{
-			constMap0->viewproj = Cameras::camera.matView * baseDirectX.matProjection;
+			constMap0->viewproj = Cameras::camera.matView * BaseDirectX::GetInstance()->matProjection;
 			constMap0->world = f_each->matWorld;
 			constMap0->cameraPos = Cameras::camera.eye;
 		}
 		else
 		{
-			constMap0->viewproj = Cameras::rCamera.matView * baseDirectX.matProjection;
+			constMap0->viewproj = Cameras::rCamera.matView * BaseDirectX::GetInstance()->matProjection;
 			constMap0->world = f_each->matWorld;
 			constMap0->cameraPos = Cameras::rCamera.eye;
 		}
@@ -97,7 +97,7 @@ void Model::Update(BaseDirectX& baseDirectX, EachInfo* f_each, bool rCamera)
 		this->each.constBuff0->Unmap(0, nullptr);
 	}
 	ConstBufferDataB1* constMap1 = nullptr;
-	baseDirectX.result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
+	BaseDirectX::GetInstance()->result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
 	constMap1->ambient = material.ambient;
 	constMap1->diffuse = material.diffuse;
 	constMap1->specular = material.specular;
@@ -105,21 +105,21 @@ void Model::Update(BaseDirectX& baseDirectX, EachInfo* f_each, bool rCamera)
 	this->each.constBuff1->Unmap(0, nullptr);
 }
 
-void Model::Update(BaseDirectX& baseDirectX, EachInfo* f_each, Camera& f_camera)
+void Model::Update(EachInfo* f_each, Camera& f_camera)
 {
 	//this->each = *f_each;
-	CalcMatrix(this, &(*f_each));
-	SendVertex(baseDirectX);
+	CalcMatrix(this, *f_each);
+	SendVertex();
 	ConstBufferDataB0* constMap0 = nullptr;
 	if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
 	{
-		constMap0->viewproj = f_camera.matView * baseDirectX.matProjection;
+		constMap0->viewproj = f_camera.matView * BaseDirectX::GetInstance()->matProjection;
 		constMap0->world = f_each->matWorld;
 		constMap0->cameraPos = f_camera.eye;
 		this->each.constBuff0->Unmap(0, nullptr);
 	}
 	ConstBufferDataB1* constMap1 = nullptr;
-	baseDirectX.result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
+	BaseDirectX::GetInstance()->result = this->each.constBuff1->Map(0, nullptr, (void**)&constMap1);
 	constMap1->ambient = material.ambient;
 	constMap1->diffuse = material.diffuse;
 	constMap1->specular = material.specular;
@@ -127,18 +127,18 @@ void Model::Update(BaseDirectX& baseDirectX, EachInfo* f_each, Camera& f_camera)
 	this->each.constBuff1->Unmap(0, nullptr);
 }
 
-void Model::SendVertex(BaseDirectX& baseDirectX)
+void Model::SendVertex()
 {
 	Vertex* vertMap = nullptr;
-	baseDirectX.result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
-	if (SUCCEEDED(baseDirectX.result))
+	BaseDirectX::GetInstance()->result = mesh.vertBuff->Map(0, nullptr, (void**)&vertMap);
+	if (SUCCEEDED(BaseDirectX::GetInstance()->result))
 	{
 		copy(mesh.vertices.begin(), mesh.vertices.end(), vertMap);
 		mesh.vertBuff->Unmap(0, nullptr);    // マップを解除
 	}
 }
 
-void Model::LoadFileContents(BaseDirectX& baseDirectX, const char* name, bool smoothing)
+void Model::LoadFileContents(const char* name, bool smoothing)
 {
 	ifstream file;
 	const string modelname = name;
@@ -167,7 +167,7 @@ void Model::LoadFileContents(BaseDirectX& baseDirectX, const char* name, bool sm
 		{   //マテリアル
 			string mFilename;
 			line_stream >> mFilename;
-			LoadMaterial(baseDirectX, directoryPath, mFilename);
+			LoadMaterial(directoryPath, mFilename);
 		}
 		if (key == "v")
 		{   //座標読み込み
@@ -233,7 +233,7 @@ void Model::LoadFileContents(BaseDirectX& baseDirectX, const char* name, bool sm
 	file.close();
 }
 
-bool Model::InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& shader, bool isTriangle)
+bool Model::InitializeGraphicsPipeline(HLSLShader& shader, bool isTriangle)
 {
 	HRESULT result = S_FALSE;
 	ComPtr<ID3DBlob> errorBlob; // エラーオブジェクト
@@ -335,7 +335,7 @@ bool Model::InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& sha
 	// バージョン自動判定のシリアライズ
 	result = D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
 	// ルートシグネチャの生成
-	result = baseDirectX.dev->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
+	result = BaseDirectX::GetInstance()->dev->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
 	if (FAILED(result)) {
 		return false;
 	}
@@ -343,7 +343,7 @@ bool Model::InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& sha
 	gpipeline.pRootSignature = rootsignature.Get();
 
 	// グラフィックスパイプラインの生成-------------------------
-	result = baseDirectX.dev->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelinestate));
+	result = BaseDirectX::GetInstance()->dev->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelinestate));
 
 	if (FAILED(result)) {
 		return false;
@@ -352,7 +352,7 @@ bool Model::InitializeGraphicsPipeline(BaseDirectX& baseDirectX, HLSLShader& sha
 	return true;
 }
 
-bool Model::LoadTexture(BaseDirectX& baseDirectX, const string& directPath, const string& filename)
+bool Model::LoadTexture(const string& directPath, const string& filename)
 {
 	HRESULT result = S_FALSE;
 
@@ -384,7 +384,7 @@ bool Model::LoadTexture(BaseDirectX& baseDirectX, const string& directPath, cons
 	);
 	CD3DX12_HEAP_PROPERTIES heapProp(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0);
 	// テクスチャ用バッファの生成
-	result = baseDirectX.dev->CreateCommittedResource(
+	result = BaseDirectX::GetInstance()->dev->CreateCommittedResource(
 		&heapProp,
 		D3D12_HEAP_FLAG_NONE,
 		&texresDesc,
@@ -420,11 +420,11 @@ bool Model::LoadTexture(BaseDirectX& baseDirectX, const string& directPath, cons
 	srvDesc.Texture2D.MipLevels = 1;
 
 	//BaseDirectX::dev->CreateShaderResourceView(texbuff.Get(), &srvDesc, cpuDescHandleSRV[materialCount]);
-	baseDirectX.dev->CreateShaderResourceView(texbuff.Get(), &srvDesc, cpuDescHandleSRV);
+	BaseDirectX::GetInstance()->dev->CreateShaderResourceView(texbuff.Get(), &srvDesc, cpuDescHandleSRV);
 	return true;
 }
 
-bool Model::InitializeDescriptorHeap(BaseDirectX& baseDirectX)
+bool Model::InitializeDescriptorHeap()
 {
 	HRESULT result = S_FALSE;
 
@@ -433,19 +433,19 @@ bool Model::InitializeDescriptorHeap(BaseDirectX& baseDirectX)
 	descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;//シェーダから見えるように
 	descHeapDesc.NumDescriptors = 1; // シェーダーリソースビュー1つ
-	result = baseDirectX.dev->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&descHeap));//生成
+	result = BaseDirectX::GetInstance()->dev->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&descHeap));//生成
 	if (FAILED(result)) {
 		assert(0);
 		return false;
 	}
 
 	// デスクリプタサイズを取得
-	descriptorHandleIncrementSize = baseDirectX.dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	descriptorHandleIncrementSize = BaseDirectX::GetInstance()->dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	return true;
 }
 
-void Model::LoadMaterial(BaseDirectX& baseDirectX, const string& directoryPath, const string& filename)
+void Model::LoadMaterial(const string& directoryPath, const string& filename)
 {
 	ifstream file;
 	file.open(directoryPath + filename);
@@ -495,44 +495,44 @@ void Model::LoadMaterial(BaseDirectX& baseDirectX, const string& directoryPath, 
 		if (key == "map_Kd")
 		{
 			line_striam >> material.texFilename;
-			LoadTexture(baseDirectX, directoryPath, material.texFilename);
+			LoadTexture(directoryPath, material.texFilename);
 		}
 	}
 	materialCount += 1;
 	file.close();
 }
 
-void Set3DDraw(BaseDirectX& baseDirectX, const Model& model, bool triangle)
+void Set3DDraw(const Model& model, bool triangle)
 {
-	baseDirectX.cmdList->IASetIndexBuffer(&model.mesh.ibView);
-	baseDirectX.cmdList->SetPipelineState(model.pipelinestate.Get());
-	baseDirectX.cmdList->SetGraphicsRootSignature(model.rootsignature.Get());
+	BaseDirectX::GetInstance()->cmdList->IASetIndexBuffer(&model.mesh.ibView);
+	BaseDirectX::GetInstance()->cmdList->SetPipelineState(model.pipelinestate.Get());
+	BaseDirectX::GetInstance()->cmdList->SetGraphicsRootSignature(model.rootsignature.Get());
 	//三角形リスト
 	if (triangle == true)
 	{
-		baseDirectX.cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		BaseDirectX::GetInstance()->cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		//BaseDirectX::cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	}
 
 	else if (triangle == false)
 	{
-		baseDirectX.cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+		BaseDirectX::GetInstance()->cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 	}
 }
 
-void Draw3DObject(BaseDirectX& baseDirectX, const Model& model, bool triangle)
+void Draw3DObject(const Model& model, bool triangle)
 {
-	Set3DDraw(baseDirectX, model, triangle);
-	baseDirectX.cmdList->IASetVertexBuffers(0, 1, &model.mesh.vbView);
-	baseDirectX.cmdList->IASetIndexBuffer(&model.mesh.ibView);
+	Set3DDraw(model, triangle);
+	BaseDirectX::GetInstance()->cmdList->IASetVertexBuffers(0, 1, &model.mesh.vbView);
+	BaseDirectX::GetInstance()->cmdList->IASetIndexBuffer(&model.mesh.ibView);
 	ID3D12DescriptorHeap* ppHeap[] = { model.descHeap.Get() };
-	baseDirectX.cmdList->SetDescriptorHeaps(_countof(ppHeap), ppHeap);
+	BaseDirectX::GetInstance()->cmdList->SetDescriptorHeaps(_countof(ppHeap), ppHeap);
 	//BaseDirectX::cmdList->SetGraphicsRootDescriptorTable(0, model.gpuDescHandleCBV);
-	baseDirectX.cmdList->SetGraphicsRootConstantBufferView(0, model.each.constBuff0->GetGPUVirtualAddress());
-	Model::light->Draw(baseDirectX.cmdList.Get(), 3);
-	baseDirectX.cmdList->SetGraphicsRootConstantBufferView(1, model.each.constBuff1->GetGPUVirtualAddress());
-	baseDirectX.cmdList->SetGraphicsRootDescriptorTable(2, model.gpuDescHandleSRV);
-	baseDirectX.cmdList->DrawIndexedInstanced((UINT)model.mesh.indices.size(), 1, 0, 0, 0);
+	BaseDirectX::GetInstance()->cmdList->SetGraphicsRootConstantBufferView(0, model.each.constBuff0->GetGPUVirtualAddress());
+	Model::light->Draw(BaseDirectX::GetInstance()->cmdList.Get(), 3);
+	BaseDirectX::GetInstance()->cmdList->SetGraphicsRootConstantBufferView(1, model.each.constBuff1->GetGPUVirtualAddress());
+	BaseDirectX::GetInstance()->cmdList->SetGraphicsRootDescriptorTable(2, model.gpuDescHandleSRV);
+	BaseDirectX::GetInstance()->cmdList->DrawIndexedInstanced((UINT)model.mesh.indices.size(), 1, 0, 0, 0);
 }
 
 bool ObjectColition(Model& object1, Model& object2)

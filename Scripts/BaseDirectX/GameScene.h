@@ -5,15 +5,15 @@
 #include "../Sprite/Sprite.h"
 #include "../Light/Light.h"
 #include "../PostEffect/PostEffect.h"
-#include "../FBXObject/FBXObject.h"
-#include "../FbxLoader/FbxLoader.h"
+#include "../FBX/FBXObject/FBXObject.h"
+#include "../FBX/FbxLoader/FbxLoader.h"
 #include "../Player/Seling.h"
-#include "../Rewired/Rewired.h"
+#include "../Tools/Rewired/Rewired.h"
 #include "../WaterFace/WaterFace.h"
 #include "../MenuUI/MenuUI.h"
-#include "../Particle/Particle3D.h"
-#include "../LoadStage/SpringBoard.h"
-#include "../KeyLog/KeyLog.h"
+#include "../Tools/Particle/Particle3D.h"
+#include "../Tools/LoadStage/SpringBoard.h"
+#include "../Tools/KeyLog/KeyLog.h"
 
 enum GameSceneName { TITLE, SELECT, GAME, END, RESULT, OP , MAPEDIT, RewiredEdit, ParticleEdit};
 
@@ -58,7 +58,7 @@ private:
 	void DrawPostEffect();
 
 	int SceneNum = TITLE;
-	BaseDirectX baseDirectX;
+	//BaseDirectX baseDirectX;
 
 	int opAnimationTime = 0;
 	const int MaxOPAnimationTime = 120;
@@ -111,7 +111,6 @@ private:
 	MenuUI pouseUI;
 
 	Model particleAreaModel;
-
 public:
 	GameScene();
 	~GameScene();

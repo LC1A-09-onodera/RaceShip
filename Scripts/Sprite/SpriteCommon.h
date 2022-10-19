@@ -39,7 +39,7 @@ public:
 	static const int SRVCount = 512;//テクスチャ最大値
 	static ComPtr<ID3D12Resource> TexBuff[SRVCount];
 
-	void Init(BaseDirectX& baseDirectX, ComPtr<ID3DBlob> vsBlob, ComPtr<ID3DBlob> psBlob);
+	void Init( ComPtr<ID3DBlob> vsBlob, ComPtr<ID3DBlob> psBlob);
 	HRESULT LoadSprtieGraph(const wchar_t *filename);
 	SpriteCommon();
 };

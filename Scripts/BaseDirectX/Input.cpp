@@ -1,5 +1,5 @@
 #include "Input.h"
-#include "../Rewired/Rewired.h"
+#include "../Tools/Rewired/Rewired.h"
 #include "../imgui/ImguiControl.h"
 
 std::shared_ptr<IDirectInput8> Input::dinput = nullptr;
@@ -8,15 +8,15 @@ DirectInput* Input::directInput = DirectInput::GetInstance();
 int Input::mouseWheel = 0;
 BYTE Input::keys[256] = {};
 BYTE Input::oldkeys[256] = {};
-void Input::Update(BaseDirectX &baseDirectX)
+void Input::Update()
 {
-	baseDirectX.result = devkeyboard->Acquire();
+	BaseDirectX::GetInstance()->result = devkeyboard->Acquire();
 	for (int i = 0; i < 256; i++)
 	{
 		oldkeys[i] = keys[i];
 		keys[i] = 0;
 	}
-	baseDirectX.result = devkeyboard->GetDeviceState(sizeof(keys), keys);
+	BaseDirectX::GetInstance()->result = devkeyboard->GetDeviceState(sizeof(keys), keys);
 
 	directInput->UpdateInput();////////////////////////////////
 
@@ -47,19 +47,19 @@ void Input::Init()
 	//directInput.reset(DirectInput::GetInstance());
 }
 
-void Input::KeySet(BaseDirectX& baseDirectX, WNDCLASSEX w, HWND hwnd)
+void Input::KeySet(  WNDCLASSEX w, HWND hwnd)
 {
 	
 	directInput->InputInit(w.hInstance,hwnd);//////////////////////////
 
-	baseDirectX.result = DirectInput8Create(w.hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void **)&dinput, nullptr);
-	baseDirectX.result = dinput->CreateDevice(GUID_SysKeyboard, &devkeyboard, NULL);
-	baseDirectX.result = devkeyboard->SetDataFormat(&c_dfDIKeyboard);
+	BaseDirectX::GetInstance()->result = DirectInput8Create(w.hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void **)&dinput, nullptr);
+	BaseDirectX::GetInstance()->result = dinput->CreateDevice(GUID_SysKeyboard, &devkeyboard, NULL);
+	BaseDirectX::GetInstance()->result = devkeyboard->SetDataFormat(&c_dfDIKeyboard);
 
 	//画面が手前にあるときのみキーボード入力を受け付ける
 	//デバイスをこのアプリだけで占有しない
 	//ウィルス等キーの無効化
-	baseDirectX.result = devkeyboard->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+	BaseDirectX::GetInstance()->result = devkeyboard->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 }
 
 bool Input::Key(BYTE key)

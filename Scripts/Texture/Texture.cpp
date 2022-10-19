@@ -3,19 +3,19 @@
 int TexManager::texNum = 0;
 
 //画僧の取得
-void Tex::LoadGraph(BaseDirectX &baseDirectX, const wchar_t *graph)
+void Tex::LoadGraph(const wchar_t *graph)
 {
     this->texNum = TexManager::texNum;
     TexManager::texNum += 1;
     TexMetadata metadata{};
     ScratchImage scratchImg{};
-    baseDirectX.result = LoadFromWICFile(graph, WIC_FLAGS_NONE, &metadata, scratchImg);
+    BaseDirectX::GetInstance()->result = LoadFromWICFile(graph, WIC_FLAGS_NONE, &metadata, scratchImg);
     const Image *img = scratchImg.GetImage(0, 0, 0);//生データの抽出
 
     CD3DX12_RESOURCE_DESC texresDesc = CD3DX12_RESOURCE_DESC::Tex2D(metadata.format, metadata.width, (UINT)metadata.height, (UINT16)metadata.arraySize, (UINT16)metadata.mipLevels);
     CD3DX12_HEAP_PROPERTIES heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0);
-    baseDirectX.result = baseDirectX.dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &texresDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&texbuff));
-    baseDirectX.result = texbuff->WriteToSubresource(0, nullptr, img->pixels, (UINT)img->rowPitch, (UINT)img->slicePitch);
+    BaseDirectX::GetInstance()->result = BaseDirectX::GetInstance()->dev->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE, &texresDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&texbuff));
+    BaseDirectX::GetInstance()->result = texbuff->WriteToSubresource(0, nullptr, img->pixels, (UINT)img->rowPitch, (UINT)img->slicePitch);
 
     //画像データ使用時
     //シェーダーリソースビュー
@@ -24,7 +24,7 @@ void Tex::LoadGraph(BaseDirectX &baseDirectX, const wchar_t *graph)
     srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
     srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
     srvDesc.Texture2D.MipLevels = 1;
-    baseDirectX.dev->CreateShaderResourceView(texbuff.Get(), &srvDesc, baseDirectX.cpuDescHandleSRV[this->texNum]);
+    BaseDirectX::GetInstance()->dev->CreateShaderResourceView(texbuff.Get(), &srvDesc, BaseDirectX::GetInstance()->cpuDescHandleSRV[this->texNum]);
 }
 
 int Tex::Get()

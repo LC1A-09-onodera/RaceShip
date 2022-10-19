@@ -5,9 +5,10 @@
 #pragma warning(pop)
 #include <DirectXMath.h>
 #include "../BaseDirectX/BaseDirectX.h"
-#include "../Rewired/Rewired.h"
+#include "../Tools/Rewired/Rewired.h"
 #include "../Player/Seling.h"
 #include "ImGuizmo.h"
+#include ".././3DModel/Model.h"
 
 using namespace Microsoft::WRL;
 using namespace DirectX;
@@ -41,19 +42,29 @@ private:
     static void CreateMenuBar();
     static void InspectorView();
     static void ParticleEdit();
-    static void GizmoUpdate(BaseDirectX& baseDirectX);
     static void FileFalse();
-    static void EachInfo();
-    static ComPtr<ID3D12DescriptorHeap> CreateDescrriptorHeapForImgui(BaseDirectX& baseDirectX);
+    static void EachInfos();
+    static void GizmoUpdate();
+    static ComPtr<ID3D12DescriptorHeap> CreateDescrriptorHeapForImgui();
     static ComPtr<ID3D12DescriptorHeap> GetHeapForImgui();
-public:
+
     static ImGuiWindowFlags gizmoWindowFlags;
-    static void DrawImGui(BaseDirectX& baseDirectX);
-    static void Init(BaseDirectX& baseDirectX);
+    static ImGuiWindowFlags menuBarWindowFlags;
+public:
+    
+    static void DrawImGui();
+    static void Init();
     static void DebugUpdate();
     static void SetWindowActive(bool f_isActive);
-    static void Update(BaseDirectX &baseDirectX, Seling& player);
+    static void Update(Seling& player);
     static bool isMulchthled;
+    static void SetGizmoObject(EachInfo &each);
+    static XMMATRIX gizmoTaget;
+    static EachInfo *gizmoTargetObject;
+    static bool isUseGizmo;
+    static bool isTuchiGizmo;
+    static bool isParticleSystemWindow;
+    static bool isGizmoMove;
     static int effectType;
     static bool isFileOutputFalse;
     enum class ImguiType
@@ -138,7 +149,7 @@ public:
     static float particleEndSize;
     static int particleLife;
     static int particleType;
-    static float particleSpornArea[3];
+    static int particleSpornArea[3];
     static int particleSpornSpan;
 
     static int emitterLife;
@@ -154,6 +165,4 @@ public:
     };
     static int isKeyRec;
     static bool isParticleEditActive;
-
-    static int playBackFrame;
 };

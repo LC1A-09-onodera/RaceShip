@@ -114,6 +114,7 @@ void EditTransform(const Camera& camera, matrix_t& matrix)
 #ifndef IMGUIZMO_NAMESPACE
 #define IMGUIZMO_NAMESPACE ImGuizmo
 #endif
+#include "imgui.h"
 #include "imgui_internal.h"
 
 namespace IMGUIZMO_NAMESPACE
@@ -127,7 +128,7 @@ namespace IMGUIZMO_NAMESPACE
 
    // this is necessary because when imguizmo is compiled into a dll, and imgui into another
    // globals are not shared between them.
-   // More details at https://stackoverflow.com/questions/19373061/what-happens-to-global-and-static-variables-in-a-shared-library-when-it-is-dynam
+   // More details athttps://stackoverflow.com/questions/19373061/what-happens-to-global-and-static-variables-in-a-shared-library-when-it-is-dynam
    // expose method to set imgui context
    IMGUI_API void SetImGuiContext(ImGuiContext* ctx);
 

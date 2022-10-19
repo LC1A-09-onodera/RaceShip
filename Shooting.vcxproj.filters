@@ -52,15 +52,6 @@
     <Filter Include="PostEffect">
       <UniqueIdentifier>{0e8de67c-36b1-49b0-bb39-f1eb30b4e887}</UniqueIdentifier>
     </Filter>
-    <Filter Include="FbxLoader">
-      <UniqueIdentifier>{f80cfa74-20f5-4917-b266-eb409b21c011}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="FBXModel">
-      <UniqueIdentifier>{53b5380a-6f78-4a4d-8eaa-cd2f224333d0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="FBXObject">
-      <UniqueIdentifier>{42f49b83-7441-4844-91b1-7edbc86de1d2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Udp">
       <UniqueIdentifier>{b2353c99-8890-443e-8f79-5250e75bba10}</UniqueIdentifier>
     </Filter>
@@ -90,6 +81,9 @@
     </Filter>
     <Filter Include="json">
       <UniqueIdentifier>{75a14077-fd83-4d58-a19a-ea67d98d6952}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FBX">
+      <UniqueIdentifier>{d9d10b9e-c6ad-40a4-b827-8391aaa6d572}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -122,15 +116,6 @@
     </ClInclude>
     <ClInclude Include="Scripts\Camera\Camera.h">
       <Filter>Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="Scripts\FbxLoader\FbxLoader.h">
-      <Filter>FbxLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="Scripts\FBXModel\FBXModel.h">
-      <Filter>FBXModel</Filter>
-    </ClInclude>
-    <ClInclude Include="Scripts\FBXObject\FBXObject.h">
-      <Filter>FBXObject</Filter>
     </ClInclude>
     <ClInclude Include="Scripts\BaseDirectX\GameScene.h">
       <Filter>GameScene</Filter>
@@ -174,18 +159,6 @@
     <ClInclude Include="Scripts\Light\SpotLight.h">
       <Filter>Light</Filter>
     </ClInclude>
-    <ClInclude Include="Scripts\LoadStage\LoadStage.h">
-      <Filter>LoadStage</Filter>
-    </ClInclude>
-    <ClInclude Include="Scripts\LoadStage\StageObject.h">
-      <Filter>LoadStage</Filter>
-    </ClInclude>
-    <ClInclude Include="Scripts\MapLayout\MapLayout.h">
-      <Filter>MapLayout</Filter>
-    </ClInclude>
-    <ClInclude Include="Scripts\Particle\Particle3D.h">
-      <Filter>Particle</Filter>
-    </ClInclude>
     <ClInclude Include="Scripts\Player\Seling.h">
       <Filter>Player</Filter>
     </ClInclude>
@@ -228,29 +201,53 @@
     <ClInclude Include="Scripts\WindowsAPI\WinAPI.h">
       <Filter>WindowsAPI</Filter>
     </ClInclude>
-    <ClInclude Include="Scripts\Rewired\Rewired.h">
-      <Filter>BaseDirectx</Filter>
-    </ClInclude>
     <ClInclude Include="Scripts\MenuUI\MenuUI.h">
       <Filter>MenuUI</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseScriptableObject.h">
-      <Filter>BaseDirectx</Filter>
-    </ClInclude>
-    <ClInclude Include="Scripts\LoadStage\SpringBoard.h">
-      <Filter>LoadStage</Filter>
-    </ClInclude>
-    <ClInclude Include="Scripts\Particle\ParticleEdit.h">
-      <Filter>ParticleEdit</Filter>
     </ClInclude>
     <ClInclude Include="Scripts\BaseDirectX\FileLoad.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Scripts\KeyLog\KeyLog.h">
-      <Filter>KeyLog</Filter>
-    </ClInclude>
     <ClInclude Include="Scripts\json\json.h">
       <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\FBX\FbxLoader\FbxLoader.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\FBX\FBXModel\FBXModel.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\FBX\FBXObject\FBXObject.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Tools\KeyLog\KeyLog.h">
+      <Filter>KeyLog</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Tools\MapLayout\MapLayout.h">
+      <Filter>MapLayout</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Tools\LoadStage\LoadStage.h">
+      <Filter>LoadStage</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Tools\LoadStage\SpringBoard.h">
+      <Filter>LoadStage</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Tools\LoadStage\StageObject.h">
+      <Filter>LoadStage</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Tools\Particle\ParticleEdit.h">
+      <Filter>ParticleEdit</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Tools\Particle\Particle3D.h">
+      <Filter>Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Tools\Rewired\Rewired.h">
+      <Filter>BaseDirectx</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Tools\MapLayout\SceneMapLayout.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\imgui\ImGuizmo.h">
+      <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="Scripts\imgui\ImGuizmo.h">
       <Filter>imgui</Filter>
@@ -271,15 +268,6 @@
     </ClCompile>
     <ClCompile Include="Scripts\Camera\Camera.cpp">
       <Filter>Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="Scripts\FbxLoader\FbxLoader.cpp">
-      <Filter>FbxLoader</Filter>
-    </ClCompile>
-    <ClCompile Include="Scripts\FBXModel\FBXModel.cpp">
-      <Filter>FBXModel</Filter>
-    </ClCompile>
-    <ClCompile Include="Scripts\FBXObject\FBXObject.cpp">
-      <Filter>FBXObject</Filter>
     </ClCompile>
     <ClCompile Include="Scripts\BaseDirectX\GameScene.cpp">
       <Filter>GameScene</Filter>
@@ -310,18 +298,6 @@
     </ClCompile>
     <ClCompile Include="Scripts\Light\Light.cpp">
       <Filter>Light</Filter>
-    </ClCompile>
-    <ClCompile Include="Scripts\LoadStage\LoadStage.cpp">
-      <Filter>LoadStage</Filter>
-    </ClCompile>
-    <ClCompile Include="Scripts\LoadStage\StageObject.cpp">
-      <Filter>LoadStage</Filter>
-    </ClCompile>
-    <ClCompile Include="Scripts\MapLayout\MapLayout.cpp">
-      <Filter>MapLayout</Filter>
-    </ClCompile>
-    <ClCompile Include="Scripts\Particle\Particle3D.cpp">
-      <Filter>Particle</Filter>
     </ClCompile>
     <ClCompile Include="Scripts\Player\Seling.cpp">
       <Filter>Player</Filter>
@@ -368,20 +344,47 @@
     <ClCompile Include="Scripts\main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Scripts\Rewired\Rewired.cpp">
-      <Filter>BaseDirectx</Filter>
-    </ClCompile>
     <ClCompile Include="Scripts\MenuUI\MenuUI.cpp">
       <Filter>MenuUI</Filter>
     </ClCompile>
-    <ClCompile Include="Scripts\LoadStage\SpringBoard.cpp">
+    <ClCompile Include="Scripts\FBX\FbxLoader\FbxLoader.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\FBX\FBXModel\FBXModel.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\FBX\FBXObject\FBXObject.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Tools\KeyLog\KeyLog.cpp">
+      <Filter>KeyLog</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Tools\MapLayout\MapLayout.cpp">
+      <Filter>MapLayout</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Tools\LoadStage\LoadStage.cpp">
       <Filter>LoadStage</Filter>
     </ClCompile>
-    <ClCompile Include="Scripts\Particle\ParticleEdit.cpp">
+    <ClCompile Include="Scripts\Tools\LoadStage\SpringBoard.cpp">
+      <Filter>LoadStage</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Tools\LoadStage\StageObject.cpp">
+      <Filter>LoadStage</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Tools\Particle\ParticleEdit.cpp">
       <Filter>ParticleEdit</Filter>
     </ClCompile>
-    <ClCompile Include="Scripts\KeyLog\KeyLog.cpp">
-      <Filter>KeyLog</Filter>
+    <ClCompile Include="Scripts\Tools\Particle\Particle3D.cpp">
+      <Filter>Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Tools\Rewired\Rewired.cpp">
+      <Filter>BaseDirectx</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Tools\MapLayout\SceneMapLayout.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\imgui\ImGuizmo.cpp">
+      <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="Scripts\imgui\ImGuizmo.cpp">
       <Filter>imgui</Filter>

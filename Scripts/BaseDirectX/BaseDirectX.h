@@ -49,11 +49,15 @@ struct PeraVertex
 	XMFLOAT2 uv;
 };
 
-class BaseDirectX
+class BaseDirectX final
 {
-public:
+private:
 	BaseDirectX();
 	~BaseDirectX();
+public:
+	static BaseDirectX *GetInstance();
+	BaseDirectX(const BaseDirectX &obj) = delete;
+	BaseDirectX& operator=(const BaseDirectX& obj) = delete;
 	XMFLOAT4 backColor = {0.0f, 0.0f, 0.0f , 0.0f};
 	HRESULT result;
 	ComPtr<ID3D12Device> dev;
