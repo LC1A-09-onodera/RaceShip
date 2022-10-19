@@ -12,8 +12,6 @@ class Camera
 	XMFLOAT3 rotation = {0, 0.2f, -1.0f};
 	float targetR = 10.0f;
 
-	
-
 public:
 	static std::array<float, 2> angle;
 	//ˆÊ’u

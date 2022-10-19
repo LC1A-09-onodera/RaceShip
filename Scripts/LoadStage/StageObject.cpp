@@ -131,7 +131,7 @@ void WallModel::Update(BaseDirectX& baseDirectX, WallObjectEach* f_each, bool rC
 	{
 		this->each = *f_each;
 	}
-	CalcMatrix(this, &this->each);
+	CalcMatrix(this, &(*f_each));
 	SendVertex(baseDirectX);
 	ConstBufferDataB0* constMap0 = nullptr;
 	if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
@@ -165,7 +165,7 @@ void WallModel::Update(BaseDirectX& baseDirectX, WallObjectEach* f_each, Camera&
 {
 	this->each = *f_each;
 
-	CalcMatrix(this, &this->each);
+	CalcMatrix(this, &(*f_each));
 	SendVertex(baseDirectX);
 	ConstBufferDataB0* constMap0 = nullptr;
 	if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
@@ -192,7 +192,8 @@ void GoalModel::Update(BaseDirectX& baseDirectX, GoalObjectEach* f_each, bool rC
 	{
 		this->each = *f_each;
 	}
-	CalcMatrix(this, &this->each);
+	
+	CalcMatrix(this, &(*f_each));
 
 	SendVertex(baseDirectX);
 
@@ -229,7 +230,7 @@ void GoalModel::Update(BaseDirectX& baseDirectX, GoalObjectEach* f_each, Camera&
 {
 
 	this->each = *f_each;
-	CalcMatrix(this, &this->each);
+	CalcMatrix(this, &(*f_each));
 
 	SendVertex(baseDirectX);
 
@@ -280,7 +281,7 @@ void SpringBoradModel::Update(BaseDirectX& baseDirectX, SpringBoradEach* f_each,
 	{
 		this->each = *f_each;
 	}
-	CalcMatrix(this, &this->each);
+	CalcMatrix(this, &(*f_each));
 	SendVertex(baseDirectX);
 	ConstBufferDataB0* constMap0 = nullptr;
 	if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))
@@ -314,7 +315,7 @@ void SpringBoradModel::Update(BaseDirectX& baseDirectX, SpringBoradEach* f_each,
 {
 	this->each = *f_each;
 
-	CalcMatrix(this, &this->each);
+	CalcMatrix(this, &(*f_each));
 	SendVertex(baseDirectX);
 	ConstBufferDataB0* constMap0 = nullptr;
 	if (SUCCEEDED(this->each.constBuff0->Map(0, nullptr, (void**)&constMap0)))

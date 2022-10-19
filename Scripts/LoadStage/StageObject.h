@@ -31,7 +31,7 @@ class GoalObjectEach : public EachInfo
 class GoalModel : public Model
 {
 public:
-	void Update(BaseDirectX& baseDirectX, GoalObjectEach* f_each = nullptr, bool rCamera = false);
+	void Update(BaseDirectX& baseDirectX, GoalObjectEach* f_each , bool rCamera = false);
 	void Update(BaseDirectX& baseDirectX, GoalObjectEach* f_each ,Camera &f_camera);
 };
 

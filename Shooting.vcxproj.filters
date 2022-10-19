@@ -252,6 +252,9 @@
     <ClInclude Include="Scripts\json\json.h">
       <Filter>json</Filter>
     </ClInclude>
+    <ClInclude Include="Scripts\imgui\ImGuizmo.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scripts\3DModel\Model.cpp">
@@ -379,6 +382,9 @@
     </ClCompile>
     <ClCompile Include="Scripts\KeyLog\KeyLog.cpp">
       <Filter>KeyLog</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\imgui\ImGuizmo.cpp">
+      <Filter>imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

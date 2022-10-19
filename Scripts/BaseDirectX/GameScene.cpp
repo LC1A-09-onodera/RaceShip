@@ -511,7 +511,7 @@ void GameScene::PreWaterFaceDraw()
 	rSeling.Draw(baseDirectX, waterFace[0].m_camera.get());
 	//rWorld.Update(baseDirectX, &rWorld.each, waterFace[0].m_camera.get());
 	Draw3DObject(baseDirectX, rWorld);
-	StageObjects::Draw(baseDirectX, waterFace[0].m_camera.get());
+	StageObjects::Draw(baseDirectX, true);
 	ParticleManager::InitializeCamera(window_width, window_height, Cameras::rCamera.eye, Cameras::rCamera.target, Cameras::rCamera.up);
 	waterFace[0].waterModel.m_renderTarget.PostDraw(baseDirectX);
 	//ParticleControl::Draw(baseDirectX);

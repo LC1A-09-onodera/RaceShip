@@ -7,6 +7,8 @@
 #include "../BaseDirectX/BaseDirectX.h"
 #include "../Rewired/Rewired.h"
 #include "../Player/Seling.h"
+#include "ImGuizmo.h"
+
 using namespace Microsoft::WRL;
 using namespace DirectX;
 
@@ -39,12 +41,13 @@ private:
     static void CreateMenuBar();
     static void InspectorView();
     static void ParticleEdit();
+    static void GizmoUpdate(BaseDirectX& baseDirectX);
     static void FileFalse();
     static void EachInfo();
     static ComPtr<ID3D12DescriptorHeap> CreateDescrriptorHeapForImgui(BaseDirectX& baseDirectX);
     static ComPtr<ID3D12DescriptorHeap> GetHeapForImgui();
 public:
-    
+    static ImGuiWindowFlags gizmoWindowFlags;
     static void DrawImGui(BaseDirectX& baseDirectX);
     static void Init(BaseDirectX& baseDirectX);
     static void DebugUpdate();

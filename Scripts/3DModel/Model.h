@@ -107,6 +107,7 @@ public:
 	XMFLOAT3 rotation = { 0,0,0 };
 	XMVECTOR position = { 0,0,0 };
 	std::string m_eachName;
+	XMMATRIX matWorld = XMMatrixIdentity();
 	bool isActive = true;
 };
 
@@ -306,6 +307,7 @@ void CalcMatrix(T *model, U *eachInfo)
 	model->matWorld *= matScale;
 	model->matWorld *= matRot;
 	model->matWorld *= matTrans;
+	eachInfo->matWorld = model->matWorld;
 }
 void Set3DDraw(BaseDirectX& baseDirectX, const Model &model, bool triangle = true);
 void Draw3DObject(BaseDirectX& baseDirectX, const Model &model, bool triangle = true);
