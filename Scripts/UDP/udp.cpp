@@ -28,7 +28,7 @@ void UDPClass::Recive()
 {
 	char buf[100] = {};
 	memset(buf, 0, 100);
-	//int data_size = recv(sock, buf, 100, 0);
+	int data_size = recv(sock, buf, 100, 0);
 	tex = buf;
 }
 

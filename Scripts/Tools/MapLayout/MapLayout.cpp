@@ -169,7 +169,7 @@ void MapEditorObjects::Draw()
 
 void MapEditorObjects::SetObject(const XMFLOAT3& position, const XMFLOAT3& f_rotation)
 {
-	if (Imgui::isUseGizmo)
+	if (Imgui::GetInstance()->isUseGizmo)
 	{
 		return;
 	}
@@ -189,6 +189,21 @@ void MapEditorObjects::SetObject(const XMFLOAT3& position, const XMFLOAT3& f_rot
 	object.Init(position);
 	object.piece.rotation = f_rotation;
 	lineMousePos = position;
+	
+	//--------------------
+	XMMATRIX matScale, matRot, matTrans;
+	matScale = XMMatrixScaling(object.piece.scale.x, object.piece.scale.y, object.piece.scale.z);
+	matRot = XMMatrixIdentity();
+	matRot *= XMMatrixRotationZ(XMConvertToRadians(object.piece.rotation.x));
+	matRot *= XMMatrixRotationX(XMConvertToRadians(object.piece.rotation.y));
+	matRot *= XMMatrixRotationY(XMConvertToRadians(object.piece.rotation.z));
+	matTrans = XMMatrixTranslation(object.piece.position.m128_f32[0], object.piece.position.m128_f32[1], object.piece.position.m128_f32[2]);
+	object.piece.matWorld = XMMatrixIdentity();
+	object.piece.matWorld *= matScale;
+	object.piece.matWorld *= matRot;
+	object.piece.matWorld *= matTrans;
+	//--------------------
+	Imgui::GetInstance()->SetGizmoObject(object.piece);
 
 	//オブジェクトの配置
 	if (activeType == MapObjects::WALL)
@@ -215,7 +230,6 @@ void MapEditorObjects::SetObject(const XMFLOAT3& position, const XMFLOAT3& f_rot
 	{
 		player = object;
 	}
-	
 }
 
 void MapEditorObjects::SetObjectLine(const XMFLOAT3& position)
@@ -260,8 +274,14 @@ bool MapEditorObjects::ObjectCollision(const XMFLOAT3& f_mousePos)
 		{
 			if (Input::MouseTrigger(MouseButton::LBUTTON))
 			{
-				Imgui::SetGizmoObject(itr->piece);
-				//wall.erase(itr);
+				if (Imgui::GetInstance()->isUseGizmo)
+				{
+					Imgui::GetInstance()->SetGizmoObject(itr->piece);
+				}
+				else
+				{
+					wall.erase(itr);
+				}
 			}
 			else if (Input::MouseTrigger(MouseButton::RBUTTON))
 			{

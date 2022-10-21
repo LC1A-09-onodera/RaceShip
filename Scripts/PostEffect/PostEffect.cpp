@@ -313,7 +313,7 @@ void PostEffects::Init()
 
 void PostEffects::PreDraw()
 {
-	type = (PostEffectType)Imgui::effectType;
+	type = (PostEffectType)Imgui::GetInstance()->effectType;
 	if (type == PostEffectType::Normal)
 	{
 		postNormal.PreDraw();
@@ -338,7 +338,7 @@ void PostEffects::PreDraw()
 
 void PostEffects::Draw()
 {
-	if (Imgui::effectType < 0) return;
+	if (Imgui::GetInstance()->effectType < 0) return;
 	if (type == PostEffectType::Normal)
 	{
 		postNormal.Draw();

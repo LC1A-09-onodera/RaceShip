@@ -13,21 +13,21 @@ namespace Editors
 	void ParticleExport::CreatePartileFile(const char* f_fileName)
 	{
 		ParticleData particle;
-		particle.acc = { Imgui::particleAcc[0], Imgui::particleAcc[1], Imgui::particleAcc[2] };
-		particle.count = Imgui::particleCount;
-		particle.emitterLife = Imgui::emitterLife;
-		particle.endPosition = { Imgui::particleEndPosition[0], Imgui::particleEndPosition[1], Imgui::particleEndPosition[2] };
-		particle.endsize = Imgui::particleEndSize;
+		particle.acc = { Imgui::GetInstance()->particleAcc[0], Imgui::GetInstance()->particleAcc[1], Imgui::GetInstance()->particleAcc[2] };
+		particle.count = Imgui::GetInstance()->particleCount;
+		particle.emitterLife = Imgui::GetInstance()->emitterLife;
+		particle.endPosition = { Imgui::GetInstance()->particleEndPosition[0], Imgui::GetInstance()->particleEndPosition[1], Imgui::GetInstance()->particleEndPosition[2] };
+		particle.endsize = Imgui::GetInstance()->particleEndSize;
 		particle.nowLife = 0;
-		particle.nowSize = Imgui::particleStartSize;
-		particle.particleLife = Imgui::particleLife;
-		//particle.particleSpanTimer = Imgui::particleSpornSpan;
-		particle.speed = { Imgui::particleSpeed[0],Imgui::particleSpeed[1],Imgui::particleSpeed[2] };
-		particle.speedDiff = { static_cast<float>(Imgui::particleSpeedDiff[0]), static_cast<float>(Imgui::particleSpeedDiff[1]) , static_cast<float>(Imgui::particleSpeedDiff[2]) };
-		particle.spornArea = { static_cast<float>(Imgui::particleSpornArea[0]), static_cast<float>(Imgui::particleSpornArea[1]) , static_cast<float>(Imgui::particleSpornArea[2]) };
-		particle.spornSpan = Imgui::particleSpornSpan;
-		particle.type = Imgui::particleType;
-		particle.startSize = Imgui::particleStartSize;
+		particle.nowSize = Imgui::GetInstance()->particleStartSize;
+		particle.particleLife = Imgui::GetInstance()->particleLife;
+		//particle.particleSpanTimer = Imgui::GetInstance()->particleSpornSpan;
+		particle.speed = { Imgui::GetInstance()->particleSpeed[0],Imgui::GetInstance()->particleSpeed[1],Imgui::GetInstance()->particleSpeed[2] };
+		particle.speedDiff = { static_cast<float>(Imgui::GetInstance()->particleSpeedDiff[0]), static_cast<float>(Imgui::GetInstance()->particleSpeedDiff[1]) , static_cast<float>(Imgui::GetInstance()->particleSpeedDiff[2]) };
+		particle.spornArea = { static_cast<float>(Imgui::GetInstance()->particleSpornArea[0]), static_cast<float>(Imgui::GetInstance()->particleSpornArea[1]) , static_cast<float>(Imgui::GetInstance()->particleSpornArea[2]) };
+		particle.spornSpan = Imgui::GetInstance()->particleSpornSpan;
+		particle.type = Imgui::GetInstance()->particleType;
+		particle.startSize = Imgui::GetInstance()->particleStartSize;
 		string allData = "";
 		json js;
 		particle.ToJson(js);

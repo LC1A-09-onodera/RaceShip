@@ -85,6 +85,9 @@
     <Filter Include="FBX">
       <UniqueIdentifier>{d9d10b9e-c6ad-40a4-b827-8391aaa6d572}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BehaviorTree">
+      <UniqueIdentifier>{fd465234-9cea-4a6e-b534-e874cde4b000}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scripts\3DModel\Model.h">
@@ -251,6 +254,9 @@
     </ClInclude>
     <ClInclude Include="Scripts\imgui\ImGuizmo.h">
       <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\BihaviorTree\BehaviorTree.h">
+      <Filter>BehaviorTree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

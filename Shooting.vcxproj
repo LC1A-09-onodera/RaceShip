@@ -178,6 +178,7 @@
     <ClInclude Include="Scripts\BaseDirectX\Library.h" />
     <ClInclude Include="Scripts\BaseDirectX\ResouceBarrier.h" />
     <ClInclude Include="Scripts\BaseDirectX\viewport.h" />
+    <ClInclude Include="Scripts\BihaviorTree\BehaviorTree.h" />
     <ClInclude Include="Scripts\Camera\Camera.h" />
     <ClInclude Include="Scripts\FBX\FbxLoader\FbxLoader.h" />
     <ClInclude Include="Scripts\FBX\FBXModel\FBXModel.h" />

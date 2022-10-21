@@ -1269,54 +1269,54 @@ void ParticleIndi::cubeParticle(const DirectX::XMFLOAT3 emitterPosition, XMFLOAT
 
 void ParticleIndi::EditorParticle()
 {
-	if (editorSpanTimer < Imgui::particleSpornSpan)
+	if (editorSpanTimer < Imgui::GetInstance()->particleSpornSpan)
 	{
 		editorSpanTimer++;
 		return;
 	}
 	editorSpanTimer = 0;
-	if (Imgui::particleType == 0)
+	if (Imgui::GetInstance()->particleType == 0)
 	{
-		for (int i = 0; i < Imgui::particleCount; i++)
+		for (int i = 0; i < Imgui::GetInstance()->particleCount; i++)
 		{
 			editorParticles.emplace_front();
 			ParticleEditorElement& p = editorParticles.front();
 			int random = rand();
-			p.position = { Imgui::emitterPosition[0] + static_cast<float>(rand() % static_cast<int>(Imgui::particleSpornArea[0] * 2 + 1) - Imgui::particleSpornArea[0]),
-						   Imgui::emitterPosition[1] + static_cast<float>(rand() % static_cast<int>(Imgui::particleSpornArea[1] * 2 + 1) - Imgui::particleSpornArea[1]), Imgui::emitterPosition[2] + static_cast<float>(rand() % static_cast<int>(Imgui::particleSpornArea[2] * 2 + 1) - Imgui::particleSpornArea[2]) };
+			p.position = { Imgui::GetInstance()->emitterPosition[0] + static_cast<float>(rand() % static_cast<int>(Imgui::GetInstance()->particleSpornArea[0] * 2 + 1) - Imgui::GetInstance()->particleSpornArea[0]),
+						   Imgui::GetInstance()->emitterPosition[1] + static_cast<float>(rand() % static_cast<int>(Imgui::GetInstance()->particleSpornArea[1] * 2 + 1) - Imgui::GetInstance()->particleSpornArea[1]), Imgui::GetInstance()->emitterPosition[2] + static_cast<float>(rand() % static_cast<int>(Imgui::GetInstance()->particleSpornArea[2] * 2 + 1) - Imgui::GetInstance()->particleSpornArea[2]) };
 			if (random % 2 == 0)
 			{
-				p.velocity = { Imgui::particleSpeed[0] + static_cast<float>((random % (Imgui::particleSpeedDiff[0] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[0])) / 10.0f, Imgui::particleSpeed[1] + static_cast<float>((random % (Imgui::particleSpeedDiff[1] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[1])) / 10.0f,
-							   Imgui::particleSpeed[2] + static_cast<float>((random % (Imgui::particleSpeedDiff[2] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[2])) / 10.0f };
+				p.velocity = { Imgui::GetInstance()->particleSpeed[0] + static_cast<float>((random % (Imgui::GetInstance()->particleSpeedDiff[0] * 2 + 1)) - static_cast<float>(Imgui::GetInstance()->particleSpeedDiff[0])) / 10.0f, Imgui::GetInstance()->particleSpeed[1] + static_cast<float>((random % (Imgui::GetInstance()->particleSpeedDiff[1] * 2 + 1)) - static_cast<float>(Imgui::GetInstance()->particleSpeedDiff[1])) / 10.0f,
+							   Imgui::GetInstance()->particleSpeed[2] + static_cast<float>((random % (Imgui::GetInstance()->particleSpeedDiff[2] * 2 + 1)) - static_cast<float>(Imgui::GetInstance()->particleSpeedDiff[2])) / 10.0f };
 			}
 			else
 			{
-				p.velocity = { Imgui::particleSpeed[0] - static_cast<float>((random % (Imgui::particleSpeedDiff[0] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[0])) / 10.0f, Imgui::particleSpeed[1] - static_cast<float>((random % (Imgui::particleSpeedDiff[1] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[1])) / 10.0f,
-							   Imgui::particleSpeed[2] - static_cast<float>((random % (Imgui::particleSpeedDiff[2] * 2 + 1)) - static_cast<float>(Imgui::particleSpeedDiff[2])) / 10.0f };
+				p.velocity = { Imgui::GetInstance()->particleSpeed[0] - static_cast<float>((random % (Imgui::GetInstance()->particleSpeedDiff[0] * 2 + 1)) - static_cast<float>(Imgui::GetInstance()->particleSpeedDiff[0])) / 10.0f, Imgui::GetInstance()->particleSpeed[1] - static_cast<float>((random % (Imgui::GetInstance()->particleSpeedDiff[1] * 2 + 1)) - static_cast<float>(Imgui::GetInstance()->particleSpeedDiff[1])) / 10.0f,
+							   Imgui::GetInstance()->particleSpeed[2] - static_cast<float>((random % (Imgui::GetInstance()->particleSpeedDiff[2] * 2 + 1)) - static_cast<float>(Imgui::GetInstance()->particleSpeedDiff[2])) / 10.0f };
 			}
-			p.accel = { Imgui::particleAcc[0], Imgui::particleAcc[1], Imgui::particleAcc[2] };
-			p.num_frame = Imgui::particleLife;
-			p.s_scale = Imgui::particleStartSize;
-			p.e_scale = Imgui::particleEndSize;
+			p.accel = { Imgui::GetInstance()->particleAcc[0], Imgui::GetInstance()->particleAcc[1], Imgui::GetInstance()->particleAcc[2] };
+			p.num_frame = Imgui::GetInstance()->particleLife;
+			p.s_scale = Imgui::GetInstance()->particleStartSize;
+			p.e_scale = Imgui::GetInstance()->particleEndSize;
 			p.scale = p.s_scale;
-			p.m_type = Imgui::particleType;
+			p.m_type = Imgui::GetInstance()->particleType;
 		}
 	}
-	if (Imgui::particleType == 1)
+	if (Imgui::GetInstance()->particleType == 1)
 	{
-		for (int i = 0; i < Imgui::particleCount; i++)
+		for (int i = 0; i < Imgui::GetInstance()->particleCount; i++)
 		{
 			editorParticles.emplace_front();
 			ParticleEditorElement& p = editorParticles.front();
-			p.position = { static_cast<float>(rand() % static_cast<int>(Imgui::particleSpornArea[0] * 2 + 1) - Imgui::particleSpornArea[0]),
-						   static_cast<float>(rand() % static_cast<int>(Imgui::particleSpornArea[1] * 2 + 1) - Imgui::particleSpornArea[1]), static_cast<float>(rand() % static_cast<int>(Imgui::particleSpornArea[2] * 2 + 1) - Imgui::particleSpornArea[2]) };
+			p.position = { static_cast<float>(rand() % static_cast<int>(Imgui::GetInstance()->particleSpornArea[0] * 2 + 1) - Imgui::GetInstance()->particleSpornArea[0]),
+						   static_cast<float>(rand() % static_cast<int>(Imgui::GetInstance()->particleSpornArea[1] * 2 + 1) - Imgui::GetInstance()->particleSpornArea[1]), static_cast<float>(rand() % static_cast<int>(Imgui::GetInstance()->particleSpornArea[2] * 2 + 1) - Imgui::GetInstance()->particleSpornArea[2]) };
 			p.startPos = p.position;
-			p.endPos = { -Imgui::particleEndPosition[0], Imgui::particleEndPosition[1], Imgui::particleEndPosition[2] };
-			p.num_frame = Imgui::particleLife;
-			p.s_scale = Imgui::particleStartSize;
-			p.e_scale = Imgui::particleEndSize;
+			p.endPos = { -Imgui::GetInstance()->particleEndPosition[0], Imgui::GetInstance()->particleEndPosition[1], Imgui::GetInstance()->particleEndPosition[2] };
+			p.num_frame = Imgui::GetInstance()->particleLife;
+			p.s_scale = Imgui::GetInstance()->particleStartSize;
+			p.e_scale = Imgui::GetInstance()->particleEndSize;
 			p.scale = p.s_scale;
-			p.m_type = Imgui::particleType;
+			p.m_type = Imgui::GetInstance()->particleType;
 		}
 	}
 }
@@ -1336,37 +1336,37 @@ void ParticleIndi::EditorUpdate(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up, bool
 	{
 		//フレームの増加
 		it->frame++;
-		if (it->m_type == Imgui::ParticleType::Normal)
+		if (it->m_type == Imgui::GetInstance()->ParticleType::Normal)
 		{
 			//速度に加速度を追加
 			it->velocity = it->velocity + it->accel;
 			//移動
 			it->position = it->position + it->velocity;
 		}
-		else if (it->m_type == Imgui::ParticleType::Easeeing)
+		else if (it->m_type == Imgui::GetInstance()->ParticleType::Easeeing)
 		{
-			if (Imgui::particleEaseType == Imgui::ParticleEaseType::InQuad)
+			if (Imgui::GetInstance()->particleEaseType == Imgui::GetInstance()->ParticleEaseType::InQuad)
 			{
 				it->position = ShlomonMath::EaseInQuad(it->startPos, it->endPos, static_cast<float>(it->frame) / static_cast<float>(it->num_frame));
 			}
-			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::OutQuad)
+			else if (Imgui::GetInstance()->particleEaseType == Imgui::GetInstance()->ParticleEaseType::OutQuad)
 			{
 				it->position = ShlomonMath::EaseOutQuad(it->startPos, it->endPos, static_cast<float>(it->frame) / static_cast<float>(it->num_frame));
 			}
-			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::InOutQuad)
+			else if (Imgui::GetInstance()->particleEaseType == Imgui::GetInstance()->ParticleEaseType::InOutQuad)
 			{
 				it->position = ShlomonMath::EaseInOutQuad(it->startPos, it->endPos, static_cast<float>(it->frame) / static_cast<float>(it->num_frame));
 			}
-			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::InBack)
+			else if (Imgui::GetInstance()->particleEaseType == Imgui::GetInstance()->ParticleEaseType::InBack)
 			{
 				it->position = ShlomonMath::EaseInBack(it->startPos, it->endPos, static_cast<float>(it->frame) / static_cast<float>(it->num_frame));
 			}
-			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::OutBack)
+			else if (Imgui::GetInstance()->particleEaseType == Imgui::GetInstance()->ParticleEaseType::OutBack)
 			{
 				it->position = ShlomonMath::EaseOutBack(it->startPos, it->endPos, static_cast<float>(it->frame) / static_cast<float>(it->num_frame));
 			}
 		}
-		else if (it->m_type == Imgui::ParticleType::Lerp)
+		else if (it->m_type == Imgui::GetInstance()->ParticleType::Lerp)
 		{
 
 		}
@@ -1456,7 +1456,7 @@ void ParticleIndi::CustomUpdate()
 	{
 		//フレームの増加
 		it->nowLife++;
-		if (it->type == Imgui::ParticleType::Normal)
+		if (it->type == Imgui::GetInstance()->ParticleType::Normal)
 		{
 			//速度に加速度を追加
 			it->speed[0] = it->speed[0] + it->acc[0];
@@ -1467,38 +1467,38 @@ void ParticleIndi::CustomUpdate()
 			it->position[1] = it->position[1] + it->speed[1];
 			it->position[2] = it->position[2] + it->speed[2];
 		}
-		else if (it->type == Imgui::ParticleType::Easeeing)
+		else if (it->type == Imgui::GetInstance()->ParticleType::Easeeing)
 		{
 			XMFLOAT3 startPos = { it->startPosition[0],it->startPosition[1] ,it->startPosition[2] };
 			XMFLOAT3 endPos = { it->endPosition[0],it->endPosition[1] ,it->endPosition[2] };
 			XMFLOAT3 pos;
-			if (Imgui::particleEaseType == Imgui::ParticleEaseType::InQuad)
+			if (Imgui::GetInstance()->particleEaseType == Imgui::GetInstance()->ParticleEaseType::InQuad)
 			{
 				pos = ShlomonMath::EaseInQuad(startPos, endPos, static_cast<float>(it->nowLife) / static_cast<float>(it->particleLife));
 				it->position = { pos.x, pos.y, pos.z };
 			}
-			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::OutQuad)
+			else if (Imgui::GetInstance()->particleEaseType == Imgui::GetInstance()->ParticleEaseType::OutQuad)
 			{
 				pos = ShlomonMath::EaseOutQuad(startPos, endPos, static_cast<float>(it->nowLife) / static_cast<float>(it->particleLife));
 				it->position = { pos.x, pos.y, pos.z };
 			}
-			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::InOutQuad)
+			else if (Imgui::GetInstance()->particleEaseType == Imgui::GetInstance()->ParticleEaseType::InOutQuad)
 			{
 				pos = ShlomonMath::EaseInOutQuad(startPos, endPos, static_cast<float>(it->nowLife) / static_cast<float>(it->particleLife));
 				it->position = { pos.x, pos.y, pos.z };
 			}
-			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::InBack)
+			else if (Imgui::GetInstance()->particleEaseType == Imgui::GetInstance()->ParticleEaseType::InBack)
 			{
 				pos = ShlomonMath::EaseInBack(startPos, endPos, static_cast<float>(it->nowLife) / static_cast<float>(it->particleLife));
 				it->position = { pos.x, pos.y, pos.z };
 			}
-			else if (Imgui::particleEaseType == Imgui::ParticleEaseType::OutBack)
+			else if (Imgui::GetInstance()->particleEaseType == Imgui::GetInstance()->ParticleEaseType::OutBack)
 			{
 				pos = ShlomonMath::EaseOutBack(startPos, endPos, static_cast<float>(it->nowLife) / static_cast<float>(it->particleLife));
 				it->position = { pos.x, pos.y, pos.z };
 			}
 		}
-		else if (it->type == Imgui::ParticleType::Lerp)
+		else if (it->type == Imgui::GetInstance()->ParticleType::Lerp)
 		{
 
 		}

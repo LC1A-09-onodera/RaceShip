@@ -9,6 +9,12 @@ UINT64 KeyLog::playBackTimer = 0;
 list<LogData<KeyCode>> KeyLog::loadKeyList;
 list<KeyCode> KeyLog::activeKeyList;
 list<list<KeyCode>::iterator> KeyLog::deleteKeyList;
+
+string PlayerPositionLog::_fileName;
+list<LogData<XMFLOAT3>> PlayerPositionLog::_posLogs;
+list<LogData<XMFLOAT3>> PlayerPositionLog::_loadList;
+UINT64 PlayerPositionLog::timer;
+UINT64 PlayerPositionLog::playBackTimer;
 void KeyLog::Recording()
 {
 	timer++;
@@ -57,12 +63,6 @@ void KeyLog::RecordingInit()
 
 void KeyLog::Playback()
 {
-	
-		for (auto activeItr = activeKeyList.begin(); activeItr != activeKeyList.end(); ++activeItr)
-		{
-			deleteKeyList.push_back(activeItr);
-		}
-	
 	//activeKeyÇé¿ç€ÇÃì¸óÕÇ…ìKâûÇ≥ÇπÇÈ
 	for (auto loadItr = loadKeyList.begin(); loadItr != loadKeyList.end(); ++loadItr)
 	{
@@ -96,6 +96,7 @@ void KeyLog::Playback()
 		int keyNum = static_cast<int>(*activeItr);
 		Input::keys[keyNum] = (BYTE)true;
 	}
+	playBackTimer++;
 }
 
 void KeyLog::PlaybackInit()
@@ -204,4 +205,57 @@ void KeyLog::SaveLog()
 void KeyLog::SetFileName(string name)
 {
 	_fileName = name;
+}
+
+void PlayerPositionLog::Recording(XMFLOAT3 &pos)
+{
+	timer++;
+	if (Rewired::KeyCodeString::GetAnyTriggerInput() || Rewired::KeyCodeString::GetAnyReleaseInput())
+	{
+		LogData<XMFLOAT3>* log = new LogData<XMFLOAT3>();
+		if (Rewired::KeyCodeString::GetAnyTriggerInput())
+		{
+			log->Init(pos, timer, true);
+			_posLogs.push_back(*log);
+		}
+	}
+}
+
+void PlayerPositionLog::RecordingInit()
+{
+	_posLogs.clear();
+	timer = 0;
+}
+
+void PlayerPositionLog::Playback(EachInfo& each)
+{
+	//activeKeyÇé¿ç€ÇÃì¸óÕÇ…ìKâûÇ≥ÇπÇÈ
+	for (auto loadItr = _loadList.begin(); loadItr != _loadList.end(); ++loadItr)
+	{
+		if (loadItr->GetFrame() == playBackTimer)
+		{
+			each.position.m128_f32[0] = loadItr->GetKey().x;
+			each.position.m128_f32[1] = loadItr->GetKey().y;
+			each.position.m128_f32[2] = loadItr->GetKey().z;
+			_deleteList.push_back(loadItr);
+		}
+	}
+	playBackTimer++;
+	if (_deleteList.size() < 1) return;
+	for (auto deleteItr = _deleteList.begin(); deleteItr != _deleteList.end(); ++deleteItr)
+	{
+
+	}
+}
+
+void PlayerPositionLog::PlaybackInit()
+{
+}
+
+void PlayerPositionLog::SaveLog()
+{
+}
+
+void PlayerPositionLog::SetFileName(string name)
+{
 }

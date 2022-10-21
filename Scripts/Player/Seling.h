@@ -63,3 +63,4 @@ public:
 	Rewired::RewiredKeys lookToRightKey;
 	Rewired::RewiredKeys lookToLeftKey;
 };
+

@@ -105,6 +105,6 @@ bool Input::Mouse(MouseButton mouseinput)
 void Input::OnMouseWheel()
 {
 	mouseWheel = GET_WHEEL_DELTA_WPARAM(WindowsAPI::msg.wParam) / WHEEL_DELTA;
-	Imgui::mouseWheel = mouseWheel;
+	Imgui::GetInstance()->mouseWheel = mouseWheel;
 	WindowsAPI::msg.wParam = 1;
 }

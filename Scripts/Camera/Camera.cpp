@@ -10,14 +10,14 @@ float Camera::editorCameraLength = 50.0f;
 std::array<float, 2> Camera::angle = {0, 0};
 void Camera::CameraTargetRot()
 {
-	isControl = Imgui::CameraControl;
+	isControl = Imgui::GetInstance()->CameraControl;
 	if (isControl)
 	{
-		targetR = Imgui::CameraR;
-		rotationXZ = Imgui::CameraRotation;
+		targetR = Imgui::GetInstance()->CameraR;
+		rotationXZ = Imgui::GetInstance()->CameraRotation;
 		rotation.x = ShlomonMath::Cos(rotationXZ);
 		rotation.z = ShlomonMath::Sin(rotationXZ);
-		rotation.y = Imgui::CameraHigh;
+		rotation.y = Imgui::GetInstance()->CameraHigh;
 		Normalize(rotation);
 		eye.x = target.x + rotation.x * targetR;
 		eye.y = target.y + rotation.y * targetR;

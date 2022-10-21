@@ -51,7 +51,7 @@ void Seling::Init()
 	m_isLanding = false;
 	XMFLOAT3 easeGoal(selingModel.each.rotation.x, selingModel.each.rotation.y, angle);
 	selingModel.each.rotation = ShlomonMath::EaseInQuad(selingModel.each.rotation, easeGoal, 1.0f);
-	Imgui::CameraRotation = -selingModel.each.rotation.z + 270.0f;
+	Imgui::GetInstance()->CameraRotation = -selingModel.each.rotation.z + 270.0f;
 	springBorad.clear();
 	for (auto itr = LoadStage::springBoradPosition.begin(); itr != LoadStage::springBoradPosition.end(); ++itr)
 	{
@@ -207,7 +207,7 @@ void Seling::Move()
 
 	XMFLOAT3 easeGoal(selingModel.each.rotation.x, selingModel.each.rotation.y, angle);
 	selingModel.each.rotation = ShlomonMath::EaseInQuad(selingModel.each.rotation, easeGoal, 0.3f);
-	Imgui::CameraRotation = -selingModel.each.rotation.z + 270.0f;
+	Imgui::GetInstance()->CameraRotation = -selingModel.each.rotation.z + 270.0f;
 }
 
 void Seling::HitWall()
