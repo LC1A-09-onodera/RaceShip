@@ -6,6 +6,10 @@
 #include <dxgi1_6.h>
 #include <DirectXMath.h>
 #include <d3dcompiler.h>
+#pragma warning(push)
+#pragma warning(disable:26812)
+#pragma warning(disable:26813)
+#pragma warning(disable:6001)
 #include <DirectXTex.h>
 #include "../BaseDirectX/Input.h"
 #include <wrl.h>
@@ -35,7 +39,7 @@ public:
 	static const int SRVCount = 512;//テクスチャ最大値
 	static ComPtr<ID3D12Resource> TexBuff[SRVCount];
 
-	void Init(BaseDirectX& baseDirectX, ComPtr<ID3DBlob> vsBlob, ComPtr<ID3DBlob> psBlob);
+	void Init( ComPtr<ID3DBlob> vsBlob, ComPtr<ID3DBlob> psBlob);
 	HRESULT LoadSprtieGraph(const wchar_t *filename);
 	SpriteCommon();
 };

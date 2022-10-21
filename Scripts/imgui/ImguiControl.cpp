@@ -1,4 +1,4 @@
-#include "ImguiControl.h"
+﻿#include "ImguiControl.h"
 #include "../imgui/imgui.h"
 #pragma warning(push)
 #pragma warning(disable:26451)
@@ -6,74 +6,32 @@
 #pragma warning(pop)
 #include "../imgui/imgui_impl_win32.h"
 #include "../Camera/Camera.h"
-#include "../LoadStage/StageObject.h"
+#include "../Tools/LoadStage/StageObject.h"
 #pragma warning(push)
 #pragma warning(disable:4505)
 #include "../BaseDirectX/DX12operator.h"
 #pragma warning(pop)
-#include "../MapLayout/MapLayout.h"
+#include "../Tools/MapLayout/MapLayout.h"
 #include <sstream>
 #include <fstream>
 #include <stdarg.h>
-#include "../3DModel/Model.h"
 #include "../Player/Seling.h"
-#include "../Particle/ParticleEdit.h"
+#include "../Tools/Particle/ParticleEdit.h"
+#include "../Tools/KeyLog/KeyLog.h"
 
 //#define _DEBUG
 
-ComPtr<ID3D12DescriptorHeap> Imgui::imguiDescHeap;
-int Imgui::effectType = -1;
-Imgui::ImguiType Imgui::tab;
-Imgui::DebugType Imgui::debugType;
-int Imgui::sceneNum = 0;
-ImguiEnum Imgui::iEnum(5, "a", "sample2", "sample3", "sample4", "player");
-bool Imgui::isActive = true;
-float Imgui::volume = 1.0f;
-float Imgui::CameraR = 25.0f;
-float Imgui::CameraRotation = 270.0f;
-float Imgui::CameraHigh = 0.4f;
-bool Imgui::CameraControl = true;
-int Imgui::useWaterNum = 0;
-
-int Imgui::mouseWheel;
-bool Imgui::touchedImgui = false;
-
-int Imgui::oldSceneNum;
-bool Imgui::isSceneChange = false;
-
-int Imgui::exportStageNum = 1;
-int Imgui::LoadStageNum = 1;
-bool Imgui::isExport = false;
-bool Imgui::isLoadstage = false;
-bool Imgui::isDeleteObjects = false;
-bool Imgui::isFileOutputFalse = false;
-int Imgui::radioMode = 0;
-bool Imgui::isMulchthled = true;
-
-list<Rewired::RewiredKeys> Imgui::keyList;
-char Imgui::buf[256] = {};
-const char* Imgui::fileName = " ";
-
-int Imgui::particleType = ParticleType::Normal;
-
-int Imgui::particleCount = 1;
-float Imgui::particleSpeed[3] = { 1.0f ,0 , 0 };
-int Imgui::particleSpeedDiff[3] = { 0, 0 ,0 };
-float Imgui::particleAcc[3] = { -0.1f ,0 , 0 };
-float Imgui::particleStartPosition[3] = { 0 ,0 , 0 };
-float Imgui::particleEndPosition[3] = { 0 ,0 , 0 };
-float Imgui::particleEaseSpeed[3] = { 0 ,0 , 0 };
-float Imgui::particleHalfwayPoint[3] = { 0 ,0 , 0 };
-float Imgui::particleStartSize = 1.0f;
-float Imgui::particleEndSize = 0;
-int Imgui::particleLife = 60;
-int Imgui::particleSpornArea[3] = { 1, 1, 1 };
-int Imgui::particleSpornSpan;
-int Imgui::particleEaseType = ParticleEaseType::InQuad;
+using namespace Editors;
+Imgui::Imgui()
+{
+}
+Imgui::~Imgui()
+{
+}
 
 void Imgui::RewiredUpdate()
 {
-    //���W�I�{�^���p
+    //ラジオボタン用
     if (ImGui::Button("ReloadRewireds"))
     {
         Rewired::RewiredContainer::ReloadRewired();
@@ -82,7 +40,7 @@ void Imgui::RewiredUpdate()
     int count = 0;
     for (auto itr = Rewired::RewiredContainer::rewiredsC.begin(); itr != Rewired::RewiredContainer::rewiredsC.end(); ++itr)
     {
-        //�t�@�C�����̋L��
+        //ファイル名の記載
         ImGui::RadioButton(itr->GetFileName().c_str(), &radioMode, count);
         count++;
     }
@@ -101,7 +59,7 @@ void Imgui::ShowRewiredElement()
     {
         itr++;
     }
-    //�L�[�{�[�h�̂̐ݒ肳��Ă���l
+    //キーボードのの設定されている値
     if (itr->keys.size() > 0)
     {
         for (auto keyListItr = Rewired::KeyCodeString::mKeyboardKeys.begin(); keyListItr != Rewired::KeyCodeString::mKeyboardKeys.end(); ++keyListItr)
@@ -116,7 +74,7 @@ void Imgui::ShowRewiredElement()
             }
         }
     }
-    //XBoxPad�̐ݒ肳��Ă���l
+    //XBoxPadの設定されている値
     if (itr->padKeys.size() > 0)
     {
         for (auto keyListItr = Rewired::KeyCodeString::mPadKeys.begin(); keyListItr != Rewired::KeyCodeString::mPadKeys.end(); ++keyListItr)
@@ -158,7 +116,7 @@ void Imgui::ShowRewiredElement()
     }
 }
 
-ComPtr<ID3D12DescriptorHeap> Imgui::CreateDescrriptorHeapForImgui(BaseDirectX& baseDirectX)
+ComPtr<ID3D12DescriptorHeap> Imgui::CreateDescrriptorHeapForImgui()
 {
     ComPtr<ID3D12DescriptorHeap> ret;
     D3D12_DESCRIPTOR_HEAP_DESC desc = {};
@@ -166,7 +124,7 @@ ComPtr<ID3D12DescriptorHeap> Imgui::CreateDescrriptorHeapForImgui(BaseDirectX& b
     desc.NodeMask = 0;
     desc.NumDescriptors = 1;
     desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-    baseDirectX.dev->CreateDescriptorHeap(&desc, IID_PPV_ARGS(ret.ReleaseAndGetAddressOf()));
+    BaseDirectX::GetInstance()->dev->CreateDescriptorHeap(&desc, IID_PPV_ARGS(ret.ReleaseAndGetAddressOf()));
     return ret;
 }
 
@@ -175,57 +133,230 @@ ComPtr<ID3D12DescriptorHeap> Imgui::GetHeapForImgui()
     return imguiDescHeap;
 }
 
-void Imgui::DrawImGui(BaseDirectX& baseDirectX)
+Imgui* Imgui::GetInstance()
 {
-    //#ifdef DEBUG
-    if (!isActive) return;
+    static Imgui imgui;
+    return &imgui;
+}
 
+void Imgui::DrawImGui()
+{
+    if (!isActive) return;
     ImGui_ImplDX12_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::Begin("InfomationAndEdit", nullptr, ImGuiWindowFlags_MenuBar);//�E�B���h�E�̖��O
-    ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
+    //GizmoDraw
+    if (isUseGizmo)
+    {
+        //ウィンドウサイズを画面全体に
+        ImGui::SetNextWindowSize(ImVec2(static_cast<float>(window_width), static_cast<float>(window_height)), ImGuiCond_Appearing);
+        //座標を左上に
+        ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Appearing);
+        //背景色を透明に
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, (ImVec4)ImColor(0.0f, 0.0f, 0.0f, 0.0f));
+        //
+        gizmoWindowFlags |= ImGuiWindowFlags_NoBackground;
+        gizmoWindowFlags |= ImGuiWindowFlags_NoCollapse;
+        gizmoWindowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
+        ImGui::Begin("Gizmo", 0, gizmoWindowFlags);//ウィンドウの名前
+        //ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond::ImGuiCond_FirstUseEver);
+        //これ必要
+        ImGuizmo::SetDrawlist();
+        float windowWidth = (float)ImGui::GetWindowWidth();
+        float windowHeight = (float)ImGui::GetWindowHeight();
+        ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+        //実際の処理
+        GizmoUpdate();
+        ImGui::End();
+        //背景色設定を削除
+        ImGui::PopStyleColor();
+    }
+    //MenuBar
+    {
+        //ウィンドウサイズを画面全体に
+        ImGui::SetNextWindowSize(ImVec2(static_cast<float>(window_width), static_cast<float>(0.0f)), ImGuiCond_Appearing);
+        //座標を左上に
+        ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Appearing);
+        //ウィンドウの背景と外枠を描画しない
+        menuBarWindowFlags |= ImGuiWindowFlags_NoBackground;
+        //タイトルバーを付けない
+        menuBarWindowFlags |= ImGuiWindowFlags_NoTitleBar;
+        //メニューバーをつける
+        menuBarWindowFlags |= ImGuiWindowFlags_MenuBar;
+        //右下のサイズ変更を出来なくする
+        menuBarWindowFlags |= ImGuiWindowFlags_NoResize;
+        //動かないようにする
+        menuBarWindowFlags |= ImGuiWindowFlags_NoMove;
+        //最前面に来ないように
+        menuBarWindowFlags |= ImGuiWindowFlags_NoFocusOnAppearing;
+        //iniを読み込み書き込みをしない
+        menuBarWindowFlags |= ImGuiWindowFlags_NoSavedSettings;
 
-    CreateMenuBar();
-    EachInfo();
+        ImGui::Begin("MenuBar", nullptr, menuBarWindowFlags);//ウィンドウの名前
+        ImGui::SetWindowSize(ImVec2(static_cast<float>(window_width), 0.0f), ImGuiCond_::ImGuiCond_FirstUseEver);
+        //guiのウィンドウ取得
+        ImGuiWindow* window = ImGui::GetCurrentWindow();
+        //Gizmo触ってもウィンドウを動かないように
+        menuBarWindowFlags = ImGui::IsWindowHovered() && ImGui::IsMouseHoveringRect(window->InnerRect.Min, window->InnerRect.Max) ? ImGuiWindowFlags_NoMove : 0;
+        if (ImGui::BeginMenuBar())
+        {
+            if (ImGui::MenuItem("Main Game"))
+            {
+                sceneNum = 0;
+                Imgui::CameraControl = true;
+                Cameras::camera.isRCamera = false;
+                isParticleSystemWindow = false;
+            }
+            if (ImGui::MenuItem("Map Editor"))
+            {
+                sceneNum = 6;
+                Cameras::camera.isRCamera = true;
+                Imgui::CameraControl = false;
+                Cameras::camera.mouseMoveAmount[0] = 0.0f;
+                Cameras::camera.mouseMoveAmount[1] = 0.0f;
+                XMFLOAT3 cameraEeyReset = { 0, 0, 20.0f };
+                //XMFLOAT3 cameraTargetReset = {0, 0, 0};
+                Cameras::camera.Init(cameraEeyReset, XMFLOAT3(0, 0, 0));
+                isParticleSystemWindow = false;
+            }
+            if (ImGui::MenuItem("Particle System"))
+            {
+                Imgui::sceneNum = 8;
+                isParticleSystemWindow = true;
+            }
+            if (ImGui::MenuItem("Key Recording"))
+            {
+                isKeyRecWindow = true;
+            }
+            if (ImGui::MenuItem("Inspector"))
+            {
+                isInspectorWindow = true;
+            }
+            ImGui::EndMenuBar();
+        }
+        ImGui::End();
+    }
+    //Gizmo用バー
+    if (sceneNum == 6)
+    {
+        //ウィンドウサイズを画面全体に
+        ImGui::SetNextWindowSize(ImVec2(static_cast<float>(window_width), static_cast<float>(0.0f)), ImGuiCond_Appearing);
+        //座標を左上に
+        ImGui::SetNextWindowPos(ImVec2(0.0f, 18.0f), ImGuiCond_Appearing);
+        //ウィンドウの背景と外枠を描画しない
+        menuBarWindowFlags |= ImGuiWindowFlags_NoBackground;
+        //タイトルバーを付けない
+        menuBarWindowFlags |= ImGuiWindowFlags_NoTitleBar;
+        //メニューバーをつける
+        menuBarWindowFlags |= ImGuiWindowFlags_MenuBar;
+        //右下のサイズ変更を出来なくする
+        menuBarWindowFlags |= ImGuiWindowFlags_NoResize;
+        //動かないようにする
+        menuBarWindowFlags |= ImGuiWindowFlags_NoMove;
+        //最前面に来ないように
+        menuBarWindowFlags |= ImGuiWindowFlags_NoFocusOnAppearing;
+        //iniを読み込み書き込みをしない
+        menuBarWindowFlags |= ImGuiWindowFlags_NoSavedSettings;
 
-    ImGui::End();
+        ImGui::Begin("GizmoMenu", nullptr, menuBarWindowFlags);//ウィンドウの名前
+        ImGui::SetWindowSize(ImVec2(static_cast<float>(window_width), 0.0f), ImGuiCond_::ImGuiCond_FirstUseEver);
+        //guiのウィンドウ取得
+        ImGuiWindow* window = ImGui::GetCurrentWindow();
+        //Gizmo触ってもウィンドウを動かないように
+        menuBarWindowFlags = ImGui::IsWindowHovered() && ImGui::IsMouseHoveringRect(window->InnerRect.Min, window->InnerRect.Max) ? ImGuiWindowFlags_NoMove : 0;
+        if (ImGui::BeginMenuBar())
+        {
+            if (ImGui::MenuItem("SetObjects"))
+            {
+                isUseGizmo = false;
+            }
+            if (ImGui::MenuItem("EditObjects"))
+            {
+                isUseGizmo = true;
+            }
 
-    ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_MenuBar);//�E�B���h�E�̖��O
-    ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
+            ImGui::EndMenuBar();
+        }
+        ImGui::End();
+    }
+    //インスペクターウィンドウ
+    if (isInspectorWindow)
+    {
+        ImGui::Begin("InfomationAndEdit", &isInspectorWindow, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
+        ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
 
-    InspectorView();
+        CreateMenuBar();
+        EachInfos();
 
-    ImGui::End();
+        ImGui::End();
+    }
+    //キーレコーディング
+    if (isKeyRecWindow)
+    {
+        ImGui::Begin("KeyRecording", &isKeyRecWindow, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
+        ImGui::SetWindowSize(ImVec2(150, 100), ImGuiCond_::ImGuiCond_FirstUseEver);
 
+        if (isKeyRec == KeyRec::None)
+        {
+            if (ImGui::Button("Recording"))
+            {
+                isKeyRec = KeyRec::Rec;
+                KeyLog::RecordingInit();
+            }
+            if (ImGui::Button("KeyPlayback"))
+            {
+                isKeyRec = KeyRec::PlayBack;
+                KeyLog::PlaybackInit();
+            }
+        }
+        else if (isKeyRec == KeyRec::Rec)
+        {
+            if (ImGui::Button("Stop"))
+            {
+                isKeyRec = KeyRec::None;
+                KeyLog::SaveLog();
+            }
+        }
+        else if (isKeyRec == KeyRec::PlayBack)
+        {
+            if (ImGui::Button("Stop"))
+            {
+                isKeyRec = KeyRec::None;
+            }
+        }
+        ImGui::End();
+    }
+    //マップの出力失敗
     if (isFileOutputFalse)
     {
-        ImGui::Begin("Error", nullptr, ImGuiWindowFlags_MenuBar);//�E�B���h�E�̖��O
+        ImGui::Begin("Error", &isFileOutputFalse, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
         ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
 
         FileFalse();
 
         ImGui::End();
     }
+    //パーティクルの設定ウィンドウ
+    if (isParticleSystemWindow)
+    {
+        ImGui::Begin("ParticleSystem", nullptr, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
+        ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
 
-    ImGui::Begin("ParticleSystem", nullptr, ImGuiWindowFlags_MenuBar);//�E�B���h�E�̖��O
-    ImGui::SetWindowSize(ImVec2(400, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
+        ParticleEdit();
 
-    ParticleEdit();
-
-    ImGui::End();
+        ImGui::End();
+    }
 
     ImGui::Render();
-    baseDirectX.cmdList->SetDescriptorHeaps(1, GetHeapForImgui().GetAddressOf());
-    ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), baseDirectX.cmdList.Get());
-    //#endif//DEBUG
+    BaseDirectX::GetInstance()->cmdList->SetDescriptorHeaps(1, GetHeapForImgui().GetAddressOf());
+    ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), BaseDirectX::GetInstance()->cmdList.Get());
 }
 
-void Imgui::Init(BaseDirectX& baseDirectX)
+void Imgui::Init()
 {
     //imgui
-    imguiDescHeap = CreateDescrriptorHeapForImgui(baseDirectX);
+    imguiDescHeap = CreateDescrriptorHeapForImgui();
     if (imguiDescHeap == nullptr)
     {
         return;
@@ -242,7 +373,7 @@ void Imgui::Init(BaseDirectX& baseDirectX)
         assert(0);
         return;
     }
-    blnResult = ImGui_ImplDX12_Init(baseDirectX.dev.Get(), 3, DXGI_FORMAT_R8G8B8A8_UNORM, GetHeapForImgui().Get(), GetHeapForImgui()->GetCPUDescriptorHandleForHeapStart(), GetHeapForImgui()->GetGPUDescriptorHandleForHeapStart());
+    blnResult = ImGui_ImplDX12_Init(BaseDirectX::GetInstance()->dev.Get(), 3, DXGI_FORMAT_R8G8B8A8_UNORM, GetHeapForImgui().Get(), GetHeapForImgui()->GetCPUDescriptorHandleForHeapStart(), GetHeapForImgui()->GetGPUDescriptorHandleForHeapStart());
 }
 
 void Imgui::CreateMenuBar()
@@ -276,7 +407,23 @@ void Imgui::InspectorView()
 
 void Imgui::ParticleEdit()
 {
+    ImGui::Checkbox("Active", &isParticleEditActive);
     ImGui::Combo("", &particleType, "Normal\0Easeeing\0Lerp\0\0");
+    ImGui::InputText(particleFileName, particleBuf, 256);
+    if (ImGui::Button("AddFile"))
+    {
+        //Rewired::RewiredContainer::CreateRewired(buf, false);
+        ParticleExport::CreatePartileFile(particleBuf);
+    }
+    if (ImGui::TreeNode("EmitterLife"))
+    {
+        ImGui::InputInt("EmitterLife", &emitterLife);
+        ImGui::TreePop();
+    }
+    if (ImGui::Button("Play"))
+    {
+        emitterPlayTimer = emitterLife;
+    }
     if (particleType == 1)
     {
         ImGui::InputInt("particleEaseType", &particleEaseType);
@@ -347,16 +494,51 @@ void Imgui::ParticleEdit()
         ImGui::TreePop();
     }
 }
+void Imgui::GizmoUpdate()
+{
+    //guiのウィンドウ取得
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    //Gizmo触ってもウィンドウを動かないように
+    gizmoWindowFlags = ImGui::IsWindowHovered() && ImGui::IsMouseHoveringRect(window->InnerRect.Min, window->InnerRect.Max) ? ImGuiWindowFlags_NoMove : 0;
+    //平行移動·回転·scaleの変更
+    static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
+    //座標系の決定
+    static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
+    //わからんとりま必要
+    static bool useSnap = true;
+    static float snap[3] = { 0.1f, 0.1f, 0.1f };
+    //わからんとりま必要
+    float viewManipulateRight = static_cast<float>(window_width);
+    float viewManipulateTop = 0;
+    //対象オブジェクトのワールド行列を取得
+    isTuchiGizmo = ImGuizmo::Manipulate(Cameras::camera.matView.r->m128_f32, BaseDirectX::GetInstance()->matProjection.r->m128_f32,
+        mCurrentGizmoOperation, mCurrentGizmoMode, gizmoTaget.r->m128_f32, NULL, useSnap ? &snap[0] : NULL);
+    ImGuizmo::ViewManipulate(Cameras::camera.matView.r->m128_f32, Imgui::CameraR, ImVec2(viewManipulateRight, viewManipulateTop), ImVec2(128, 128), 0x10101010);
+    //平行移動をワールド行列から自身の座標系に移行
+    if (gizmoTargetObject == nullptr) return;
+    gizmoTargetObject->position.m128_f32[0] = gizmoTaget.r[3].m128_f32[0];
+    gizmoTargetObject->position.m128_f32[1] = gizmoTaget.r[3].m128_f32[1];
+    gizmoTargetObject->position.m128_f32[2] = gizmoTaget.r[3].m128_f32[2];
+    gizmoTargetObject->position.m128_f32[3] = gizmoTaget.r[3].m128_f32[3];
+}
+
+void Imgui::SetGizmoObject(EachInfo& each)
+{
+    gizmoTaget = each.matWorld;
+    gizmoTargetObject = &each;
+}
+
 void Imgui::FileFalse()
 {
     ImGui::Text("File Export Is Failed");
+
     if (ImGui::Button("Close"))
     {
         isFileOutputFalse = false;
     }
 }
 
-void Imgui::EachInfo()
+void Imgui::EachInfos()
 {
     if (tab == ImguiType::Status)
     {
@@ -488,12 +670,12 @@ void Imgui::SetWindowActive(bool f_isActive)
     Imgui::isActive = f_isActive;
 }
 
-void Imgui::Update(BaseDirectX& baseDirectX, Seling& player)
+void Imgui::Update(Seling& player)
 {
     if (isLoadstage)
     {
         string path = "Resource/TextData/Stage/stage" + to_string(LoadStageNum) + ".txt";
-        StageObjects::LoadFile(baseDirectX, player, path.c_str());
+        StageObjects::LoadFile(player, path.c_str());
         isLoadstage = false;
     }
     if (isExport)

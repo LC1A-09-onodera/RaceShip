@@ -32,11 +32,11 @@ class PostEffect : public Sprite
 	float weights[NumWeight] = {};
 public:
 	PostEffect();
-	void Initialize(HLSLShader &shader, BaseDirectX& baseDirectX);
-	void Draw(BaseDirectX& baseDirectX);
-	void PreDraw(BaseDirectX& baseDirectX);
-	void PostDraw(BaseDirectX& baseDirectX);
-	void CreateGraphicsPipelineState(HLSLShader &shader, BaseDirectX& baseDirectX);
+	void Initialize(HLSLShader &shader);
+	void Draw();
+	void PreDraw();
+	void PostDraw();
+	void CreateGraphicsPipelineState(HLSLShader &shader);
 	void CalcWeightGaussian(float* weightsTbl, int sizeOfWeightsTbl, float sigma);
 	RenderTarget renderTarget;
 };
@@ -58,8 +58,8 @@ public:
 	static PostEffect postBlur;
 	static PostEffect postNormal;
 	static PostEffectType type;
-	static void Init(BaseDirectX& baseDirectX);
-	static void PreDraw(BaseDirectX& baseDirectX);
-	static void Draw(BaseDirectX& baseDirectX);
-	static void PostDraw(BaseDirectX& baseDirectX);
+	static void Init();
+	static void PreDraw();
+	static void Draw();
+	static void PostDraw();
 };

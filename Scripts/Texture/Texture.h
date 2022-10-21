@@ -9,6 +9,8 @@
 
 #pragma warning(push)
 #pragma warning(disable:26812)
+#pragma warning(disable:26813)
+#pragma warning(disable:6001)
 #include <DirectXTex.h>
 #pragma warning(pop)
 
@@ -29,7 +31,7 @@ class Tex
 public:
     ComPtr<ID3D12Resource> texbuff;
     int texNum = 0;
-    void LoadGraph(BaseDirectX& baseDirectX, const wchar_t *graph);
+    void LoadGraph( const wchar_t *graph);
     int Get();
 };
 

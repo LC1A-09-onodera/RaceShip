@@ -20,7 +20,7 @@ void VoiceReciver::VoiceUDPUpdate()
 
 void VoiceReciver::StartUp()
 {
-	udp.SetPortNum(50008);
+	udp.SetPortNum(8000);
 	udp.StartUp();
 }
 
@@ -29,13 +29,17 @@ void VoiceReciver::ReciveData()
 	udp.Recive();
 	std::string text = udp.GetResult();
 	if (text == "") return;
+	if (text != "")
+	{
+		int a = 0;
+	}
 	if (text == "SystemOpen")
 	{
-		Imgui::SetWindowActive(true);
+		Imgui::GetInstance()->SetWindowActive(true);
 	}
 	else if (text == "SystemClose")
 	{
-		Imgui::SetWindowActive(false);
+		Imgui::GetInstance()->SetWindowActive(false);
 	}
 	else if (text == "LinkStart")
 	{

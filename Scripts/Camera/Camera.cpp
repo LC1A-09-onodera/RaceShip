@@ -10,14 +10,14 @@ float Camera::editorCameraLength = 50.0f;
 std::array<float, 2> Camera::angle = {0, 0};
 void Camera::CameraTargetRot()
 {
-	isControl = Imgui::CameraControl;
+	isControl = Imgui::GetInstance()->CameraControl;
 	if (isControl)
 	{
-		targetR = Imgui::CameraR;
-		rotationXZ = Imgui::CameraRotation;
+		targetR = Imgui::GetInstance()->CameraR;
+		rotationXZ = Imgui::GetInstance()->CameraRotation;
 		rotation.x = ShlomonMath::Cos(rotationXZ);
 		rotation.z = ShlomonMath::Sin(rotationXZ);
-		rotation.y = Imgui::CameraHigh;
+		rotation.y = Imgui::GetInstance()->CameraHigh;
 		Normalize(rotation);
 		eye.x = target.x + rotation.x * targetR;
 		eye.y = target.y + rotation.y * targetR;
@@ -176,7 +176,7 @@ XMFLOAT3 Camera::GetTargetDirection()
 	return dire;
 }
 
-XMFLOAT3 Camera::GetMousePosition(BaseDirectX& baseDirectX)
+XMFLOAT3 Camera::GetMousePosition()
 {
 	//スクリーン系
 	POINT mouse = WindowsAPI::GetMousePos();
@@ -193,7 +193,7 @@ XMFLOAT3 Camera::GetMousePosition(BaseDirectX& baseDirectX)
 	//ビュー座標
 	XMVECTOR mousePosition;
 	XMMATRIX invProj, invView;
-	invProj = XMMatrixInverse(nullptr, baseDirectX.matProjection);
+	invProj = XMMatrixInverse(nullptr, BaseDirectX::GetInstance()->matProjection);
 	invView = XMMatrixInverse(nullptr, Camera::matView);
 
 	mousePosition = XMLoadFloat3(&mouseFloat);
@@ -206,10 +206,10 @@ XMFLOAT3 Camera::GetMousePosition(BaseDirectX& baseDirectX)
 	return result;
 }
 
-XMFLOAT3 Camera::EyeToMouseVec(BaseDirectX& baseDirectX)
+XMFLOAT3 Camera::EyeToMouseVec()
 {
 	XMFLOAT3 mouse;
-	mouse = GetMousePosition(baseDirectX);
+	mouse = GetMousePosition();
 	XMFLOAT3 eyePos;
 	eyePos = Camera::eye;
 	XMFLOAT3 result;
@@ -217,9 +217,9 @@ XMFLOAT3 Camera::EyeToMouseVec(BaseDirectX& baseDirectX)
 	return Normalize(result);
 }
 
-XMFLOAT3 Camera::MousePosition(BaseDirectX& baseDirectX, float z)
+XMFLOAT3 Camera::MousePosition( float z)
 {
-	XMFLOAT3 mouseVec = EyeToMouseVec(baseDirectX);
+	XMFLOAT3 mouseVec = EyeToMouseVec();
 	float count;
 	count = z - Camera::eye.z / mouseVec.z;
 	float x;
@@ -242,18 +242,18 @@ void Camera::MouseWheelY()
 	}
 }
 
-void Camera::MouseRightPushMove(BaseDirectX& baseDirectX)
+void Camera::MouseRightPushMove()
 {
 	if (Input::MouseTrigger(MouseButton::RBUTTON))
 	{
-		mouseClickPos = { MousePosition(baseDirectX, 0.0f).x, MousePosition(baseDirectX, 0.0f).y };
+		mouseClickPos = { MousePosition(0.0f).x, MousePosition( 0.0f).y };
 	}
 	if (Input::Mouse(MouseButton::RBUTTON))
 	{
 		const float rangeLimit = 25.0f;
 		const float sensitivity = 2.0f;
 
-		std::array<float, 2> nowMousePos = { MousePosition(baseDirectX, 0.0f).x , MousePosition(baseDirectX, 0.0f).y };
+		std::array<float, 2> nowMousePos = { MousePosition( 0.0f).x , MousePosition( 0.0f).y };
 		eye.x -= (nowMousePos[0] - mouseClickPos[0]) / sensitivity;
 		target.x -= (nowMousePos[0] - mouseClickPos[0]) / sensitivity;
 		eye.y -= (nowMousePos[1] - mouseClickPos[1]) / sensitivity;
@@ -291,7 +291,7 @@ void Camera::MouseRightPushMove(BaseDirectX& baseDirectX)
 	}
 }
 
-void Camera::EditorMouseControl(BaseDirectX& baseDirectX)
+void Camera::EditorMouseControl()
 {
 	if (Input::Key(DIK_RIGHT))
 	{

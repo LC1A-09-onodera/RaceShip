@@ -12,8 +12,6 @@ class Camera
 	XMFLOAT3 rotation = {0, 0.2f, -1.0f};
 	float targetR = 10.0f;
 
-	
-
 public:
 	static std::array<float, 2> angle;
 	//ˆÊ’u
@@ -52,14 +50,14 @@ public:
 	void SetShake(float f_shakePower);
 	void SetTarget(XMFLOAT3 &f_target);
 	XMFLOAT3 GetTargetDirection();
-	XMFLOAT3 GetMousePosition(BaseDirectX &baseDirectX);
-	XMFLOAT3 EyeToMouseVec(BaseDirectX& baseDirectX);
-	XMFLOAT3 MousePosition(BaseDirectX& baseDirectX, float z);
+	XMFLOAT3 GetMousePosition();
+	XMFLOAT3 EyeToMouseVec();
+	XMFLOAT3 MousePosition( float z);
 	void MouseWheelY();
 
 	static float editorCameraLength;
-	void MouseRightPushMove(BaseDirectX& baseDirectX);
-	void EditorMouseControl(BaseDirectX& baseDirectX);
+	void MouseRightPushMove();
+	void EditorMouseControl();
 };
 
 class Cameras

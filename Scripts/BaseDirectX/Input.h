@@ -11,8 +11,7 @@
 #pragma comment(lib,"dxguid.lib")
 
 
-static BYTE keys[256] = {};
-static BYTE oldkeys[256] = {};
+
 static LPDIRECTINPUT8 g_lpDI;
 static LPDIRECTINPUTDEVICE8 g_lpDIDevive;
 static DIDEVCAPS g_diDevCaps;
@@ -83,13 +82,15 @@ class Input
 {
 public:
 	static std::shared_ptr<IDirectInput8> dinput;
-	static IDirectInputDevice8 *devkeyboard;
-	static DirectInput *directInput;/////////////////////
+	static IDirectInputDevice8* devkeyboard;
+	static DirectInput* directInput;/////////////////////
 	static int mouseWheel;
+	static BYTE keys[256];
+	static BYTE oldkeys[256];
 	static void Init();
-	static void Update(BaseDirectX& baseDirectX);
+	static void Update();
 
-	static void KeySet(BaseDirectX& baseDirectX, WNDCLASSEX w, HWND hwnd);
+	static void KeySet( WNDCLASSEX w, HWND hwnd);
 
 	static bool Key(BYTE key);
 	static bool Key(KeyCode key);
