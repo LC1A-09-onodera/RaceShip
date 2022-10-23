@@ -208,7 +208,7 @@ public:
 	void CreateModel( const char *name, HLSLShader &shader, bool smoothing = false, bool isTriangle = true);
 	//void Update();
 	virtual void Update( EachInfo *f_each, bool rCamera = false);
-	virtual void Update( EachInfo* f_each, Camera &f_camera);
+	virtual void Update( EachInfo *f_each, Camera &f_camera);
 	void SendVertex();
 	
 	void LoadFileContents( const char* name, bool smoothing = false);
@@ -219,7 +219,6 @@ public:
 	void AddAmoothData(unsigned short indexPosition, unsigned short indexVertex);
 	void CalculateSmoothedVertexNormals();
 	bool InitializeGraphicsPipeline(HLSLShader &shader, bool isTriangle = true);
-	//bool LoadTexture(const wchar_t *texName = nullptr);
 	bool LoadTexture( const string &directPath, const string &filename);
 	bool InitializeDescriptorHeap();
 	void LoadMaterial(const string &directoryPath, const string &filename);

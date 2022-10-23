@@ -23,12 +23,10 @@
 class SpriteCommon
 {
 public:
-	
 	//グラフィックスパイプライン
 	static D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline;
 	//スプライト用デスクリプタヒープ
 	static ComPtr<ID3D12DescriptorHeap> basicDescHeap;
-	//static D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc;
 	static D3D12_INPUT_ELEMENT_DESC inputLayout[2];
 	//パイプラインステート
 	static ComPtr<ID3D12PipelineState> spritePipelineState;

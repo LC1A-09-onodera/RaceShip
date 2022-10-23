@@ -1,4 +1,5 @@
 ﻿#include "FbxLoader.h"
+#include "../../BaseDirectX/BaseDirectX.h"
 #include <cassert>
 
 const std::string FbxLoader::baseDirectory = "Resource/FBX/";
@@ -11,10 +12,9 @@ FbxLoader* FbxLoader::GetInstance()
 	return &instance;
 }
 
-void FbxLoader::Initialize(ID3D12Device* f_dev)
+void FbxLoader::Initialize()
 {
 	assert(fbxManager == nullptr);
-	this->dev = f_dev;
 	fbxManager = FbxManager::Create();
 	FbxIOSettings* ios = FbxIOSettings::Create(fbxManager, IOSROOT);
 	fbxManager->SetIOSettings(ios);
@@ -47,7 +47,7 @@ FBXModel* FbxLoader::LoadModelFromFile(const string& modelName)
 
 	ParseNodeRecursive(model, fbxScene->GetRootNode());
 
-	model->CreateBuffers(dev);
+	model->CreateBuffers(BaseDirectX::GetInstance()->dev.Get());
 
 	model->fbxScene = fbxScene;
 	return model;

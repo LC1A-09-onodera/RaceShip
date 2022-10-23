@@ -61,14 +61,15 @@ private:
 	static string _fileName;
 	static list<LogData<XMFLOAT3>> _posLogs;
 	static list<LogData<XMFLOAT3>> _loadList;
+	static list<list<LogData<XMFLOAT3>>::iterator> _deleteList;
 public:
 	static UINT64 timer;
 	static UINT64 playBackTimer;
 	//ò^âÊ
-	static void Recording();
+	static void Recording(XMFLOAT3& pos);
 	static void RecordingInit();
 	//çƒê∂
-	static void Playback();
+	static void Playback(EachInfo &each);
 	static void PlaybackInit();
 
 	static void SaveLog();

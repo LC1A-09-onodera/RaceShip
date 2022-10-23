@@ -13,8 +13,11 @@ list<list<KeyCode>::iterator> KeyLog::deleteKeyList;
 string PlayerPositionLog::_fileName;
 list<LogData<XMFLOAT3>> PlayerPositionLog::_posLogs;
 list<LogData<XMFLOAT3>> PlayerPositionLog::_loadList;
+list<list<LogData<XMFLOAT3>>::iterator> PlayerPositionLog::_deleteList;
 UINT64 PlayerPositionLog::timer;
 UINT64 PlayerPositionLog::playBackTimer;
+
+
 void KeyLog::Recording()
 {
 	timer++;
@@ -207,18 +210,13 @@ void KeyLog::SetFileName(string name)
 	_fileName = name;
 }
 
-void PlayerPositionLog::Recording(XMFLOAT3 &pos)
+void PlayerPositionLog::Recording(XMFLOAT3& pos)
 {
 	timer++;
-	if (Rewired::KeyCodeString::GetAnyTriggerInput() || Rewired::KeyCodeString::GetAnyReleaseInput())
-	{
-		LogData<XMFLOAT3>* log = new LogData<XMFLOAT3>();
-		if (Rewired::KeyCodeString::GetAnyTriggerInput())
-		{
-			log->Init(pos, timer, true);
-			_posLogs.push_back(*log);
-		}
-	}
+
+	LogData<XMFLOAT3>* log = new LogData<XMFLOAT3>();
+	log->Init(pos, timer, true);
+	_posLogs.push_back(*log);
 }
 
 void PlayerPositionLog::RecordingInit()
@@ -241,21 +239,63 @@ void PlayerPositionLog::Playback(EachInfo& each)
 		}
 	}
 	playBackTimer++;
-	if (_deleteList.size() < 1) return;
-	for (auto deleteItr = _deleteList.begin(); deleteItr != _deleteList.end(); ++deleteItr)
-	{
-
-	}
 }
 
 void PlayerPositionLog::PlaybackInit()
 {
+	_loadList.clear();
+	playBackTimer = 0;
+	//ファイル読み込み
+	string pathName = _fileName;
+	string fullPath = "Resource/TextData/Log/" + pathName + ".csv";
+
+	ifstream file;
+	file.open(fullPath);
+	if (file.fail())
+	{
+		assert(0);
+	}
+	string keyType;
+	while (getline(file, keyType))
+	{
+		istringstream line_stream(keyType);
+		string key;
+		getline(line_stream, key, ',');
+		//Frame
+		LogData<XMFLOAT3> log;
+		getline(line_stream, key, ',');
+		UINT64 frame = std::stoi(key);
+		log.SetFrame(frame);
+		//Key
+		getline(line_stream, key, ',');
+		getline(line_stream, key, ',');
+
+		XMFLOAT3 pos;
+		pos.x = std::stof(key);
+		getline(line_stream, key, ',');
+		pos.y = std::stof(key);
+		getline(line_stream, key, ',');
+		pos.z = std::stof(key);
+		log.SetKey(pos);
+
+		_loadList.push_back(log);
+	}
 }
 
 void PlayerPositionLog::SaveLog()
 {
+	//ファイルを作る
+	string saveFileName = "Resource/TextData/Log/" + _fileName + ".csv";
+	ofstream ofs(saveFileName);
+	if (!ofs) return;
+
+	for (auto posItr = _posLogs.begin(); posItr != _posLogs.end(); ++posItr)
+	{
+		ofs << "Frame," << posItr->GetFrame() << "," << "Key," << posItr->GetKey().x << "," << posItr->GetKey().y << "," << posItr->GetKey().z << endl;
+	}
 }
 
 void PlayerPositionLog::SetFileName(string name)
 {
+	_fileName = name;
 }

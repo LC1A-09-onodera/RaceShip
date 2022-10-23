@@ -20,7 +20,6 @@ using namespace DirectX;
 class Light
 {
 private:
-	static ID3D12Device *device;
 	static const int PointLightNum = 3;
 	static const int SpotLightNum = 3;
 	static const int CircleShadowNum = 1;
@@ -37,7 +36,6 @@ public:
 		SpotLight::ConstBufferData spotLights[SpotLightNum];
 		CircleShadow::ConstBufferData circleShadows[CircleShadowNum];
 	};
-	static void StaticInitialize(ID3D12Device *Device);
 	void Update();
 	void Draw(ID3D12GraphicsCommandList *cmdList, UINT rootParameterIndex);
 	static Light *Create();

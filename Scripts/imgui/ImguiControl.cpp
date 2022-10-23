@@ -139,7 +139,7 @@ Imgui* Imgui::GetInstance()
     return &imgui;
 }
 
-void Imgui::DrawImGui()
+void Imgui::DrawImGui(EachInfo& each)
 {
     if (!isActive) return;
     ImGui_ImplDX12_NewFrame();
@@ -274,8 +274,9 @@ void Imgui::DrawImGui()
             if (ImGui::MenuItem("EditObjects"))
             {
                 isUseGizmo = true;
+                XMFLOAT3 gizmoPos = { gizmoTaget.r[3].m128_f32[0], gizmoTaget.r[3].m128_f32[1], gizmoTaget.r[3].m128_f32[2] };
+                MapEditorObjects::ObjectCollision(gizmoPos);
             }
-
             ImGui::EndMenuBar();
         }
         ImGui::End();
@@ -294,12 +295,12 @@ void Imgui::DrawImGui()
     //キーレコーディング
     if (isKeyRecWindow)
     {
-        ImGui::Begin("KeyRecording", &isKeyRecWindow, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
+        ImGui::Begin("Recording", &isKeyRecWindow, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
         ImGui::SetWindowSize(ImVec2(150, 100), ImGuiCond_::ImGuiCond_FirstUseEver);
 
         if (isKeyRec == KeyRec::None)
         {
-            if (ImGui::Button("Recording"))
+            if (ImGui::Button("KeyRecording"))
             {
                 isKeyRec = KeyRec::Rec;
                 KeyLog::RecordingInit();
@@ -312,7 +313,7 @@ void Imgui::DrawImGui()
         }
         else if (isKeyRec == KeyRec::Rec)
         {
-            if (ImGui::Button("Stop"))
+            if (ImGui::Button("KeyStop"))
             {
                 isKeyRec = KeyRec::None;
                 KeyLog::SaveLog();
@@ -323,6 +324,38 @@ void Imgui::DrawImGui()
             if (ImGui::Button("Stop"))
             {
                 isKeyRec = KeyRec::None;
+            }
+        }
+        if (isPosRec == KeyRec::None)
+        {
+            if (ImGui::Button("PosRecording"))
+            {
+                isPosRec = KeyRec::Rec;
+                PlayerPositionLog::RecordingInit();
+            }
+            if (ImGui::Button("PosPlayback"))
+            {
+                string fileName = "posLog";
+                PlayerPositionLog::SetFileName(fileName);
+                isPosRec = KeyRec::PlayBack;
+                PlayerPositionLog::PlaybackInit();
+            }
+        }
+        else if (isPosRec == KeyRec::Rec)
+        {
+            if (ImGui::Button("PosStop"))
+            {
+                isPosRec = KeyRec::None;
+                string fileName = "posLog";
+                PlayerPositionLog::SetFileName(fileName);
+                PlayerPositionLog::SaveLog();
+            }
+        }
+        else if (isPosRec == KeyRec::PlayBack)
+        {
+            if (ImGui::Button("PosStop"))
+            {
+                isPosRec = KeyRec::None;
             }
         }
         ImGui::End();

@@ -32,6 +32,10 @@ struct SoundData
 class Sound
 {
 public:
+	~Sound()
+	{
+		delete(masterVoice);
+	}
 	//‰¹
 	static ComPtr<IXAudio2> xAudio2;
 	static IXAudio2MasteringVoice *masterVoice;

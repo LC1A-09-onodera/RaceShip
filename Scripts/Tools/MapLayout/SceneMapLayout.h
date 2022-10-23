@@ -6,6 +6,7 @@ class SceneEachInfo
 {
 public:
 	Model model;
+	Model rModel;
 	list<EachInfo> each;
 	list<EachInfo> rEach;
 };

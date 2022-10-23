@@ -1,21 +1,12 @@
 #include "Light.h"
-
-ID3D12Device *Light::device = nullptr;
-
-void Light::StaticInitialize(ID3D12Device* Device)
-{
-	//再初期化チェック
-	assert(!Light::device);
-	assert(Device);
-	Light::device = (Device);
-}
+#include "../BaseDirectX/BaseDirectX.h"
 
 void Light::CreateBuff()
 {
 	HRESULT result;
 	CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
 	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) &~0xff);
-	result = device->CreateCommittedResource(&heapProp,
+	result = BaseDirectX::GetInstance()->dev->CreateCommittedResource(&heapProp,
 			 D3D12_HEAP_FLAG_NONE,
 			 &resourceDesc,
 			 D3D12_RESOURCE_STATE_GENERIC_READ,

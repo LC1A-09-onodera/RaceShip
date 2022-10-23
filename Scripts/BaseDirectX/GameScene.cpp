@@ -36,6 +36,15 @@ void GameScene::SceneManageUpdateAndDraw()
 	{
 		KeyLog::Recording();
 	}
+	if (Imgui::GetInstance()->isPosRec == Imgui::GetInstance()->KeyRec::PlayBack)
+	{
+		PlayerPositionLog::Playback(seling.selingModel.each);
+	}
+	else if (Imgui::GetInstance()->isPosRec == Imgui::GetInstance()->KeyRec::Rec)
+	{
+		XMFLOAT3 pos = { seling.selingModel.each.position.m128_f32[0], seling.selingModel.each.position.m128_f32[1], seling.selingModel.each.position.m128_f32[2] };
+		PlayerPositionLog::Recording(pos);
+	}
 	WindowsAPI::CheckMsg();
 	light->Update();
 	if (Input::KeyTrigger(DIK_F1))
@@ -122,8 +131,6 @@ void GameScene::Init()
 	Cameras::rCamera.isRCamera = true;
 	//Imguiの初期化
 	Imgui::GetInstance()->Init();
-	//ライトの初期化
-	Light::StaticInitialize(BaseDirectX::GetInstance()->dev.Get());
 	//シェーダーのロード
 	ShaderManager::LoadShaders();
 	// 3Dパーティクル静的初期化
@@ -131,7 +138,7 @@ void GameScene::Init()
 	//インプット初期化
 	Input::KeySet(WindowsAPI::w, WindowsAPI::hwnd);
 	//FBX系
-	/*FbxLoader::GetInstance()->Initialize(.dev.Get());
+	/*FbxLoader::GetInstance()->Initialize();
 	FBXObject::SetDevice(.dev.Get());
 	FBXObject::CreateGraphicsPipeline();*/
 	//ライト初期化
@@ -452,7 +459,7 @@ void GameScene::MapEditUpdate()
 	mapFrameH.Update( &mapFrameH.each);
 	//deleteした後のオブジェクトを描画しようとしてエラーを出さないための応急処置
 	//Update段階でオブジェクトをなくしたい
-	Imgui::GetInstance()->DrawImGui();
+	Imgui::GetInstance()->DrawImGui(seling.selingModel.each);
 	XMFLOAT3 nowMousePos = Cameras::camera.MousePosition( 0.0f);
 
 	XMFLOAT3 mousePosi(nowMousePos.x - Cameras::camera.mouseMoveAmount[0], nowMousePos.y - Cameras::camera.mouseMoveAmount[1], nowMousePos.z);
@@ -586,7 +593,7 @@ void GameScene::TitleDraw()
 	PouseDraw();
 
 	PostEffects::PostDraw();
-	Imgui::GetInstance()->DrawImGui();
+	Imgui::GetInstance()->DrawImGui(seling.selingModel.each);
 	//描画コマンドここまで
 	BaseDirectX::GetInstance()->UpdateBack();
 }
@@ -596,7 +603,7 @@ void GameScene::SelectDraw()
 	BaseDirectX::GetInstance()->UpdateFront();
 
 	DrawSprites();
-	Imgui::GetInstance()->DrawImGui();
+	Imgui::GetInstance()->DrawImGui(seling.selingModel.each);
 	//描画コマンドここまで
 	BaseDirectX::GetInstance()->UpdateBack();
 }
@@ -620,7 +627,7 @@ void GameScene::GameDraw()
 	PouseDraw();
 
 	PostEffects::PostDraw();
-	Imgui::GetInstance()->DrawImGui();
+	Imgui::GetInstance()->DrawImGui(seling.selingModel.each);
 	//描画コマンドここまで
 	BaseDirectX::GetInstance()->UpdateBack();
 }
@@ -646,7 +653,7 @@ void GameScene::ResultDraw()
 	PostEffects::PostDraw();
 
 	//
-	Imgui::GetInstance()->DrawImGui();
+	Imgui::GetInstance()->DrawImGui(seling.selingModel.each);
 	//描画コマンドここまで
 	BaseDirectX::GetInstance()->UpdateBack();
 }
@@ -661,7 +668,7 @@ void GameScene::MapEditDraw()
 	Draw3DObject( mapFrameV, false);
 	Draw3DObject( mapFrameH, false);
 	MapEditorObjects::Draw();
-	Imgui::GetInstance()->DrawImGui();
+	Imgui::GetInstance()->DrawImGui(seling.selingModel.each);
 	//描画コマンドここまで
 	BaseDirectX::GetInstance()->UpdateBack();
 }
@@ -673,7 +680,7 @@ void GameScene::ParticleEditDraw()
 	Draw3DObject( particleAreaModel, true);
 	ParticleControl::Draw();
 	Cameras::camera.EditorMouseControl();
-	Imgui::GetInstance()->DrawImGui();
+	Imgui::GetInstance()->DrawImGui(seling.selingModel.each);
 	//描画コマンドここまで
 	BaseDirectX::GetInstance()->UpdateBack();
 }
@@ -719,7 +726,7 @@ void GameScene::EndDraw()
 	PostEffects::PostDraw();
 
 	//
-	Imgui::GetInstance()->DrawImGui();
+	Imgui::GetInstance()->DrawImGui(seling.selingModel.each);
 	//描画コマンドここまで
 	BaseDirectX::GetInstance()->UpdateBack();
 }

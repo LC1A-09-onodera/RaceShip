@@ -54,7 +54,7 @@ public:
     static Imgui *GetInstance();
     Imgui(const Imgui& obj) = delete;
     Imgui& operator=(const Imgui& obj) = delete;
-    void DrawImGui();
+    void DrawImGui(EachInfo &each);
     void Init();
     void DebugUpdate();
     void SetWindowActive(bool f_isActive);
@@ -97,7 +97,6 @@ public:
         Rec,
         PlayBack,
     };
-
     int effectType = -1;
     ImguiType tab;
     DebugType debugType;
@@ -134,14 +133,14 @@ public:
     int particleType = ParticleType::Normal;
 
     int particleCount = 1;
-    float particleSpeed[3] = { 1.0f ,0 , 0 };
-    int particleSpeedDiff[3] = { 0, 0 ,0 };
-    float particleAcc[3] = { -0.1f ,0 , 0 };
+    float particleSpeed[3] = { 0.0f ,1.5f , 0 };
+    int particleSpeedDiff[3] = { 7, 0 ,0 };
+    float particleAcc[3] = { 0.0f ,-0.1f , 0 };
     float particleStartPosition[3] = { 0 ,0 , 0 };
     float particleEndPosition[3] = { 0 ,0 , 0 };
     float particleEaseSpeed[3] = { 0 ,0 , 0 };
     float particleHalfwayPoint[3] = { 0 ,0 , 0 };
-    float particleStartSize = 1.0f;
+    float particleStartSize = 2.0f;
     float particleEndSize = 0;
     int particleLife = 60;
     int particleSpornArea[3] = { 1, 1, 1 };
@@ -162,4 +161,6 @@ public:
 
     bool isKeyRecWindow = false;
     bool isInspectorWindow = true;
+
+    int isPosRec = KeyRec::None;
 };

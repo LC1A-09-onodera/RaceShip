@@ -9,7 +9,9 @@ SceneEachInfo SceneMapLayout::stoneModel;
 void SceneMapLayout::LoadModel()
 {
 	sambasiModel.model.CreateModel("sambasi", ShaderManager::playerShader, true);
+	sambasiModel.rModel.CreateModel("rSambasi", ShaderManager::playerShader, true);
 	towerModel.model.CreateModel("tower", ShaderManager::playerShader, true);
+	towerModel.rModel.CreateModel("rTower", ShaderManager::playerShader, true);
 	stoneModel.model.CreateModel("stone", ShaderManager::playerShader, true);
 }
 
@@ -68,13 +70,13 @@ void SceneMapLayout::WaterFaceDraw()
 {
 	for (auto sabmasiRItr = sambasiModel.rEach.begin(); sabmasiRItr != sambasiModel.rEach.end(); ++sabmasiRItr)
 	{
-		sambasiModel.model.Update(&(*sabmasiRItr), true);
-		Draw3DObject(sambasiModel.model);
+		sambasiModel.rModel.Update(&(*sabmasiRItr), true);
+		Draw3DObject(sambasiModel.rModel);
 	}
 	for (auto towerRItr = towerModel.rEach.begin(); towerRItr != towerModel.rEach.end(); ++towerRItr)
 	{
-		towerModel.model.Update(&(*towerRItr), true);
-		Draw3DObject(towerModel.model);
+		towerModel.rModel.Update(&(*towerRItr), true);
+		Draw3DObject(towerModel.rModel);
 	}
 	for (auto stoneItr = stoneModel.rEach.begin(); stoneItr != stoneModel.rEach.end(); ++stoneItr)
 	{

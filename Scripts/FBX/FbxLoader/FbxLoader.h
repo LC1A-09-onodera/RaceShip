@@ -22,7 +22,7 @@ public:
 	/// </summary>
 	/// <returns>インスタンス</returns>
 	static FbxLoader* GetInstance();
-	void Initialize(ID3D12Device* f_dev);
+	void Initialize();
 	void Finalize();
 	FBXModel* LoadModelFromFile(const std::string& modelName);
 	void ParseNodeRecursive(FBXModel* model, FbxNode* fbxNode, Node* parent = nullptr);
@@ -51,8 +51,6 @@ private:
 	FbxLoader(const FbxLoader& obj) = delete;
 	// コピー代入演算子を禁止（シングルトンパターン）
 	void operator=(const FbxLoader& obj) = delete;
-
-	ID3D12Device* dev = nullptr;
 
 	FbxManager* fbxManager = nullptr;
 

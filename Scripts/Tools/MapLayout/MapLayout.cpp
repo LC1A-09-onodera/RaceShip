@@ -288,6 +288,10 @@ bool MapEditorObjects::ObjectCollision(const XMFLOAT3& f_mousePos)
 				//‰ñ“]‚ð‚©‚¯‚é
 				itr->piece.rotation.x += 90.0f;
 			}
+			else
+			{
+				Imgui::GetInstance()->SetGizmoObject(itr->piece);
+			}
 			lineMousePos = f_mousePos;
 			return true;
 		}
