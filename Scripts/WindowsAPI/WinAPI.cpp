@@ -6,7 +6,7 @@ HWND WindowsAPI::hwnd{};
 MSG WindowsAPI::msg{};
 WNDCLASSEX WindowsAPI::w{};
 bool WindowsAPI::Qite;
-int WindowsAPI::intarval;
+int WindowsAPI::intarval = 0;
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND, UINT, WPARAM, LPARAM);
 float WindowsAPI::rate;
 
@@ -27,7 +27,7 @@ void WindowsAPI::Set()
     //WNDCLASSEX w{}; // ウィンドウクラスの設定
     w.cbSize = sizeof(WNDCLASSEX);
     w.lpfnWndProc = (WNDPROC)WindowProc; // ウィンドウプロシージャを設定
-    w.lpszClassName = L"Employment"; // ウィンドウクラス名
+    w.lpszClassName = L"Race Ship"; // ウィンドウクラス名
     w.hInstance = GetModuleHandle(nullptr); // ウィンドウハンドル
     w.hCursor = LoadCursor(NULL, IDC_ARROW); // カーソル指定
     // ウィンドウクラスをOSに登録
@@ -38,7 +38,7 @@ void WindowsAPI::Set()
 
     hwnd = CreateWindow(
         w.lpszClassName, // クラス名
-        L"Employment",         // タイトルバーの文字
+        L"Race Ship",         // タイトルバーの文字
         WS_OVERLAPPEDWINDOW,        // 標準的なウィンドウスタイル
         CW_USEDEFAULT,              // 表示X座標（OSに任せる）
         CW_USEDEFAULT,              // 表示Y座標（OSに任せる）
@@ -73,8 +73,14 @@ void WindowsAPI::Update()
 {
     auto hdc = GetDC(hwnd);
     rate = static_cast<float>(GetDeviceCaps(hdc, VREFRESH));
-    intarval = 0;
-    intarval = static_cast<int>(rate / 60.0f);
+    if (rate < 1)
+    {
+        int a = 0;
+    }
+    if (intarval == 0)
+    {
+        intarval = static_cast<int>(rate / 60.0f);
+    }
     if (msg.message == WM_QUIT)
     {
         Qite = true;

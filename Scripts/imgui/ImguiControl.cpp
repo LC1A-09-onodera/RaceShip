@@ -576,7 +576,7 @@ void Imgui::EachInfos()
     if (tab == ImguiType::Status)
     {
         //ImGui::Image()
-        ImGui::Text("FPS:%.2f", WindowsAPI::rate);
+        //ImGui::Text("FPS:%.2f", WindowsAPI::rate);
         ImGui::InputInt("WaterFaceType", &useWaterNum, 1, 1);
         useWaterNum = ShlomonMath::Clamp(useWaterNum, 0, 4);
         if (useWaterNum == 0)
