@@ -107,6 +107,13 @@ void GameScene::SceneManageUpdateAndDraw()
 		LightUpdate();
 		ParticleEditDraw();
 		break;
+	case Behavior:
+		BaseDirectX::GetInstance()->UpdateFront();
+		Cameras::camera.EditorMouseControl();
+
+		Imgui::GetInstance()->DrawImGui(seling.selingModel.each);
+		//•`‰æƒRƒ}ƒ“ƒh‚±‚±‚Ü‚Å
+		BaseDirectX::GetInstance()->UpdateBack();
 	default:
 		break;
 	}

@@ -15,7 +15,7 @@
 #include "../Tools/LoadStage/SpringBoard.h"
 #include "../Tools/KeyLog/KeyLog.h"
 
-enum GameSceneName { TITLE, SELECT, GAME, END, RESULT, OP , MAPEDIT, RewiredEdit, ParticleEdit};
+enum GameSceneName { TITLE, SELECT, GAME, END, RESULT, OP , MAPEDIT, RewiredEdit, ParticleEdit, Behavior};
 
 class GameScene
 {

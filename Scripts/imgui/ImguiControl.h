@@ -45,11 +45,16 @@ private:
     void FileFalse();
     void EachInfos();
     void GizmoUpdate();
+
+    void DrawBehavior();
+
     ComPtr<ID3D12DescriptorHeap> CreateDescrriptorHeapForImgui();
     ComPtr<ID3D12DescriptorHeap> GetHeapForImgui();
 
     ImGuiWindowFlags gizmoWindowFlags = 0;
     ImGuiWindowFlags menuBarWindowFlags = 0;
+    ImGuiWindowFlags beharviorWindowFlags = 0;
+    bool isBehavior = false;
 public:
     static Imgui *GetInstance();
     Imgui(const Imgui& obj) = delete;
@@ -121,7 +126,7 @@ public:
     bool isDeleteObjects = false;
     bool isFileOutputFalse = false;
     int radioMode = 0;
-    bool isMulchthled = true;
+    bool isMulchthled = false;
 
     list<Rewired::RewiredKeys> keyList;
     char buf[256] = {};
