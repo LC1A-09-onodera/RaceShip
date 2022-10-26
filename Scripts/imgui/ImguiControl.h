@@ -53,7 +53,6 @@ private:
 
     ImGuiWindowFlags gizmoWindowFlags = 0;
     ImGuiWindowFlags menuBarWindowFlags = 0;
-    ImGuiWindowFlags beharviorWindowFlags = 0;
     bool isBehavior = false;
 public:
     static Imgui *GetInstance();
@@ -168,4 +167,5 @@ public:
     bool isInspectorWindow = true;
 
     int isPosRec = KeyRec::None;
+
 };

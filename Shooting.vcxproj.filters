@@ -395,6 +395,9 @@
     <ClCompile Include="Scripts\imgui\ImGuizmo.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
+    <ClCompile Include="Scripts\BihaviorTree\BehaviorTree.cpp">
+      <Filter>BehaviorTree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\HLSL\OBJPixelShader.hlsl" />

@@ -12,6 +12,8 @@
 #include "../Tools/LoadStage/StageObject.h"
 #include "../Tools/MapLayout/MapLayout.h"
 #include "../Tools/MapLayout/SceneMapLayout.h"
+#include "../BihaviorTree/BehaviorTree.h"
+
 #include <thread>
 
 GameScene::GameScene()

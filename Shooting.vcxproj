@@ -229,6 +229,7 @@
     <ClCompile Include="Scripts\BaseDirectX\DirectInput.cpp" />
     <ClCompile Include="Scripts\BaseDirectX\GameScene.cpp" />
     <ClCompile Include="Scripts\BaseDirectX\Input.cpp" />
+    <ClCompile Include="Scripts\BihaviorTree\BehaviorTree.cpp" />
     <ClCompile Include="Scripts\Camera\Camera.cpp" />
     <ClCompile Include="Scripts\FBX\FbxLoader\FbxLoader.cpp" />
     <ClCompile Include="Scripts\FBX\FBXModel\FBXModel.cpp" />

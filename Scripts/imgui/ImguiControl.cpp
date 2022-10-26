@@ -18,7 +18,7 @@
 #include "../Player/Seling.h"
 #include "../Tools/Particle/ParticleEdit.h"
 #include "../Tools/KeyLog/KeyLog.h"
-
+#include "../BihaviorTree/BehaviorTree.h"
 //#define _DEBUG
 
 using namespace Editors;
@@ -395,109 +395,10 @@ void Imgui::DrawImGui(EachInfo& each)
 
         ImGui::End();
     }
+    //ビヘイビアのドロー
     if (isBehavior)
     {
-        //キャンパスのスクロール
-        static ImVec2 origin = {0, 0};
-        ImVector<ImVec2> poss;
-        ImGui::Begin("tree1", nullptr, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
-        ImGui::SetWindowSize(ImVec2(static_cast<float>(100), static_cast<float>(100)), ImGuiCond_::ImGuiCond_FirstUseEver);
-        //guiのウィンドウ取得
-        ImGuiWindow* windowsm1 = ImGui::GetCurrentWindow();
-        poss.push_back(windowsm1->Pos);
-        ImGui::End();
-
-        ImGui::Begin("tree2", nullptr, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
-        ImGui::SetWindowSize(ImVec2(static_cast<float>(100), static_cast<float>(100)), ImGuiCond_::ImGuiCond_FirstUseEver);
-        //guiのウィンドウ取得
-        ImGuiWindow* windowsm2 = ImGui::GetCurrentWindow();
-        poss.push_back(windowsm2->Pos);
-        ImGui::End();
-
-        //ウィンドウサイズを画面全体に
-        ImGui::SetNextWindowSize(ImVec2(static_cast<float>(window_width), static_cast<float>(window_height)), ImGuiCond_Appearing);
-        //座標を左上に
-        ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Appearing);
-        //ウィンドウの背景と外枠を描画しない
-        beharviorWindowFlags |= ImGuiWindowFlags_NoBackground;
-        //タイトルバーを付けない
-        beharviorWindowFlags |= ImGuiWindowFlags_NoTitleBar;
-        //右下のサイズ変更を出来なくする
-        beharviorWindowFlags |= ImGuiWindowFlags_NoResize;
-        //動かないようにする
-        beharviorWindowFlags |= ImGuiWindowFlags_NoMove;
-        //最前面に来ないように
-        beharviorWindowFlags |= ImGuiWindowFlags_NoFocusOnAppearing;
-        //iniを読み込み書き込みをしない
-        beharviorWindowFlags |= ImGuiWindowFlags_NoSavedSettings;
-        beharviorWindowFlags |= ImGuiWindowFlags_NoBackground;
-        beharviorWindowFlags |= ImGuiWindowFlags_NoCollapse;
-        beharviorWindowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
-        ImGui::Begin("BehaviarTree", nullptr, beharviorWindowFlags);//ウィンドウの名前
-        ImGui::SetWindowSize(ImVec2(static_cast<float>(window_width), static_cast<float>(window_height)), ImGuiCond_::ImGuiCond_FirstUseEver);
-
-        // Draw border and background color
-        ImGuiIO& io = ImGui::GetIO();
-
-        static ImVector<ImVec2> points;
-        static ImVec2 scrolling(0.0f, 0.0f);
-        //
-        static bool opt_enable_grid = true;
-        static bool opt_enable_context_menu = true;
-        static bool adding_line = false;
-        // Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2) allows us to use IsItemHovered()/IsItemActive()
-        ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();      // ImDrawList API uses screen coordinates!
-        ImVec2 canvas_sz = ImGui::GetContentRegionAvail();   // Resize canvas to what's available
-        float hoge = 0.0f;
-        if (canvas_sz.x < hoge) canvas_sz.x = hoge;
-        if (canvas_sz.y < hoge) canvas_sz.y = hoge;
-        ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
-
-        ImDrawList* draw_list = ImGui::GetWindowDrawList();
-        //背景色
-        draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
-        //?
-        draw_list->AddRect(canvas_p0, canvas_p1, IM_COL32(0, 0, 2, 255));
-        //画面をボタンとして見立ててる？
-        //マウスの入力キーの取得がしたいのかも
-        ImGui::InvisibleButton("canvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-        const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-        const bool is_active = ImGui::IsItemActive();   // Held
-        origin = {canvas_p0.x + scrolling.x, canvas_p0.y + scrolling.y}; // Lock scrolled origin
-        //キャンパス内でのマウス位置
-
-        //スクロール
-        const float mouse_threshold_for_pan = opt_enable_context_menu ? -1.0f : 0.0f;
-        if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
-        {
-            scrolling.x += io.MouseDelta.x;
-            scrolling.y += io.MouseDelta.y;
-        }
-        ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
-        if (opt_enable_context_menu && drag_delta.x == 0.0f && drag_delta.y == 0.0f)
-            ImGui::OpenPopupOnItemClick("context", ImGuiPopupFlags_MouseButtonRight);
-
-        // Draw grid + all lines in the canvas
-        //描画前準備
-        draw_list->PushClipRect(canvas_p0, canvas_p1, true);
-
-        //グリッドの描画
-        if (opt_enable_grid)
-        {
-            //グリッドサイズ
-            const float GRID_STEP = 32.0f;
-            for (float x = fmodf(scrolling.x, GRID_STEP); x < canvas_sz.x; x += GRID_STEP)
-                draw_list->AddLine(ImVec2(canvas_p0.x + x, canvas_p0.y), ImVec2(canvas_p0.x + x, canvas_p1.y), IM_COL32(200, 200, 200, 40));
-            for (float y = fmodf(scrolling.y, GRID_STEP); y < canvas_sz.y; y += GRID_STEP)
-                draw_list->AddLine(ImVec2(canvas_p0.x, canvas_p0.y + y), ImVec2(canvas_p1.x, canvas_p0.y + y), IM_COL32(200, 200, 200, 40));
-        }
-        for (int n = 0; n < poss.Size; n += 2)
-        {
-            draw_list->AddLine(ImVec2(poss[n].x, poss[n].y), ImVec2(poss[n + 1].x, poss[n + 1].y), IM_COL32(255, 255, 0, 255), 2.0f);
-        }
-        //描画終了処理
-        draw_list->PopClipRect();
-        ImGui::End();
+        BehavirTree::BehavierImGui::DrawImGui();
     }
     ImGui::Render();
     BaseDirectX::GetInstance()->cmdList->SetDescriptorHeaps(1, GetHeapForImgui().GetAddressOf());
@@ -851,6 +752,7 @@ void Imgui::Update(Seling& player)
 };
 
 ImguiEnum::ImguiEnum(int count, ...)
+
 {
     va_list ap;
     va_start(ap, count);

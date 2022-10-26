@@ -1,59 +1,205 @@
 #pragma once
 #include <string>
 #include <list>
-using namespace std;
+#include <memory>
+
+#include "../imgui/imgui.h"
+#include "../imgui/imgui_impl_dx12.h"
+#include "../imgui/imgui_impl_win32.h"
+#include "../imgui/imgui_internal.h"
 
 namespace BehavirTree
 {
-	class GUIWindow
+	enum NodeType
 	{
-	private:
-		list<GUIWindow> _parent;
-		list<GUIWindow> _children;
-	public:
-		void GetParent();
-		void GUIDraw(string &f_name);
+		e_Root,
+		e_Selector,
+		e_Sequence,
+		e_Task,
+		e_NONE,
 	};
-	class Element
+	enum NowState
+	{
+		//対象じゃない、実行していない
+		Stay,
+		//実行中
+		Run,
+		//成功
+		Success,
+		//失敗
+		Failure,
+		//エラー
+		Error,
+	};
+	//ノードの基本クラス
+	class Node
 	{
 	private:
+		std::list<Node*> _children;
+
 		//優先度(使用割合)
-		int _priority;
-		string _name;
+		int _priority = 0;
+		//ノードの名前
+		std::string _name = "";
+		//ノードの実行中フラグ
+		bool _isActive = false;
+		//ステータス
+		NowState _nowState = NowState::Stay;
+		//Nodeの種類を格納
+		NodeType _nodeType = NodeType::e_NONE;
+		//GUIの描画ルール
+		ImGuiWindowFlags _flags = 0;
+		//GUIウィンドウの座標
+		ImVec2 _windowPos = { 0, 0 };
 	public:
-		int GetPriority()
+		//ここにすべてのノードを格納
+		//描画を行う
+		class NodeManager
 		{
-			return _priority;
+		public:
+			std::list<Node *> nodes;
+			void Draw()
+			{
+				for each (auto node in nodes)
+				{
+					node->GUIDraw();
+				}
+			};
+
 		};
-		string GetName()
+		//
+		Node()
 		{
-			return _name;
+		}
+		~Node()
+		{
+		}
+		Node* _parent = nullptr;
+		void GUIDraw();
+		ImVec2 GetWindowPos(){return _windowPos;}
+		Node* GetParent(){return _parent;};
+		const int GetPriority(){return _priority;};
+		const std::string GetName(){return _name;}
+		void SetName(std::string f_name){_name = f_name;}
+		const bool GetActive(){return _isActive;}
+		const NowState GetIsReturnParent(){return _nowState;}
+		void SetNodeType(NodeType f_type){_nodeType = f_type;}
+		const NodeType GetNodeType(){return _nodeType;}
+		void SetActive(bool f_active){_isActive = f_active;}
+		std::list<Node*> Children(){return _children;}
+		Node* GetNode(){return this;}
+	};
+	//親子を結ぶ
+	static void SetParentAndChild(Node& f_parent, Node& f_child)
+	{
+		f_parent.Children().push_back(&f_child);
+		if (f_child._parent == nullptr)
+		{
+			f_child._parent = new Node();
+		}
+		f_child._parent = &f_parent;
+	};
+
+	//----------------------以下各種ノード-----------------------
+	//ルートオブジェクト
+	class RootBehavior : public Node
+	{
+	public:
+		RootBehavior()
+		{
+			SetNodeType(NodeType::e_Root);
+		}
+		~RootBehavior()
+		{
 		}
 	};
-
-	//ルートオブジェクト
-	class RootBehavior : public Element, public  GUIWindow
-	{
-		bool _isActive = false;
-		bool GetIsActive()
-		{
-			return _isActive;
-		};
-		void StartElement()
-		{
-			_isActive = true;
-		};
-	};
 	//セレクター
-	class Selector : public  Element, public GUIWindow
+	class Selector : public Node
 	{
-		
+	public:
+		Selector()
+		{
+			SetNodeType(NodeType::e_Selector);
+		}
+		~Selector()
+		{
+
+		}
 	};
 	//シーケンス
-	class Sequence : public Element, public GUIWindow
+	class Sequence : public Node
 	{
-		
-	};
-	//
+	public:
+		Sequence()
+		{
+			SetNodeType(NodeType::e_Sequence);
+		}
+		~Sequence()
+		{
 
+		}
+	};
+	//タスク
+	class Task : public Node
+	{
+	public:
+		Task()
+		{
+			SetNodeType(NodeType::e_Task);
+		}
+		~Task()
+		{
+
+		}
+		//実際に行う関数の純粋仮想関数
+		//継承先で関数のアクションを決める
+		//virtual bool Task() = 0;
+	};
+	//-----------------------------------------------------------
+
+
+	//-----------------------以下GUI制御用-----------------------
+	class BehavierImGui
+	{
+	private:
+		//Behaviorのルートオブジェクト
+		static RootBehavior rootObject;
+		//ノードの名前を格納
+		static char nameBuf[256];
+		static const char *nodeName;
+	public:
+		//これで描画するためにまとめている
+		static Node::NodeManager nodeManager;
+		static ImGuiWindowFlags beharviorWindowFlags;
+		static ImVector<ImVec2> behaviarWindowPosisions;
+		static void CreateNode(const char* f_nodeName, NodeType f_type, Node*f_parent);
+		static void DrawImGui();
+		static void ClearNodes();
+	};
+
+	//-----------------------------------------------------------
+	//class smp
+	//{
+	//public:
+
+	//	//static RootBehavior root;
+	//	static void Init()
+	//	{
+	//		/*root.Children().push_back(&task);
+	//		root.SetName("root");
+	//		task.SetName("task");
+	//		task2.SetName("task2");
+	//		SetParentAndChild(root, task);
+	//		SetParentAndChild(root, task2);
+	//		
+	//		BehavirTree::Node::NodeManager::nodes.push_back(&root);
+	//		BehavirTree::Node::NodeManager::nodes.push_back(&task);
+	//		BehavirTree::Node::NodeManager::nodes.push_back(&task2);*/
+	//	};
+
+	//	static void Draw()
+	//	{
+	//		//Node::NodeManager::Draw();
+	//	}
+	//};
 }
