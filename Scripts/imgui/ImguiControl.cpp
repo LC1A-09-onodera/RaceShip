@@ -398,7 +398,7 @@ void Imgui::DrawImGui(EachInfo& each)
     //ビヘイビアのドロー
     if (isBehavior)
     {
-        BehavirTree::BehavierImGui::DrawImGui();
+        BehaviorTree::BehavierImGui::DrawImGui();
     }
     ImGui::Render();
     BaseDirectX::GetInstance()->cmdList->SetDescriptorHeaps(1, GetHeapForImgui().GetAddressOf());

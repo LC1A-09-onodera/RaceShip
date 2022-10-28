@@ -1,55 +1,67 @@
 #include "BehaviorTree.h"
-#include "../imgui/ImguiControl.h"
+#include <sstream>
+#include <fstream>
 
-BehavirTree::RootBehavior BehavirTree::BehavierImGui::rootObject;
-BehavirTree::Node::NodeManager BehavirTree::BehavierImGui::nodeManager;
-char BehavirTree::BehavierImGui::nameBuf[256] = {};
-const char* BehavirTree::BehavierImGui::nodeName = " ";
-ImGuiWindowFlags BehavirTree::BehavierImGui::beharviorWindowFlags = 0;
-ImVector<ImVec2> BehavirTree::BehavierImGui::behaviarWindowPosisions;
-void BehavirTree::Node::GUIDraw()
+BehaviorTree::RootBehavior BehaviorTree::BehavierImGui::rootObject;
+BehaviorTree::Node::NodeManager BehaviorTree::BehavierImGui::nodeManager;
+char BehaviorTree::BehavierImGui::nameBuf[256] = {};
+const char* BehaviorTree::BehavierImGui::nodeName = " ";
+ImGuiWindowFlags BehaviorTree::BehavierImGui::beharviorWindowFlags = 0;
+ImVector<ImVec2> BehaviorTree::BehavierImGui::behaviarWindowPosisions;
+BehaviorTree::Node* BehaviorTree::BehavierImGui::selectObject;
+
+void BehaviorTree::Node::GUIDraw()
 {
+	ImGuiContext& g = *GImGui;
+
 	//iniを読み込み書き込みをしない
 	_flags |= ImGuiWindowFlags_NoSavedSettings;
 
 	ImVec4* style = ImGui::GetStyle().Colors;
-	if (GetNodeType() == NodeType::e_Root)
+	//ノードのカラー変更
 	{
-		style[ImGuiCol_TitleBg] = { 0.4f, 0.4f, 0.01f, 1.0f };
-		style[ImGuiCol_TitleBgCollapsed] = { 0.4f, 0.4f, 0.01f, 1.0f };
-		style[ImGuiCol_TitleBgActive] = { 0.4f, 0.4f, 0.01f, 1.0f };
+		if (GetNodeType() == NodeType::e_Root)
+		{
+			style[ImGuiCol_TitleBg] = { 0.3f, 0.3f, 0.01f, 1.0f };
+			style[ImGuiCol_TitleBgCollapsed] = { 0.35f, 0.35f, 0.01f, 1.0f };
+			style[ImGuiCol_TitleBgActive] = { 0.5f, 0.5f, 0.01f, 1.0f };
+		}
+		else if (GetNodeType() == NodeType::e_Selector)
+		{
+			style[ImGuiCol_TitleBg] = { 0.01f, 0.3f, 0.3f, 1.0f };
+			style[ImGuiCol_TitleBgCollapsed] = { 0.01f, 0.35f, 0.35f, 1.0f };
+			style[ImGuiCol_TitleBgActive] = { 0.01f, 0.5f, 0.5f, 1.0f };
+		}
+		else if (GetNodeType() == NodeType::e_Sequence)
+		{
+			style[ImGuiCol_TitleBg] = { 0.21f, 0.21f, 0.6f, 1.0f };
+			style[ImGuiCol_TitleBgCollapsed] = { 0.25f, 0.25f, 0.65f, 1.0f };
+			style[ImGuiCol_TitleBgActive] = { 0.4f, 0.4f, 0.75f, 1.0f };
+		}
+		else if (GetNodeType() == NodeType::e_Task)
+		{
+			style[ImGuiCol_TitleBg] = { 0.3f, 0.01f, 0.3f, 1.0f };
+			style[ImGuiCol_TitleBgCollapsed] = { 0.35f, 0.01f, 0.35f, 1.0f };
+			style[ImGuiCol_TitleBgActive] = { 0.5f, 0.01f, 0.5f, 1.0f };
+		}
 	}
-	else if (GetNodeType() == NodeType::e_Selector)
-	{
-		style[ImGuiCol_TitleBg] = { 0.01f, 0.4f, 0.4f, 1.0f };
-		style[ImGuiCol_TitleBgCollapsed] = { 0.01f, 0.4f, 0.4f, 1.0f };
-		style[ImGuiCol_TitleBgActive] = { 0.01f, 0.4f, 0.4f, 1.0f };
-	}
-	else if (GetNodeType() == NodeType::e_Sequence)
-	{
-		style[ImGuiCol_TitleBg] = { 0.31f, 0.31f, 0.7f, 1.0f };
-		style[ImGuiCol_TitleBgCollapsed] = { 0.31f, 0.31f, 0.7f, 1.0f };
-		style[ImGuiCol_TitleBgActive] = { 0.31f, 0.31f, 0.7f, 1.0f };
-	}
-	else if (GetNodeType() == NodeType::e_Task)
-	{
-		style[ImGuiCol_TitleBg] = { 0.4f, 0.01f, 0.4f, 1.0f };
-		style[ImGuiCol_TitleBgCollapsed] = { 0.4f, 0.01f, 0.4f, 1.0f };
-		style[ImGuiCol_TitleBgActive] = { 0.4f, 0.01f, 0.4f, 1.0f };
-	}
-
 	ImGui::Begin(GetName().c_str(), nullptr, _flags);//ウィンドウの名前
 	ImGui::SetWindowSize(ImVec2(200.0f, 80.0f), ImGuiCond_::ImGuiCond_FirstUseEver);
-
-
-	ImGui::DragInt("Priority", &_priority);
-
+	if (GetName() == (GImGui)->Windows[GImGui->Windows.size() - 1]->Name)
+	{
+		BehaviorTree::BehavierImGui::selectObject = this;
+	}
+	//ノードに表示する情報
+	{
+		ImGui::DragInt("Priority", &_priority);
+	}
 
 	//guiのウィンドウ取得
 	ImGuiWindow* window = ImGui::GetCurrentWindow();
 	_windowPos = window->Pos;
 	if (GetParent() != nullptr)
 	{
+		//親子を線で結ぶ
 		BehavierImGui::behaviarWindowPosisions.push_back(_parent->GetWindowPos());
 		BehavierImGui::behaviarWindowPosisions.push_back(window->Pos);
 	}
@@ -57,37 +69,56 @@ void BehavirTree::Node::GUIDraw()
 	ImGui::End();
 }
 
-void BehavirTree::BehavierImGui::CreateNode(const char* f_nodeName, NodeType f_type, Node* f_parent)
+void BehaviorTree::BehavierImGui::CreateNode(const char* f_nodeName, NodeType f_type, Node* f_parent)
 {
-	if (nodeManager.nodes.size() == 0)
+	//最初のノードつくりの時の処理
 	{
-		rootObject.SetName("RootNode");
-		nodeManager.nodes.push_back(&rootObject);
+		if (nodeManager.nodes.size() == 0)
+		{
+			rootObject.SetName("RootNode");
+			nodeManager.nodes.push_back(&rootObject);
+		}
+		if (selectObject == nullptr)
+		{
+			selectObject = new Node();
+			selectObject = &rootObject;
+		}
+		if (f_parent == nullptr)
+		{
+			f_parent = new Node();
+			f_parent = selectObject;
+		}
 	}
-	if (f_type == BehavirTree::e_Selector)
+	//実際にノードを作る
 	{
-		Selector* selector = new Selector();
-		selector->SetName(f_nodeName);
-		SetParentAndChild(*f_parent, *selector);
-		nodeManager.nodes.push_back(selector);
-	}
-	else if (f_type == BehavirTree::e_Sequence)
-	{
-		Sequence* sequence = new Sequence();
-		sequence->SetName(f_nodeName);
-		SetParentAndChild(*f_parent, *sequence);
-		nodeManager.nodes.push_back(sequence);
-	}
-	else if (f_type == BehavirTree::e_Task)
-	{
-		Task* task = new Task();
-		task->SetName(f_nodeName);
-		SetParentAndChild(*f_parent, *task);
-		nodeManager.nodes.push_back(task);
+		//タスクノードの下にノードを作らせない
+		if (f_parent->GetNodeType() == BehaviorTree::NodeType::e_Task)return;
+
+		if (f_type == BehaviorTree::e_Selector)
+		{
+			Selector* selector = new Selector();
+			selector->SetName(f_nodeName);
+			SetParentAndChild(*f_parent, *selector);
+			nodeManager.nodes.push_back(selector);
+		}
+		else if (f_type == BehaviorTree::e_Sequence)
+		{
+			Sequence* sequence = new Sequence();
+			sequence->SetName(f_nodeName);
+			SetParentAndChild(*f_parent, *sequence);
+			nodeManager.nodes.push_back(sequence);
+		}
+		else if (f_type == BehaviorTree::e_Task)
+		{
+			Task* task = new Task();
+			task->SetName(f_nodeName);
+			SetParentAndChild(*f_parent, *task);
+			nodeManager.nodes.push_back(task);
+		}
 	}
 }
 
-void BehavirTree::BehavierImGui::DrawImGui()
+void BehaviorTree::BehavierImGui::DrawImGui()
 {
 	//キャンパスのスクロール
 	static ImVec2 origin = { 0, 0 };
@@ -104,26 +135,33 @@ void BehavirTree::BehavierImGui::DrawImGui()
 		ImGui::InputText(nodeName, nameBuf, 256);
 		if (ImGui::Button("Add Selector"))
 		{
-			CreateNode(nameBuf, BehavirTree::NodeType::e_Selector, &rootObject);
+			CreateNode(nameBuf, BehaviorTree::NodeType::e_Selector, selectObject);
 		}
 		if (ImGui::Button("Add Sequence"))
 		{
-			CreateNode(nameBuf, BehavirTree::NodeType::e_Sequence, &rootObject);
+			CreateNode(nameBuf, BehaviorTree::NodeType::e_Sequence, selectObject);
 		}
 		if (ImGui::Button("Add Task"))
 		{
-			CreateNode(nameBuf, BehavirTree::NodeType::e_Task, &rootObject);
+			CreateNode(nameBuf, BehaviorTree::NodeType::e_Task, selectObject);
+		}
+
+		if (ImGui::Button("Behavior Export"))
+		{
+			nodeManager.ExportFile("smp");
 		}
 		ImGui::End();
 	}
 
-	BehavirTree::BehavierImGui::nodeManager.Draw();
+	BehaviorTree::BehavierImGui::nodeManager.Draw();
 
 	//グリッドキャンパス
 	//ウィンドウサイズは各自で設定してください
 	{
 		//ウィンドウサイズを画面全体に
-		ImGui::SetNextWindowSize(ImVec2(static_cast<float>(window_width), static_cast<float>(window_height)), ImGuiCond_Appearing);
+		const float windowWid = 1280;
+		const float windowHi = 720;
+		ImGui::SetNextWindowSize(ImVec2(windowWid, windowHi), ImGuiCond_Appearing);
 		//座標を左上に
 		ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Appearing);
 		//ウィンドウの背景と外枠を描画しない
@@ -142,7 +180,7 @@ void BehavirTree::BehavierImGui::DrawImGui()
 		beharviorWindowFlags |= ImGuiWindowFlags_NoCollapse;
 		beharviorWindowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
 		ImGui::Begin("BehaviarTree", nullptr, beharviorWindowFlags);//ウィンドウの名前
-		ImGui::SetWindowSize(ImVec2(static_cast<float>(window_width), static_cast<float>(window_height)), ImGuiCond_::ImGuiCond_FirstUseEver);
+		ImGui::SetWindowSize(ImVec2(windowWid, windowHi), ImGuiCond_::ImGuiCond_FirstUseEver);
 
 		// Draw border and background color
 		ImGuiIO& io = ImGui::GetIO();
@@ -213,8 +251,34 @@ void BehavirTree::BehavierImGui::DrawImGui()
 	}
 }
 
-void BehavirTree::BehavierImGui::ClearNodes()
+void BehaviorTree::BehavierImGui::ClearNodes()
 {
-	rootObject.Children().clear();
+	rootObject.Children()->clear();
 	nodeManager.nodes.clear();
+}
+
+void BehaviorTree::Node::NodeManager::ExportFile(std::string f_fileName)
+{
+	std::string particleFileName = f_fileName;
+	//ファイルを作る
+	std::string saveFileName = "Resource/TextData/Behavior/" + particleFileName + ".csv";
+	std::ofstream ofs(saveFileName);
+	dataStr = "";
+	this->GetChildren(*nodes.begin());
+	ofs << dataStr;
+}
+
+void BehaviorTree::Node::NodeManager::GetChildren(Node* f_node)
+{
+	if (f_node->Children()->size() < 1) return;
+	dataStr += "Name," + f_node->GetName() + ",";
+	dataStr += "NodeType," + f_node->GetNodeTypeName() + ",";
+	if (f_node->GetParent() != nullptr)
+	{
+		dataStr += "Parent," + f_node->GetParent()->GetName() + ",";
+	}
+	for each (Node *node in *f_node->Children())
+	{
+		GetChildren(node);
+	}
 }

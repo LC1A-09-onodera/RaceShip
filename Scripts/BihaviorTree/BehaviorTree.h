@@ -2,14 +2,15 @@
 #include <string>
 #include <list>
 #include <memory>
-
+//インクルードは自分で調整してください
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_dx12.h"
 #include "../imgui/imgui_impl_win32.h"
 #include "../imgui/imgui_internal.h"
 
-namespace BehavirTree
+namespace BehaviorTree
 {
+	//ノードの種類
 	enum NodeType
 	{
 		e_Root,
@@ -18,6 +19,7 @@ namespace BehavirTree
 		e_Task,
 		e_NONE,
 	};
+	//ノードの状態遷移
 	enum NowState
 	{
 		//対象じゃない、実行していない
@@ -52,12 +54,15 @@ namespace BehavirTree
 		//GUIウィンドウの座標
 		ImVec2 _windowPos = { 0, 0 };
 	public:
+		//親ノード
+		Node* _parent = nullptr;
 		//ここにすべてのノードを格納
 		//描画を行う
 		class NodeManager
 		{
 		public:
 			std::list<Node *> nodes;
+			std::string dataStr;
 			void Draw()
 			{
 				for each (auto node in nodes)
@@ -65,16 +70,13 @@ namespace BehavirTree
 					node->GUIDraw();
 				}
 			};
-
+			void LoadFile(std::string f_fileName);
+			void ExportFile(std::string f_fileName);
+			void GetChildren(Node *f_node);
 		};
-		//
-		Node()
-		{
-		}
-		~Node()
-		{
-		}
-		Node* _parent = nullptr;
+		//コンストラクタ・デストラクタ
+		Node(){}
+		~Node(){}
 		void GUIDraw();
 		ImVec2 GetWindowPos(){return _windowPos;}
 		Node* GetParent(){return _parent;};
@@ -85,14 +87,38 @@ namespace BehavirTree
 		const NowState GetIsReturnParent(){return _nowState;}
 		void SetNodeType(NodeType f_type){_nodeType = f_type;}
 		const NodeType GetNodeType(){return _nodeType;}
+		const std::string GetNodeTypeName() 
+		{
+			switch (_nodeType)
+			{
+			case BehaviorTree::e_Root:
+				return "Root";
+				break;
+			case BehaviorTree::e_Selector:
+				return "Selector";
+				break;
+			case BehaviorTree::e_Sequence:
+				return "Sequence";
+				break;
+			case BehaviorTree::e_Task:
+				return "Task";
+				break;
+			case BehaviorTree::e_NONE:
+				return "Error";
+				break;
+			default:
+				return "Error";
+				break;
+			}
+		}
 		void SetActive(bool f_active){_isActive = f_active;}
-		std::list<Node*> Children(){return _children;}
+		std::list<Node*> *Children(){return &_children;}
 		Node* GetNode(){return this;}
 	};
 	//親子を結ぶ
 	static void SetParentAndChild(Node& f_parent, Node& f_child)
 	{
-		f_parent.Children().push_back(&f_child);
+		f_parent.Children()->push_back(&f_child);
 		if (f_child._parent == nullptr)
 		{
 			f_child._parent = new Node();
@@ -138,6 +164,7 @@ namespace BehavirTree
 		{
 
 		}
+		
 	};
 	//タスク
 	class Task : public Node
@@ -164,10 +191,12 @@ namespace BehavirTree
 	private:
 		//Behaviorのルートオブジェクト
 		static RootBehavior rootObject;
+		
 		//ノードの名前を格納
 		static char nameBuf[256];
 		static const char *nodeName;
 	public:
+		static Node *selectObject;
 		//これで描画するためにまとめている
 		static Node::NodeManager nodeManager;
 		static ImGuiWindowFlags beharviorWindowFlags;
@@ -176,30 +205,4 @@ namespace BehavirTree
 		static void DrawImGui();
 		static void ClearNodes();
 	};
-
-	//-----------------------------------------------------------
-	//class smp
-	//{
-	//public:
-
-	//	//static RootBehavior root;
-	//	static void Init()
-	//	{
-	//		/*root.Children().push_back(&task);
-	//		root.SetName("root");
-	//		task.SetName("task");
-	//		task2.SetName("task2");
-	//		SetParentAndChild(root, task);
-	//		SetParentAndChild(root, task2);
-	//		
-	//		BehavirTree::Node::NodeManager::nodes.push_back(&root);
-	//		BehavirTree::Node::NodeManager::nodes.push_back(&task);
-	//		BehavirTree::Node::NodeManager::nodes.push_back(&task2);*/
-	//	};
-
-	//	static void Draw()
-	//	{
-	//		//Node::NodeManager::Draw();
-	//	}
-	//};
 }
