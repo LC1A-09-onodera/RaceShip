@@ -1,0 +1,444 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <FxCompile Include="Resource\HLSL\BlurPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\FBXVS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\FBXPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\MonoPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\NormalPlane.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\ObjectMosicPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\OBJHS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\OBJPixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\OBJVertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\ParticleGS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\ParticlePS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\ParticleVS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\peraVertex.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\PixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\PostBlurPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\PostEffectTestPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\PostEffectTestVS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\PostMosaicPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\PostWaterPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\SpritePixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\SpriteVertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\VertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\WaterSamplePS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\HLSL\WireFrameGS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Scripts\main.cpp" />
+    <ClCompile Include="Scripts\BaseDirectX\BaseDirectX.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\imgui\imgui.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\imgui\imgui_demo.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\imgui\imgui_draw.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\imgui\imgui_impl_dx12.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\imgui\imgui_impl_win32.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\imgui\imgui_tables.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\imgui\imgui_widgets.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\imgui\ImguiControl.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\imgui\ImGuizmo.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\WindowsAPI\WinAPI.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\BihaviorTree\BehaviorTree.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\FBX\FbxLoader\FbxLoader.cpp">
+      <Filter>Engine\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\FBX\FBXModel\FBXModel.cpp">
+      <Filter>Engine\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\FBX\FBXObject\FBXObject.cpp">
+      <Filter>Engine\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\BaseDirectX\DirectInput.cpp">
+      <Filter>Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\BaseDirectX\Input.cpp">
+      <Filter>Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Camera\Camera.cpp">
+      <Filter>Engine\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Player\Seling.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\WaterFace\WaterFace.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Tools\LoadStage\SpringBoard.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Tools\MapLayout\SceneMapLayout.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\MenuUI\MenuUI.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Tools\KeyLog\KeyLog.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\BaseDirectX\GameScene.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Tools\MapLayout\MapLayout.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Tools\LoadStage\LoadStage.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Tools\Particle\Particle3D.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Tools\Particle\ParticleEdit.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\RenderTarget\RenderTarget.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Sound\Sound.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Tools\Rewired\Rewired.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\UDP\udp.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Shader\ShaderManager.cpp">
+      <Filter>Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Tools\LoadStage\StageObject.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Sprite\Sprite.cpp">
+      <Filter>Engine\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Sprite\SpriteCommon.cpp">
+      <Filter>Engine\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Texture\Texture.cpp">
+      <Filter>Engine\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\3DModel\Model.cpp">
+      <Filter>Engine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Light\Light.cpp">
+      <Filter>Engine\Shadow</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Shader\Shader.cpp">
+      <Filter>Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\PostEffect\PostEffect.cpp">
+      <Filter>Engine\PostEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\VoiceUDPRecive\VoiceUDPRecive.cpp">
+      <Filter>Engine\Voice</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\VoiceUDPRecive\VoiceUDPSender.cpp">
+      <Filter>Engine\Voice</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Scripts\BaseDirectX\BaseDirectX.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\imgui\imconfig.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\imgui\imgui.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\imgui\imgui_impl_dx12.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\imgui\imgui_impl_win32.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\imgui\imgui_internal.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\imgui\ImguiControl.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\imgui\ImGuizmo.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\imgui\imstb_rectpack.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\imgui\imstb_textedit.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\imgui\imstb_truetype.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\WindowsAPI\WinAPI.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\BihaviorTree\BehaviorTree.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\BaseDirectX\dirent.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\BaseDirectX\DX12operator.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Light\CircleShadow.h">
+      <Filter>Engine\Shadow</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\FBX\FbxLoader\FbxLoader.h">
+      <Filter>Engine\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\FBX\FBXModel\FBXModel.h">
+      <Filter>Engine\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\FBX\FBXObject\FBXObject.h">
+      <Filter>Engine\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\BaseDirectX\FileLoad.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\BaseDirectX\DirectInput.h">
+      <Filter>Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\BaseDirectX\Input.h">
+      <Filter>Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Camera\Camera.h">
+      <Filter>Engine\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Player\Seling.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\WaterFace\WaterFace.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Tools\LoadStage\SpringBoard.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Tools\MapLayout\SceneMapLayout.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\MenuUI\MenuUI.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Tools\KeyLog\KeyLog.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\BaseDirectX\Library.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\BaseDirectX\GameScene.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Tools\MapLayout\MapLayout.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Tools\LoadStage\LoadStage.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Tools\Particle\Particle3D.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Tools\Particle\ParticleEdit.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\RenderTarget\RenderTarget.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\BaseDirectX\ResouceBarrier.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Sound\Sound.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Tools\Rewired\Rewired.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\BaseDirectX\viewport.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\UDP\udp.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Shader\ShaderManager.h">
+      <Filter>Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Tools\LoadStage\StageObject.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\json\json.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Sprite\Sprite.h">
+      <Filter>Engine\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Sprite\SpriteCommon.h">
+      <Filter>Engine\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Texture\Texture.h">
+      <Filter>Engine\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\3DModel\Model.h">
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Light\PointLight.h">
+      <Filter>Engine\Shadow</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Light\Light.h">
+      <Filter>Engine\Shadow</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Shader\Shader.h">
+      <Filter>Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Light\SpotLight.h">
+      <Filter>Engine\Shadow</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\PostEffect\PostEffect.h">
+      <Filter>Engine\PostEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\VoiceUDPRecive\VoiceUDPRecive.h">
+      <Filter>Engine\Voice</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\VoiceUDPRecive\VoiceUDPSender.h">
+      <Filter>Engine\Voice</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Resource\HLSL\BSH.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Resource\HLSL\FBX.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Resource\HLSL\OBJHeader.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Resource\HLSL\Particle.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Resource\HLSL\peraHeader.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Resource\HLSL\PostEffectTest.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Resource\HLSL\SpriteshaderHeader.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{8f0a8b7b-c9c9-4d13-8147-1830f3633fc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui">
+      <UniqueIdentifier>{feebc318-7e17-4600-aeb1-213612d38619}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tools">
+      <UniqueIdentifier>{86098f7c-7f15-4320-b6ec-b892bd663e64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application">
+      <UniqueIdentifier>{10a9b2a8-9b5b-42bc-b3e2-fb09bd3ea89e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{05372777-037c-4a92-89c9-bfa2934c634e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Shadow">
+      <UniqueIdentifier>{e7a864ee-ca7e-49c0-837e-9492af1a7b77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\FBX">
+      <UniqueIdentifier>{965b6ef2-dde2-471b-94a8-5ea3bf028887}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Input">
+      <UniqueIdentifier>{9ff1cf3c-9d3c-44aa-af26-4ecef7bcd9ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Camera">
+      <UniqueIdentifier>{0f5d992f-6b80-4952-8687-81f27fda38d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Sprite">
+      <UniqueIdentifier>{95fedc98-9508-4b57-a34a-56cd70b9ae1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Model">
+      <UniqueIdentifier>{5c66078b-57d7-498c-843c-03c98ffe5d4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PostEffect">
+      <UniqueIdentifier>{507272d3-21f5-4e24-85b5-d56871ba9453}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Voice">
+      <UniqueIdentifier>{c5fae3ca-1a4b-4288-b78b-8e99c78c9d89}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
