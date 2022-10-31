@@ -1,284 +1,431 @@
 #include "BehaviorTree.h"
 #include <sstream>
 #include <fstream>
+#include <iostream>
 
-BehaviorTree::RootBehavior BehaviorTree::BehavierImGui::rootObject;
-BehaviorTree::Node::NodeManager BehaviorTree::BehavierImGui::nodeManager;
-char BehaviorTree::BehavierImGui::nameBuf[256] = {};
-const char* BehaviorTree::BehavierImGui::nodeName = " ";
-ImGuiWindowFlags BehaviorTree::BehavierImGui::beharviorWindowFlags = 0;
-ImVector<ImVec2> BehaviorTree::BehavierImGui::behaviarWindowPosisions;
-BehaviorTree::Node* BehaviorTree::BehavierImGui::selectObject;
-
-void BehaviorTree::Node::GUIDraw()
+namespace BehaviorTree
 {
-	ImGuiContext& g = *GImGui;
+	RootNode BehavierImGui::rootObject = RootNode();
+	char BehavierImGui::nameBuf[256] = {};
+	const char* BehavierImGui::nodeName = " ";
+	char BehavierImGui::treeNameBuf[256] = {};
+	const char* BehavierImGui::treeName = " ";
 
-	//iniを読み込み書き込みをしない
-	_flags |= ImGuiWindowFlags_NoSavedSettings;
+	ImGuiWindowFlags BehavierImGui::beharviorWindowFlags = 0;
+	ImGuiWindowFlags BehavierImGui::beharviorButtonWindowFlags = 0;
+	ImVector<ImVec2> BehavierImGui::behaviarWindowPosisions;
+	Node* BehavierImGui::selectObject;
+	const ImVec2 Node::WindowSize = { 200.0f, 80.0f };
 
-	ImVec4* style = ImGui::GetStyle().Colors;
-	//ノードのカラー変更
+	void Node::Init(Node* f_parent, string f_nodeName, NodeType f_type)
 	{
-		if (GetNodeType() == NodeType::e_Root)
-		{
-			style[ImGuiCol_TitleBg] = { 0.3f, 0.3f, 0.01f, 1.0f };
-			style[ImGuiCol_TitleBgCollapsed] = { 0.35f, 0.35f, 0.01f, 1.0f };
-			style[ImGuiCol_TitleBgActive] = { 0.5f, 0.5f, 0.01f, 1.0f };
-		}
-		else if (GetNodeType() == NodeType::e_Selector)
-		{
-			style[ImGuiCol_TitleBg] = { 0.01f, 0.3f, 0.3f, 1.0f };
-			style[ImGuiCol_TitleBgCollapsed] = { 0.01f, 0.35f, 0.35f, 1.0f };
-			style[ImGuiCol_TitleBgActive] = { 0.01f, 0.5f, 0.5f, 1.0f };
-		}
-		else if (GetNodeType() == NodeType::e_Sequence)
-		{
-			style[ImGuiCol_TitleBg] = { 0.21f, 0.21f, 0.6f, 1.0f };
-			style[ImGuiCol_TitleBgCollapsed] = { 0.25f, 0.25f, 0.65f, 1.0f };
-			style[ImGuiCol_TitleBgActive] = { 0.4f, 0.4f, 0.75f, 1.0f };
-		}
-		else if (GetNodeType() == NodeType::e_Task)
-		{
-			style[ImGuiCol_TitleBg] = { 0.3f, 0.01f, 0.3f, 1.0f };
-			style[ImGuiCol_TitleBgCollapsed] = { 0.35f, 0.01f, 0.35f, 1.0f };
-			style[ImGuiCol_TitleBgActive] = { 0.5f, 0.01f, 0.5f, 1.0f };
-		}
-	}
-	ImGui::Begin(GetName().c_str(), nullptr, _flags);//ウィンドウの名前
-	ImGui::SetWindowSize(ImVec2(200.0f, 80.0f), ImGuiCond_::ImGuiCond_FirstUseEver);
-	if (GetName() == (GImGui)->Windows[GImGui->Windows.size() - 1]->Name)
-	{
-		BehaviorTree::BehavierImGui::selectObject = this;
-	}
-	//ノードに表示する情報
-	{
-		ImGui::DragInt("Priority", &_priority);
-	}
-
-	//guiのウィンドウ取得
-	ImGuiWindow* window = ImGui::GetCurrentWindow();
-	_windowPos = window->Pos;
-	if (GetParent() != nullptr)
-	{
-		//親子を線で結ぶ
-		BehavierImGui::behaviarWindowPosisions.push_back(_parent->GetWindowPos());
-		BehavierImGui::behaviarWindowPosisions.push_back(window->Pos);
-	}
-
-	ImGui::End();
-}
-
-void BehaviorTree::BehavierImGui::CreateNode(const char* f_nodeName, NodeType f_type, Node* f_parent)
-{
-	//最初のノードつくりの時の処理
-	{
-		if (nodeManager.nodes.size() == 0)
-		{
-			rootObject.SetName("RootNode");
-			nodeManager.nodes.push_back(&rootObject);
-		}
-		if (selectObject == nullptr)
-		{
-			selectObject = new Node();
-			selectObject = &rootObject;
-		}
+		//ウィンドウ生成時親ノードとどれだけずらすかを設定
+		static const ImVec2 WindowSponeDiff = { 220.0f, 30.0f };
+		datas[defaultDatas[je_NodeName]] = f_nodeName;
+		datas[defaultDatas[je_NodeType]] = f_type;
+		//ルートオブジェクトの場合親ノードがない
 		if (f_parent == nullptr)
 		{
-			f_parent = new Node();
-			f_parent = selectObject;
+			datas[defaultDatas[je_Priority]] = 0;
+			datas[defaultDatas[je_WindowPos]] = { 100.0f, 30.0f };
+			return;
 		}
-	}
-	//実際にノードを作る
-	{
-		//タスクノードの下にノードを作らせない
-		if (f_parent->GetNodeType() == BehaviorTree::NodeType::e_Task)return;
-
-		if (f_type == BehaviorTree::e_Selector)
-		{
-			Selector* selector = new Selector();
-			selector->SetName(f_nodeName);
-			SetParentAndChild(*f_parent, *selector);
-			nodeManager.nodes.push_back(selector);
-		}
-		else if (f_type == BehaviorTree::e_Sequence)
-		{
-			Sequence* sequence = new Sequence();
-			sequence->SetName(f_nodeName);
-			SetParentAndChild(*f_parent, *sequence);
-			nodeManager.nodes.push_back(sequence);
-		}
-		else if (f_type == BehaviorTree::e_Task)
-		{
-			Task* task = new Task();
-			task->SetName(f_nodeName);
-			SetParentAndChild(*f_parent, *task);
-			nodeManager.nodes.push_back(task);
-		}
-	}
-}
-
-void BehaviorTree::BehavierImGui::DrawImGui()
-{
-	//キャンパスのスクロール
-	static ImVec2 origin = { 0, 0 };
-	behaviarWindowPosisions.clear();
-
-	//ビヘイビアの生成ボタン用ウィンドウ
-	{
-		ImGui::Begin("BehaviorWindow", nullptr, ImGuiWindowFlags_MenuBar);//ウィンドウの名前
-		ImGui::SetWindowSize(ImVec2(static_cast<float>(200), static_cast<float>(200)), ImGuiCond_::ImGuiCond_FirstUseEver);
-		if (ImGui::Button("Clear Nodes"))
-		{
-			ClearNodes();
-		}
-		ImGui::InputText(nodeName, nameBuf, 256);
-		if (ImGui::Button("Add Selector"))
-		{
-			CreateNode(nameBuf, BehaviorTree::NodeType::e_Selector, selectObject);
-		}
-		if (ImGui::Button("Add Sequence"))
-		{
-			CreateNode(nameBuf, BehaviorTree::NodeType::e_Sequence, selectObject);
-		}
-		if (ImGui::Button("Add Task"))
-		{
-			CreateNode(nameBuf, BehaviorTree::NodeType::e_Task, selectObject);
-		}
-
-		if (ImGui::Button("Behavior Export"))
-		{
-			nodeManager.ExportFile("smp");
-		}
-		ImGui::End();
+		datas[defaultDatas[je_Priority]] = static_cast<int>(f_parent->Children()->size());
+		datas[defaultDatas[je_WindowPos]] = { f_parent->datas[defaultDatas[je_WindowPos]][0] + WindowSponeDiff.x, f_parent->datas[defaultDatas[je_WindowPos]][1] + WindowSponeDiff.y + static_cast<float>(f_parent->Children()->size()) * WindowSize.y };
+		SetParentAndChild(*f_parent, *this);
 	}
 
-	BehaviorTree::BehavierImGui::nodeManager.Draw();
-
-	//グリッドキャンパス
-	//ウィンドウサイズは各自で設定してください
+	void Node::GUIDraw()
 	{
-		//ウィンドウサイズを画面全体に
-		const float windowWid = 1280;
-		const float windowHi = 720;
-		ImGui::SetNextWindowSize(ImVec2(windowWid, windowHi), ImGuiCond_Appearing);
-		//座標を左上に
-		ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Appearing);
-		//ウィンドウの背景と外枠を描画しない
-		beharviorWindowFlags |= ImGuiWindowFlags_NoBackground;
-		//タイトルバーを付けない
-		beharviorWindowFlags |= ImGuiWindowFlags_NoTitleBar;
-		//右下のサイズ変更を出来なくする
-		beharviorWindowFlags |= ImGuiWindowFlags_NoResize;
-		//動かないようにする
-		beharviorWindowFlags |= ImGuiWindowFlags_NoMove;
-		//最前面に来ないように
-		beharviorWindowFlags |= ImGuiWindowFlags_NoFocusOnAppearing;
+		ImGuiContext& g = *GImGui;
+
 		//iniを読み込み書き込みをしない
-		beharviorWindowFlags |= ImGuiWindowFlags_NoSavedSettings;
-		beharviorWindowFlags |= ImGuiWindowFlags_NoBackground;
-		beharviorWindowFlags |= ImGuiWindowFlags_NoCollapse;
-		beharviorWindowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
-		ImGui::Begin("BehaviarTree", nullptr, beharviorWindowFlags);//ウィンドウの名前
-		ImGui::SetWindowSize(ImVec2(windowWid, windowHi), ImGuiCond_::ImGuiCond_FirstUseEver);
+		_flags |= ImGuiWindowFlags_NoSavedSettings;
 
-		// Draw border and background color
-		ImGuiIO& io = ImGui::GetIO();
-
-		static ImVector<ImVec2> points;
-		static ImVec2 scrolling(0.0f, 0.0f);
-		//
-		static bool opt_enable_grid = true;
-		static bool opt_enable_context_menu = true;
-		static bool adding_line = false;
-		// Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2) allows us to use IsItemHovered()/IsItemActive()
-		ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();      // ImDrawList API uses screen coordinates!
-		ImVec2 canvas_sz = ImGui::GetContentRegionAvail();   // Resize canvas to what's available
-		float hoge = 0.0f;
-		if (canvas_sz.x < hoge) canvas_sz.x = hoge;
-		if (canvas_sz.y < hoge) canvas_sz.y = hoge;
-		ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
-
-		ImDrawList* draw_list = ImGui::GetWindowDrawList();
-		//背景色
-		draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
-		//?
-		draw_list->AddRect(canvas_p0, canvas_p1, IM_COL32(0, 0, 2, 255));
-		//画面をボタンとして見立ててる？
-		//マウスの入力キーの取得がしたいのかも
-		ImGui::InvisibleButton("canvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-		const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-		const bool is_active = ImGui::IsItemActive();   // Held
-		origin = { canvas_p0.x + scrolling.x, canvas_p0.y + scrolling.y }; // Lock scrolled origin
-		//キャンパス内でのマウス位置
-
-		//スクロール
-		const float mouse_threshold_for_pan = opt_enable_context_menu ? -1.0f : 0.0f;
-		if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
+		ImVec4* style = ImGui::GetStyle().Colors;
+		//ノードのカラー変更
 		{
-			scrolling.x += io.MouseDelta.x;
-			scrolling.y += io.MouseDelta.y;
+			//NONEノードは基本なしなので描画しない
+			if (datas[defaultDatas[je_NodeType]] == NodeType::e_NONE)return;
+			if (datas[defaultDatas[je_NodeType]] == NodeType::e_Root)
+			{
+				style[ImGuiCol_TitleBg] = { 0.3f, 0.3f, 0.01f, 1.0f };
+				style[ImGuiCol_TitleBgCollapsed] = { 0.35f, 0.35f, 0.01f, 1.0f };
+				style[ImGuiCol_TitleBgActive] = { 0.5f, 0.5f, 0.01f, 1.0f };
+			}
+			else if (datas[defaultDatas[je_NodeType]] == NodeType::e_Selector)
+			{
+				style[ImGuiCol_TitleBg] = { 0.01f, 0.3f, 0.3f, 1.0f };
+				style[ImGuiCol_TitleBgCollapsed] = { 0.01f, 0.35f, 0.35f, 1.0f };
+				style[ImGuiCol_TitleBgActive] = { 0.01f, 0.5f, 0.5f, 1.0f };
+			}
+			else if (datas[defaultDatas[je_NodeType]] == NodeType::e_Sequence)
+			{
+				style[ImGuiCol_TitleBg] = { 0.21f, 0.21f, 0.6f, 1.0f };
+				style[ImGuiCol_TitleBgCollapsed] = { 0.25f, 0.25f, 0.65f, 1.0f };
+				style[ImGuiCol_TitleBgActive] = { 0.4f, 0.4f, 0.75f, 1.0f };
+			}
+			else if (datas[defaultDatas[je_NodeType]] == NodeType::e_Task)
+			{
+				style[ImGuiCol_TitleBg] = { 0.3f, 0.01f, 0.3f, 1.0f };
+				style[ImGuiCol_TitleBgCollapsed] = { 0.35f, 0.01f, 0.35f, 1.0f };
+				style[ImGuiCol_TitleBgActive] = { 0.5f, 0.01f, 0.5f, 1.0f };
+			}
 		}
-		ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
-		if (opt_enable_context_menu && drag_delta.x == 0.0f && drag_delta.y == 0.0f)
-			ImGui::OpenPopupOnItemClick("context", ImGuiPopupFlags_MouseButtonRight);
-
-		// Draw grid + all lines in the canvas
-		//描画前準備
-		draw_list->PushClipRect(canvas_p0, canvas_p1, true);
-
-		//グリッドの描画
-		if (opt_enable_grid)
+		//座標の設定
+		ImGui::SetNextWindowPos({ datas[defaultDatas[je_WindowPos]][0],datas[defaultDatas[je_WindowPos]][1] }, ImGuiCond_Appearing);
+		string titlebarName = datas[defaultDatas[je_NodeName]];
+		ImGui::Begin(titlebarName.c_str(), nullptr, _flags);//ウィンドウの名前
+		ImGui::SetWindowSize(WindowSize, ImGuiCond_::ImGuiCond_FirstUseEver);
+		if (static_cast<string>(datas[defaultDatas[je_NodeName]]) == (GImGui)->Windows[GImGui->Windows.size() - 1]->Name)
 		{
-			//グリッドサイズ
-			const float GRID_STEP = 32.0f;
-			for (float x = fmodf(scrolling.x, GRID_STEP); x < canvas_sz.x; x += GRID_STEP)
-				draw_list->AddLine(ImVec2(canvas_p0.x + x, canvas_p0.y), ImVec2(canvas_p0.x + x, canvas_p1.y), IM_COL32(200, 200, 200, 40));
-			for (float y = fmodf(scrolling.y, GRID_STEP); y < canvas_sz.y; y += GRID_STEP)
-				draw_list->AddLine(ImVec2(canvas_p0.x, canvas_p0.y + y), ImVec2(canvas_p1.x, canvas_p0.y + y), IM_COL32(200, 200, 200, 40));
+			BehavierImGui::selectObject = this;
 		}
-		/*for (int n = 0; n < poss.Size; n += 2)
+
+		int priority = datas[defaultDatas[je_Priority]];
+		ImGui::DragInt("Priority", &priority);
+		datas[defaultDatas[je_Priority]] = priority;
+
+		//ノードに表示する情報
 		{
-			draw_list->AddLine(ImVec2(poss[n].x, poss[n].y), ImVec2(poss[n + 1].x, poss[n + 1].y), IM_COL32(255, 255, 0, 255), 2.0f);
-		}*/
-		for (int n = 0; n < behaviarWindowPosisions.Size; n += 2)
-		{
-			draw_list->AddLine(ImVec2(behaviarWindowPosisions[n].x, behaviarWindowPosisions[n].y), ImVec2(behaviarWindowPosisions[n + 1].x, behaviarWindowPosisions[n + 1].y), IM_COL32(255, 255, 0, 255), 2.0f);
+			//jsonデータにアクセス
+			for (auto& [key, value] : datas.items())
+			{
+				string tex = key + ":" + to_string(datas[key]);
+				ImGui::Text(tex.c_str());
+			}
 		}
-		//描画終了処理
-		draw_list->PopClipRect();
+
+		//guiのウィンドウ取得
+		ImGuiWindow* window = ImGui::GetCurrentWindow();
+		datas[defaultDatas[je_WindowPos]] = {window->Pos.x, window->Pos.y};
+		//_windowPos = window->Pos;
+		if (GetParent() != nullptr)
+		{
+			//親子を線で結ぶための座標保管
+			BehavierImGui::behaviarWindowPosisions.push_back({_parent->GetData(defaultDatas[je_WindowPos])[0], _parent->GetData(defaultDatas[je_WindowPos])[1] });
+			BehavierImGui::behaviarWindowPosisions.push_back(window->Pos);
+		}
+
 		ImGui::End();
 	}
-}
-
-void BehaviorTree::BehavierImGui::ClearNodes()
-{
-	rootObject.Children()->clear();
-	nodeManager.nodes.clear();
-}
-
-void BehaviorTree::Node::NodeManager::ExportFile(std::string f_fileName)
-{
-	std::string particleFileName = f_fileName;
-	//ファイルを作る
-	std::string saveFileName = "Resource/TextData/Behavior/" + particleFileName + ".csv";
-	std::ofstream ofs(saveFileName);
-	dataStr = "";
-	this->GetChildren(*nodes.begin());
-	ofs << dataStr;
-}
-
-void BehaviorTree::Node::NodeManager::GetChildren(Node* f_node)
-{
-	if (f_node->Children()->size() < 1) return;
-	dataStr += "Name," + f_node->GetName() + ",";
-	dataStr += "NodeType," + f_node->GetNodeTypeName() + ",";
-	if (f_node->GetParent() != nullptr)
+	Node* Node::SearchParentNode(string f_nodeName)
 	{
-		dataStr += "Parent," + f_node->GetParent()->GetName() + ",";
+
+		return nullptr;
 	}
-	for each (Node *node in *f_node->Children())
+
+	Node* Node::SearchChildrenNode(Node* f_node, string f_nodeName)
 	{
-		GetChildren(node);
+		//名前一致してたらそのオブジェクトを返す
+		if (f_node->GetData(defaultDatas[je_NodeName]) == f_nodeName)
+		{
+			return f_node;
+		}
+		//子がいなければ戻る
+		if (f_node->Children()->size() < 1) return nullptr;
+
+		for each (Node * node in *f_node->Children())
+		{
+			return SearchChildrenNode(node, f_nodeName);
+		}
+		return nullptr;
+	}
+
+	void Node::DrawGUIChildren(Node* f_node)
+	{
+		//ノードの描画
+		f_node->GUIDraw();
+
+		//子がいなければ戻る
+		if (f_node->Children()->size() < 1) return;
+
+		for each (Node * node in *f_node->Children())
+		{
+			node->DrawGUIChildren(node);
+		}
+	}
+
+	void Node::ToJson(json& j)
+	{
+		if (_parent == nullptr)
+		{
+			j = json{
+				{"NodeType", datas[defaultDatas[je_NodeType]]},
+				{"NodeName", datas[defaultDatas[je_NodeName]]},
+				{"Priority", datas[defaultDatas[je_Priority]]},
+				{"WindowPosition", {_windowPos.x, _windowPos.y}},
+			};
+		}
+		else
+		{
+			j = json{
+				{"NodeType", datas[defaultDatas[je_NodeType]]},
+				{"NodeName", datas[defaultDatas[je_NodeName]]},
+				{"ParentName", _parent->GetData(defaultDatas[je_NodeName])},
+				{"Priority", datas[defaultDatas[je_Priority]]},
+				{"WindowPosition", {_windowPos.x, _windowPos.y}},
+
+			};
+		}
+	}
+
+	void Node::FromJson(json& j)
+	{
+		j.at("NodeType").get_to(datas[defaultDatas[je_NodeType]]);
+		j.at("NodeName").get_to(datas[defaultDatas[je_NodeName]]);
+		j.at("Priority").get_to(datas[defaultDatas[je_Priority]]);
+		string parentName;
+		j.at("ParentName").get_to(parentName);
+		j.at("WindowPosition").get_to(datas[defaultDatas[je_WindowPos]]);
+	}
+
+	void Node::JsonUpdate()
+	{
+
+	}
+
+	void BehavierImGui::CreateNode(const char* f_nodeName, NodeType f_type, Node* f_parent)
+	{
+		//最初のノードつくりの時の処理
+		{
+			if (selectObject == nullptr)
+			{
+				rootObject.Init(nullptr, "RootNode", e_Root);
+				rootObject.GetData(defaultDatas[je_WindowPos]) = { 100.0f, 30.0f };
+				selectObject = &rootObject;
+			}
+			if (f_parent == nullptr)
+			{
+				f_parent = new Node();
+				f_parent = selectObject;
+			}
+		}
+		//実際にノードを作る
+		{
+			//タスクノードの下にノードを作らせない
+			if (f_parent->GetData(defaultDatas[je_NodeType]) == NodeType::e_Task)return;
+			Node* node = new Node();
+			if (f_type == e_Selector)
+			{
+				node->Init(f_parent, f_nodeName, e_Selector);
+			}
+			else if (f_type == e_Sequence)
+			{
+				node->Init(f_parent, f_nodeName, e_Sequence);
+			}
+			else if (f_type == e_Task)
+			{
+				node->Init(f_parent, f_nodeName, e_Task);
+			}
+			else
+			{
+				node->Init(f_parent, f_nodeName, e_NONE);
+			}
+		}
+	}
+
+	void BehavierImGui::DrawImGui()
+	{
+		//キャンパスのスクロール
+		static ImVec2 origin = { 0, 0 };
+		behaviarWindowPosisions.clear();
+
+		//ビヘイビアの生成ボタン用ウィンドウ
+		{
+			ImVec4* style = ImGui::GetStyle().Colors;
+			style[ImGuiCol_TitleBg] = { 0.3f, 0.3f, 0.3f, 1.0f };
+			style[ImGuiCol_TitleBgCollapsed] = { 0.3f, 0.3f, 0.3f, 1.0f };
+			style[ImGuiCol_TitleBgActive] = { 0.3f, 0.3f, 0.3f, 1.0f };
+			ImGui::Begin("BehaviorWindow", nullptr, beharviorButtonWindowFlags);//ウィンドウの名前
+			ImGui::SetWindowSize(ImVec2(static_cast<float>(200), static_cast<float>(200)), ImGuiCond_::ImGuiCond_FirstUseEver);
+			if (ImGui::Button("Clear Nodes"))
+			{
+				ClearNodes();
+
+			}
+			if (ImGui::TreeNode("Tree Name"))
+			{
+				ImGui::InputText(treeName, treeNameBuf, 256);
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("Node Name"))
+			{
+				ImGui::InputText(nodeName, nameBuf, 256);
+				ImGui::TreePop();
+			}
+			if (ImGui::Button("Add Selector"))
+			{
+				CreateNode(nameBuf, NodeType::e_Selector, selectObject);
+			}
+			if (ImGui::Button("Add Sequence"))
+			{
+				CreateNode(nameBuf, NodeType::e_Sequence, selectObject);
+			}
+			if (ImGui::Button("Add Task"))
+			{
+				CreateNode(nameBuf, NodeType::e_Task, selectObject);
+			}
+
+			if (ImGui::Button("Behavior Export"))
+			{
+				//rootObject.ExportFile("smp");
+			}
+			if (ImGui::Button("Behavior Inport"))
+			{
+				rootObject.InportFile("smp");
+			}
+			ImGui::End();
+		}
+
+		//個々のノードを描画
+		rootObject.Init(nullptr, "RootNode", e_Root);
+		rootObject.DrawGUIChildren(&rootObject);
+
+		//グリッドキャンパス
+		//ウィンドウサイズは各自で設定してください
+		{
+			//ウィンドウサイズを画面全体に
+			static const float windowWid = 1280;
+			static const float windowHi = 720;
+			ImGui::SetNextWindowSize(ImVec2(windowWid, windowHi), ImGuiCond_Appearing);
+			//座標を左上に
+			ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Appearing);
+			//ウィンドウの背景と外枠を描画しない
+			beharviorWindowFlags |= ImGuiWindowFlags_NoBackground;
+			//タイトルバーを付けない
+			beharviorWindowFlags |= ImGuiWindowFlags_NoTitleBar;
+			//右下のサイズ変更を出来なくする
+			beharviorWindowFlags |= ImGuiWindowFlags_NoResize;
+			//動かないようにする
+			beharviorWindowFlags |= ImGuiWindowFlags_NoMove;
+			//最前面に来ないように
+			beharviorWindowFlags |= ImGuiWindowFlags_NoFocusOnAppearing;
+			//iniを読み込み書き込みをしない
+			beharviorWindowFlags |= ImGuiWindowFlags_NoSavedSettings;
+			//背景にいかない？
+			beharviorWindowFlags |= ImGuiWindowFlags_NoBackground;
+			beharviorWindowFlags |= ImGuiWindowFlags_NoCollapse;
+			//フォーカスを受けても前に来ない(ノードより前に来ない)
+			beharviorWindowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
+			ImGui::Begin("BehaviarTree", nullptr, beharviorWindowFlags);//ウィンドウの名前
+			ImGui::SetWindowSize(ImVec2(windowWid, windowHi), ImGuiCond_::ImGuiCond_FirstUseEver);
+
+			//マウス入力などを取得
+			ImGuiIO& io = ImGui::GetIO();
+
+			static ImVector<ImVec2> points;
+			static ImVec2 scrolling(0.0f, 0.0f);
+
+			static bool opt_enable_context_menu = true;
+			// Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2) allows us to use IsItemHovered()/IsItemActive()
+			ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();      // ImDrawList API uses screen coordinates!
+			ImVec2 canvas_sz = ImGui::GetContentRegionAvail();   // Resize canvas to what's available
+			float hoge = 0.0f;
+			if (canvas_sz.x < hoge) canvas_sz.x = hoge;
+			if (canvas_sz.y < hoge) canvas_sz.y = hoge;
+			ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
+
+			ImDrawList* draw_list = ImGui::GetWindowDrawList();
+			//背景色
+			draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
+			//?
+			draw_list->AddRect(canvas_p0, canvas_p1, IM_COL32(0, 0, 2, 255));
+			//画面をボタンとして見立ててる？
+			//マウスの入力キーの取得がしたいのかも
+			ImGui::InvisibleButton("canvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+			const bool is_hovered = ImGui::IsItemHovered(); // Hovered
+			const bool is_active = ImGui::IsItemActive();   // Held
+			origin = { canvas_p0.x + scrolling.x, canvas_p0.y + scrolling.y }; // Lock scrolled origin
+			//キャンパス内でのマウス位置
+
+			//スクロール
+			const float mouse_threshold_for_pan = opt_enable_context_menu ? -1.0f : 0.0f;
+			if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
+			{
+				scrolling.x += io.MouseDelta.x;
+				scrolling.y += io.MouseDelta.y;
+			}
+			ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
+			if (opt_enable_context_menu && drag_delta.x == 0.0f && drag_delta.y == 0.0f)
+				ImGui::OpenPopupOnItemClick("context", ImGuiPopupFlags_MouseButtonRight);
+
+			// Draw grid + all lines in the canvas
+			//描画前準備
+			draw_list->PushClipRect(canvas_p0, canvas_p1, true);
+
+			//グリッドの描画
+			{
+				//グリッドサイズ
+				const float GRID_STEP = 32.0f;
+				for (float x = fmodf(scrolling.x, GRID_STEP); x < canvas_sz.x; x += GRID_STEP)
+					draw_list->AddLine(ImVec2(canvas_p0.x + x, canvas_p0.y), ImVec2(canvas_p0.x + x, canvas_p1.y), IM_COL32(200, 200, 200, 40));
+				for (float y = fmodf(scrolling.y, GRID_STEP); y < canvas_sz.y; y += GRID_STEP)
+					draw_list->AddLine(ImVec2(canvas_p0.x, canvas_p0.y + y), ImVec2(canvas_p1.x, canvas_p0.y + y), IM_COL32(200, 200, 200, 40));
+
+				for (int n = 0; n < behaviarWindowPosisions.Size; n += 2)
+				{
+					draw_list->AddLine(ImVec2(behaviarWindowPosisions[n].x, behaviarWindowPosisions[n].y), ImVec2(behaviarWindowPosisions[n + 1].x, behaviarWindowPosisions[n + 1].y), IM_COL32(255, 255, 0, 255), 2.0f);
+				}
+			}
+			//描画終了処理
+			draw_list->PopClipRect();
+			ImGui::End();
+		}
+	}
+
+	void BehavierImGui::ClearNodes()
+	{
+		rootObject.Children()->clear();
+		//nodeManager.nodes.clear();
+	}
+
+	void ExportFile(string f_fileName)
+	{
+		string particleFileName = f_fileName;
+		//ファイルを作る
+		string saveFileName = "Resource/TextData/Behavior/" + particleFileName + ".csv";
+		ofstream ofs(saveFileName);
+		string dataStr = "";
+		json js;
+
+		ofs << dataStr;
+	}
+
+	void RootNode::InportFile(string f_fileName)
+	{
+		//ファイル読み込み
+		string pathName = f_fileName;
+		string fullPath = "Resource/TextData/Behavior/" + pathName + ".csv";
+
+		ifstream file;
+		file.open(fullPath);
+		if (file.fail())
+		{
+			assert(0);
+		}
+		string keyType;
+		string allFileData = "";
+
+		while (getline(file, keyType))
+		{
+			allFileData += keyType;
+		}
+		json loadData = json::parse(allFileData);
+		this->FromJson(loadData);
+	}
+
+	void RootNode::DrawGUIChildren(Node* f_node)
+	{
+		//ノードの描画
+		f_node->GUIDraw();
+
+		//子がいなければ戻る
+		if (f_node->Children()->size() < 1) return;
+
+		for each (Node * node in *f_node->Children())
+		{
+			node->DrawGUIChildren(node);
+		}
 	}
 }

@@ -193,7 +193,6 @@
     <ClInclude Include="Scripts\imgui\imstb_rectpack.h" />
     <ClInclude Include="Scripts\imgui\imstb_textedit.h" />
     <ClInclude Include="Scripts\imgui\imstb_truetype.h" />
-    <ClInclude Include="Scripts\json\json.h" />
     <ClInclude Include="Scripts\Light\CircleShadow.h" />
     <ClInclude Include="Scripts\Light\Light.h" />
     <ClInclude Include="Scripts\Light\PointLight.h" />

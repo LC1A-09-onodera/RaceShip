@@ -339,9 +339,6 @@
     <ClInclude Include="Scripts\Tools\LoadStage\StageObject.h">
       <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="Scripts\json\json.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="Scripts\Sprite\Sprite.h">
       <Filter>Engine\Sprite</Filter>
     </ClInclude>

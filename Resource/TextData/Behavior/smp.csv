@@ -1,1 +1,1 @@
-Name,RootNode,NodeType,Root,Name,selector,NodeType,Selector,Parent,RootNode,
+{NodeType:Root, Name:RootNode,Priority:0,NodeType:Selector, Name:selector,Priority:0,Parent:RootNode,NodeType:Task, Name:task,Priority:0,Parent:selector,}

@@ -9,5 +9,5 @@ class FileLoad
 		CSV,
 	};
 
-	static void LoadFile(std::string path)
+	static void LoadFile(std::string path);
 };
