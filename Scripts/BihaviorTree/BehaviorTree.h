@@ -52,8 +52,8 @@ namespace BehaviorTree
 		je_WindowPos,
 		je_Priority,
 	};
-	static array<string, 10> defaultDatas = { "NodeType", "NodeName", "ParentName", "WindowPosition", "Priority"};
-	
+	static array<string, 10> defaultDatas = { "NodeType", "NodeName", "ParentName", "WindowPosition", "Priority" };
+
 	//ノードの基本クラス
 	class Node
 	{
@@ -61,43 +61,37 @@ namespace BehaviorTree
 		static const ImVec2 WindowSize;
 		json datas;
 	public:
-		
-		list<string> jsonNames;
+
+		//list<string> jsonNames;
 		//GUIの描画ルール
 		ImGuiWindowFlags _flags = 0;
 		//子ノード
 		list<Node*> _children;
-		
 		//親ノード
 		Node* _parent = nullptr;
 		//GUIウィンドウの座標
-		ImVec2 _windowPos = { 0, 0 };
-		Node(){}
-		~Node(){}
+		//ImVec2 _windowPos = { 0, 0 };
+		Node() {}
+		~Node() {}
 
+		json GetData()
+		{
+			return datas;
+		}
 		auto GetData(string f_jsonName)
 		{
 			return datas[f_jsonName];
 		}
-		//親ノードを取得
-		Node* GetParent(){return _parent;};
-		//優先度を取得
-		//const int GetPriority(){return _priority;};
-		//void SetPriority(int f_priority) { _priority = f_priority; };
-		//ノードの名前取得
-		//string GetName(){return _name;}
-		//ノードの名前を決める
-		//void SetName(string f_name){_name = f_name;}
-		//
-		//const NowState GetIsReturnParent(){return _nowState;}
-		//ノードの種類を決める
-		//void SetNodeType(NodeType f_type){_nodeType = f_type;}
-		//ノードの種類を取得
-		//const NodeType GetNodeType(){return _nodeType;}
-		//ノードの種類を文字列で取得
-		const string GetNodeTypeName() 
+		void SetData(json& f_js)
 		{
-			if(datas[je_NodeType] == e_Root)
+			datas = f_js;
+		}
+		//親ノードを取得
+		Node* GetParent() { return _parent; };
+		//ノードの種類を文字列で取得
+		const string GetNodeTypeName()
+		{
+			if (datas[je_NodeType] == e_Root)
 			{
 				return "Root";
 			}
@@ -119,41 +113,21 @@ namespace BehaviorTree
 			}
 		}
 		//自身より親のオブジェクトの中から名前一致するノードを取得
-		Node *SearchParentNode(string f_nodeName);
+		Node* SearchParentNode(string f_nodeName);
 		//自身より子のオブジェクトの中から名前一致するノードを取得
-		Node* SearchChildrenNode(Node *f_node, string f_nodeName);
+		Node* SearchChildrenNode(Node* f_node, string f_nodeName);
 		//子オブジェクトのリスト取得
-		list<Node*> *Children(){return &_children;}
+		list<Node*>* Children() { return &_children; }
 		//自身を返す
-		Node* GetNode(){return this;}
-		
-		void DrawGUIChildren(Node* f_node);
+		Node* GetNode() { return this; }
 
 		/*------------継承時書き換え推奨-------------*/
-		//標準初期化
-		virtual void Init(Node *f_parent, string f_nodeName, NodeType f_type);
-		//データをJson化
-		virtual void ToJson(json& j);
-		//Jsonから実データへ
-		virtual void FromJson(json& j);
-		//json変数datasを書き換える
-		virtual void JsonUpdate();
+		//標準初期化-最低限しか行っていない
+		virtual void Init(Node* f_parent, string f_nodeName, NodeType f_type);
 		//ノードの描画
 		virtual void GUIDraw();
 		/*-------------------------------------------*/
-	};
 
-	class RootNode : public Node
-	{
-	public:
-		RootNode(){}
-		/// <summary>
-		/// GUI描画用
-		/// </summary>
-		/// <param name="rootNode"></param>
-		/// <param name="f_fileName"></param>
-		virtual void InportFile(string f_fileName);
-		
 		/// <summary>
 		/// 出力用文字列作成jsonに任せようかな
 		/// </summary>
@@ -165,16 +139,18 @@ namespace BehaviorTree
 		virtual void DrawGUIChildren(Node* f_node);
 	};
 
-	class GUIRootExm : public RootNode
-	{
-
-	};
-
 	/// <summary>
 	/// GUIのデータを出力
 	/// </summary>
 	/// <param name="f_fileName">出力ファイル名</param>
-	static void ExportFile(string f_fileName);
+	static void ExportFile(string f_fileName, Node* f_rootNode);
+	/// <summary>
+	/// </summary>
+	/// </summary>
+	/// <param name="rootNode"></param>
+	/// <param name="f_fileName"></param>
+	void InportFile(string f_fileName, Node* f_rootNode);
+	static void GetChildName(Node* f_node, string& f_names);
 	/// <summary>
 	/// 親子を結ぶ
 	/// </summary>
@@ -194,15 +170,15 @@ namespace BehaviorTree
 	private:
 		//GUIのBehaviorのルートオブジェクト
 		//ノードを作成すれば自動で作成される
-		static RootNode rootObject;
+		static Node rootObject;
 		//ノードの名前を格納
 		static char nameBuf[256];
-		static const char *nodeName;
+		static const char* nodeName;
 		//ノードの名前を格納
 		static char treeNameBuf[256];
 		static const char* treeName;
 	public:
-		static Node *selectObject;
+		static Node* selectObject;
 		//これで描画するためにまとめている
 		//static NodeManager nodeManager;
 		//GUIウィンドウの描画ルール
@@ -217,10 +193,12 @@ namespace BehaviorTree
 		/// <param name="f_nodeName">ノードの名前</param>
 		/// <param name="f_type">ノードの種類</param>
 		/// <param name="f_parent">親ノードになるノード</param>
-		static void CreateNode(const char* f_nodeName, NodeType f_type, Node*f_parent);
+		static void CreateNode(const char* f_nodeName, NodeType f_type, Node* f_parent);
 		//全体の描画←これでグリットからなんやらを描画してもらう
 		static void DrawImGui();
 		//GUIのノードを一掃してもらう
 		static void ClearNodes();
+		//GUIウィンドウが [非表示→表示] の時に毎回呼び出すと動作安定
+		static void Init();
 	};
 }

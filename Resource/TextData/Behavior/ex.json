@@ -1,0 +1,7 @@
+{
+"RootNode":{"NodeName":"RootNode","NodeType":0,"Priority":0,"WindowPosition":[100.0,30.0]},
+"selector":{"NodeName":"selector","NodeType":1,"Priority":0,"WindowPosition":[333.0,93.0]},
+"task":{"NodeName":"task","NodeType":3,"Priority":0,"WindowPosition":[540.0,90.0]},
+"task1":{"NodeName":"task1","NodeType":3,"Priority":1,"WindowPosition":[540.0,250.0]},
+"task2":{"NodeName":"task2","NodeType":3,"Priority":1,"WindowPosition":[287.0,261.0]}
+}

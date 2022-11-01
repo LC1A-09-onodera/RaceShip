@@ -5,7 +5,7 @@
 
 namespace BehaviorTree
 {
-	RootNode BehavierImGui::rootObject = RootNode();
+	Node BehavierImGui::rootObject = Node();
 	char BehavierImGui::nameBuf[256] = {};
 	const char* BehavierImGui::nodeName = " ";
 	char BehavierImGui::treeNameBuf[256] = {};
@@ -15,7 +15,7 @@ namespace BehaviorTree
 	ImGuiWindowFlags BehavierImGui::beharviorButtonWindowFlags = 0;
 	ImVector<ImVec2> BehavierImGui::behaviarWindowPosisions;
 	Node* BehavierImGui::selectObject;
-	const ImVec2 Node::WindowSize = { 200.0f, 80.0f };
+	const ImVec2 Node::WindowSize = { 200.0f, 160.0f };
 
 	void Node::Init(Node* f_parent, string f_nodeName, NodeType f_type)
 	{
@@ -32,6 +32,7 @@ namespace BehaviorTree
 		}
 		datas[defaultDatas[je_Priority]] = static_cast<int>(f_parent->Children()->size());
 		datas[defaultDatas[je_WindowPos]] = { f_parent->datas[defaultDatas[je_WindowPos]][0] + WindowSponeDiff.x, f_parent->datas[defaultDatas[je_WindowPos]][1] + WindowSponeDiff.y + static_cast<float>(f_parent->Children()->size()) * WindowSize.y };
+		datas[defaultDatas[je_ParentName]] = f_parent->datas[defaultDatas[je_NodeName]];
 		SetParentAndChild(*f_parent, *this);
 	}
 
@@ -146,45 +147,6 @@ namespace BehaviorTree
 		}
 	}
 
-	void Node::ToJson(json& j)
-	{
-		if (_parent == nullptr)
-		{
-			j = json{
-				{"NodeType", datas[defaultDatas[je_NodeType]]},
-				{"NodeName", datas[defaultDatas[je_NodeName]]},
-				{"Priority", datas[defaultDatas[je_Priority]]},
-				{"WindowPosition", {_windowPos.x, _windowPos.y}},
-			};
-		}
-		else
-		{
-			j = json{
-				{"NodeType", datas[defaultDatas[je_NodeType]]},
-				{"NodeName", datas[defaultDatas[je_NodeName]]},
-				{"ParentName", _parent->GetData(defaultDatas[je_NodeName])},
-				{"Priority", datas[defaultDatas[je_Priority]]},
-				{"WindowPosition", {_windowPos.x, _windowPos.y}},
-
-			};
-		}
-	}
-
-	void Node::FromJson(json& j)
-	{
-		j.at("NodeType").get_to(datas[defaultDatas[je_NodeType]]);
-		j.at("NodeName").get_to(datas[defaultDatas[je_NodeName]]);
-		j.at("Priority").get_to(datas[defaultDatas[je_Priority]]);
-		string parentName;
-		j.at("ParentName").get_to(parentName);
-		j.at("WindowPosition").get_to(datas[defaultDatas[je_WindowPos]]);
-	}
-
-	void Node::JsonUpdate()
-	{
-
-	}
-
 	void BehavierImGui::CreateNode(const char* f_nodeName, NodeType f_type, Node* f_parent)
 	{
 		//最初のノードつくりの時の処理
@@ -256,24 +218,24 @@ namespace BehaviorTree
 			}
 			if (ImGui::Button("Add Selector"))
 			{
-				CreateNode(nameBuf, NodeType::e_Selector, selectObject);
+				if (nameBuf[0] != '\0')CreateNode(nameBuf, NodeType::e_Selector, selectObject);
 			}
 			if (ImGui::Button("Add Sequence"))
 			{
-				CreateNode(nameBuf, NodeType::e_Sequence, selectObject);
+				if (nameBuf[0] != '\0')CreateNode(nameBuf, NodeType::e_Sequence, selectObject);
 			}
 			if (ImGui::Button("Add Task"))
 			{
-				CreateNode(nameBuf, NodeType::e_Task, selectObject);
+				if (nameBuf[0] != '\0')CreateNode(nameBuf, NodeType::e_Task, selectObject);
 			}
 
 			if (ImGui::Button("Behavior Export"))
 			{
-				//rootObject.ExportFile("smp");
+				if (treeNameBuf[0] != '\0')ExportFile(treeNameBuf, &rootObject);
 			}
 			if (ImGui::Button("Behavior Inport"))
 			{
-				rootObject.InportFile("smp");
+				if (treeNameBuf[0] != '\0')InportFile(treeNameBuf, &rootObject);
 			}
 			ImGui::End();
 		}
@@ -377,26 +339,49 @@ namespace BehaviorTree
 	void BehavierImGui::ClearNodes()
 	{
 		rootObject.Children()->clear();
-		//nodeManager.nodes.clear();
 	}
 
-	void ExportFile(string f_fileName)
+	void BehavierImGui::Init()
+	{
+		rootObject.Init(nullptr, "RootNode", e_Root);
+		selectObject = &rootObject;
+	}
+
+	void ExportFile(string f_fileName, Node* f_rootNode)
 	{
 		string particleFileName = f_fileName;
 		//ファイルを作る
-		string saveFileName = "Resource/TextData/Behavior/" + particleFileName + ".csv";
+		string saveFileName = "Resource/TextData/Behavior/" + particleFileName + ".json";
 		ofstream ofs(saveFileName);
-		string dataStr = "";
-		json js;
-
+		string dataStr = "{\n";	
+		GetChildName(f_rootNode, dataStr);
+		dataStr += "\n}";
 		ofs << dataStr;
 	}
 
-	void RootNode::InportFile(string f_fileName)
+	void GetChildName(Node* f_node, string &f_names)
+	{
+		//ノードの文字列化
+		f_names += "\"";
+		f_names += f_node->GetData(defaultDatas[je_NodeName]);
+		f_names += "\":";
+		f_names += f_node->GetData().dump();
+		
+		//子がいなければ戻る
+		if (f_node->Children()->size() < 1) return;
+
+		for each (Node * node in *f_node->Children())
+		{
+			f_names += ",\n";
+			GetChildName(node, f_names);
+		}
+	}
+
+	void InportFile(string f_fileName, Node *f_rootNode)
 	{
 		//ファイル読み込み
 		string pathName = f_fileName;
-		string fullPath = "Resource/TextData/Behavior/" + pathName + ".csv";
+		string fullPath = "Resource/TextData/Behavior/" + pathName + ".json";
 
 		ifstream file;
 		file.open(fullPath);
@@ -412,20 +397,16 @@ namespace BehaviorTree
 			allFileData += keyType;
 		}
 		json loadData = json::parse(allFileData);
-		this->FromJson(loadData);
-	}
-
-	void RootNode::DrawGUIChildren(Node* f_node)
-	{
-		//ノードの描画
-		f_node->GUIDraw();
-
-		//子がいなければ戻る
-		if (f_node->Children()->size() < 1) return;
-
-		for each (Node * node in *f_node->Children())
+		//jsonデータにアクセス
+		for (auto& [key, value] : loadData.items())
 		{
-			node->DrawGUIChildren(node);
+			if (key == "RootNode")continue;
+			Node *nodeData = new Node();
+			nodeData->SetData(loadData[key]);
+			NodeType type = nodeData->GetData()[defaultDatas[je_NodeType]];
+			string parentName = nodeData->GetData()[defaultDatas[je_ParentName]];
+			Node *targetNode =  f_rootNode->SearchChildrenNode(f_rootNode, parentName);
+			BehavierImGui::CreateNode(key.c_str(), type, targetNode);
 		}
 	}
 }
