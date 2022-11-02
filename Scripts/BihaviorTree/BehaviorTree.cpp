@@ -2,10 +2,12 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include <functional>
 
 namespace BehaviorTree
 {
 	Node BehavierImGui::rootObject = Node();
+
 	char BehavierImGui::nameBuf[256] = {};
 	const char* BehavierImGui::nodeName = " ";
 	char BehavierImGui::treeNameBuf[256] = {};
@@ -13,66 +15,72 @@ namespace BehaviorTree
 
 	ImGuiWindowFlags BehavierImGui::beharviorWindowFlags = 0;
 	ImGuiWindowFlags BehavierImGui::beharviorButtonWindowFlags = 0;
-	ImVector<ImVec2> BehavierImGui::behaviarWindowPosisions;
+	ImVector<pair<ImVec2, NodeType>> BehavierImGui::behaviarWindowPosisions;
 	Node* BehavierImGui::selectObject;
-	const ImVec2 Node::WindowSize = { 200.0f, 160.0f };
+
+	const ImVec2 Node::WindowSize = { 220.0f, 140.0f };
+
+	Hoge ExBehavior::hoge;
+	Node ExBehavior::rootNode;
 
 	void Node::Init(Node* f_parent, string f_nodeName, NodeType f_type)
 	{
 		//ウィンドウ生成時親ノードとどれだけずらすかを設定
-		static const ImVec2 WindowSponeDiff = { 220.0f, 30.0f };
+		static const ImVec2 WindowSponeDiff = { 5.0f, 5.0f };
 		datas[defaultDatas[je_NodeName]] = f_nodeName;
 		datas[defaultDatas[je_NodeType]] = f_type;
-		//ルートオブジェクトの場合親ノードがない
-		if (f_parent == nullptr)
-		{
-			datas[defaultDatas[je_Priority]] = 0;
-			datas[defaultDatas[je_WindowPos]] = { 100.0f, 30.0f };
-			return;
-		}
+
+		datas[defaultDatas[je_Priority]] = 0;
+		datas[defaultDatas[je_WindowPos]] = { 100.0f, 30.0f };
+		datas[defaultDatas[je_WindowSize]] = { WindowSize.x, WindowSize.y };
+		//ルートオブジェクトの場合親ノードがない場合戻る
+		if (f_parent == nullptr)return;
 		datas[defaultDatas[je_Priority]] = static_cast<int>(f_parent->Children()->size());
-		datas[defaultDatas[je_WindowPos]] = { f_parent->datas[defaultDatas[je_WindowPos]][0] + WindowSponeDiff.x, f_parent->datas[defaultDatas[je_WindowPos]][1] + WindowSponeDiff.y + static_cast<float>(f_parent->Children()->size()) * WindowSize.y };
+		datas[defaultDatas[je_WindowPos]] = { f_parent->datas[defaultDatas[je_WindowPos]][0] + WindowSize.x + WindowSponeDiff.x, f_parent->datas[defaultDatas[je_WindowPos]][1] + (WindowSize.y / 2.0f) + (f_parent->Children()->size() * WindowSize.y) };
 		datas[defaultDatas[je_ParentName]] = f_parent->datas[defaultDatas[je_NodeName]];
 		SetParentAndChild(*f_parent, *this);
 	}
 
+	NowState Node::RootNodeRun()
+	{
+		for (auto childItr = _children.begin(); childItr != _children.end(); ++childItr)
+		{
+			//childItr
+		}
+		return Error;
+	}
+	NowState Node::SelectorRun()
+	{
+		return Error;
+	}
+	NowState Node::SequenceRun()
+	{
+		return Error;
+	}
+	NowState Node::TaskRun()
+	{
+		if (nowState == NowState::Error)
+		{
+			assert(0);
+		}
+		if (_function())
+		{
+			return NowState::Success;
+		}
+		else
+		{
+			return NowState::Failure;
+		}
+		
+	}
 	void Node::GUIDraw()
 	{
-		ImGuiContext& g = *GImGui;
-
 		//iniを読み込み書き込みをしない
 		_flags |= ImGuiWindowFlags_NoSavedSettings;
-
-		ImVec4* style = ImGui::GetStyle().Colors;
 		//ノードのカラー変更
-		{
-			//NONEノードは基本なしなので描画しない
-			if (datas[defaultDatas[je_NodeType]] == NodeType::e_NONE)return;
-			if (datas[defaultDatas[je_NodeType]] == NodeType::e_Root)
-			{
-				style[ImGuiCol_TitleBg] = { 0.3f, 0.3f, 0.01f, 1.0f };
-				style[ImGuiCol_TitleBgCollapsed] = { 0.35f, 0.35f, 0.01f, 1.0f };
-				style[ImGuiCol_TitleBgActive] = { 0.5f, 0.5f, 0.01f, 1.0f };
-			}
-			else if (datas[defaultDatas[je_NodeType]] == NodeType::e_Selector)
-			{
-				style[ImGuiCol_TitleBg] = { 0.01f, 0.3f, 0.3f, 1.0f };
-				style[ImGuiCol_TitleBgCollapsed] = { 0.01f, 0.35f, 0.35f, 1.0f };
-				style[ImGuiCol_TitleBgActive] = { 0.01f, 0.5f, 0.5f, 1.0f };
-			}
-			else if (datas[defaultDatas[je_NodeType]] == NodeType::e_Sequence)
-			{
-				style[ImGuiCol_TitleBg] = { 0.21f, 0.21f, 0.6f, 1.0f };
-				style[ImGuiCol_TitleBgCollapsed] = { 0.25f, 0.25f, 0.65f, 1.0f };
-				style[ImGuiCol_TitleBgActive] = { 0.4f, 0.4f, 0.75f, 1.0f };
-			}
-			else if (datas[defaultDatas[je_NodeType]] == NodeType::e_Task)
-			{
-				style[ImGuiCol_TitleBg] = { 0.3f, 0.01f, 0.3f, 1.0f };
-				style[ImGuiCol_TitleBgCollapsed] = { 0.35f, 0.01f, 0.35f, 1.0f };
-				style[ImGuiCol_TitleBgActive] = { 0.5f, 0.01f, 0.5f, 1.0f };
-			}
-		}
+		ImVec4* style = ImGui::GetStyle().Colors;
+		SetDedaltColor(style);
+
 		//座標の設定
 		ImGui::SetNextWindowPos({ datas[defaultDatas[je_WindowPos]][0],datas[defaultDatas[je_WindowPos]][1] }, ImGuiCond_Appearing);
 		string titlebarName = datas[defaultDatas[je_NodeName]];
@@ -83,6 +91,8 @@ namespace BehaviorTree
 			BehavierImGui::selectObject = this;
 		}
 
+
+		//優先度の変更
 		int priority = datas[defaultDatas[je_Priority]];
 		ImGui::DragInt("Priority", &priority);
 		datas[defaultDatas[je_Priority]] = priority;
@@ -99,13 +109,13 @@ namespace BehaviorTree
 
 		//guiのウィンドウ取得
 		ImGuiWindow* window = ImGui::GetCurrentWindow();
-		datas[defaultDatas[je_WindowPos]] = {window->Pos.x, window->Pos.y};
-		//_windowPos = window->Pos;
+		datas[defaultDatas[je_WindowPos]] = { window->Pos.x, window->Pos.y };
+		datas[defaultDatas[je_WindowSize]] = { window->Size.x, window->Size.y };
+
 		if (GetParent() != nullptr)
 		{
-			//親子を線で結ぶための座標保管
-			BehavierImGui::behaviarWindowPosisions.push_back({_parent->GetData(defaultDatas[je_WindowPos])[0], _parent->GetData(defaultDatas[je_WindowPos])[1] });
-			BehavierImGui::behaviarWindowPosisions.push_back(window->Pos);
+			//ライン描画用セット
+			SetLines(window);
 		}
 
 		ImGui::End();
@@ -114,6 +124,60 @@ namespace BehaviorTree
 	{
 
 		return nullptr;
+	}
+	void Node::SetDedaltColor(ImVec4* f_color)
+	{
+		if (f_color == nullptr) return;
+		//NONEノードは基本なしなので描画しない
+		if (datas[defaultDatas[je_NodeType]] == NodeType::e_NONE)return;
+		if (datas[defaultDatas[je_NodeType]] == NodeType::e_Root)
+		{
+			f_color[ImGuiCol_TitleBg] = { 0.3f, 0.3f, 0.01f, 1.0f };
+			f_color[ImGuiCol_TitleBgCollapsed] = { 0.35f, 0.35f, 0.01f, 1.0f };
+			f_color[ImGuiCol_TitleBgActive] = { 0.5f, 0.5f, 0.01f, 1.0f };
+		}
+		else if (datas[defaultDatas[je_NodeType]] == NodeType::e_Selector)
+		{
+			f_color[ImGuiCol_TitleBg] = { 0.01f, 0.3f, 0.3f, 1.0f };
+			f_color[ImGuiCol_TitleBgCollapsed] = { 0.01f, 0.35f, 0.35f, 1.0f };
+			f_color[ImGuiCol_TitleBgActive] = { 0.01f, 0.5f, 0.5f, 1.0f };
+		}
+		else if (datas[defaultDatas[je_NodeType]] == NodeType::e_Sequence)
+		{
+			f_color[ImGuiCol_TitleBg] = { 0.21f, 0.21f, 0.6f, 1.0f };
+			f_color[ImGuiCol_TitleBgCollapsed] = { 0.25f, 0.25f, 0.65f, 1.0f };
+			f_color[ImGuiCol_TitleBgActive] = { 0.4f, 0.4f, 0.75f, 1.0f };
+		}
+		else if (datas[defaultDatas[je_NodeType]] == NodeType::e_Task)
+		{
+			f_color[ImGuiCol_TitleBg] = { 0.3f, 0.01f, 0.3f, 1.0f };
+			f_color[ImGuiCol_TitleBgCollapsed] = { 0.35f, 0.01f, 0.35f, 1.0f };
+			f_color[ImGuiCol_TitleBgActive] = { 0.5f, 0.01f, 0.5f, 1.0f };
+		}
+	}
+
+	void Node::SetLines(ImGuiWindow* f_window)
+	{
+		if (f_window == nullptr) return;
+		if (_parent == nullptr) return;
+		if (_parent->GetData(defaultDatas[je_WindowPos])[0] + WindowSize.x / 2.0f > f_window->Pos.x)
+		{
+			f_window->Pos.x = _parent->GetData(defaultDatas[je_WindowPos])[0] + WindowSize.x / 2.0f;
+		}
+		if (_parent->GetData(defaultDatas[je_WindowPos])[1] + WindowSize.y / 2.0f > f_window->Pos.y)
+		{
+			f_window->Pos.y = _parent->GetData(defaultDatas[je_WindowPos])[1] + WindowSize.y / 2.0f;
+		}
+
+		float parentX;
+		parentX = _parent->GetData(defaultDatas[je_WindowPos])[0];
+		parentX += _parent->GetData(defaultDatas[je_WindowSize])[0] / 2.0f;
+		float parentY;
+		parentY = _parent->GetData(defaultDatas[je_WindowPos])[1];
+		parentY += _parent->GetData(defaultDatas[je_WindowSize])[1] / 2.0f;
+		//親子を線で結ぶための座標保管
+		BehavierImGui::behaviarWindowPosisions.push_back({ {parentX, parentY}, _parent->GetData(defaultDatas[je_NodeType]) });
+		BehavierImGui::behaviarWindowPosisions.push_back({ f_window->Pos, datas[defaultDatas[je_NodeType]] });
 	}
 
 	Node* Node::SearchChildrenNode(Node* f_node, string f_nodeName)
@@ -137,7 +201,6 @@ namespace BehaviorTree
 	{
 		//ノードの描画
 		f_node->GUIDraw();
-
 		//子がいなければ戻る
 		if (f_node->Children()->size() < 1) return;
 
@@ -154,7 +217,6 @@ namespace BehaviorTree
 			if (selectObject == nullptr)
 			{
 				rootObject.Init(nullptr, "RootNode", e_Root);
-				rootObject.GetData(defaultDatas[je_WindowPos]) = { 100.0f, 30.0f };
 				selectObject = &rootObject;
 			}
 			if (f_parent == nullptr)
@@ -325,9 +387,25 @@ namespace BehaviorTree
 				for (float y = fmodf(scrolling.y, GRID_STEP); y < canvas_sz.y; y += GRID_STEP)
 					draw_list->AddLine(ImVec2(canvas_p0.x, canvas_p0.y + y), ImVec2(canvas_p1.x, canvas_p0.y + y), IM_COL32(200, 200, 200, 40));
 
+
 				for (int n = 0; n < behaviarWindowPosisions.Size; n += 2)
 				{
-					draw_list->AddLine(ImVec2(behaviarWindowPosisions[n].x, behaviarWindowPosisions[n].y), ImVec2(behaviarWindowPosisions[n + 1].x, behaviarWindowPosisions[n + 1].y), IM_COL32(255, 255, 0, 255), 2.0f);
+					ImVec4 col;
+					static float hi = 200.0f;
+					static float low = 70.0f;
+					if (behaviarWindowPosisions[n + 1].second == NodeType::e_Selector)
+					{
+						col = { low, hi, hi, 255.0f };
+					}
+					else if (behaviarWindowPosisions[n + 1].second == NodeType::e_Sequence)
+					{
+						col = { low, low, hi, 255.0f };
+					}
+					else if (behaviarWindowPosisions[n + 1].second == NodeType::e_Task)
+					{
+						col = { hi, low, hi ,255.0f };
+					}
+					draw_list->AddLine(behaviarWindowPosisions[n].first, behaviarWindowPosisions[n + 1].first, IM_COL32(col.x, col.y, col.z, col.w), 2.0f);
 				}
 			}
 			//描画終了処理
@@ -353,20 +431,20 @@ namespace BehaviorTree
 		//ファイルを作る
 		string saveFileName = "Resource/TextData/Behavior/" + particleFileName + ".json";
 		ofstream ofs(saveFileName);
-		string dataStr = "{\n";	
+		string dataStr = "{\n";
 		GetChildName(f_rootNode, dataStr);
 		dataStr += "\n}";
 		ofs << dataStr;
 	}
 
-	void GetChildName(Node* f_node, string &f_names)
+	void GetChildName(Node* f_node, string& f_names)
 	{
 		//ノードの文字列化
 		f_names += "\"";
 		f_names += f_node->GetData(defaultDatas[je_NodeName]);
 		f_names += "\":";
 		f_names += f_node->GetData().dump();
-		
+
 		//子がいなければ戻る
 		if (f_node->Children()->size() < 1) return;
 
@@ -377,7 +455,7 @@ namespace BehaviorTree
 		}
 	}
 
-	void InportFile(string f_fileName, Node *f_rootNode)
+	void InportFile(string f_fileName, Node* f_rootNode)
 	{
 		//ファイル読み込み
 		string pathName = f_fileName;
@@ -401,11 +479,11 @@ namespace BehaviorTree
 		for (auto& [key, value] : loadData.items())
 		{
 			if (key == "RootNode")continue;
-			Node *nodeData = new Node();
+			Node* nodeData = new Node();
 			nodeData->SetData(loadData[key]);
 			NodeType type = nodeData->GetData()[defaultDatas[je_NodeType]];
 			string parentName = nodeData->GetData()[defaultDatas[je_ParentName]];
-			Node *targetNode =  f_rootNode->SearchChildrenNode(f_rootNode, parentName);
+			Node* targetNode = f_rootNode->SearchChildrenNode(f_rootNode, parentName);
 			BehavierImGui::CreateNode(key.c_str(), type, targetNode);
 		}
 	}

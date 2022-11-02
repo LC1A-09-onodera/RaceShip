@@ -51,8 +51,10 @@ namespace BehaviorTree
 		je_ParentName,
 		je_WindowPos,
 		je_Priority,
+		je_WindowSize,
+		je_Max
 	};
-	static array<string, 10> defaultDatas = { "NodeType", "NodeName", "ParentName", "WindowPosition", "Priority" };
+	static array<string, je_Max> defaultDatas = { "NodeType", "NodeName", "ParentName", "WindowPosition", "Priority" , "WindowSize"};
 
 	//ノードの基本クラス
 	class Node
@@ -60,8 +62,17 @@ namespace BehaviorTree
 	private:
 		static const ImVec2 WindowSize;
 		json datas;
-	public:
 
+		function<bool()> _function;
+
+		NowState nowState = Stay;
+
+		NowState RootNodeRun();
+		NowState SelectorRun();
+		NowState SequenceRun();
+		NowState TaskRun();
+
+	public:
 		//list<string> jsonNames;
 		//GUIの描画ルール
 		ImGuiWindowFlags _flags = 0;
@@ -73,19 +84,23 @@ namespace BehaviorTree
 		//ImVec2 _windowPos = { 0, 0 };
 		Node() {}
 		~Node() {}
-
+		/*-----------json関連--------------*/
+		//json自体の取得
 		json GetData()
 		{
 			return datas;
 		}
+		//jsonないの指定keyのオブジェクト取得
 		auto GetData(string f_jsonName)
 		{
 			return datas[f_jsonName];
 		}
+		//json全体を書き換える
 		void SetData(json& f_js)
 		{
 			datas = f_js;
 		}
+		/*---------------------------------*/
 		//親ノードを取得
 		Node* GetParent() { return _parent; };
 		//ノードの種類を文字列で取得
@@ -120,23 +135,26 @@ namespace BehaviorTree
 		list<Node*>* Children() { return &_children; }
 		//自身を返す
 		Node* GetNode() { return this; }
-
-		/*------------継承時書き換え推奨-------------*/
+		//自分以下をGUIに描画(ルートノードで行うことを推奨)
+		void DrawGUIChildren(Node* f_node);
+		//GUIのカラー設定
+		void SetDedaltColor(ImVec4 *f_color);
+		//ノード同士の線を構成する
+		void SetLines(ImGuiWindow* f_window);
 		//標準初期化-最低限しか行っていない
 		virtual void Init(Node* f_parent, string f_nodeName, NodeType f_type);
-		//ノードの描画
+		//ノードの描画-デフォルトではjsonデータを表示するだけ
 		virtual void GUIDraw();
-		/*-------------------------------------------*/
-
-		/// <summary>
-		/// 出力用文字列作成jsonに任せようかな
-		/// </summary>
-		/// <param name="dataStr">出力用文字列変数</param>
-		/// <param name="f_node">最初に呼び出すときは親ノード、内部的に子ノードを渡すこともある</param>
-		/// <param name="indextCount">いらない(何階層目なのかはわかるかも)</param>
-		//virtual void GetChildrenDataString(string& dataStr, Node* f_node, int indextCount);
-		//自分以下をGUIに描画(ルートノードで行うことを推奨)
-		virtual void DrawGUIChildren(Node* f_node);
+		//関数ポインタのセット
+		void SetFunction(function<bool()> f_function)
+		{
+			_function = f_function;
+		}
+		//保管しておいた関数を実行
+		bool RunFunc()
+		{
+			return _function();
+		}
 	};
 
 	/// <summary>
@@ -174,19 +192,20 @@ namespace BehaviorTree
 		//ノードの名前を格納
 		static char nameBuf[256];
 		static const char* nodeName;
-		//ノードの名前を格納
+		//ツリー自体の名前を格納
 		static char treeNameBuf[256];
 		static const char* treeName;
 	public:
+		//親ノードにするオブジェクトを保管しておく
 		static Node* selectObject;
-		//これで描画するためにまとめている
-		//static NodeManager nodeManager;
 		//GUIウィンドウの描画ルール
 		static ImGuiWindowFlags beharviorWindowFlags;
 		//ボタンが配置されているウィンドウの描画ルール
 		static ImGuiWindowFlags beharviorButtonWindowFlags;
-		//GUIウィンドウの座標コンテナ
-		static ImVector<ImVec2> behaviarWindowPosisions;
+		//線引く用のデータコンテナ
+		//ImVec2-線引くための座標
+		//NodeType-タイプによって色を変える
+		static ImVector<pair<ImVec2, NodeType>> behaviarWindowPosisions;
 		/// <summary>
 		/// ノードを作る
 		/// </summary>
@@ -200,5 +219,54 @@ namespace BehaviorTree
 		static void ClearNodes();
 		//GUIウィンドウが [非表示→表示] の時に毎回呼び出すと動作安定
 		static void Init();
+	};
+	//-----------------------------------------------------------
+	
+	//Demo
+	class Hoge
+	{
+	public:
+		bool GetTrue()
+		{
+			return true;
+		}
+		bool GetFalse()
+		{
+			return false;
+		}
+	};
+	class ExBehavior
+	{
+	public:
+		static Hoge hoge;
+		static Node rootNode;
+		static void Init(Hoge &hoge)
+		{
+			rootNode.SetFunction(function<bool()>([&]() {return hoge.GetFalse(); }));
+		}
+		static bool IsFunc()
+		{
+			return (bool)rootNode.RunFunc();
+		}
+	};
+
+	//Demo2
+	class Element
+	{
+		int num;
+		string actionName;
+		//bool isAction
+		virtual bool Action() = 0;
+	};
+	class ExAI
+	{
+	public:
+		enum Actions
+		{
+			Run,
+			Stay,
+		};
+		array<string, 10> actions = {"Run", "Stay"};
+		
 	};
 }

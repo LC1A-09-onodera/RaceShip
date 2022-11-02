@@ -208,6 +208,7 @@ void Imgui::DrawImGui(EachInfo& each)
                 Cameras::camera.isRCamera = false;
                 isParticleSystemWindow = false;
                 isUseGizmo = false;
+                isBehavior = false;
             }
             if (ImGui::MenuItem("Map Editor"))
             {
@@ -220,11 +221,13 @@ void Imgui::DrawImGui(EachInfo& each)
                 //XMFLOAT3 cameraTargetReset = {0, 0, 0};
                 Cameras::camera.Init(cameraEeyReset, XMFLOAT3(0, 0, 0));
                 isParticleSystemWindow = false;
+                isBehavior = false;
             }
             if (ImGui::MenuItem("Particle System"))
             {
                 Imgui::sceneNum = 8;
                 isParticleSystemWindow = true;
+                isBehavior = false;
             }
             if (ImGui::MenuItem("Key Recording"))
             {
@@ -233,6 +236,7 @@ void Imgui::DrawImGui(EachInfo& each)
             if (ImGui::MenuItem("Inspector"))
             {
                 isInspectorWindow = true;
+
             }
             if (ImGui::MenuItem("Behavior"))
             {

@@ -238,10 +238,16 @@ void GameScene::Init()
 
 	SceneMapLayout::LoadModel();
 	SceneMapLayout::Init();
+
+	BehaviorTree::ExBehavior::Init(BehaviorTree::ExBehavior::hoge);
 }
 
 void GameScene::TitleUpdate()
 {
+	if (BehaviorTree::ExBehavior::IsFunc())
+	{
+		int a = 0;
+	}
 	if (Imgui::GetInstance()->isMulchthled)
 	{
 		thread th_a(ParticleControl::Update);
