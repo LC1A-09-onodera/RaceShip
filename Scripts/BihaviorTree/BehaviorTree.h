@@ -146,9 +146,9 @@ namespace BehaviorTree
 		//ノードの描画-デフォルトではjsonデータを表示するだけ
 		virtual void GUIDraw();
 		//関数ポインタのセット
-		void SetFunction(function<bool()> f_function)
+		void SetFunction(string f_nodeName, function<bool()> f_function)
 		{
-			_function = f_function;
+			SearchChildrenNode(this, f_nodeName)->_function = f_function;
 		}
 		//保管しておいた関数を実行
 		bool RunFunc()
@@ -195,6 +195,7 @@ namespace BehaviorTree
 		//ツリー自体の名前を格納
 		static char treeNameBuf[256];
 		static const char* treeName;
+		static bool isBehaviorError;
 	public:
 		//親ノードにするオブジェクトを保管しておく
 		static Node* selectObject;
@@ -242,7 +243,7 @@ namespace BehaviorTree
 		static Node rootNode;
 		static void Init(Hoge &hoge)
 		{
-			rootNode.SetFunction(function<bool()>([&]() {return hoge.GetFalse(); }));
+			rootNode.SetFunction("", function<bool()>([&]() {return hoge.GetFalse(); }));
 		}
 		static bool IsFunc()
 		{

@@ -54,6 +54,7 @@ private:
     ImGuiWindowFlags gizmoWindowFlags = 0;
     ImGuiWindowFlags menuBarWindowFlags = 0;
     bool isBehavior = false;
+
 public:
     static Imgui *GetInstance();
     Imgui(const Imgui& obj) = delete;

@@ -20,6 +20,8 @@ namespace BehaviorTree
 
 	const ImVec2 Node::WindowSize = { 220.0f, 140.0f };
 
+	bool BehavierImGui::isBehaviorError = false;
+
 	Hoge ExBehavior::hoge;
 	Node ExBehavior::rootNode;
 
@@ -281,23 +283,28 @@ namespace BehaviorTree
 			if (ImGui::Button("Add Selector"))
 			{
 				if (nameBuf[0] != '\0')CreateNode(nameBuf, NodeType::e_Selector, selectObject);
+				else isBehaviorError = true;
 			}
 			if (ImGui::Button("Add Sequence"))
 			{
 				if (nameBuf[0] != '\0')CreateNode(nameBuf, NodeType::e_Sequence, selectObject);
+				else isBehaviorError = true;
 			}
 			if (ImGui::Button("Add Task"))
 			{
 				if (nameBuf[0] != '\0')CreateNode(nameBuf, NodeType::e_Task, selectObject);
+				else isBehaviorError = true;
 			}
 
 			if (ImGui::Button("Behavior Export"))
 			{
 				if (treeNameBuf[0] != '\0')ExportFile(treeNameBuf, &rootObject);
+				else isBehaviorError = true;
 			}
 			if (ImGui::Button("Behavior Inport"))
 			{
 				if (treeNameBuf[0] != '\0')InportFile(treeNameBuf, &rootObject);
+				else isBehaviorError = true;
 			}
 			ImGui::End();
 		}
@@ -305,6 +312,24 @@ namespace BehaviorTree
 		//個々のノードを描画
 		rootObject.Init(nullptr, "RootNode", e_Root);
 		rootObject.DrawGUIChildren(&rootObject);
+
+		//エラーの表示
+		if (isBehaviorError)
+		{
+			static const float sizeX = 300;
+			static const float sizeY = 50;
+			ImVec4* style = ImGui::GetStyle().Colors;
+			style[ImGuiCol_TitleBg] = { 0.8f, 0.3f, 0.3f, 1.0f };
+			style[ImGuiCol_TitleBgCollapsed] = { 0.8f, 0.3f, 0.3f, 1.0f };
+			style[ImGuiCol_TitleBgActive] = { 0.8f, 0.3f, 0.3f, 1.0f };
+			ImGui::SetNextWindowSize(ImVec2(sizeX, sizeY), ImGuiCond_Appearing);
+			//座標を左上に
+			ImGui::SetNextWindowPos(ImVec2((1280.0f / 2.0f) - (sizeX / 2), (720.0f / 2.0f) - (sizeY / 2)), ImGuiCond_Appearing);
+			ImGui::Begin("BehaviorError", &isBehaviorError, beharviorButtonWindowFlags);//ウィンドウの名前
+
+			ImGui::Text("Enter the name of the node or node tree");
+			ImGui::End();
+		}
 
 		//グリッドキャンパス
 		//ウィンドウサイズは各自で設定してください
