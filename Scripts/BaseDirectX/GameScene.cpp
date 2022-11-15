@@ -240,10 +240,12 @@ void GameScene::Init()
 	SceneMapLayout::Init();
 
 	//BehaviorTree::ExBehavior::Init(BehaviorTree::ExBehavior::hoge);
+	BehaviorTree::Enemy::Init("hoge");
 }
 
 void GameScene::TitleUpdate()
 {
+	BehaviorTree::Enemy::Update();
 	/*if (BehaviorTree::ExBehavior::IsFunc())
 	{
 		int a = 0;

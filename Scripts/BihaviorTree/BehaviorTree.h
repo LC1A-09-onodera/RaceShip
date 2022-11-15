@@ -2,6 +2,10 @@
 #include <string>
 #include <list>
 #include <memory>
+#include <sstream>
+#include <fstream>
+#include <iostream>
+#include <functional>
 //インクルードは自分で調整してください
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_dx12.h"
@@ -52,16 +56,17 @@ namespace BehaviorTree
 		je_WindowPos,
 		je_Priority,
 		je_WindowSize,
+		je_LoadNumber,
 		je_Max
 	};
-	static array<string, je_Max> defaultDatas = { "NodeType", "NodeName", "ParentName", "WindowPosition", "Priority" , "WindowSize"};
+	static array<string, je_Max> defaultDatas = { "NodeType", "NodeName", "ParentName", "WindowPosition", "Priority" , "WindowSize", "LoadNumber"};
 
 	//ノードの基本クラス
 	class Node
 	{
 	private:
 		static const ImVec2 WindowSize;
-		json datas;
+		
 
 		function<bool()> _function;
 
@@ -73,6 +78,7 @@ namespace BehaviorTree
 		NowState TaskRun();
 
 	public:
+		json datas;
 		//list<string> jsonNames;
 		//GUIの描画ルール
 		ImGuiWindowFlags _flags = 0;
@@ -138,11 +144,12 @@ namespace BehaviorTree
 		//自分以下をGUIに描画(ルートノードで行うことを推奨)
 		void DrawGUIChildren(Node* f_node);
 		//GUIのカラー設定
-		void SetDedaltColor(ImVec4 *f_color);
+		void SetDefaultColor(ImVec4 *f_color);
 		//ノード同士の線を構成する
 		void SetLines(ImGuiWindow* f_window);
 		//標準初期化-最低限しか行っていない
 		virtual void Init(Node* f_parent, string f_nodeName, NodeType f_type);
+		virtual void Init(Node* f_parent, string f_nodeName, NodeType f_type, string f_functionName, int f_functionNumber);
 		//ノードの描画-デフォルトではjsonデータを表示するだけ
 		virtual void GUIDraw();
 		//関数ポインタのセット
@@ -196,7 +203,21 @@ namespace BehaviorTree
 		static char treeNameBuf[256];
 		static const char* treeName;
 		static bool isBehaviorError;
+		static bool isSetFunctionError;
+		
+		
 	public:
+		BehavierImGui()
+		{
+
+		}
+		enum FunctionsTab
+		{
+			Enemey,
+			None,
+		};
+		static int loadNumber;
+		static FunctionsTab funcTab;
 		//親ノードにするオブジェクトを保管しておく
 		static Node* selectObject;
 		//GUIウィンドウの描画ルール
@@ -214,60 +235,92 @@ namespace BehaviorTree
 		/// <param name="f_type">ノードの種類</param>
 		/// <param name="f_parent">親ノードになるノード</param>
 		static void CreateNode(const char* f_nodeName, NodeType f_type, Node* f_parent);
+		static void CreateNode(const char* f_nodeName, NodeType f_type, Node* f_parent, string f_functionName, int f_functionNumber);
 		//全体の描画←これでグリットからなんやらを描画してもらう
 		static void DrawImGui();
 		//GUIのノードを一掃してもらう
 		static void ClearNodes();
 		//GUIウィンドウが [非表示→表示] の時に毎回呼び出すと動作安定
 		static void Init();
+		//Taskノードに関数をつける
+		static void SetFunction(string f_name, int f_number);
 	};
 	//-----------------------------------------------------------
-	
-	//Demo
-	class Hoge
-	{
-	public:
-		bool GetTrue()
-		{
-			return true;
-		}
-		bool GetFalse()
-		{
-			return false;
-		}
-	};
-	class ExBehavior
-	{
-	public:
-		static Hoge hoge;
-		static Node rootNode;
-		static void Init(Hoge &hoge)
-		{
-			rootNode.SetFunction("", function<bool()>([&]() {return hoge.GetFalse(); }));
-		}
-		static bool IsFunc()
-		{
-			return (bool)rootNode.RunFunc();
-		}
-	};
 
-	//Demo2
-	class Element
+	class FuncElement
 	{
-		int num;
-		string actionName;
-		//bool isAction
-		virtual bool Action() = 0;
+	private:
+		
+	public:
+		FuncElement(function<bool()> f_func, string f_name, int f_num)
+		{
+			_function = f_func;
+			_functionName = f_name;
+			_number = f_num;
+		}
+		string _functionName;
+		int _number;
+		function<bool()> _function;
 	};
-	class ExAI
+	
+	class Enemy
 	{
 	public:
-		enum Actions
+		static list<FuncElement *> functions;
+
+		static bool HogeTrigger()
 		{
-			Run,
-			Stay,
-		};
-		array<string, 10> actions = {"Run", "Stay"};
-		
+
+		}
+
+		static bool GetFlag1() { return true; };
+		static bool GetFlag2() { return false; };
+		static bool GetFlag3() { return true; };
+
+		static void Init(string f_jsonFilePath)
+		{
+			
+			FuncElement *func1 = new FuncElement(GetFlag1, "Attack", 0);
+			FuncElement *func2 = new FuncElement(GetFlag2, "Stay", 1);
+			FuncElement *func3 = new FuncElement(GetFlag2, "Move", 2);
+			functions.push_back(func1);
+			functions.push_back(func2);
+			functions.push_back(func3);
+		}
+
+		static void Update()
+		{
+			for (auto itr = functions.begin(); itr != functions.end(); ++itr)
+			{
+				if (!(*itr)->_function())
+				{
+					int a = 0;
+					a++;
+					int b = 0;
+					b = a;
+				}
+			}
+		}
+
+		static void GUIShow()
+		{
+			static int hoge = 0;
+			string combo = "";
+			for (auto itr = functions.begin(); itr != functions.end(); ++itr)
+			{
+				combo += (*itr)->_functionName;
+				combo += '\0';
+			}
+			ImGui::Combo("functions", &hoge, combo.c_str());
+			if (ImGui::Button("Add Function"))
+			{
+				auto itr = functions.begin();
+				for (int i = 0; i < hoge; i++)
+				{
+					itr++;
+				}
+				BehavierImGui::SetFunction((*itr)->_functionName, hoge);
+			}
+		}
 	};
 }

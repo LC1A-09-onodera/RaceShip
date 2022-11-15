@@ -251,6 +251,7 @@ void Imgui::DrawImGui(EachInfo& each)
                 isBehavior = true;
                 isInspectorWindow = false;
                 isParticleSystemWindow = false;
+                BehaviorTree::BehavierImGui::Init();
             }
             ImGui::EndMenuBar();
         }

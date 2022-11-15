@@ -1,8 +1,4 @@
 #include "BehaviorTree.h"
-#include <sstream>
-#include <fstream>
-#include <iostream>
-#include <functional>
 
 namespace BehaviorTree
 {
@@ -15,6 +11,7 @@ namespace BehaviorTree
 
 	ImGuiWindowFlags BehavierImGui::beharviorWindowFlags = 0;
 	ImGuiWindowFlags BehavierImGui::beharviorButtonWindowFlags = 0;
+	bool BehavierImGui::isSetFunctionError = false;
 	ImVector<pair<ImVec2, NodeType>> BehavierImGui::behaviarWindowPosisions;
 	Node* BehavierImGui::selectObject;
 
@@ -22,10 +19,31 @@ namespace BehaviorTree
 
 	bool BehavierImGui::isBehaviorError = false;
 
-	Hoge ExBehavior::hoge;
-	Node ExBehavior::rootNode;
+	BehavierImGui::FunctionsTab BehavierImGui::funcTab = BehavierImGui::FunctionsTab::Enemey;
+	list<FuncElement*> Enemy::functions = list<FuncElement*>();
+
+	int BehavierImGui::loadNumber = 0;
 
 	void Node::Init(Node* f_parent, string f_nodeName, NodeType f_type)
+	{
+		//ウィンドウ生成時親ノードとどれだけずらすかを設定
+		static const ImVec2 WindowSponeDiff = { 5.0f, 5.0f };
+		datas[defaultDatas[je_NodeName]] = f_nodeName;
+		datas[defaultDatas[je_NodeType]] = f_type;
+
+		datas[defaultDatas[je_Priority]] = 0;
+		datas[defaultDatas[je_WindowPos]] = { 100.0f, 30.0f };
+		datas[defaultDatas[je_WindowSize]] = { WindowSize.x, WindowSize.y };
+		datas[defaultDatas[je_LoadNumber]] = BehavierImGui::loadNumber;
+		BehavierImGui::loadNumber++;
+		//ルートオブジェクトの場合親ノードがない場合戻る
+		if (f_parent == nullptr)return;
+		datas[defaultDatas[je_Priority]] = static_cast<int>(f_parent->Children()->size());
+		datas[defaultDatas[je_WindowPos]] = { f_parent->datas[defaultDatas[je_WindowPos]][0] + WindowSize.x + WindowSponeDiff.x, f_parent->datas[defaultDatas[je_WindowPos]][1] + (WindowSize.y / 2.0f) + (f_parent->Children()->size() * WindowSize.y) };
+		datas[defaultDatas[je_ParentName]] = f_parent->datas[defaultDatas[je_NodeName]];
+		SetParentAndChild(*f_parent, *this);
+	}
+	void Node::Init(Node* f_parent, string f_nodeName, NodeType f_type, string f_functionName, int f_functionNumber)
 	{
 		//ウィンドウ生成時親ノードとどれだけずらすかを設定
 		static const ImVec2 WindowSponeDiff = { 5.0f, 5.0f };
@@ -40,6 +58,9 @@ namespace BehaviorTree
 		datas[defaultDatas[je_Priority]] = static_cast<int>(f_parent->Children()->size());
 		datas[defaultDatas[je_WindowPos]] = { f_parent->datas[defaultDatas[je_WindowPos]][0] + WindowSize.x + WindowSponeDiff.x, f_parent->datas[defaultDatas[je_WindowPos]][1] + (WindowSize.y / 2.0f) + (f_parent->Children()->size() * WindowSize.y) };
 		datas[defaultDatas[je_ParentName]] = f_parent->datas[defaultDatas[je_NodeName]];
+
+		datas["FunctionName"] = f_functionName;
+		datas["FunctionNumber"] = f_functionNumber;
 		SetParentAndChild(*f_parent, *this);
 	}
 
@@ -81,7 +102,7 @@ namespace BehaviorTree
 		_flags |= ImGuiWindowFlags_NoSavedSettings;
 		//ノードのカラー変更
 		ImVec4* style = ImGui::GetStyle().Colors;
-		SetDedaltColor(style);
+		SetDefaultColor(style);
 
 		//座標の設定
 		ImGui::SetNextWindowPos({ datas[defaultDatas[je_WindowPos]][0],datas[defaultDatas[je_WindowPos]][1] }, ImGuiCond_Appearing);
@@ -127,7 +148,7 @@ namespace BehaviorTree
 
 		return nullptr;
 	}
-	void Node::SetDedaltColor(ImVec4* f_color)
+	void Node::SetDefaultColor(ImVec4* f_color)
 	{
 		if (f_color == nullptr) return;
 		//NONEノードは基本なしなので描画しない
@@ -157,7 +178,6 @@ namespace BehaviorTree
 			f_color[ImGuiCol_TitleBgActive] = { 0.5f, 0.01f, 0.5f, 1.0f };
 		}
 	}
-
 	void Node::SetLines(ImGuiWindow* f_window)
 	{
 		if (f_window == nullptr) return;
@@ -250,7 +270,44 @@ namespace BehaviorTree
 			}
 		}
 	}
-
+	void BehavierImGui::CreateNode(const char* f_nodeName, NodeType f_type, Node* f_parent, string f_functionName, int f_functionNumber)
+	{
+		//最初のノードつくりの時の処理
+		{
+			if (selectObject == nullptr)
+			{
+				rootObject.Init(nullptr, "RootNode", e_Root);
+				selectObject = &rootObject;
+			}
+			if (f_parent == nullptr)
+			{
+				f_parent = new Node();
+				f_parent = selectObject;
+			}
+		}
+		//実際にノードを作る
+		{
+			//タスクノードの下にノードを作らせない
+			if (f_parent->GetData(defaultDatas[je_NodeType]) == NodeType::e_Task)return;
+			Node* node = new Node();
+			if (f_type == e_Selector)
+			{
+				node->Init(f_parent, f_nodeName, e_Selector);
+			}
+			else if (f_type == e_Sequence)
+			{
+				node->Init(f_parent, f_nodeName, e_Sequence);
+			}
+			else if (f_type == e_Task)
+			{
+				node->Init(f_parent, f_nodeName, e_Task, f_functionName, f_functionNumber);
+			}
+			else
+			{
+				node->Init(f_parent, f_nodeName, e_NONE);
+			}
+		}
+	}
 	void BehavierImGui::DrawImGui()
 	{
 		//キャンパスのスクロール
@@ -308,10 +365,42 @@ namespace BehaviorTree
 			}
 			ImGui::End();
 		}
+		
+		{
+			//関数セット用ウィンドウ
+			ImVec4* style = ImGui::GetStyle().Colors;
+			style[ImGuiCol_TitleBg] = { 0.3f, 0.3f, 0.3f, 1.0f };
+			style[ImGuiCol_TitleBgCollapsed] = { 0.3f, 0.3f, 0.3f, 1.0f };
+			style[ImGuiCol_TitleBgActive] = { 0.3f, 0.3f, 0.3f, 1.0f };
+
+			ImGuiWindowFlags flag = 0;
+			flag |= ImGuiWindowFlags_MenuBar;
+
+			ImGui::Begin("Functions", nullptr, flag);//ウィンドウの名前
+			ImGui::SetWindowSize(ImVec2(static_cast<float>(200), static_cast<float>(200)), ImGuiCond_::ImGuiCond_FirstUseEver);
+			
+			if (ImGui::BeginMenuBar())
+			{
+				if (ImGui::MenuItem("Ememy"))
+				{
+					funcTab = FunctionsTab::Enemey;
+				}
+				ImGui::EndMenuBar();
+			}
+			
+			//エネミーの情報表示
+			if (funcTab == FunctionsTab::Enemey)
+			{
+				Enemy::GUIShow();
+			}
+			ImGui::End();
+		}
 
 		//個々のノードを描画
-		rootObject.Init(nullptr, "RootNode", e_Root);
+		
 		rootObject.DrawGUIChildren(&rootObject);
+
+		
 
 		//エラーの表示
 		if (isBehaviorError)
@@ -330,7 +419,22 @@ namespace BehaviorTree
 			ImGui::Text("Enter the name of the node or node tree");
 			ImGui::End();
 		}
+		if (isSetFunctionError)
+		{
+			static const float sizeX = 300;
+			static const float sizeY = 50;
+			ImVec4* style = ImGui::GetStyle().Colors;
+			style[ImGuiCol_TitleBg] = { 0.8f, 0.3f, 0.3f, 1.0f };
+			style[ImGuiCol_TitleBgCollapsed] = { 0.8f, 0.3f, 0.3f, 1.0f };
+			style[ImGuiCol_TitleBgActive] = { 0.8f, 0.3f, 0.3f, 1.0f };
+			ImGui::SetNextWindowSize(ImVec2(sizeX, sizeY), ImGuiCond_Appearing);
+			//座標を左上に
+			ImGui::SetNextWindowPos(ImVec2((1280.0f / 2.0f) - (sizeX / 2), (720.0f / 2.0f) - (sizeY / 2)), ImGuiCond_Appearing);
+			ImGui::Begin("FunctionError", &isSetFunctionError, beharviorButtonWindowFlags);//ウィンドウの名前
 
+			ImGui::Text("The specified node is not a task node");
+			ImGui::End();
+		}
 		//グリッドキャンパス
 		//ウィンドウサイズは各自で設定してください
 		{
@@ -442,12 +546,25 @@ namespace BehaviorTree
 	void BehavierImGui::ClearNodes()
 	{
 		rootObject.Children()->clear();
+		loadNumber = 0;
 	}
 
 	void BehavierImGui::Init()
 	{
 		rootObject.Init(nullptr, "RootNode", e_Root);
 		selectObject = &rootObject;
+	}
+
+	void BehavierImGui::SetFunction(string f_name, int f_number)
+	{
+		if (selectObject == nullptr) return;
+		if (selectObject->GetData(defaultDatas[je_NodeType]) != NodeType::e_Task)
+		{
+			isSetFunctionError = true;
+			return;
+		}
+		selectObject->datas["FunctionName"] = f_name;
+		selectObject->datas["FunctionNumber"] = f_number;
 	}
 
 	void ExportFile(string f_fileName, Node* f_rootNode)
@@ -509,7 +626,14 @@ namespace BehaviorTree
 			NodeType type = nodeData->GetData()[defaultDatas[je_NodeType]];
 			string parentName = nodeData->GetData()[defaultDatas[je_ParentName]];
 			Node* targetNode = f_rootNode->SearchChildrenNode(f_rootNode, parentName);
-			BehavierImGui::CreateNode(key.c_str(), type, targetNode);
+			if (nodeData->GetData()[defaultDatas[je_NodeType]] != e_Task)
+			{
+				BehavierImGui::CreateNode(key.c_str(), type, targetNode);
+			}
+			else
+			{
+				BehavierImGui::CreateNode(key.c_str(), type, targetNode, nodeData->datas["FunctionName"], nodeData->datas["FunctionNumber"]);
+			}
 		}
 	}
 }
