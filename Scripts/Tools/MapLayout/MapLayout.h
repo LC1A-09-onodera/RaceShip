@@ -60,7 +60,7 @@ class MapEditorObjects
 	static XMFLOAT3 lineMousePos;
 	static bool isLinePut;
 
-	static list<pair<list<MapEditorObject>::iterator, MapObjects>> andoList;
+	static list<pair<list<MapEditorObject>::iterator, MapObjects>> undoList;
 public:
 	static const int MapW;
 	static const int MapH;

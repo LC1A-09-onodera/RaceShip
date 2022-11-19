@@ -28,7 +28,7 @@ XMFLOAT3 MapEditorObjects::lineMousePos;
 bool MapEditorObjects::isLinePut;
 const int MapEditorObjects::MapW = 25;
 const int MapEditorObjects::MapH = 25;
-list<pair<list<MapEditorObject>::iterator, MapObjects>> MapEditorObjects::andoList;
+list<pair<list<MapEditorObject>::iterator, MapObjects>> MapEditorObjects::undoList;
 
 bool MapEditorObject::OnCollisionMouse(float posX, float posY)
 {
@@ -212,7 +212,7 @@ void MapEditorObjects::SetObject(const XMFLOAT3& position, const XMFLOAT3& f_rot
 		auto itr = wall.end();
 		--itr;
 		pair<list<MapEditorObject>::iterator, MapObjects > ando = { itr, activeType };
-		andoList.push_back(ando);
+		undoList.push_back(ando);
 	}
 	else if (activeType == MapObjects::SpringBorad)
 	{
@@ -220,7 +220,7 @@ void MapEditorObjects::SetObject(const XMFLOAT3& position, const XMFLOAT3& f_rot
 		auto itr = springBorads.end();
 		--itr;
 		pair<list<MapEditorObject>::iterator, MapObjects> ando = { itr ,activeType };
-		andoList.push_back(ando);
+		undoList.push_back(ando);
 	}
 	else if (activeType == MapObjects::GOAL)
 	{
@@ -390,8 +390,8 @@ void MapEditorObjects::DeleteObjects()
 
 void MapEditorObjects::EraseObject()
 {
-	if (andoList.size() < 1)return;
-	auto eraseObject = andoList.end();
+	if (undoList.size() < 1)return;
+	auto eraseObject = undoList.end();
 	--eraseObject;
 	if (eraseObject->second == MapObjects::WALL)
 	{
@@ -401,5 +401,5 @@ void MapEditorObjects::EraseObject()
 	{
 		springBorads.erase(eraseObject->first);
 	}
-	andoList.erase(eraseObject);
+	undoList.erase(eraseObject);
 }

@@ -178,7 +178,7 @@
     <ClInclude Include="Scripts\BaseDirectX\Library.h" />
     <ClInclude Include="Scripts\BaseDirectX\ResouceBarrier.h" />
     <ClInclude Include="Scripts\BaseDirectX\viewport.h" />
-    <ClInclude Include="Scripts\BihaviorTree\BehaviorTree.h" />
+    <ClInclude Include="Scripts\BehaviorTree\BehaviorTree.h" />
     <ClInclude Include="Scripts\Camera\Camera.h" />
     <ClInclude Include="Scripts\FBX\FbxLoader\FbxLoader.h" />
     <ClInclude Include="Scripts\FBX\FBXModel\FBXModel.h" />
@@ -228,7 +228,7 @@
     <ClCompile Include="Scripts\BaseDirectX\DirectInput.cpp" />
     <ClCompile Include="Scripts\BaseDirectX\GameScene.cpp" />
     <ClCompile Include="Scripts\BaseDirectX\Input.cpp" />
-    <ClCompile Include="Scripts\BihaviorTree\BehaviorTree.cpp" />
+    <ClCompile Include="Scripts\BehaviorTree\BehaviorTree.cpp" />
     <ClCompile Include="Scripts\Camera\Camera.cpp" />
     <ClCompile Include="Scripts\FBX\FbxLoader\FbxLoader.cpp" />
     <ClCompile Include="Scripts\FBX\FBXModel\FBXModel.cpp" />
