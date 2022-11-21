@@ -199,12 +199,6 @@
     <ClCompile Include="Scripts\PostEffect\PostEffect.cpp">
       <Filter>Engine\PostEffect</Filter>
     </ClCompile>
-    <ClCompile Include="Scripts\VoiceUDPRecive\VoiceUDPRecive.cpp">
-      <Filter>Engine\Voice</Filter>
-    </ClCompile>
-    <ClCompile Include="Scripts\VoiceUDPRecive\VoiceUDPSender.cpp">
-      <Filter>Engine\Voice</Filter>
-    </ClCompile>
     <ClCompile Include="Scripts\BehaviorTree\BehaviorTree.cpp">
       <Filter>Tools</Filter>
     </ClCompile>
@@ -362,12 +356,6 @@
     </ClInclude>
     <ClInclude Include="Scripts\PostEffect\PostEffect.h">
       <Filter>Engine\PostEffect</Filter>
-    </ClInclude>
-    <ClInclude Include="Scripts\VoiceUDPRecive\VoiceUDPRecive.h">
-      <Filter>Engine\Voice</Filter>
-    </ClInclude>
-    <ClInclude Include="Scripts\VoiceUDPRecive\VoiceUDPSender.h">
-      <Filter>Engine\Voice</Filter>
     </ClInclude>
     <ClInclude Include="Scripts\BehaviorTree\BehaviorTree.h">
       <Filter>Tools</Filter>

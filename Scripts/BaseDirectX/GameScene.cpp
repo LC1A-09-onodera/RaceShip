@@ -1,4 +1,3 @@
-#include "../VoiceUDPRecive/VoiceUDPRecive.h"
 #include"GameScene.h"
 #include "BaseDirectX.h"
 #include "../WindowsAPI/WinAPI.h"
@@ -23,7 +22,7 @@ GameScene::GameScene()
 
 GameScene::~GameScene()
 {
-	VoiceReciver::EndRecive();
+	
 }
 
 void GameScene::SceneManageUpdateAndDraw()
@@ -186,7 +185,6 @@ void GameScene::Init()
 	rSeling.LoadModel();
 	//ボイスコマンドの通信受付スタート
 	//送信側はまた違うアプリケーションで行う
-	VoiceReciver::StartUp();
 	XMFLOAT3 cameraPos = { 0.0f, -67.0f, -10.1f };
 	XMFLOAT3 targetPos = { 0, 0, 0 };
 	XMFLOAT3 cameraPos2 = { 0.0f, -67.0f + 89.0f, -10.1f };
@@ -254,13 +252,10 @@ void GameScene::TitleUpdate()
 	{
 		thread th_a(ParticleControl::Update);
 		th_a.join();
-		thread th_b(VoiceReciver::VoiceUDPUpdate);
-		th_b.join();
 	}
 	else
 	{
 		ParticleControl::Update();
-		VoiceReciver::VoiceUDPUpdate();
 	}
 
 	Cameras::camera.isRCamera = false;
@@ -333,13 +328,10 @@ void GameScene::GameUpdate()
 	{
 		std::thread th_a(ParticleControl::Update);
 		th_a.join();
-		std::thread th_b(VoiceReciver::VoiceUDPUpdate);
-		th_b.join();
 	}
 	else
 	{
 		ParticleControl::Update();
-		VoiceReciver::VoiceUDPUpdate();
 	}
 	light->SetLightDir(XMFLOAT3(Cameras::camera.GetTargetDirection()));
 	LightUpdate();
@@ -405,13 +397,10 @@ void GameScene::ResultUpdate()
 	{
 		std::thread th_a(ParticleControl::Update);
 		th_a.join();
-		std::thread th_b(VoiceReciver::VoiceUDPUpdate);
-		th_b.join();
 	}
 	else
 	{
 		ParticleControl::Update();
-		VoiceReciver::VoiceUDPUpdate();
 	}
 	//カメラのイージングを行う　
 	/*XMFLOAT3 cameraStart(Imgui::GetInstance()->CameraRotation, 0, 0);

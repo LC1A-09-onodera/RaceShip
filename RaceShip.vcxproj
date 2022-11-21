@@ -219,8 +219,6 @@
     <ClInclude Include="Scripts\Tools\Particle\ParticleEdit.h" />
     <ClInclude Include="Scripts\Tools\Rewired\Rewired.h" />
     <ClInclude Include="Scripts\UDP\udp.h" />
-    <ClInclude Include="Scripts\VoiceUDPRecive\VoiceUDPRecive.h" />
-    <ClInclude Include="Scripts\VoiceUDPRecive\VoiceUDPSender.h" />
     <ClInclude Include="Scripts\WaterFace\WaterFace.h" />
     <ClInclude Include="Scripts\WindowsAPI\WinAPI.h" />
   </ItemGroup>
@@ -266,8 +264,6 @@
     <ClCompile Include="Scripts\Tools\Particle\ParticleEdit.cpp" />
     <ClCompile Include="Scripts\Tools\Rewired\Rewired.cpp" />
     <ClCompile Include="Scripts\UDP\udp.cpp" />
-    <ClCompile Include="Scripts\VoiceUDPRecive\VoiceUDPRecive.cpp" />
-    <ClCompile Include="Scripts\VoiceUDPRecive\VoiceUDPSender.cpp" />
     <ClCompile Include="Scripts\WaterFace\WaterFace.cpp" />
     <ClCompile Include="Scripts\WindowsAPI\WinAPI.cpp" />
   </ItemGroup>
