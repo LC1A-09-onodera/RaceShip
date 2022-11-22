@@ -543,18 +543,18 @@ namespace BehaviorTree
 		}
 	}
 
+	
+
 	void BehavierImGui::ClearNodes()
 	{
 		rootObject.Children()->clear();
 		loadNumber = 0;
 	}
-
 	void BehavierImGui::Init()
 	{
 		rootObject.Init(nullptr, "RootNode", e_Root);
 		selectObject = &rootObject;
 	}
-
 	void BehavierImGui::SetFunction(string f_name, int f_number)
 	{
 		if (selectObject == nullptr) return;
@@ -565,6 +565,11 @@ namespace BehaviorTree
 		}
 		selectObject->datas["FunctionName"] = f_name;
 		selectObject->datas["FunctionNumber"] = f_number;
+	}
+	
+	bool StartNode(Node& f_rootNode)
+	{
+		//f_rootNode;
 	}
 
 	void ExportFile(string f_fileName, Node* f_rootNode)
@@ -578,7 +583,6 @@ namespace BehaviorTree
 		dataStr += "\n}";
 		ofs << dataStr;
 	}
-
 	void GetChildName(Node* f_node, string& f_names)
 	{
 		//ノードの文字列化
@@ -596,7 +600,6 @@ namespace BehaviorTree
 			GetChildName(node, f_names);
 		}
 	}
-
 	void InportFile(string f_fileName, Node* f_rootNode)
 	{
 		//ファイル読み込み
@@ -617,22 +620,31 @@ namespace BehaviorTree
 			allFileData += keyType;
 		}
 		json loadData = json::parse(allFileData);
+		vector<Node> datas;
 		//jsonデータにアクセス
 		for (auto& [key, value] : loadData.items())
 		{
 			if (key == "RootNode")continue;
-			Node* nodeData = new Node();
+			Node *nodeData = new Node();
 			nodeData->SetData(loadData[key]);
-			NodeType type = nodeData->GetData()[defaultDatas[je_NodeType]];
-			string parentName = nodeData->GetData()[defaultDatas[je_ParentName]];
+			datas.push_back(*nodeData);
+		}
+		sort(datas.begin(), datas.end());
+
+		for each (Node var in datas)
+		{
+			NodeType type = var.GetData()[defaultDatas[je_NodeType]];
+			string parentName = var.GetData()[defaultDatas[je_ParentName]];
 			Node* targetNode = f_rootNode->SearchChildrenNode(f_rootNode, parentName);
-			if (nodeData->GetData()[defaultDatas[je_NodeType]] != e_Task)
+			if (var.GetData()[defaultDatas[je_NodeType]] != e_Task)
 			{
-				BehavierImGui::CreateNode(key.c_str(), type, targetNode);
+				string name = var.datas[defaultDatas[je_NodeName]];
+				BehavierImGui::CreateNode(name.c_str(), type, targetNode);
 			}
 			else
 			{
-				BehavierImGui::CreateNode(key.c_str(), type, targetNode, nodeData->datas["FunctionName"], nodeData->datas["FunctionNumber"]);
+				string name = var.datas[defaultDatas[je_NodeName]];
+				BehavierImGui::CreateNode(name.c_str(), type, targetNode, var.datas["FunctionName"], var.datas["FunctionNumber"]);
 			}
 		}
 	}

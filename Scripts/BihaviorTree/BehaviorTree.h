@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <functional>
+#include <algorithm>
 //インクルードは自分で調整してください
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_dx12.h"
@@ -66,7 +67,6 @@ namespace BehaviorTree
 	{
 	private:
 		static const ImVec2 WindowSize;
-		
 
 		function<bool()> _function;
 
@@ -79,6 +79,19 @@ namespace BehaviorTree
 
 	public:
 		json datas;
+		int _loadNumber = 0;
+		bool operator<(const Node& right) const {
+			int loadNum1 = datas[defaultDatas[je_LoadNumber]];
+			int loadNum2 = right.datas[defaultDatas[je_LoadNumber]];
+			bool loadnum = loadNum1 < loadNum2;
+			if (loadNum1 == loadNum2)
+			{
+				int priority1 = datas[defaultDatas[je_Priority]];
+				int priority2 = right.datas[defaultDatas[je_Priority]];
+				return priority1 < priority2;
+			}
+			return loadnum;
+		}
 		//list<string> jsonNames;
 		//GUIの描画ルール
 		ImGuiWindowFlags _flags = 0;
@@ -188,6 +201,8 @@ namespace BehaviorTree
 		}
 		f_child._parent = &f_parent;
 	};
+
+	static bool StartNode(Node &f_rootNode);
 
 	//-----------------------以下GUI制御用-----------------------
 	class BehavierImGui
