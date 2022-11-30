@@ -1,4 +1,4 @@
-#include "../VoiceUDPRecive/VoiceUDPRecive.h"
+//#include "../VoiceUDPRecive/VoiceUDPRecive.h"
 #include "Seling.h"
 #include "../BaseDirectX/Input.h"
 #include "../Shader/ShaderManager.h"
@@ -178,32 +178,27 @@ void Seling::Move()
 			m_isLanding = false;
 		}
 	}*/
-	if (VoiceReciver::GetRight() || lookToRightKey.GetKey())
+	if (lookToRightKey.GetKey())
 	{
 		angle += addSelingAngle;
 	}
-	if (VoiceReciver::GetLeft() || lookToLeftKey.GetKey())
+	if (lookToLeftKey.GetKey())
 	{
 		angle -= addSelingAngle;
 	}
 
 	frontDirection = { ShlomonMath::Sin(angle), 0, ShlomonMath::Cos(angle) };
 
-	if (VoiceReciver::GetFront() || goFrontKey.GetKey())
+	if (goFrontKey.GetKey())
 	{
 		XMFLOAT3 force(frontDirection.x * addForcePower, frontDirection.y * addForcePower, frontDirection.z * addForcePower);
 		AddForce(force);
 	}
-	if (VoiceReciver::GetBack() || goBackKey.GetKey())
+	if (goBackKey.GetKey())
 	{
 		XMFLOAT3 force(frontDirection.x * -addForcePower, frontDirection.y * -addForcePower, frontDirection.z * -addForcePower);
 		AddForce(force);
 	}
-
-	VoiceReciver::SetRight(false);
-	VoiceReciver::SetLeft(false);
-	VoiceReciver::SetFront(false);
-	VoiceReciver::SetBack(false);
 
 	XMFLOAT3 easeGoal(selingModel.each.rotation.x, selingModel.each.rotation.y, angle);
 	selingModel.each.rotation = ShlomonMath::EaseInQuad(selingModel.each.rotation, easeGoal, 0.3f);

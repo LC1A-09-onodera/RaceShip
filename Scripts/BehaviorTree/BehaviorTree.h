@@ -99,6 +99,11 @@ namespace BehaviorTree
 		list<Node*> _children;
 		//親ノード
 		Node* _parent = nullptr;
+		
+		//現在再生中のノード
+		Node *_playbBackNode;
+		int _playBackPriorityNum = 0;
+
 		//GUIウィンドウの座標
 		//ImVec2 _windowPos = { 0, 0 };
 		Node() {}
@@ -175,6 +180,25 @@ namespace BehaviorTree
 		{
 			return _function();
 		}
+
+		NowState StartNode()
+		{
+			if (datas[je_NodeType] == NodeType::e_Task)
+			{
+
+			}
+			if (_children.size() == 0)
+			{
+				
+			}
+			for each (Node *var in _children)
+			{
+				if (var)
+				if (var->Children()->size() == 0) return NowState::Stay;
+				var->StartNode();
+				return NowState::Stay;
+			}
+		}
 	};
 
 	/// <summary>
@@ -188,7 +212,8 @@ namespace BehaviorTree
 	/// <param name="rootNode"></param>
 	/// <param name="f_fileName"></param>
 	void InportFile(string f_fileName, Node* f_rootNode);
-	static void GetChildName(Node* f_node, string& f_names);
+	//static bool isExportError;
+	static bool GetChildName(Node* f_node, string& f_names);
 	/// <summary>
 	/// 親子を結ぶ
 	/// </summary>
@@ -201,8 +226,6 @@ namespace BehaviorTree
 		}
 		f_child._parent = &f_parent;
 	};
-
-	static bool StartNode(Node &f_rootNode);
 
 	//-----------------------以下GUI制御用-----------------------
 	class BehavierImGui
@@ -285,19 +308,36 @@ namespace BehaviorTree
 
 		static bool HogeTrigger()
 		{
-
+			return false;
 		}
-
-		static bool GetFlag1() { return true; };
-		static bool GetFlag2() { return false; };
-		static bool GetFlag3() { return true; };
+		//static bool isAttack;
+		//static bool isMove;
+		//static bool isStay;
+		/*static bool Attack()
+		{ 
+			if (isMove || isStay) return false; 
+			isAttack = true;
+			return isAttack;
+		};
+		static bool Move()
+		{ 
+			if (isStay || isAttack) return false;
+			isMove = true;
+			return isMove;
+		};
+		static bool Stay()
+		{ 
+			if (isAttack || isMove) return false;
+			isStay = true;
+			return isStay;
+		};*/
 
 		static void Init(string f_jsonFilePath)
 		{
 			
-			FuncElement *func1 = new FuncElement(GetFlag1, "Attack", 0);
-			FuncElement *func2 = new FuncElement(GetFlag2, "Stay", 1);
-			FuncElement *func3 = new FuncElement(GetFlag2, "Move", 2);
+			FuncElement *func1 = new FuncElement(HogeTrigger, "Attack", 0);
+			FuncElement *func2 = new FuncElement(HogeTrigger, "Stay", 1);
+			FuncElement *func3 = new FuncElement(HogeTrigger, "Move", 2);
 			functions.push_back(func1);
 			functions.push_back(func2);
 			functions.push_back(func3);
@@ -305,16 +345,7 @@ namespace BehaviorTree
 
 		static void Update()
 		{
-			for (auto itr = functions.begin(); itr != functions.end(); ++itr)
-			{
-				if (!(*itr)->_function())
-				{
-					int a = 0;
-					a++;
-					int b = 0;
-					b = a;
-				}
-			}
+			
 		}
 
 		static void GUIShow()

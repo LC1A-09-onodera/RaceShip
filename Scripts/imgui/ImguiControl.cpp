@@ -18,7 +18,7 @@
 #include "../Player/Seling.h"
 #include "../Tools/Particle/ParticleEdit.h"
 #include "../Tools/KeyLog/KeyLog.h"
-#include "../BihaviorTree/BehaviorTree.h"
+#include "../BehaviorTree/BehaviorTree.h"
 //#define _DEBUG
 
 using namespace Editors;

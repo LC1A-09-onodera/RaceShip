@@ -156,6 +156,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -164,6 +165,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>libfbxsdk-mt.lib;libxml2-mt.lib;zlib-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+      <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -178,7 +180,7 @@
     <ClInclude Include="Scripts\BaseDirectX\Library.h" />
     <ClInclude Include="Scripts\BaseDirectX\ResouceBarrier.h" />
     <ClInclude Include="Scripts\BaseDirectX\viewport.h" />
-    <ClInclude Include="Scripts\BihaviorTree\BehaviorTree.h" />
+    <ClInclude Include="Scripts\BehaviorTree\BehaviorTree.h" />
     <ClInclude Include="Scripts\Camera\Camera.h" />
     <ClInclude Include="Scripts\FBX\FbxLoader\FbxLoader.h" />
     <ClInclude Include="Scripts\FBX\FBXModel\FBXModel.h" />
@@ -217,8 +219,6 @@
     <ClInclude Include="Scripts\Tools\Particle\ParticleEdit.h" />
     <ClInclude Include="Scripts\Tools\Rewired\Rewired.h" />
     <ClInclude Include="Scripts\UDP\udp.h" />
-    <ClInclude Include="Scripts\VoiceUDPRecive\VoiceUDPRecive.h" />
-    <ClInclude Include="Scripts\VoiceUDPRecive\VoiceUDPSender.h" />
     <ClInclude Include="Scripts\WaterFace\WaterFace.h" />
     <ClInclude Include="Scripts\WindowsAPI\WinAPI.h" />
   </ItemGroup>
@@ -228,7 +228,7 @@
     <ClCompile Include="Scripts\BaseDirectX\DirectInput.cpp" />
     <ClCompile Include="Scripts\BaseDirectX\GameScene.cpp" />
     <ClCompile Include="Scripts\BaseDirectX\Input.cpp" />
-    <ClCompile Include="Scripts\BihaviorTree\BehaviorTree.cpp" />
+    <ClCompile Include="Scripts\BehaviorTree\BehaviorTree.cpp" />
     <ClCompile Include="Scripts\Camera\Camera.cpp" />
     <ClCompile Include="Scripts\FBX\FbxLoader\FbxLoader.cpp" />
     <ClCompile Include="Scripts\FBX\FBXModel\FBXModel.cpp" />
@@ -264,8 +264,6 @@
     <ClCompile Include="Scripts\Tools\Particle\ParticleEdit.cpp" />
     <ClCompile Include="Scripts\Tools\Rewired\Rewired.cpp" />
     <ClCompile Include="Scripts\UDP\udp.cpp" />
-    <ClCompile Include="Scripts\VoiceUDPRecive\VoiceUDPRecive.cpp" />
-    <ClCompile Include="Scripts\VoiceUDPRecive\VoiceUDPSender.cpp" />
     <ClCompile Include="Scripts\WaterFace\WaterFace.cpp" />
     <ClCompile Include="Scripts\WindowsAPI\WinAPI.cpp" />
   </ItemGroup>
