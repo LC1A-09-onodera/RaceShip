@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <functional>
+#include <algorithm>
 //インクルードは自分で調整してください
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_dx12.h"
@@ -66,7 +67,6 @@ namespace BehaviorTree
 	{
 	private:
 		static const ImVec2 WindowSize;
-		
 
 		function<bool()> _function;
 
@@ -79,6 +79,19 @@ namespace BehaviorTree
 
 	public:
 		json datas;
+		int _loadNumber = 0;
+		bool operator<(const Node& right) const {
+			int loadNum1 = datas[defaultDatas[je_LoadNumber]];
+			int loadNum2 = right.datas[defaultDatas[je_LoadNumber]];
+			bool loadnum = loadNum1 < loadNum2;
+			if (loadNum1 == loadNum2)
+			{
+				int priority1 = datas[defaultDatas[je_Priority]];
+				int priority2 = right.datas[defaultDatas[je_Priority]];
+				return priority1 < priority2;
+			}
+			return loadnum;
+		}
 		//list<string> jsonNames;
 		//GUIの描画ルール
 		ImGuiWindowFlags _flags = 0;
@@ -86,6 +99,11 @@ namespace BehaviorTree
 		list<Node*> _children;
 		//親ノード
 		Node* _parent = nullptr;
+		
+		//現在再生中のノード
+		Node *_playbBackNode;
+		int _playBackPriorityNum = 0;
+
 		//GUIウィンドウの座標
 		//ImVec2 _windowPos = { 0, 0 };
 		Node() {}
@@ -162,6 +180,25 @@ namespace BehaviorTree
 		{
 			return _function();
 		}
+
+		NowState StartNode()
+		{
+			if (datas[je_NodeType] == NodeType::e_Task)
+			{
+
+			}
+			if (_children.size() == 0)
+			{
+				
+			}
+			for each (Node *var in _children)
+			{
+				if (var)
+				if (var->Children()->size() == 0) return NowState::Stay;
+				var->StartNode();
+				return NowState::Stay;
+			}
+		}
 	};
 
 	/// <summary>
@@ -175,7 +212,8 @@ namespace BehaviorTree
 	/// <param name="rootNode"></param>
 	/// <param name="f_fileName"></param>
 	void InportFile(string f_fileName, Node* f_rootNode);
-	static void GetChildName(Node* f_node, string& f_names);
+	//static bool isExportError;
+	static bool GetChildName(Node* f_node, string& f_names);
 	/// <summary>
 	/// 親子を結ぶ
 	/// </summary>
@@ -270,19 +308,36 @@ namespace BehaviorTree
 
 		static bool HogeTrigger()
 		{
-
+			return false;
 		}
-
-		static bool GetFlag1() { return true; };
-		static bool GetFlag2() { return false; };
-		static bool GetFlag3() { return true; };
+		//static bool isAttack;
+		//static bool isMove;
+		//static bool isStay;
+		/*static bool Attack()
+		{ 
+			if (isMove || isStay) return false; 
+			isAttack = true;
+			return isAttack;
+		};
+		static bool Move()
+		{ 
+			if (isStay || isAttack) return false;
+			isMove = true;
+			return isMove;
+		};
+		static bool Stay()
+		{ 
+			if (isAttack || isMove) return false;
+			isStay = true;
+			return isStay;
+		};*/
 
 		static void Init(string f_jsonFilePath)
 		{
 			
-			FuncElement *func1 = new FuncElement(GetFlag1, "Attack", 0);
-			FuncElement *func2 = new FuncElement(GetFlag2, "Stay", 1);
-			FuncElement *func3 = new FuncElement(GetFlag2, "Move", 2);
+			FuncElement *func1 = new FuncElement(HogeTrigger, "Attack", 0);
+			FuncElement *func2 = new FuncElement(HogeTrigger, "Stay", 1);
+			FuncElement *func3 = new FuncElement(HogeTrigger, "Move", 2);
 			functions.push_back(func1);
 			functions.push_back(func2);
 			functions.push_back(func3);
@@ -290,16 +345,7 @@ namespace BehaviorTree
 
 		static void Update()
 		{
-			for (auto itr = functions.begin(); itr != functions.end(); ++itr)
-			{
-				if (!(*itr)->_function())
-				{
-					int a = 0;
-					a++;
-					int b = 0;
-					b = a;
-				}
-			}
+			
 		}
 
 		static void GUIShow()

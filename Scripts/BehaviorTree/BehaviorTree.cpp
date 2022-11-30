@@ -23,6 +23,7 @@ namespace BehaviorTree
 	list<FuncElement*> Enemy::functions = list<FuncElement*>();
 
 	int BehavierImGui::loadNumber = 0;
+	bool isExportError = false;
 
 	void Node::Init(Node* f_parent, string f_nodeName, NodeType f_type)
 	{
@@ -435,6 +436,22 @@ namespace BehaviorTree
 			ImGui::Text("The specified node is not a task node");
 			ImGui::End();
 		}
+		if (isExportError)
+		{
+			static const float sizeX = 400;
+			static const float sizeY = 50;
+			ImVec4* style = ImGui::GetStyle().Colors;
+			style[ImGuiCol_TitleBg] = { 0.8f, 0.3f, 0.3f, 1.0f };
+			style[ImGuiCol_TitleBgCollapsed] = { 0.8f, 0.3f, 0.3f, 1.0f };
+			style[ImGuiCol_TitleBgActive] = { 0.8f, 0.3f, 0.3f, 1.0f };
+			ImGui::SetNextWindowSize(ImVec2(sizeX, sizeY), ImGuiCond_Appearing);
+			//座標を左上に
+			ImGui::SetNextWindowPos(ImVec2((1280.0f / 2.0f) - (sizeX / 2), (720.0f / 2.0f) - (sizeY / 2)), ImGuiCond_Appearing);
+			ImGui::Begin("ExportError", &isExportError, beharviorButtonWindowFlags);//ウィンドウの名前
+
+			ImGui::Text("Some functions are not registered in the task node.");
+			ImGui::End();
+		}
 		//グリッドキャンパス
 		//ウィンドウサイズは各自で設定してください
 		{
@@ -548,13 +565,11 @@ namespace BehaviorTree
 		rootObject.Children()->clear();
 		loadNumber = 0;
 	}
-
 	void BehavierImGui::Init()
 	{
 		rootObject.Init(nullptr, "RootNode", e_Root);
 		selectObject = &rootObject;
 	}
-
 	void BehavierImGui::SetFunction(string f_name, int f_number)
 	{
 		if (selectObject == nullptr) return;
@@ -566,6 +581,12 @@ namespace BehaviorTree
 		selectObject->datas["FunctionName"] = f_name;
 		selectObject->datas["FunctionNumber"] = f_number;
 	}
+	
+	bool StartNode(Node& f_rootNode)
+	{
+		//f_rootNode;
+		return false;
+	}
 
 	void ExportFile(string f_fileName, Node* f_rootNode)
 	{
@@ -574,13 +595,19 @@ namespace BehaviorTree
 		string saveFileName = "Resource/TextData/Behavior/" + particleFileName + ".json";
 		ofstream ofs(saveFileName);
 		string dataStr = "{\n";
-		GetChildName(f_rootNode, dataStr);
+		isExportError = GetChildName(f_rootNode, dataStr);
 		dataStr += "\n}";
-		ofs << dataStr;
+		if (!isExportError)
+		{
+			ofs << dataStr;
+		}
 	}
-
-	void GetChildName(Node* f_node, string& f_names)
+	bool GetChildName(Node* f_node, string& f_names)
 	{
+		if (f_node->GetData()[defaultDatas[je_NodeType]] == e_Task && f_node->GetData()["FunctionName"] == nullptr)
+		{
+			return true;
+		}
 		//ノードの文字列化
 		f_names += "\"";
 		f_names += f_node->GetData(defaultDatas[je_NodeName]);
@@ -588,15 +615,16 @@ namespace BehaviorTree
 		f_names += f_node->GetData().dump();
 
 		//子がいなければ戻る
-		if (f_node->Children()->size() < 1) return;
+		if (f_node->Children()->size() < 1) return false;
 
 		for each (Node * node in *f_node->Children())
 		{
 			f_names += ",\n";
-			GetChildName(node, f_names);
+			isExportError = GetChildName(node, f_names);
+			if (isExportError) return true;
 		}
+		return false;
 	}
-
 	void InportFile(string f_fileName, Node* f_rootNode)
 	{
 		//ファイル読み込み
@@ -617,22 +645,31 @@ namespace BehaviorTree
 			allFileData += keyType;
 		}
 		json loadData = json::parse(allFileData);
+		vector<Node> datas;
 		//jsonデータにアクセス
 		for (auto& [key, value] : loadData.items())
 		{
 			if (key == "RootNode")continue;
-			Node* nodeData = new Node();
+			Node *nodeData = new Node();
 			nodeData->SetData(loadData[key]);
-			NodeType type = nodeData->GetData()[defaultDatas[je_NodeType]];
-			string parentName = nodeData->GetData()[defaultDatas[je_ParentName]];
+			datas.push_back(*nodeData);
+		}
+		sort(datas.begin(), datas.end());
+
+		for each (Node var in datas)
+		{
+			NodeType type = var.GetData()[defaultDatas[je_NodeType]];
+			string parentName = var.GetData()[defaultDatas[je_ParentName]];
 			Node* targetNode = f_rootNode->SearchChildrenNode(f_rootNode, parentName);
-			if (nodeData->GetData()[defaultDatas[je_NodeType]] != e_Task)
+			if (var.GetData()[defaultDatas[je_NodeType]] != e_Task)
 			{
-				BehavierImGui::CreateNode(key.c_str(), type, targetNode);
+				string name = var.datas[defaultDatas[je_NodeName]];
+				BehavierImGui::CreateNode(name.c_str(), type, targetNode);
 			}
 			else
 			{
-				BehavierImGui::CreateNode(key.c_str(), type, targetNode, nodeData->datas["FunctionName"], nodeData->datas["FunctionNumber"]);
+				string name = var.datas[defaultDatas[je_NodeName]];
+				BehavierImGui::CreateNode(name.c_str(), type, targetNode, var.datas["FunctionName"], var.datas["FunctionNumber"]);
 			}
 		}
 	}
