@@ -1,0 +1,6 @@
+{
+"RootNode":{"LoadNumber":1,"NodeName":"RootNode","NodeType":0,"Priority":0,"WindowPosition":[100.0,30.0],"WindowSize":[220.0,140.0]},
+"attack":{"LoadNumber":2,"NodeName":"attack","NodeType":3,"ParentName":"RootNode","Priority":0,"WindowPosition":[325.0,100.0],"WindowSize":[220.0,140.0]},
+"selector":{"LoadNumber":3,"NodeName":"selector","NodeType":1,"ParentName":"RootNode","Priority":1,"WindowPosition":[325.0,240.0],"WindowSize":[220.0,140.0]},
+"stay":{"LoadNumber":4,"NodeName":"stay","NodeType":3,"ParentName":"selector","Priority":0,"WindowPosition":[559.0,318.0],"WindowSize":[220.0,140.0]}
+}

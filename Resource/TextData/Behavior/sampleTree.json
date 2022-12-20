@@ -1,0 +1,7 @@
+{
+"RootNode":{"LoadNumber":0,"NodeName":"RootNode","NodeType":0,"Priority":0,"WindowPosition":[100.0,61.0],"WindowSize":[216.0,143.0]},
+"slector":{"LoadNumber":1,"NodeName":"slector","NodeType":1,"ParentName":"RootNode","Priority":0,"WindowPosition":[365.0,173.0],"WindowSize":[220.0,140.0]},
+"task1":{"FunctionName":"Attack","FunctionNumber":0,"LoadNumber":2,"NodeName":"task1","NodeType":3,"ParentName":"slector","Priority":0,"WindowPosition":[664.0,268.0],"WindowSize":[220.0,140.0]},
+"task2":{"FunctionName":"Stay","FunctionNumber":1,"LoadNumber":3,"NodeName":"task2","NodeType":3,"ParentName":"slector","Priority":1,"WindowPosition":[663.0,447.0],"WindowSize":[220.0,140.0]},
+"task3":{"FunctionName":"Move","FunctionNumber":2,"LoadNumber":4,"NodeName":"task3","NodeType":3,"ParentName":"RootNode","Priority":1,"WindowPosition":[321.0,375.0],"WindowSize":[220.0,140.0]}
+}

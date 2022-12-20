@@ -1,5 +1,0 @@
-{
-"RootNode":{"NodeName":"RootNode","NodeType":0,"Priority":0,"WindowPosition":[100.0,30.0]},
-"se":{"NodeName":"se","NodeType":1,"ParentName":"RootNode","Priority":0,"WindowPosition":[623.0,162.0]},
-"task":{"NodeName":"task","NodeType":3,"ParentName":"se","Priority":0,"WindowPosition":[843.0,192.0]}
-}

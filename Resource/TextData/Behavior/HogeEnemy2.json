@@ -1,0 +1,5 @@
+{
+"RootNode":{"LoadNumber":0,"NodeName":"RootNode","NodeType":0,"Priority":0,"WindowPosition":[100.0,30.0],"WindowSize":[220.0,140.0]},
+"hoge":{"LoadNumber":0,"NodeName":"hoge","NodeType":1,"ParentName":"RootNode","Priority":0,"WindowPosition":[316.0,100.0],"WindowSize":[220.0,140.0]},
+"task":{"LoadNumber":1,"NodeName":"task","NodeType":3,"ParentName":"RootNode","Priority":1,"WindowPosition":[314.0,288.0],"WindowSize":[220.0,140.0]}
+}
